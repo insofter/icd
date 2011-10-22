@@ -1,0 +1,46 @@
+Organizacja danych:
+
+config.db Aktualne dane konfiguracyjne
+config-default.db Konfiguracja domyślna lub inaczej ustawienia fabryczne
+live.db - Dane robocze trzymane w pliku tymczasowym  (dane nie są zachowywane pomiędzy resetami)
+  Tabele: events, flow, tests
+archive.db - Dane trwałe trzymane we flashu; zachowywane pomiędzy resetami systemu
+  Tabele: flow
+
+Moduły:
+
+icd-transition-detector-daemon
+icd-transition-detector-kmod
+
+icd-scheduler-daemon    <- maybe cron will suffice
+
+icd-init-net              # reads config db and configures the network
+                          # also saves the current settings into the db
+icd-init-livedb           # creates empty database and populates it with
+                          # the data from archive db
+icd-archive-data          # copies relevant data from temp db into data db
+                          # also removes outdated entries
+icd-transfer-data         # transfers data from live db to external server 
+                          # with custom data exchange protocol based on HTTP POST
+icd-test-detector         # Runs a test common for all detectors; the result
+                          # of the tests is presented on the program standard output
+                          # but is also registered in live db (this can be controlled
+                          # by a command line parameter)
+
+icd-init:
+  - runs icd-init-livedb
+  - runs insmod icd-transition-detector-kmod
+  - starts icd-transition-detector-daemon
+  - runs icd-init-net 
+
+----
+
+TODO: Support for LCD + buttons
+TODO: Web based configuration / data preview tool
+
+
+
+
+
+
+
