@@ -9,10 +9,9 @@ archive.db - Dane trwałe trzymane we flashu; zachowywane pomiędzy resetami sys
 
 Moduły:
 
-icd-transition-detector-daemon
-icd-transition-detector-kmod
+icd-itd-kmod              # input transition detector kernel module
 
-icd-scheduler-daemon    <- maybe cron will suffice
+icd-itd-daemon            # input transition detector daemon
 
 icd-init-net              # reads config db and configures the network
                           # also saves the current settings into the db
@@ -20,7 +19,7 @@ icd-init-livedb           # creates empty database and populates it with
                           # the data from archive db
 icd-archive-data          # copies relevant data from temp db into data db
                           # also removes outdated entries
-icd-transfer-data         # transfers data from live db to external server 
+icd-transfer-data         # transfers data from live db to external server
                           # with custom data exchange protocol based on HTTP POST
 icd-test-detector         # Runs a test common for all detectors; the result
                           # of the tests is presented on the program standard output
