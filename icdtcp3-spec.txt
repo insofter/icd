@@ -1,9 +1,33 @@
 Organizacja danych:
 
 config.db Aktualne dane konfiguracyjne
+
 config-default.db Konfiguracja domyślna lub inaczej ustawienia fabryczne
+
 live.db - Dane robocze trzymane w pliku tymczasowym  (dane nie są zachowywane pomiędzy resetami)
-  Tabele: events, flow, tests
+  Tabele: events, flow
+    id         // event id
+    itd_id     // input transition detector (e.g photocell) id
+    dtm        // date and time of the event
+    state      // 1 (0->1) or 0 (1->0)
+    flags      // NOT SENT (1), SENT (0) (= aggregated into a flow period)
+
+  Flow table:
+    id         // period id
+    itd_id     // input transition detector (e.g photocell) id
+    dtm        // date and time of the beginning of the period
+    cnt        // number of events = number of transitions 0->1
+    dark_time  // time the photocell was blocked within this period
+    work_time  // time the photocell was working within this period
+    test       // photocell test result; the test performed at some time within this period
+    flags      // one of: OPEN (2), NOT SENT (1), SENT (0) (we need to distiguish between OPEN periods
+               // (ones that are still being modified) and NOT SENT (finished but not yet sent)
+               // as we want to send all periods, but also want to resent the OPEN one in the future
+               // once it is finished. Also, we don't want to judge if a row is OPEN or not
+               // by the current time as all sort of dealys are expected in the system.
+
+
+
 archive.db - Dane trwałe trzymane we flashu; zachowywane pomiędzy resetami systemu
   Tabele: flow
 
