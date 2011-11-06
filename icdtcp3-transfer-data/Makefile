@@ -6,16 +6,17 @@
 .PHONY: cleanall
 
 #CC=arm-linux-uclibcgnueabi-gcc
-#CC=g++
+#CXX=arm-linux-uclibcgnueabi-g++
 CPPFLAGS=
 CXXFLAGS=-Wall -g -D_GNU_SOURCE
 
+INC= curlcc.h sqlite3cc.h transfer-agent.h
+
 all: icdtcp3-transfer-data
 
-icdtcp3-transfer-data: icdtcp3-transfer-data.cc
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lsqlite3 -o $@ icdtcp3-transfer-data.cc
+icdtcp3-transfer-data: icdtcp3-transfer-data.cc transfer-agent.cc $(INC)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lsqlite3 -lcurl -lroxml -o $@ icdtcp3-transfer-data.cc transfer-agent.cc
 
-#INC= tsdfs.h ../tsdfs-ioctl.h
 
 #all: tsdfs-erase tsdfs-split tsdfs-join
 
@@ -29,5 +30,5 @@ icdtcp3-transfer-data: icdtcp3-transfer-data.cc
 #	$(CC) $(CPPFLAGS) $(CXXFLAGS) -o $@ tsdfs-join.c
 
 clean:
-	$(RM) icdtcp3-itd-daemon
+	$(RM) icdtcp3-transfer-data
 
