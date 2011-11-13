@@ -12,10 +12,14 @@ CXXFLAGS=-Wall -g -D_GNU_SOURCE
 
 INC= curlcc.h sqlite3cc.h transfer-agent.h
 
-all: icdtcp3-transfer-data
+all: icdtcp3-transfer-data icdtcp3-itd-daemon
 
 icdtcp3-transfer-data: icdtcp3-transfer-data.cc transfer-agent.cc $(INC)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lsqlite3 -lcurl -lroxml -o $@ icdtcp3-transfer-data.cc transfer-agent.cc
+
+icdtcp3-itd-daemon: icdtcp3-itd-daemon.cc $(INC)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lsqlite3 -o $@ icdtcp3-itd-daemon.cc
+
 
 
 #all: tsdfs-erase tsdfs-split tsdfs-join
@@ -31,4 +35,5 @@ icdtcp3-transfer-data: icdtcp3-transfer-data.cc transfer-agent.cc $(INC)
 
 clean:
 	$(RM) icdtcp3-transfer-data
+	$(RM) icdtcp3-itd-daemon
 
