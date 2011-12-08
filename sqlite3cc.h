@@ -45,6 +45,22 @@ namespace sqlite3cc
         handle = NULL;
       }
 
+      void exec(const char *sql)
+      {
+        int err = sqlite3_exec(handle, sql, NULL, NULL, NULL);
+        if (err != SQLITE_OK)
+          std::cerr << "conn::exec: Error! sqlite3_exec returned "
+            "an error code (" << err << ")" << std::endl;
+      }
+
+      void busy_timeout(int ms)
+      {
+        int err = sqlite3_busy_timeout(handle, ms);
+        if (err != SQLITE_OK)
+          std::cerr << "conn::busy_timeout: Error! sqlite3_busy_timeout returned "
+            "an error code (" << err << ")" << std::endl;
+      }
+
       sqlite3 *get_handle(void) { return handle; }
 
     private:
@@ -72,7 +88,7 @@ namespace sqlite3cc
           std::cerr << "stmt::prepare: handle " << handle << std::endl;
       }
 
-      int step(void)
+      int step()
       {
         int err = sqlite3_step(handle);
         if (err != SQLITE_ROW && err != SQLITE_DONE)
@@ -80,6 +96,16 @@ namespace sqlite3cc
             "an error code (" << err << ")" << std::endl;
 
         return err;
+      }
+
+      void reset()
+      {
+        int err = sqlite3_reset(handle);
+        if (err != SQLITE_OK)
+          std::cerr << "stmt::reset: Error! sqlite3_reset returned "
+            "an error code (" << err << ")" << std::endl;
+        else
+          std::cerr << "stmt::reset: handle " << handle << std::endl;
       }
 
       int column_type(int col)
@@ -102,6 +128,41 @@ namespace sqlite3cc
         return (const char *)sqlite3_column_text(handle, col);
       }
 
+      void bind_null(int index)
+      {
+        int err = sqlite3_bind_null(handle, index);
+        if (err != SQLITE_OK)
+          std::cerr << "stmt::bind_null: Error!" << std::endl;
+      }
+
+      void bind_int(int index, int value)
+      {
+        int err = sqlite3_bind_int(handle, index, value);
+        if (err != SQLITE_OK)
+          std::cerr << "stmt::bind_int: Error!" << std::endl;
+      }
+
+      void bind_int64(int index, long long int value)
+      {
+        int err = sqlite3_bind_int64(handle, index, value);
+        if (err != SQLITE_OK)
+          std::cerr << "stmt::bind_int64: Error!" << std::endl;
+      }
+
+      void bind_text(int index, const std::string& value)
+      {
+        int err = sqlite3_bind_text(handle, index, value.c_str(), -1, SQLITE_TRANSIENT);
+        if (err != SQLITE_OK)
+          std::cerr << "stmt::bind_text: Error!" << std::endl;
+      } 
+
+      void clear_bindings()
+      {
+        int err = sqlite3_clear_bindings(handle);
+        if (err != SQLITE_OK)
+          std::cerr << "stmt::clear_bindings: Error!" << std::endl;
+      }
+
       void finalize(void)
       {
         std::cerr << "stmt::finalize: handle " << handle << std::endl;
@@ -122,7 +183,7 @@ namespace sqlite3cc
       sqlite3_stmt *handle;
   };
 
-  class row
+/*  class row
   {
     public:
       row();
@@ -156,15 +217,15 @@ namespace sqlite3cc
     test = st.column_text(6);
     flags = st.column_int(7);
   } 
-
-  //template <class T>
+*/
+  template <class T>
   class rowset
   {
   public:
     rowset(conn& db) : db(db) {}
     ~rowset();
 
-    std::vector<row *>& get_rows(void) { return rows; }
+    std::vector<T *>& get_rows(void) { return rows; }
     conn& get_db(void);
 
     void db_select(const char *sql);
@@ -172,10 +233,11 @@ namespace sqlite3cc
   protected:
   
     conn& db;
-    std::vector<row *> rows;
+    std::vector<T *> rows;
   };
 
-  rowset::~rowset()
+  template <class T>
+  rowset<T>::~rowset()
   {
     while (!rows.empty())
     {
@@ -184,15 +246,15 @@ namespace sqlite3cc
     }
   }
 
-  void rowset::db_select(const char *sql)
+  template <class T>
+  void rowset<T>::db_select(const char *sql)
   {
     stmt st(db);
     st.prepare(sql);
 
     while (st.step() == SQLITE_ROW)
     {
-      row *r = new row();
-      r->init(st);
+      T *r = new T(st);
       rows.push_back(r);
     }
 

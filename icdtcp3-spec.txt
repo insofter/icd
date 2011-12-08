@@ -22,7 +22,7 @@ live.db - Dane robocze trzymane w pliku tymczasowym  (dane nie są zachowywane p
     test       // photocell test result; the test performed at some time within this period
     flags      // one of: OPEN (2), NOT SENT (1), SENT (0) (we need to distiguish between OPEN periods
                // (ones that are still being modified) and NOT SENT (finished but not yet sent)
-               // as we want to send all periods, but also want to resent the OPEN one in the future
+               // as we want to send all periods, but also want to resend the OPEN one in the future
                // once it is finished. Also, we don't want to judge if a row is OPEN or not
                // by the current time as all sort of dealys are expected in the system.
 
@@ -41,6 +41,7 @@ icd-init-net              # reads config db and configures the network
                           # also saves the current settings into the db
 icd-init-livedb           # creates empty database and populates it with
                           # the data from archive db
+icd-aggregate-data        # creates and updates flow entries based on events table
 icd-archive-data          # copies relevant data from temp db into data db
                           # also removes outdated entries
 icd-transfer-data         # transfers data from live db to external server

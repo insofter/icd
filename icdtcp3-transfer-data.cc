@@ -6,6 +6,22 @@
 #include "curlcc.h"
 #include "sqlite3cc.h"
 
+class flow_entry_db : public idctcp3::flow_entry
+{
+  public:
+    flow_entry_db(sqlite3cc::stmt& st)
+    {
+      id = st.column_int(0);
+      itd_id = st.column_int(1);
+      dtm = st.column_text(2);
+      cnt = st.column_int(3);
+      dark_time = st.column_int(4);
+      work_time = st.column_int(5);
+      test = st.column_text(6);
+      flags = st.column_int(7);
+    }
+};
+
 int main(int argc, char* argv[])
 {
   std::cout << "Hello world!!!\n";
@@ -26,13 +42,13 @@ int main(int argc, char* argv[])
 
   ta.send_data();
 
-  sqlite3cc::rowset entries(db);
+  sqlite3cc::rowset<flow_entry_db> entries(db);
   entries.db_select("SELECT id, itd_id, dtm, cnt, dark_time, work_time, test, flags FROM flow");
 
-  std::vector<sqlite3cc::row *>::iterator i;  
+  std::vector<flow_entry_db *>::iterator i;
   for (i = entries.get_rows().begin(); i < entries.get_rows().end(); i++)
   {
-    sqlite3cc::row *r = *i;
+    flow_entry_db *r = *i;
     std::cerr << "id=" << r->id << "|"
      << "itd_id=" << r->itd_id << "|"
      << "dtm=" << r->dtm << "|"
