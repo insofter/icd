@@ -5,7 +5,7 @@
 
 namespace idctcp3
 {
-  class aggregation_agent
+/*  class aggregation_agent
   {
     public:
       aggregation_agent(const std::string& dbname);
@@ -73,16 +73,16 @@ namespace idctcp3
 
   void aggregation_agent::remove_old_events()
   {
-  }
+  }*/
 }
 
 int main(int argc, char *argv[])
 {
   std::cout << "icdtcd3-aggr-data: Hello world;\n";
 
-  aggregation_agent aggr("live.db");
-  aggr.run();
-
+//  aggregation_agent aggr("live.db");
+//  aggr.run();
+/*
 
 
   //TODO get last aggregation time from current config
@@ -110,7 +110,7 @@ int main(int argc, char *argv[])
     dtm += period;
   }
   stmt.finalize();
-
+*/
 /*
 SELECT f.id, f.itd_id, f.dtm,
   f.cnt + (SELECT count(*) FROM events e1 JOIN events e2
