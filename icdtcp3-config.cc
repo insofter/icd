@@ -1,158 +1,266 @@
 #include <string>
+#include <sstream>
+#include <stdexcept>
+#include <cstdlib>
+#include <getopt.h>
+
 #include "sqlite3cc.h"
+#include "db-config.h"
 
-namespace icdtcp3
+class command_parser
 {
-  class config
+  public:
+    command_parser(sqlite3cc::conn& db, int argc, char* argv[]) 
+      : config(db), argc(argc), argv(argv),
+        separator(":"), optind(0)  {}
+    ~command_parser() {}
+
+    void set_separator(const std::string& s) { separator = s; }
+    void run();
+
+  private:
+    icdtcp3::config config;
+    int argc;
+    char **argv;
+    std::string separator;
+    int optind;
+
+    void check_num_of_args(int expected);
+
+    void run_get();
+    void run_set();
+    void run_rm();
+    void run_list();
+    void run_list_all();
+    void run_add_section();
+    void run_rm_section();
+    void run_list_sections();
+};
+
+void command_parser::run()
+{
+  while(optind < argc)
   {
-    public:
-      config(sqlite3cc::conn& db) : db(db) {}
-      ~config() {}
-
-      std::string entry(const std::string& section, const std::string& key);
-      void set_entry(const std::string& section, const std::string& key, const std::string& value);
-      void remove_entry(const std::string& section, const std::string& key);
-
-      void add_section(const std::string& name);
-      void remove_section(const std::string& name);
-
-    private:
-      sqlite3cc::conn& db;
-  };
-
-  std::string config::entry(const std::string& section, const std::string& key)
-  {
-    sqlite3cc::stmt stmt(db);
-    const char *sql = "SELECT c.value "
-      "FROM config c JOIN config_section s ON c.section_id == s.id "
-      "WHERE s.name == ?1 AND c.key == ?2";
-    stmt.prepare(sql);
-    stmt.bind_text(1, section.c_str());
-    stmt.bind_text(2, key.c_str());
-    stmt.step();
-    std::string value = stmt.column_text(0);
-    stmt.finalize();
-    return value;
+    if (std::string(argv[optind]).compare("get") == 0)
+      run_get();
+    else if (std::string(argv[optind]).compare("set") == 0)
+      run_set();
+    else if (std::string(argv[optind]).compare("rm") == 0)
+      run_rm();
+    else if (std::string(argv[optind]).compare("list") == 0)
+      run_list();
+    else if (std::string(argv[optind]).compare("list-all") == 0)
+      run_list_all();
+    else if (std::string(argv[optind]).compare("add-section") == 0)
+      run_add_section();
+    else if (std::string(argv[optind]).compare("rm-section") == 0)
+      run_rm_section();
+    else if (std::string(argv[optind]).compare("list-sections") == 0)
+      run_list_sections();
+    else
+      throw std::runtime_error(std::string("Unknown command '") + argv[optind] + "'");
   }
-
-  void config::set_entry(const std::string& section, const std::string& key, const std::string& value)
-  {
-    sqlite3cc::stmt stmt(db);
-    const char *sql = "INSERT OR REPLACE INTO config (section_id, key, value) "
-      "VALUES ( (SELECT s.id FROM config_section s WHERE s.name = ?1), ?2, ?3)";
-    stmt.prepare(sql);
-    stmt.bind_text(1, section.c_str());
-    stmt.bind_text(2, key.c_str());
-    stmt.bind_text(3, value.c_str());
-    stmt.step();
-    stmt.finalize();
-  }
-
-  void config::remove_entry(const std::string& section, const std::string& key)
-  {
-    sqlite3cc::stmt stmt(db);
-    const char *sql = "DELETE FROM config WHERE "
-      "section_id == (SELECT s.id FROM config_section s WHERE s.name == ?1) "
-      "AND key == ?2";
-    stmt.prepare(sql);
-    stmt.bind_text(1, section.c_str());
-    stmt.bind_text(2, key.c_str());
-    stmt.step();
-    stmt.finalize();
-  }
-
-  void config::add_section(const std::string& name)
-  {
-    sqlite3cc::stmt stmt(db);
-    const char *sql = "INSERT INTO config_section (name) VALUES (?1)";
-    stmt.prepare(sql);
-    stmt.bind_text(1, name.c_str());
-    stmt.step();
-    stmt.finalize();
-  }
-
-  void config::remove_section(const std::string& name)
-  {
-    sqlite3cc::stmt stmt(db);
-    const char *sql = "DELETE FROM config_section WHERE name == ?1";
-    stmt.prepare(sql);
-    stmt.bind_text(1, name.c_str());
-    stmt.step();
-    stmt.finalize();
-  }
-
-  struct config_entry
-  {  
-    int id;
-    int section_id;
-    std::string section;
-    std::string key;
-    std::string value;
-  };
-
-/*  class config
-  {
-    public:
-      config(db);
-      ~config();
-
-      void load(); // loads data from db
-      void save(); // stores data into db
-
-      std::string entry(const std::string& section, const std::string& key) const;
-      void set_entry(const std::string& section, const std::string& key, const std::string& value);
-      void remove_entry(const std::string& section, const std::string& key) const;
-      void remove_section(const std::string& name);
-
-      vector<std::string> keys(const std::sting& section) const;
-      vector<std::string> sections() const;
-
-    private:
-      enum state
-      {
-        UNCHANGED,
-        NEW,
-        MODIFIED,
-        DELETED
-      };
-
-      struct entry
-      {
-        int id;
-        int section_id;
-        std::string key;
-        std::string name;
-        state st;
-        section *section;
-      };
-
-      struct section
-      {
-        int id;
-        std::string name;
-        state st;
-        std::map<std::string, entry> entries;
-      };
-
-      conn *db;
-      std::map<std::string, section> sections;
-  };*/
 }
 
-int main(int argc, char* argv[])
+void command_parser::check_num_of_args(int expected)
 {
-  sqlite3cc::conn db;
-  db.open("live.db");
-  db.busy_timeout(60 * 1000);
+  if (optind + expected >= argc)
+  {
+    std::ostringstream oss;
+    oss << "Incorect number of arguments for '" << argv[optind] << "'command";
+    throw std::runtime_error(oss.str());
+  }  
+}
 
-  icdtcp3::config config(db);
+void command_parser::run_get()
+{
+  check_num_of_args(2);
+  std::string section = argv[optind + 1];
+  std::string key = argv[optind + 2];
+  std::string value = config.entry(section, key);
+  std::cout << section << separator << key << separator << value << std::endl;
+  optind += 3;
+}
 
-  std::string ip = config.entry("tcpip","ip");
-  std::cout << "tcpip:ip=" << ip << std::endl;
+void command_parser::run_set()
+{
+  check_num_of_args(3);
+  std::string section = argv[optind + 1];
+  std::string key = argv[optind + 2];
+  std::string value = argv[optind + 3];
+  config.set_entry(section, key, value);
+  optind += 4;
+}
 
-  config.set_entry("tcpip","ipa","192.168.2.200");
+void command_parser::run_rm()
+{
+  check_num_of_args(2);
+  std::string section = argv[optind + 1];
+  std::string key = argv[optind + 2];
+  config.remove_entry(section, key);
+  optind += 3;
+}
 
-  db.close();
+void command_parser::run_list()
+{
+  check_num_of_args(1);
+  std::string section = argv[optind + 1];
+  std::vector<icdtcp3::config_entry> list = config.list_entries(section);
+  std::vector<icdtcp3::config_entry>::iterator i;
+  for (i = list.begin() ; i < list.end(); i++)
+    std::cout << (*i).section << separator << (*i).key
+      << separator << (*i).value << std::endl;
+  optind += 2;
+}
+
+void command_parser::run_list_all()
+{
+  std::vector<icdtcp3::config_entry> list = config.list_entries();
+  std::vector<icdtcp3::config_entry>::iterator i;
+  for (i = list.begin() ; i < list.end(); i++)
+    std::cout << (*i).section << separator << (*i).key
+      << separator << (*i).value << std::endl;
+  optind += 1;
+}
+
+void command_parser::run_add_section()
+{
+  check_num_of_args(1);
+  std::string section = argv[optind + 1];
+  config.add_section(section);
+  optind += 2;
+}
+
+void command_parser::run_rm_section()
+{
+  check_num_of_args(1);
+  std::string section = argv[optind + 1];
+  config.remove_section(section);
+  optind += 2;
+}
+
+void command_parser::run_list_sections()
+{
+  std::vector<std::string> list = config.list_sections();
+  std::vector<std::string>::iterator i;
+  for (i = list.begin() ; i < list.end(); i++)
+    std::cout << (*i) << std::endl;
+  optind += 1;
+}
+
+//------------------------------------------------------------------------------
+
+#define APP_NAME "icdtcp3-config"
+#define APP_VERSION "1.0"
+#define APP_COPYRIGHT "Copyright (c) 2011 Tomasz Rozensztrauch"
+
+const char *usage =
+  "\n"
+  "Usage: "APP_NAME" OPTION... CMD [ARG]... [CMD [ARG]...]...\n"
+  "\n"
+  "A command line tool for managing icdtcp3 configuration entries.\n"
+  "\n"
+  "Comands:\n"
+  "  get SECTION KEY\n"
+  "  set SECTION KEY VALUE\n"
+  "  rm SECTION KEY\n"
+  "  list [SECTION]\n"
+  "  list-all\n"
+  "  add-section SECTION\n"
+  "  rm-section SECTION\n"
+  "  list-sections\n"
+  "\n"
+  "Options:\n"
+  "  -d|--db=DB_NAME              Database file path; Mandatory option\n"
+  "  -t|--timeout=TIMEOUT_MS      Timeout when waiting for acces to the database in ms\n"
+  "  -s|--separator=SEPARATOR     Output separator; Default value is ':'\n"
+  "  -h|--help\n"
+  "  -v|--version\n"
+  "\n";
+
+const char *version =
+  APP_NAME" "APP_VERSION"\n"
+  APP_COPYRIGHT"\n";
+
+int main(int argc, char *argv[])
+{
+  try
+  {
+    std::string db_name;
+    std::string separator(":");
+    int db_timeout = 60000; // default timeout is 60 seconds
+    bool exit = false;
+
+    struct option long_options[] = {
+    { "db", required_argument, 0, 'd' },
+    { "timeout", required_argument, 0, 't' },
+    { "separator", required_argument, 0, 's' },
+    { "help", no_argument, 0, 'h' },
+    { "version", no_argument, 0, 'v' },
+    { 0, 0, 0, 0 }
+    };
+
+    while(1)
+    {
+      int option_index = 0;
+      int ch = getopt_long(argc, argv, "d:t:s:hv", long_options, &option_index);
+      if (ch == -1)
+        break;
+
+      switch(ch)
+      {
+        case 'd':
+          db_name = optarg;
+          break;
+        case 't':
+          db_timeout = strtol(optarg, NULL, 0);
+        case 's':
+          separator = optarg;
+          break;
+        case 'h':
+          std::cout << usage;
+          exit = true;
+          break;
+        case 'v':
+          std::cout << version;
+          exit = true;
+          break;
+        default:
+        {
+          std::ostringstream oss;
+          oss << "Unknown option '" << char(ch) << "'";
+          throw std::runtime_error(oss.str());
+        }
+      }
+
+      if (exit)
+        break;
+    }
+
+    if (!exit)
+    {
+      if (optind >= argc)
+        throw std::runtime_error("No command specified");
+
+      if (db_name.empty())
+        throw std::runtime_error("Missing '--db' parameter");
+
+      sqlite3cc::conn db;
+      db.open(db_name.c_str());
+      db.busy_timeout(db_timeout);
+
+      command_parser parser(db, argc - optind, argv + optind);
+      parser.set_separator(separator);
+      parser.run();
+
+      db.close();
+    }
+  }
+  catch(std::exception& e)
+  {
+    std::cout << APP_NAME" error: " << e.what() << std::endl;
+    return 1;
+  }
 
   return 0;
 }

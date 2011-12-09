@@ -10,12 +10,12 @@
 CPPFLAGS=
 CXXFLAGS=-Wall -g -D_GNU_SOURCE
 
-INC= curlcc.h sqlite3cc.h transfer-agent.h
+INC= db-config.h curlcc.h sqlite3cc.h transfer-agent.h
 
 all: icdtcp3-config icdtcp3-itd-daemon icdtcp3-aggr-data icdtcp3-transfer-data
 
-icdtcp3-config: icdtcp3-config.cc $(INC)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lsqlite3 -o $@ icdtcp3-config.cc
+icdtcp3-config: icdtcp3-config.cc db-config.cc $(INC)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lsqlite3 -o $@ icdtcp3-config.cc db-config.cc
 
 icdtcp3-itd-daemon: icdtcp3-itd-daemon.cc $(INC)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lsqlite3 -o $@ icdtcp3-itd-daemon.cc
