@@ -4,6 +4,7 @@ namespace icdtcp3
 {
   std::string config::entry(const std::string& section, const std::string& key)
   {
+    std::string value;
     sqlite3cc::stmt stmt(db);
     const char *sql = "SELECT c.value "
       "FROM config c JOIN config_section s ON c.section_id == s.id "
@@ -12,7 +13,8 @@ namespace icdtcp3
     stmt.bind_text(1, section.c_str());
     stmt.bind_text(2, key.c_str());
     stmt.step();
-    std::string value = stmt.column_text(0);
+    if (stmt.column_type(0) != SQLITE_NULL)
+      value = stmt.column_text(0);
     stmt.finalize();
     return value;
   }
