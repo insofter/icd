@@ -12,7 +12,7 @@ class flow_entry_db : public idctcp3::flow_entry
     flow_entry_db(sqlite3cc::stmt& st)
     {
       id = st.column_int(0);
-      itd_id = st.column_int(1);
+      itd = st.column_text(1);
       dtm = st.column_text(2);
       cnt = st.column_int(3);
       dark_time = st.column_int(4);
@@ -43,14 +43,14 @@ int main(int argc, char* argv[])
   ta.send_data();
 
   sqlite3cc::rowset<flow_entry_db> entries(db);
-  entries.db_select("SELECT id, itd_id, dtm, cnt, dark_time, work_time, test, flags FROM flow");
+  entries.db_select("SELECT id, itd, dtm, cnt, dark_time, work_time, test, flags FROM flow");
 
   std::vector<flow_entry_db *>::iterator i;
   for (i = entries.get_rows().begin(); i < entries.get_rows().end(); i++)
   {
     flow_entry_db *r = *i;
     std::cerr << "id=" << r->id << "|"
-     << "itd_id=" << r->itd_id << "|"
+     << "itd=" << r->itd << "|"
      << "dtm=" << r->dtm << "|"
      << "cnt=" << r->cnt << "|"
      << "dark_time=" << r->dark_time << "|"

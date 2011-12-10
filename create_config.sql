@@ -41,8 +41,10 @@ INSERT INTO config (section_id, key, value) VALUES ( 3, "idd", "0" );
 INSERT INTO config (section_id, key, value) VALUES ( 3, "address", "www.insofter.pl" );
 INSERT INTO config (section_id, key, value) VALUES ( 3, "user", "" );
 INSERT INTO config (section_id, key, value) VALUES ( 3, "pass", "" );
-INSERT INTO config (section_id, key, value) VALUES ( 3, "aggr-period-mins", "15" );
 INSERT INTO config (section_id, key, value) VALUES ( 3, "transfer-enabled", "yes" );
+INSERT INTO config (section_id, key, value) VALUES ( 3, "aggr-period-mins", "15" );
+INSERT INTO config (section_id, key, value) VALUES ( 3, "event-retention-period-mins", "60" );
+INSERT INTO config (section_id, key, value) VALUES ( 3, "flow-entry-retention-period-mins", "120" );
 
 -- section itd0 --
 INSERT INTO config (section_id, key, value) VALUES ( 4, "name", "Entrance A" );

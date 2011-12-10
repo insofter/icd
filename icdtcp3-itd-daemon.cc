@@ -193,7 +193,7 @@ int main(int argc, char *argv[])
   db.open("live.db");
 
   sqlite3cc::stmt stmt(db);
-  const char *sql = "INSERT INTO events (itd_id, dtmms, state) VALUES (?1, ?2, ?3)";
+  const char *sql = "INSERT INTO events (itd, dtmms, state) VALUES (?1, ?2, ?3)";
   stmt.prepare(sql);
 
   while(1)
@@ -204,7 +204,7 @@ int main(int argc, char *argv[])
 
     std::cout << e.state() << ";" <<  e.dtm() << std::endl;
 
-    stmt.bind_int(1, 0);
+    stmt.bind_text(1, "itd0");
     stmt.bind_int64(2, e.dtm().sec() * 1000 + e.dtm().usec() / 1000);
     stmt.bind_int(3, e.state());
 

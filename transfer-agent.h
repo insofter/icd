@@ -10,12 +10,12 @@ namespace idctcp3
   class flow_entry
   {
     public:
-      flow_entry() : id(0), itd_id(0), cnt(0),
+      flow_entry() : id(0), cnt(0),
         dark_time(0), work_time(0), flags(0) {}
       ~flow_entry() {}
 
       int id;
-      int itd_id;
+      std::string itd;
       std::string dtm;
       int cnt;
       int dark_time;
