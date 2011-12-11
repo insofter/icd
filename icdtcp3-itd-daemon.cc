@@ -205,7 +205,7 @@ int main(int argc, char *argv[])
     std::cout << e.state() << ";" <<  e.dtm() << std::endl;
 
     stmt.bind_text(1, "itd0");
-    stmt.bind_int64(2, e.dtm().sec() * 1000 + e.dtm().usec() / 1000);
+    stmt.bind_int64(2, (long long)e.dtm().sec() * 1000 + (long long)e.dtm().usec() / 1000);
     stmt.bind_int(3, e.state());
 
     stmt.step();
