@@ -1,4 +1,6 @@
+#include <stdexcept>
 #include <iostream>
+#include <sstream>
 #include <vector>
 #include <sqlite3.h>
 
@@ -7,217 +9,207 @@
 
 namespace sqlite3cc
 {
+  class sqlite3cc_error : public std::runtime_error
+  {
+    public:
+      explicit sqlite3cc_error(sqlite3 *handle, const std::string& what)
+        : std::runtime_error(std::string())
+      {
+        std::ostringstream oss;
+        oss << what << " (errcode " << sqlite3_errcode(handle) << ", '"
+          << sqlite3_errmsg(handle) << "')";
+        what_ = oss.str();
+      }
+      virtual ~sqlite3cc_error() throw() {}
+
+      virtual const char* what() const throw()
+      {
+        return what_.c_str();
+      }
+
+    private:
+      std::string what_;
+  };
+
+  typedef int (*exec_cbf_t)(void *, int, char **, char **);
+
   class conn
   {
     public:
-      conn() : handle(NULL) {}
+      conn() : handle_(NULL), exec_cbf(NULL), exec_cbf_data(NULL) {}
 
       ~conn()
       {
-        if (handle != NULL)
+        if (handle_ != NULL)
           close();
       }
 
       void open(const char *file_name)
       {
-        std::cerr << "conn::open: Open db '" << file_name << "'" << std::endl;
-
-        int err = sqlite3_open(file_name, &handle);
+        int err = sqlite3_open(file_name, &handle_);
         if (err != SQLITE_OK)
-          std::cerr << "conn::open: Error! sqlite3_open returned "
-            "an error code (" << err << ")" << std::endl;
-        else
-          std::cerr << "conn::open: handle " << handle << std::endl;
+        {
+          std::ostringstream oss;
+          oss <<  "Opening db file '" << file_name << "' failed";
+          throw sqlite3cc_error(handle_, oss.str());
+        }
       }
 
       void close(void)
       {
-        std::cerr << "conn::close: handle " << handle << std::endl;
+        if (handle_ != NULL)
+        {
+          int err = sqlite3_close(handle_);
+          if (err != SQLITE_OK)
+          {
+             std::ostringstream oss;
+             oss <<  "Closing db failed"
+               << " (errcode " << sqlite3_errcode(handle_) << ", '"
+               << sqlite3_errmsg(handle_) << "')";
+             std::cerr << oss.str();
+          }
+          handle_ = NULL;
+        }
+      }
 
-        if (handle == NULL)
-          return;
-
-        int err = sqlite3_close(handle);
-        if (err != SQLITE_OK)
-          std::cerr << "conn::close: Error! sqlite3_close returned "
-            "an error code (" << err << ")" << std::endl;
-
-        handle = NULL;
+      void set_exec_cbf(exec_cbf_t cbf, void* data) 
+      {
+        exec_cbf = cbf;
+        exec_cbf_data = data;
       }
 
       void exec(const char *sql)
       {
-        int err = sqlite3_exec(handle, sql, NULL, NULL, NULL);
+        int err = sqlite3_exec(handle_, sql, exec_cbf, exec_cbf_data, NULL);
         if (err != SQLITE_OK)
-          std::cerr << "conn::exec: Error! sqlite3_exec returned "
-            "an error code (" << err << ")" << std::endl;
+          throw sqlite3cc_error(handle_, "Executing SQL failed");
       }
 
       void busy_timeout(int ms)
       {
-        int err = sqlite3_busy_timeout(handle, ms);
+        int err = sqlite3_busy_timeout(handle_, ms);
         if (err != SQLITE_OK)
-          std::cerr << "conn::busy_timeout: Error! sqlite3_busy_timeout returned "
-            "an error code (" << err << ")" << std::endl;
+          throw sqlite3cc_error(handle_, "Setting busy_timeout failed");
       }
 
-      sqlite3 *get_handle(void) { return handle; }
+      sqlite3 *handle(void) const { return handle_; }
 
     private:
-      sqlite3 *handle;
+      sqlite3 *handle_;
+      exec_cbf_t exec_cbf;
+      void *exec_cbf_data;
   };
 
   class stmt
   {
     public:
-      stmt(conn& db) : db(db), handle(NULL)  {}
+      stmt(conn& db) : db(db), handle_(NULL)  {}
 
       ~stmt()
       {
-        if (handle != NULL)
+        if (handle_ != NULL)
           finalize();
       }
 
       void prepare(const char *sql)
       {
-        int err = sqlite3_prepare_v2(db.get_handle(), sql, -1, &handle, NULL);
+        int err = sqlite3_prepare_v2(db.handle(), sql, -1, &handle_, NULL);
         if (err != SQLITE_OK)
-          std::cerr << "stmt::prepare: Error! sqlite3_prepare_v2 returned "
-            "an error code (" << err << ")" << std::endl;
-        else
-          std::cerr << "stmt::prepare: handle " << handle << std::endl;
+          throw sqlite3cc_error(db.handle(), "Preparing SQL failed");
       }
 
       int step()
       {
-        int err = sqlite3_step(handle);
+        int err = sqlite3_step(handle_);
         if (err != SQLITE_ROW && err != SQLITE_DONE)
-          std::cerr << "stmt::step: Error! sqlite3_step returned "
-            "an error code (" << err << ")" << std::endl;
-
+          throw sqlite3cc_error(db.handle(), "Stmt step failed");
         return err;
       }
 
       void reset()
       {
-        int err = sqlite3_reset(handle);
+        int err = sqlite3_reset(handle_);
         if (err != SQLITE_OK)
-          std::cerr << "stmt::reset: Error! sqlite3_reset returned "
-            "an error code (" << err << ")" << std::endl;
-        else
-          std::cerr << "stmt::reset: handle " << handle << std::endl;
+          throw sqlite3cc_error(db.handle(), "Stmt reset failed");
       }
 
       int column_type(int col)
       {
-        return sqlite3_column_type(handle, col);
+        return sqlite3_column_type(handle_, col);
       }
 
       double column_double(int col)
       {
-        return sqlite3_column_double(handle, col);
+        return sqlite3_column_double(handle_, col);
       }
 
       int column_int(int col)
       { 
-        return sqlite3_column_int(handle, col);
+        return sqlite3_column_int(handle_, col);
       }
 
       const char *column_text(int col) 
       { 
-        return (const char *)sqlite3_column_text(handle, col);
+        return (const char *)sqlite3_column_text(handle_, col);
       }
 
       void bind_null(int index)
       {
-        int err = sqlite3_bind_null(handle, index);
+        int err = sqlite3_bind_null(handle_, index);
         if (err != SQLITE_OK)
-          std::cerr << "stmt::bind_null: Error!" << std::endl;
+          throw sqlite3cc_error(db.handle(), "Stmt bind_null failed");
       }
 
       void bind_int(int index, int value)
       {
-        int err = sqlite3_bind_int(handle, index, value);
+        int err = sqlite3_bind_int(handle_, index, value);
         if (err != SQLITE_OK)
-          std::cerr << "stmt::bind_int: Error!" << std::endl;
+          throw sqlite3cc_error(db.handle(), "Stmt bind_int failed");
       }
 
       void bind_int64(int index, long long int value)
       {
-        int err = sqlite3_bind_int64(handle, index, value);
+        int err = sqlite3_bind_int64(handle_, index, value);
         if (err != SQLITE_OK)
-          std::cerr << "stmt::bind_int64: Error!" << std::endl;
+          throw sqlite3cc_error(db.handle(), "Stmt bind_int64 failed");
       }
 
       void bind_text(int index, const std::string& value)
       {
-        int err = sqlite3_bind_text(handle, index, value.c_str(), -1, SQLITE_TRANSIENT);
+        int err = sqlite3_bind_text(handle_, index, value.c_str(), -1, SQLITE_TRANSIENT);
         if (err != SQLITE_OK)
-          std::cerr << "stmt::bind_text: Error!" << std::endl;
+          throw sqlite3cc_error(db.handle(), "Stmt bind_text failed");
       } 
 
       void clear_bindings()
       {
-        int err = sqlite3_clear_bindings(handle);
+        int err = sqlite3_clear_bindings(handle_);
         if (err != SQLITE_OK)
-          std::cerr << "stmt::clear_bindings: Error!" << std::endl;
+          throw sqlite3cc_error(db.handle(), "Stmt clear_bindings failed");
       }
 
       void finalize(void)
       {
-        std::cerr << "stmt::finalize: handle " << handle << std::endl;
-
-        if (handle == NULL)
-          return;
-
-        int err = sqlite3_finalize(handle);
-        if (err != SQLITE_OK)
-          std::cerr << "stmt::finalize: Error! sqlite3_finalize returned "
-            "an error code (" << err << ")" << std::endl;
-
-        handle = NULL;
+        if (handle_ != NULL)
+        {
+          int err = sqlite3_finalize(handle_);
+          if (err != SQLITE_OK)
+          {
+            std::ostringstream oss;
+            oss <<  "Stmt finalize failed"
+               << " (errcode " << sqlite3_errcode(db.handle()) << ", '"
+               << sqlite3_errmsg(db.handle()) << "')";
+             std::cerr << oss.str();
+          }
+          handle_ = NULL;
+        }
       }
 
     private:
       conn& db;
-      sqlite3_stmt *handle;
+      sqlite3_stmt *handle_;
   };
 
-/*  class row
-  {
-    public:
-      row();
-      ~row() {}
-
-      int id;
-      int itd_id;
-      std::string dtm;
-      int cnt;
-      int dark_time;
-      int work_time;
-      std::string test;
-      int flags;
-
-      void init(stmt& st);
-  };
-
-  row::row() : id(0), itd_id(0), cnt(0),
-    dark_time(0), work_time(0), flags(0)
-  {
-  }
-
-  void row::init(stmt& st)
-  {
-    id = st.column_int(0);
-    itd_id = st.column_int(1);
-    dtm = st.column_text(2);
-    cnt = st.column_int(3);
-    dark_time = st.column_int(4);
-    work_time = st.column_int(5);
-    test = st.column_text(6);
-    flags = st.column_int(7);
-  } 
-*/
   template <class T>
   class rowset
   {

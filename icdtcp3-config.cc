@@ -192,12 +192,12 @@ int main(int argc, char *argv[])
     bool exit = false;
 
     struct option long_options[] = {
-    { "db", required_argument, 0, 'd' },
-    { "timeout", required_argument, 0, 't' },
-    { "separator", required_argument, 0, 's' },
-    { "help", no_argument, 0, 'h' },
-    { "version", no_argument, 0, 'v' },
-    { 0, 0, 0, 0 }
+      { "db", required_argument, 0, 'd' },
+      { "timeout", required_argument, 0, 't' },
+      { "separator", required_argument, 0, 's' },
+      { "help", no_argument, 0, 'h' },
+      { "version", no_argument, 0, 'v' },
+      { 0, 0, 0, 0 }
     };
 
     while(1)
@@ -214,6 +214,7 @@ int main(int argc, char *argv[])
           break;
         case 't':
           db_timeout = strtol(optarg, NULL, 0);
+          break;
         case 's':
           separator = optarg;
           break;

@@ -1,0 +1,2 @@
+DETACH DATABASE externdb;
+
