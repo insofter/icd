@@ -1,8 +1,27 @@
 #!/bin/bash
 
-icdtcp3-sql --db="${ICD_DB_DIR}/config.db" \
-  "${ICD_SQL_SCRIPTS_DIR}/begin-transaction.sql" \
-  "${ICD_SQL_SCRIPTS_DIR}/create-schema-config.sql" \
-  "${ICD_SQL_SCRIPTS_DIR}/init-default-config.sql" \
-  "${ICD_SQL_SCRIPTS_DIR}/commit-transaction.sql"
+#ICD_DATA_DIR
+#ICD_TMP_DIRi
+
+PROGRAM_NAME=`basename "$0"`
+
+function check_error
+{
+  if [ $? != 0 ] ; then
+    echo "Error! ${PROGRAM_NAME} halted."
+    exit 1
+  fi
+}
+
+
+echo ${PROGRAM_NAME}
+
+rm -Rf "${ICD_DATA_DIR}/config.db" 
+
+icdtcp3-sql --db="${ICD_DATA_DIR}/config.db" \
+  "${ICD_SQL_DIR}/begin-transaction.sql" \
+  "${ICD_SQL_DIR}/create-schema-config.sql" \
+  "${ICD_SQL_DIR}/init-default-config.sql" \
+  "${ICD_SQL_DIR}/commit-transaction.sql"
+check_error
 
