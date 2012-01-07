@@ -19,7 +19,7 @@ class command_parser
     void run();
 
   private:
-    icdtcp3::config config;
+    icd::config config;
     int argc;
     char **argv;
     std::string separator;
@@ -105,8 +105,8 @@ void command_parser::run_list()
 {
   check_num_of_args(1);
   std::string section = argv[optind + 1];
-  std::vector<icdtcp3::config_entry> list = config.list_entries(section);
-  std::vector<icdtcp3::config_entry>::iterator i;
+  std::vector<icd::config_entry> list = config.list_entries(section);
+  std::vector<icd::config_entry>::iterator i;
   for (i = list.begin() ; i < list.end(); i++)
     std::cout << (*i).section << separator << (*i).key
       << separator << (*i).value << std::endl;
@@ -115,8 +115,8 @@ void command_parser::run_list()
 
 void command_parser::run_list_all()
 {
-  std::vector<icdtcp3::config_entry> list = config.list_entries();
-  std::vector<icdtcp3::config_entry>::iterator i;
+  std::vector<icd::config_entry> list = config.list_entries();
+  std::vector<icd::config_entry>::iterator i;
   for (i = list.begin() ; i < list.end(); i++)
     std::cout << (*i).section << separator << (*i).key
       << separator << (*i).value << std::endl;
@@ -150,7 +150,7 @@ void command_parser::run_list_sections()
 
 //------------------------------------------------------------------------------
 
-#define APP_NAME "icdtcp3-config"
+#define APP_NAME "icd-config"
 #define APP_VERSION "1.0"
 #define APP_COPYRIGHT "Copyright (c) 2011 Tomasz Rozensztrauch"
 
@@ -158,7 +158,7 @@ const char *usage =
   "\n"
   "Usage: "APP_NAME" OPTION... CMD [ARG]... [CMD [ARG]...]...\n"
   "\n"
-  "A command line tool for managing icdtcp3 configuration entries.\n"
+  "A command line tool for managing icd configuration entries.\n"
   "\n"
   "Comands:\n"
   "  get SECTION KEY\n"

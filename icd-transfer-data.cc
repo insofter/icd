@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
   std::cout << "Hello world!!!\n";
 
   sqlite3cc::conn db;
-  const char* db_name = "/home/tomasz/projects/icdtcp3/icdtcp3/live.db";
+  const char* db_name = "/home/icdtcp3/projects/icd/live.db";
   db.open(db_name);
 
   std::string base_url("http://www.insofter.pl/");

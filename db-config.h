@@ -4,7 +4,7 @@
 #ifndef __DB_CONFIG_H__
 #define __DB_CONFIG_H__
 
-namespace icdtcp3
+namespace icd
 {
   struct config_entry
   {  

@@ -6,7 +6,7 @@
 #include <getopt.h>
 
 #include "sqlite3cc.h"
-#define APP_NAME "icdtcp3-sql"
+#define APP_NAME "icd-sql"
 #define APP_VERSION "1.0"
 #define APP_COPYRIGHT "Copyright (c) 2011 Tomasz Rozensztrauch"
 

@@ -1,6 +1,6 @@
 #include "db-config.h"
 
-namespace icdtcp3
+namespace icd
 {
   std::string config::entry(const std::string& section, const std::string& key)
   {

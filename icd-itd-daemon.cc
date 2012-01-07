@@ -12,7 +12,7 @@
 
 #include "sqlite3cc.h"
 
-namespace icdtcp3
+namespace icd
 {
 
   enum itd_state 
@@ -186,8 +186,8 @@ void sigint_handler(int signum)
 
 int main(int argc, char *argv[])
 {
-//  icdtcp3::itd_kbd_emulator dev;
-  icdtcp3::itd_rand_emulator dev;
+//  icd::itd_kbd_emulator dev;
+  icd::itd_rand_emulator dev;
 
   sqlite3cc::conn db;
   db.open("live.db");
@@ -198,7 +198,7 @@ int main(int argc, char *argv[])
 
   while(1)
   {
-    icdtcp3::itd_event e = dev.next();
+    icd::itd_event e = dev.next();
     std::ostringstream oss;
     oss << e.dtm();
 
