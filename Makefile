@@ -21,7 +21,7 @@ icd-sql: icd-sql.cc $(INC)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ icd-sql.cc -lsqlite3 
 
 icd-itd-daemon: icd-itd-daemon.cc $(INC)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ icd-itd-daemon.cc -lsqlite3 
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ icd-itd-daemon.cc db-config.cc -lsqlite3 
 
 icd-fc-daemon: icd-fc-daemon.cc $(INC)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ icd-fc-daemon.cc -lsqlite3 

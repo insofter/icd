@@ -21,6 +21,11 @@ namespace icd
       ~config() {}
 
       std::string entry(const std::string& section, const std::string& key);
+      bool entry_bool(const std::string& section, const std::string& key,
+        bool empty_ok = true, bool def_val = false);
+      long entry_long(const std::string& section, const std::string& key,
+        bool empty_ok = true, long def_val = 0);
+
       void set_entry(const std::string& section, const std::string& key, const std::string& value);
       void remove_entry(const std::string& section, const std::string& key);
       std::vector<config_entry> list_entries(const std::string& section);

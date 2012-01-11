@@ -1,16 +1,44 @@
-//#include <stdio.h>
-//#include <signal.h>
-
-
 #include <iostream>
+#include <fstream>
 #include <sstream>
 #include <iomanip>
 #include <string> 
 #include <cstdlib>
 #include <time.h>
 #include <sys/time.h>
+#include <getopt.h>
 
 #include "sqlite3cc.h"
+#include "db-config.h"
+
+#define APP_NAME "icd-itd-daemon"
+#define APP_VERSION "1.0"
+#define APP_COPYRIGHT "Copyright (c) 2012 Tomasz Rozensztrauch"
+
+const char *usage =
+  "\n"
+  "Usage: "APP_NAME" OPTION...\n"
+  "\n"
+  "A daemon communicating with itd devices. After configuration of\n"
+  "the device the tool reads input events from it and stores them\n"
+  "in the database.\n"
+  "\n"
+  "Options:\n"
+  "  -d|--db=DB_NAME              Database file path; Mandatory option\n"
+  "  -t|--timeout=TIMEOUT_MS      Timeout when waiting for acces to the database in ms\n"
+  "  -i|--device=DEVICE           Device name; E.g. itd0, itd1... This is mandatory option\n"
+  "                               This tool provides also 2 'emulator' devices:\n"
+  "                               rand - generates input events randomly\n"
+  "                               kbd - generates event when user enters characters\n"
+  "                               on standard input\n"
+  "  -c|--cmdline                 Do not daemonize; Run as a command line tool\n"
+  "  -h|--help\n"
+  "  -v|--version\n"
+  "\n";
+
+const char *version =
+  APP_NAME" "APP_VERSION"\n"
+  APP_COPYRIGHT"\n";
 
 namespace icd
 {
@@ -51,9 +79,7 @@ namespace icd
   itd_time::itd_time()
   {
     struct timeval tv;
-    /*int res =*/ gettimeofday(&tv, NULL);
-    //if (res != 0) trow exception;
-
+    gettimeofday(&tv, NULL);
     _sec = tv.tv_sec;
     _usec = tv.tv_usec;
   }
@@ -63,13 +89,8 @@ namespace icd
     char s[32];
     struct tm result;
     struct tm *m = gmtime_r((const time_t *)&ref._sec, &result);
-    //if (m == NULL) throw
-  
     strftime(s, sizeof(s), "%Y-%m-%dT%H:%M:%S", m);
-
     os << s << "." << std::setw(3) << std::setfill('0') << ref._usec / 1000;
-
-//    os << "[idt_time:_sec=" << ref._sec << ";_usec=" << ref._usec << "]";
     return os;
   }
 
@@ -103,14 +124,132 @@ namespace icd
   class itd_base_device
   {
     public:
+      itd_base_device() {}
+      virtual ~itd_base_device() {}
+
       virtual itd_event next() = 0;
       virtual void cleanup() {}
   };
 
-/*  class itd_device : public itd_base_device
+  class itd_device : public itd_base_device
   {
+    public :
+      itd_device(const std::string& name);
+      virtual ~itd_device() {}
+
+      std::string name() { return name_; }
+
+      void set_active_low(int active_low);
+      void set_engage_delay_ms(long engage_delay_ms);
+      void set_release_delay_ms(long release_delay_ms);
+
+      virtual itd_event next();
+      virtual void cleanup();
+
+    private:
+      void throw_ios_reading_failure(const std::string& file);
+      void throw_ios_writing_failure(const std::string& file);
+
+      std::string name_;
+      std::string dev_path_;
+      std::string sysfs_path_;
+      std::ifstream is_;
   };
-*/
+
+  itd_device::itd_device(const std::string& name)
+  {
+    name_ = name;
+    dev_path_ = std::string("/dev/") + name; 
+    sysfs_path_ = std::string("/sys/devices/platform/gpio-itd.");
+    sysfs_path_ += name.substr(3);
+
+    is_.open(dev_path_.c_str());
+    if (!is_)
+      throw_ios_reading_failure(dev_path_);
+  }
+
+  void itd_device::set_active_low(int active_low)
+  {
+    std::string path = sysfs_path_ + "/active_low";
+    std::ofstream os;
+
+    os.open(path.c_str());
+    if (!os)
+      throw_ios_writing_failure(path);
+
+    os << active_low << std::endl;
+    if (!os)
+      throw_ios_writing_failure(path);
+
+    os.close();
+  }
+
+  void itd_device::set_engage_delay_ms(long engage_delay_ms)
+  {
+    std::string path = sysfs_path_ + "/engage_delay_usec";
+    std::ofstream os;
+
+    os.open(path.c_str());
+    if (!os)
+      throw_ios_writing_failure(path);
+
+    os << engage_delay_ms * 1000 << std::endl;
+    if (!os)
+      throw_ios_writing_failure(path);
+
+    os.close();
+  }
+
+  void itd_device::set_release_delay_ms(long release_delay_ms)
+  {
+    std::string path = sysfs_path_ + "/release_delay_usec";
+    std::ofstream os;
+
+    os.open(path.c_str());
+    if (!os)
+      throw_ios_writing_failure(path);
+
+    os << release_delay_ms * 1000 << std::endl;
+    if (!os)
+      throw_ios_writing_failure(path);
+
+    os.close();
+  }
+
+  itd_event itd_device::next()
+  {
+    std::string line;
+    if (!getline(is_, line))
+      throw_ios_reading_failure(dev_path_);
+
+    long long sec = 0, usec = 0;
+    int state = 0;
+    std::istringstream iss(line);
+    iss >> sec >> usec >> state >> std::ws;
+    if (!iss.eof())
+      throw_ios_reading_failure(dev_path_);
+
+    return itd_event((itd_state)state, itd_time(sec, usec));
+  }
+
+  void itd_device::cleanup()
+  {
+    is_.close();
+  }
+
+  void itd_device::throw_ios_reading_failure(const std::string& file)
+  {
+    std::ostringstream oss;
+    oss << "Reading file '" << file << "' failed";
+    throw std::ios_base::failure(oss.str());
+  }
+
+  void itd_device::throw_ios_writing_failure(const std::string& file)
+  {
+    std::ostringstream oss;
+    oss << "Writing file '" << file << "' failed";
+    throw std::ios_base::failure(oss.str());
+  }
 
   class itd_rand_emulator : public itd_base_device
   {
@@ -176,147 +315,174 @@ namespace icd
 
 }
 
-/*volatile sig_atomic_t sigint = 0;
-
-void sigint_handler(int signum)
+void throw_bad_config_entry(const std::string& section, const std::string& key)
 {
-  printf("sigint invoked\n");
-  sigint = 1;
-}*/
+  std::ostringstream oss;
+  oss << "Reading db config option '" << section << ":" << key << "' failed."
+    " Missing or invalid value.";
+  throw std::runtime_error(oss.str());
+}
+
+icd::itd_base_device *create_device(sqlite3cc::conn& db,
+  const std::string& dev_name, const std::string& emulator)
+{
+  icd::itd_base_device *dev = NULL;
+
+  icd::config config(db);
+  bool enabled  = config.entry_bool(dev_name, "enabled", false);
+  long engage_delay_ms = config.entry_long(dev_name, "engage-delay-ms", false);
+  long release_delay_ms = config.entry_long(dev_name, "release-delay-ms", false);
+  bool active_low = config.entry_bool(dev_name, "active-low", false);
+
+  if (!enabled)
+  {
+    std::ostringstream oss;
+    oss << "Device '" << dev_name << "' is not enabled.";
+    throw std::runtime_error(oss.str());
+  }
+
+  if (emulator.empty())
+  {
+    icd::itd_device *itddev = new icd::itd_device(dev_name);
+    itddev->set_engage_delay_ms(engage_delay_ms);
+    itddev->set_release_delay_ms(release_delay_ms);
+    itddev->set_active_low(active_low);
+    dev = itddev;
+  }
+  else if (emulator == "rand")
+    dev = new icd::itd_rand_emulator();
+  else
+    dev = new icd::itd_kbd_emulator();
+
+  return dev;
+}
+
+void config_itddev(sqlite3cc::conn& db, icd::itd_device& itddev)
+{
+  std::istringstream iss;
+  std::string s;
+}
 
 int main(int argc, char *argv[])
 {
-//  icd::itd_kbd_emulator dev;
-  icd::itd_rand_emulator dev;
-
-  sqlite3cc::conn db;
-  db.open("live.db");
-
-  sqlite3cc::stmt stmt(db);
-  const char *sql = "INSERT INTO events (itd, dtmms, state) VALUES (?1, ?2, ?3)";
-  stmt.prepare(sql);
-
-  while(1)
+  try
   {
-    icd::itd_event e = dev.next();
-    std::ostringstream oss;
-    oss << e.dtm();
+    std::string db_name;
+    int db_timeout = 60000; // default timeout is 60 seconds
+    std::string dev_name;
+    std::string emulator;
+    bool daemonize = true;
+    bool exit = false;
 
-    std::cout << e.state() << ";" <<  e.dtm() << std::endl;
+    struct option long_options[] = {
+      { "db", required_argument, 0, 'd' },
+      { "timeout", required_argument, 0, 't' },
+      { "device", required_argument, 0, 'i' },
+      { "rand", no_argument, 0, 'r' },
+      { "kbd", no_argument, 0, 'k' },
+      { "cmdline", no_argument, 0, 'c' },
+      { "help", no_argument, 0, 'h' },
+      { "version", no_argument, 0, 'v' },
+      { 0, 0, 0, 0 }
+    };
 
-    stmt.bind_text(1, "itd0");
-    stmt.bind_int64(2, (long long)e.dtm().sec() * 1000 + (long long)e.dtm().usec() / 1000);
-    stmt.bind_int(3, e.state());
+    while(1)
+    {
+      int option_index = 0;
+      int ch = getopt_long(argc, argv, "d:t:i:rkchv", long_options, &option_index);
+      if (ch == -1)
+        break;
 
-    stmt.step();
+      switch(ch)
+      {
+        case 'd':
+          db_name = optarg;
+          break;
+        case 't':
+          db_timeout = strtol(optarg, NULL, 0);
+          break;
+        case 'i':
+          dev_name = optarg;
+          break;
+        case 'k':
+          emulator = "kbd";
+          break;
+        case 'r':
+          emulator = "rand";
+          break;
+        case 'c':
+          daemonize = false;
+          break;
+        case 'h':
+          std::cout << usage;
+          exit = true;
+          break;
+        case 'v':
+          std::cout << version;
+          exit = true;
+          break;
+        default:
+        {
+          std::ostringstream oss;
+          oss << "Unknown option '" << char(ch) << "'";
+          throw std::runtime_error(oss.str());
+        }
+      }
 
-    stmt.reset();
-    stmt.clear_bindings();
+      if (exit)
+        break;
+    }
+
+    if (!exit)
+    {
+      if (db_name.empty())
+        throw std::runtime_error("Missing '--db' parameter");
+
+      if (dev_name.empty())
+        throw std::runtime_error("Missing '--device' parameter");
+
+      sqlite3cc::conn db;
+      db.open(db_name.c_str());
+      db.busy_timeout(db_timeout);
+
+      sqlite3cc::stmt stmt(db);
+      const char *sql = "INSERT INTO events (itd, dtmms, state) VALUES (?1, ?2, ?3)";
+      stmt.prepare(sql);
+
+      icd::itd_base_device *dev = create_device(db, dev_name, emulator);
+
+      while(1)
+      {
+        icd::itd_event e = dev->next();
+        std::ostringstream oss;
+        oss << e.dtm();
+
+        std::cout << dev_name << " " << e.dtm() << " " << e.state() << std::endl;
+
+        stmt.bind_text(1, dev_name.c_str());
+        stmt.bind_int64(2, (long long)e.dtm().sec() * 1000 + (long long)e.dtm().usec() / 1000);
+        stmt.bind_int(3, e.state());
+
+        stmt.step();
+
+        stmt.reset();
+        stmt.clear_bindings();
+      }
+
+      stmt.finalize();
+
+      dev->cleanup();
+      delete dev;
+
+      db.close();
+    }
   }
-
-  stmt.finalize();
-
-  db.close();
-
-  dev.cleanup();
+  catch(std::exception& e)
+  {
+    std::cout << APP_NAME" error: " << e.what() << std::endl;
+    return 1;
+  }
 
   return 0;
 }
 
-/*int main_a(int argc, char *argv[])
-{
-  int err = 0;
-  FILE *f = NULL;
-  char *buf = NULL;
-  size_t buf_len = 0;
-  int len = 0;
-  struct sigaction action;
-  sqlite3 *db = NULL;
-  sqlite3_stmt *stmt = NULL;
-  const char *sql = "insert into tbl values ( ?1, ?2 )"; 
-
-  printf("Hello world!\n");
-
-  action.sa_handler = sigint_handler;
-  sigemptyset(&action.sa_mask);
-  action.sa_flags = 0;
-
-  err = sigaction(SIGINT, &action, NULL);
-  if (err != 0)
-  {
-    printf("sigaction failed\n");
-    return 1;
-  }
-
-  // open /dev/photocell0 device
-  f = fopen("/dev/photocell0", "r");
-  if (f == NULL)
-  {
-    // check err properly
-    printf("Failed to open /dev/photocell0\n");
-    return 1;
-  }
-
-  // open db
-  err = sqlite3_open("test.db", &db);
-  if (err != SQLITE_OK)
-  {
-    printf("Failed to open test.db database\n");
-    return 1;
-  }
-
-  err = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
-  if (err != SQLITE_OK)
-    printf("sqlite_prepare_v2 failed\n");
-
-  while(!sigint)
-  {
-     // read line
-    len = getline(&buf, &buf_len, f);
-      printf("getline returned len=%i\n", len);
-    if (len <= 0)
-    {
-      printf("getline error\n");
-      continue;
-    }
-
-    // parse the line -> event date and time plus duration
-
-    printf("%s", buf);
-
-    // insert the event into sqlite database table
-    err = sqlite3_bind_text(stmt, 1, buf, -1, SQLITE_STATIC);
-    if (err != SQLITE_OK)
-      printf("sqlite_bind_text failed\n");
-
-    err = sqlite3_bind_text(stmt, 2, "TestTest", -1, SQLITE_STATIC);
-    if (err != SQLITE_OK)
-      printf("sqlite_bind_text failed\n");
-
-    err = sqlite3_step(stmt);
-    if (err != SQLITE_DONE)
-      printf("sqlite_step failed (err=%i)\n", err);
-
-    err = sqlite3_reset(stmt);
-    if (err != SQLITE_OK)
-      printf("sqlite_reset failed\n");
-  
-    err = sqlite3_clear_bindings(stmt);
-    if (err != SQLITE_OK)
-      printf("sqlite_clear_bindings failed\n");
-  }
-
-  err = sqlite3_finalize(stmt);
-  if (err != SQLITE_OK)
-    printf("sqlite_finalize failed\n");
-
-  sqlite3_close(db);
-  // check err
-
-  // close /dev/photocell0 device
-  fclose(f);
-  // check err of fclose
-
-  return err;
-}
-*/

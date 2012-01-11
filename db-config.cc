@@ -19,6 +19,67 @@ namespace icd
     return value;
   }
 
+  bool config::entry_bool(const std::string& section, const std::string& key,
+    bool empty_ok, bool def_val)
+  {
+    std::string value = entry(section, key);
+    if (value.empty())
+    {
+      if (empty_ok)
+        return def_val;
+      else
+      {
+        std::ostringstream oss;
+        oss << "Reading db config (" << section << ":" << key << ") failed."
+         " Empty entry is not allowed.";
+        throw std::runtime_error(oss.str());
+      }
+    }
+     
+    if (value == "1" || value == "yes" || value == "true")
+      return true;
+    else if (value == "0" || value == "no" || value == "false") 
+      return false;
+    else
+    {
+      std::ostringstream oss;
+      oss << "Reading db config boolean '" << value << "' (" << section << ":" << key << ") failed."
+        " Expected one of the values: 1, yes, true, 0, no, false.";
+      throw std::runtime_error(oss.str());
+    }
+  }
+
+  long config::entry_long(const std::string& section, const std::string& key,
+    bool empty_ok, long def_val)
+  {
+    std::string value = entry(section, key);
+    if (value.empty())
+    {
+      if (empty_ok)
+        return def_val;
+      else
+      {
+        std::ostringstream oss;
+        oss << "Reading db config (" << section << ":" << key << ") failed."
+          " Empty entry is not allowed.";
+        throw std::runtime_error(oss.str());
+      }
+    }
+
+    std::istringstream iss(value);
+    long value_long;
+    iss >> value_long;
+    if (!iss.eof())
+    {
+      std::ostringstream oss;
+      oss << "Reading db config long '" << value << "' (" << section << ":" << key << ") failed."
+        " Invalud long integer value.";
+      throw std::runtime_error(oss.str());
+    }
+
+    return value_long;
+  }
+
   void config::set_entry(const std::string& section, const std::string& key, const std::string& value)
   {
     sqlite3cc::stmt stmt(db);
