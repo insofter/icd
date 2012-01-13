@@ -24,7 +24,7 @@ icd-itd-daemon: icd-itd-daemon.cc $(INC)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ icd-itd-daemon.cc db-config.cc -lsqlite3 
 
 icd-fc-daemon: icd-fc-daemon.cc $(INC)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ icd-fc-daemon.cc -lsqlite3 
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ icd-fc-daemon.cc db-config.cc -lsqlite3 
 
 icd-transfer-data: icd-transfer-data.cc transfer-agent.cc $(INC)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ icd-transfer-data.cc transfer-agent.cc -lsqlite3 -lcurl -lroxml
