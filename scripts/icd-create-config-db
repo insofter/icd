@@ -1,0 +1,19 @@
+#!/bin/sh
+
+PROGRAM_NAME=`basename "$0"`
+
+check_error()
+{
+  if [ $? != 0 ] ; then
+    echo "Error! ${PROGRAM_NAME} halted."
+    exit 1
+  fi
+}
+
+if [ ! -f "${ICD_DATA_DIR}/config.db" ]; then
+  icd-sql --db="${ICD_DATA_DIR}/config.db" \
+    "${ICD_SHARE_DIR}/create-schema-config.sql" \
+    "${ICD_SHARE_DIR}/init-default-config.sql"
+  check_error
+fi
+

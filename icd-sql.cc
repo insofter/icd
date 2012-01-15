@@ -23,6 +23,8 @@ const char *usage =
   "  -d|--db=DB_NAME              Database file path; Mandatory option\n"
   "  -t|--timeout=TIMEOUT_MS      Timeout when waiting for acces to the database in ms\n"
   "  -s|--separator=SEPARATOR     Output separator; Default value is ':'\n"
+  "  -e|--extern-db=DB_NAME       Second (external) database for commands that\n"
+  "                               performs operations between two databases\n"
   "  -h|--help\n"
   "  -v|--version\n"
   "\n";
@@ -49,6 +51,7 @@ int main(int argc, char *argv[])
   {
     std::string db_name;
     std::string separator(":");
+    std::string db_attach;
     int db_timeout = 60000; // default timeout is 60 seconds
     bool exit = false;
 
@@ -56,6 +59,7 @@ int main(int argc, char *argv[])
       { "db", required_argument, 0, 'd' },
       { "timeout", required_argument, 0, 't' },
       { "separator", required_argument, 0, 's' },
+      { "extern-db", required_argument, 0, 'e' },
       { "help", no_argument, 0, 'h' },
       { "version", no_argument, 0, 'v' },
       { 0, 0, 0, 0 }
@@ -64,7 +68,7 @@ int main(int argc, char *argv[])
     while(1)
     {
       int option_index = 0;
-      int ch = getopt_long(argc, argv, "d:t:s:hv", long_options, &option_index);
+      int ch = getopt_long(argc, argv, "d:t:s:e:hv", long_options, &option_index);
       if (ch == -1)
         break;
 
@@ -79,6 +83,13 @@ int main(int argc, char *argv[])
         case 's':
           separator = optarg;
           break;
+        case 'e':
+        {
+          std::ostringstream oss;
+          oss << "ATTACH DATABASE '" << optarg << "' AS externdb";
+          db_attach = oss.str();
+          break;
+        }
         case 'h':
           std::cout << usage;
           exit = true;
@@ -137,7 +148,13 @@ int main(int argc, char *argv[])
       db.set_exec_cbf(db_exec_cbf, reinterpret_cast<void*>(&separator));
       db.exec("PRAGMA recursive_triggers = ON");
       db.exec("PRAGMA foreign_keys = ON");
+      if (!db_attach.empty())
+        db.exec(db_attach.c_str());
+      db.exec("BEGIN EXCLUSIVE TRANSACTION");
       db.exec(oss.str().c_str());
+      db.exec("COMMIT TRANSACTION");
+      if (!db_attach.empty())
+        db.exec("DETACH DATABASE externdb");
       db.close();
     }
   }

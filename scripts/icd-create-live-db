@@ -1,0 +1,30 @@
+#!/bin/sh
+
+PROGRAM_NAME=`basename "$0"`
+
+check_error()
+{
+  if [ $? != 0 ] ; then
+    echo "Error! ${PROGRAM_NAME} halted."
+    exit 1
+  fi
+}
+
+rm -f "${ICD_TEMP_DIR}/live.db" 
+
+icd-sql --db="${ICD_TEMP_DIR}/live.db" \
+  "${ICD_SHARE_DIR}/create-schema-events.sql" \
+  "${ICD_SHARE_DIR}/create-schema-flow.sql" \
+  "${ICD_SHARE_DIR}/create-schema-config.sql"
+check_error
+
+icd-sql --db="${ICD_TEMP_DIR}/live.db" \
+  --extern-db="${ICD_DATA_DIR}/config.db" \
+  "${ICD_SHARE_DIR}/sync-config.sql"
+check_error
+
+icd-sql --db="${ICD_TEMP_DIR}/live.db" \
+  --extern-db="${ICD_DATA_DIR}/flow.db" \
+  "${ICD_SHARE_DIR}/sync-flow.sql"
+check_error
+

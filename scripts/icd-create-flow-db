@@ -1,0 +1,18 @@
+#!/bin/sh
+
+PROGRAM_NAME=`basename "$0"`
+
+check_error()
+{
+  if [ $? != 0 ] ; then
+    echo "Error! ${PROGRAM_NAME} halted."
+    exit 1
+  fi
+}
+
+if [ ! -f "${ICD_DATA_DIR}/flow.db" ]; then
+  icd-sql --db="${ICD_DATA_DIR}/flow.db" \
+    "${ICD_SHARE_DIR}/create-schema-flow.sql"
+  check_error
+fi
+
