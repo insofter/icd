@@ -1,0 +1,126 @@
+#!/bin/sh
+
+PROGRAM_NAME=`basename "$0"`
+
+report_error()
+{
+  echo "${PROGRAM_NAME}: Error! $1."
+  exit 1
+}
+
+check_error()
+{
+  if [ $? != 0 ] ; then
+    report_error "$1"
+  fi
+}
+
+setup_static_ip()
+{
+  local IP MASK GATE DNS1 DNS2
+
+  IP=`icd-config --db="${ICD_TEMP_DIR}/live.db" get tcpip ip`
+  check_error "Reading tcpip:ip config entry failed"
+  IP=`echo ${IP} | cut -d: -f3`
+
+  MASK=`icd-config --db="${ICD_TEMP_DIR}/live.db" get tcpip mask`
+  check_error "Reading tcpip:mask config entry failed"
+  MASK=`echo ${MASK} | cut -d: -f3`
+
+  GATE=`icd-config --db="${ICD_TEMP_DIR}/live.db" get tcpip gate`
+  check_error "Reading tcpip:gate config entry failed"
+  GATE=`echo ${GATE} | cut -d: -f3`
+
+  DNS1=`icd-config --db="${ICD_TEMP_DIR}/live.db" get tcpip dns1`
+  check_error "Reading tcpip:dns1 config entry failed"
+  DNS1=`echo ${DNS1} | cut -d: -f3`
+
+  DNS2=`icd-config --db="${ICD_TEMP_DIR}/live.db" get tcpip dns2`
+  check_error "Reading tcpip:dns2 config entry failed"
+  DNS2=`echo ${DNS2} | cut -d: -f3`
+
+  if [ "x${IP}" = "x" ]; then
+    report_error "No static ip addres specified in the configuration"
+  fi
+
+  if [ "x${MASK}" != "x" ]; then
+    echo "${PROGRAM_NAME}: Setting up eth0 with ip ${IP} and mask ${MASK}"
+    ifconfig eth0 up ${IP} netmask ${MASK} 
+    check_error "Configuration of static ip failed"
+  else
+    # Use defalut mask for the usual class A, B or C
+    # as derived from the IP address
+    echo "${PROGRAM_NAME}: Setting up eth0 with ip ${IP} and default mask"
+    ifconfig eth0 up ${IP}
+    check_error "Configuration of static ip and mask failed"
+  fi
+
+  if [ "x${GATE}" != "x" ]; then
+    echo "${PROGRAM_NAME}: Setting up gateway ${GATE}"
+    route add default gw ${GATE}
+    check_error "Setting up the default route failed"
+  fi
+
+  # Append primary dns if specified (not empty)
+  if [ "x$DNS1" != "x" ]; then
+    echo "${PROGRAM_NAME}: Adding dns ${DNS1}"
+    echo "nameserver $DNS1" >> /etc/resolv.conf
+    check_error "Setting up the primary dns failed"
+  fi
+
+  # Append secondary dns if specified (not empty)
+  if [ "x$DNS2" != "x" ]; then
+    echo "${PROGRAM_NAME}: Adding dns ${DNS2}"
+    echo "nameserver $DNS2" >> /etc/resolv.conf
+    check_error "Setting up the secondary dns failed"
+  fi
+}
+
+setdown()
+{
+  echo "${PROGRAM_NAME}: Stopping dhcp client (if started)"
+  start-stop-daemon -n udhcpc -K
+
+  echo "${PROGRAM_NAME}: Setting down eth0"
+  ifconfig eth0 0.0.0.0
+  ifconfig eth0 down
+
+  echo "${PROGRAM_NAME}: Removing dns entries"
+  cat /dev/null > /etc/resolv.conf
+
+  #clean current config
+}
+
+case "$1" in
+  start)
+    echo "${PROGRAM_NAME}: Starting network..."
+    DHCP=`icd-config --db="${ICD_TEMP_DIR}/live.db" get tcpip dhcp`
+    check_error "Reading tcpip:dhcp config entry failed"
+    DHCP=`echo ${DHCP} | cut -d: -f3`
+
+    if [ "$DHCP" == "yes" -o "$DHCP" == "true" -o "$DHCP" == "1" ]; then
+      echo "${PROGRAM_NAME}: Starting dhcp client..."
+      udhcpc -i eth0 -t 3 -n
+      check_error "Obtaining dhcp lease failed"
+    elif [ "x$DHCP" == "x" -o "$DHCP" == "no" -o "$DHCP" == "false" -o "$DHCP" == "0" ]; then
+      setup_static_ip
+    else
+      report_error "Invalid dhcp value specified in the configuration"
+    fi
+    #update current config
+    ;;
+  stop)
+    echo "${PROGRAM_NAME}: Stopping network..."
+    setdown
+    ;;
+  restart|reload)
+    $0 stop
+    $0 start
+    ;;
+  *)
+    echo "Usage: ${PROGRAM_NAME} {start|stop|restart}"
+    exit 1
+esac
+
+exit 0
+
