@@ -1,0 +1,81 @@
+#!/bin/sh
+
+update_current_config()
+{
+  local cmd ip broadcast subnet router entries entry dns_nr
+
+  hwaddr=`ifconfig ${interface} | sed -n 's/^[^H]*HWaddr[[:space:]]*\([[:xdigit:]:][[:xdigit:]:]*\).*$/\1/p'`
+  ip=`ifconfig ${interface} | sed -n 's/^[^i]*inet addr:\([0-9.][0-9.]*\).*$/\1/p'`
+  broadcast=`ifconfig ${interface} | sed -n 's/^[^B]*Bcast:\([0-9.][0-9.]*\).*$/\1/p'`
+  subnet=`ifconfig ${interface} | sed -n 's/^[^M]*Mask:\([0-9.][0-9.]*\).*$/\1/p'`
+  router=`route | sed -n 's/^default[[:space:]]*\([0-9.][0-9.]*\).*$/\1/p'`
+
+  cmd="icd-config --db=\"${ICD_TEMP_DIR}/live.db\""
+  cmd=${cmd}" set current interface \"${interface}\""
+  cmd=${cmd}" set current hwaddr \"${hwaddr}\""
+  cmd=${cmd}" set current ip \"${ip}\""
+  cmd=${cmd}" set current broadcast \"${broadcast}\""
+  cmd=${cmd}" set current mask \"${subnet}\""
+  cmd=${cmd}" set current gate \"${router}\""
+
+  # First clean all dns entries in current config
+  entries=`icd-config --db="${ICD_TEMP_DIR}/live.db" list current | sed -n 's/^current:\(dns[[:digit:]]*\):.*$/\1/p'`
+  for entry in $entries; do
+    test "x$entry" != "x" && cmd=${cmd}" set current $entry \"\""
+  done
+
+  # Then enter new entries (if any)
+  entries=`cat /etc/resolv.conf | sed -n 's/^[[:space:]]*nameserver[[:space:]]*\([0-9.][0-9.]*\).*$/\1/p'`
+  dns_nr=1
+  for entry in $entries; do
+    cmd=${cmd}" set current dns${dns_nr} \"${entry}\""
+    dns_nr=$(($dns_nr + 1))
+  done
+
+  # Run all the command at once (as a one transation)
+  eval ${cmd}
+  warn_on_error "Updating current config failed."
+}
+
+setup_interface()
+{
+  local subnet_arg broadcast_arg
+
+  test "x${ip}" != "x"
+  warn_on_error "Missing ip addres"
+
+  test "x${subnet}" != "x" && subnet_arg=" netmask ${subnet}"
+  test "x${broadcast}" != "x" && broadcast_arg=" broadcast ${broadcast}"
+  print_info "Setting up ${interface} with ip ${ip}${subnet_arg}${broadcast_arg}"
+  ifconfig ${interface} up ${ip}${subnet_arg}${broadcast_arg}
+  warn_on_error "Setting up ip address failed"
+
+  if [ "x${router}" != "x" ]; then
+    print_info "Configuring gateway ${router}"
+    route add default gw ${router}
+    warn_on_error "Setting up the default route failed"
+  fi
+
+  cat /dev/null > /etc/resolv.conf
+  for entry in $dns; do
+    print_info "Adding dns ${entry}"
+    echo "nameserver $entry" >> /etc/resolv.conf
+    warn_on_error "Adding the dns failed"
+  done
+
+  update_current_config
+}
+
+setdown_interface()
+{
+  print_info "Setting down ${interface}"
+  ifconfig ${interface} 0.0.0.0
+  warn_on_error "Setting ip to 0.0.0.0 failed"
+
+  print_info "Removing dns entries"
+  cat /dev/null > /etc/resolv.conf
+  warn_on_error "Cleaning up dns entries failed"
+
+  update_current_config
+}
+

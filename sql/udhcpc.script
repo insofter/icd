@@ -1,0 +1,32 @@
+#!/bin/sh
+
+. "${ICD_SHARE_DIR}/error.script"
+. "${ICD_SHARE_DIR}/network.script"
+
+program_name=`basename "$0"`
+dtm=`icd-get-current-dtm`
+
+print_info "$1"
+
+case "$1" in
+  deconfig)
+    setdown_interface
+    cmd="icd-config --db=\"${ICD_TEMP_DIR}/live.db\""
+    cmd=${cmd}" set current dhcp_lease_last_renewal \"\""
+    cmd=${cmd}" set current dhcp_lease_time \"\""
+    eval ${cmd}
+    warn_on_error "Updating current config failed"    
+    ;;
+
+  renew|bound)
+    setup_interface
+    cmd="icd-config --db=\"${ICD_TEMP_DIR}/live.db\""
+    cmd=${cmd}" set current dhcp_lease_last_renewal \"${dtm}\""
+    cmd=${cmd}" set current dhcp_lease_time \"${lease}\""
+    eval ${cmd}
+    warn_on_error "Updating current config failed"    
+    ;;
+esac
+
+exit 0
+

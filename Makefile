@@ -48,7 +48,8 @@ scp: mktarget
 	scp -r output/target admin@192.168.2.21:~/
 	ssh admin@192.168.2.21 \
 	  'sudo install -d /usr/share/icd;' \
-	  'sudo install -m 644 ./target/usr/share/icd/* /usr/share/icd/;' \
+	  'sudo install -m 644 ./target/usr/share/icd/*sql /usr/share/icd/;' \
+	  'sudo install -m 755 ./target/usr/share/icd/*script /usr/share/icd/;' \
 	  'sudo install ./target/usr/bin/* /usr/bin;' \
 	  'rm -Rf ./target'
 

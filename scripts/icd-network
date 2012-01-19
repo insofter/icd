@@ -1,60 +1,15 @@
 #!/bin/sh
 
-program_name=`basename "$0"`
-
-print_info()
-{
-  echo "${program_name}: $1."
-}
-
-warn_on_error()
-{
-  if [ $? -ne 0 ]; then
-    echo "${program_name}: Error! $1."
-  fi
-}
-
-update_current_config()
-{
-  local cmd ipaddr broadcast mask gate entries entry dns_nr
-
-  ipaddr=`ifconfig eth0 | sed -n 's/^[^i]*inet addr:\([0-9.][0-9.]*\).*$/\1/p'`
-  broadcast=`ifconfig eth0 | sed -n 's/^[^B]*Bcast:\([0-9.][0-9.]*\).*$/\1/p'`
-  mask=`ifconfig eth0 | sed -n 's/^[^M]*Mask:\([0-9.][0-9.]*\).*$/\1/p'`
-  gate=`route | sed -n 's/^default[[:space:]]*\([0-9.][0-9.]*\).*$/\1/p'`
-
-  cmd="icd-config --db=\"${ICD_TEMP_DIR}/live.db\""
-  cmd=${cmd}" set current ip \"${ipaddr}\""
-  cmd=${cmd}" set current broadcast \"${broadcast}\""
-  cmd=${cmd}" set current mask \"${mask}\""
-  cmd=${cmd}" set current gate \"${gate}\""
-
-  # First clean all dns entries in current config
-  entries=`icd-config --db="${ICD_TEMP_DIR}/live.db" list current | sed -n 's/^current:\(dns[[:digit:]]*\):.*$/\1/p'`
-  for entry in $entries; do
-    test "x$entry" != "x" && cmd=${cmd}" set current $entry \"\""
-  done
-
-  # Then enter new entries (if any)
-  entries=`cat /etc/resolv.conf | sed -n 's/^[[:space:]]*nameserver[[:space:]]*\([0-9.][0-9.]*\).*$/\1/p'`
-  dns_nr=1
-  for entry in $entries; do
-    cmd=${cmd}" set current dns${dns_nr} \"${entry}\""
-    dns_nr=$(($dns_nr + 1))
-  done
-
-  # Run all the command at once (as a one transation)
-  eval ${cmd}
-  warn_on_error "Updating current config failed."
-}
+. "${ICD_SHARE_DIR}/error.script"
+. "${ICD_SHARE_DIR}/network.script"
 
 read_static_ip_config()
 {
   local dns1 dns2
 
-  ipaddr=`icd-config --db="${ICD_TEMP_DIR}/live.db" get tcpip ip | cut -d: -f3`
-  mask=`icd-config --db="${ICD_TEMP_DIR}/live.db" get tcpip mask | cut -d: -f3`
-  gate=`icd-config --db="${ICD_TEMP_DIR}/live.db" get tcpip gate | cut -d: -f3`
+  ip=`icd-config --db="${ICD_TEMP_DIR}/live.db" get tcpip ip | cut -d: -f3`
+  subnet=`icd-config --db="${ICD_TEMP_DIR}/live.db" get tcpip mask | cut -d: -f3`
+  router=`icd-config --db="${ICD_TEMP_DIR}/live.db" get tcpip gate | cut -d: -f3`
   dns1=`icd-config --db="${ICD_TEMP_DIR}/live.db" get tcpip dns1 | cut -d: -f3`
   dns2=`icd-config --db="${ICD_TEMP_DIR}/live.db" get tcpip dns2 | cut -d: -f3`
 
@@ -69,82 +24,50 @@ read_static_ip_config()
   fi
 }
 
-setup_interface()
-{
-  local mask_arg broadcast_arg
-
-  test "x${ipaddr}" != "x"
-  warn_on_error "Missing ip addres"
-
-  test "x${mask}" != "x" && mask_arg=" netmask ${mask}"
-  test "x${broadcast}" != "x" && broadcast_arg=" broadcast ${broadcast}"
-  print_info "Setting up eth0 with ip ${ipaddr}${mask_arg}${broadcast_arg}"
-  ifconfig eth0 up ${ipaddr}${mask_arg}${broadcast_arg}
-  warn_on_error "Setting up ip address failed"
-
-  if [ "x${gate}" != "x" ]; then
-    print_info "Setting up gateway ${gate}"
-    route add default gw ${gate}
-    warn_on_error "Setting up the default route failed"
-  fi
-
-  cat /dev/null > /etc/resolv.conf
-  for entry in $dns; do
-    print_info "Adding dns ${entry}"
-    echo "nameserver $entry" >> /etc/resolv.conf
-    warn_on_error "Adding the dns failed"
-  done
-}
-
-setdown_interface()
-{
-  print_info "Setting down eth0"
-  ifconfig eth0 0.0.0.0
-  warn_on_error "Setting ip to 0.0.0.0 failed"
-  ifconfig eth0 down
-  warn_on_error "Setting down eth0 failed"
-
-  print_info "Removing dns entries"
-  cat /dev/null > /etc/resolv.conf
-  warn_on_error "Cleaning up dns entries failed"
-}
-
 start_network()
 {
-  local ipaddr broadcast mask gate dns
+  local ip broadcast subnet router dns
+
+  ifup=`icd-config --db="${ICD_TEMP_DIR}/live.db" get current ifup | cut -d: -f3`
+  test "x${ifup}" == "x"
+  exit_on_error "Network already configured"
 
   print_info "Starting network..."
+
+  ifconfig ${interface} up
 
   dhcp=`icd-config --db="${ICD_TEMP_DIR}/live.db" get tcpip dhcp | cut -d: -f3`
 
   if [ "$dhcp" == "yes" -o "$dhcp" == "true" -o "$dhcp" == "1" ]; then
     print_info "Starting dhcp client..."
-    udhcpc -i eth0 -t 3
+    udhcpc -i ${interface} -t 3 -s "${ICD_SHARE_DIR}/udhcpc.script"
     warn_on_error "Starting dhcp client failed"
 
-    icd-config --db="${ICD_TEMP_DIR}/live.db" set current dhcp yes
+    icd-config --db="${ICD_TEMP_DIR}/live.db" set current ifup yes set current dhcp yes
     warn_on_error "Updating current config failed"
 
   elif [ "x$dhcp" == "x" -o "$dhcp" == "no" -o "$dhcp" == "false" -o "$dhcp" == "0" ]; then
     read_static_ip_config
-
     setup_interface
 
-    icd-config --db="${ICD_TEMP_DIR}/live.db" set current dhcp no
+    icd-config --db="${ICD_TEMP_DIR}/live.db" set current ifup yes set current dhcp no
     warn_on_error "Updating current config failed"
-
-    update_current_config
 
   else
     echo "${program_name}: Error! Reading config entry failed."
     echo "${program_name}: Program halted."
     exit 1
+
   fi
 }
 
 stop_network()
 {
   local cmd
+
+  ifup=`icd-config --db="${ICD_TEMP_DIR}/live.db" get current ifup | cut -d: -f3`
+  test "${ifup}" == "yes"
+  exit_on_error "Network not configured"
 
   print_info "Stopping network..."
 
@@ -153,15 +76,19 @@ stop_network()
 
   setdown_interface
 
-  update_current_config
+  ifconfig ${interface} down
 
   cmd="icd-config --db=\"${ICD_TEMP_DIR}/live.db\""
+  cmd=${cmd}" set current ifup \"\""
   cmd=${cmd}" set current dhcp \"\""
   cmd=${cmd}" set current dhcp_lease_last_renewal \"\""
   cmd=${cmd}" set current dhcp_lease_time \"\""
   eval ${cmd}
   warn_on_error "Updating current config failed"
 }
+
+program_name=`basename "$0"`
+interface="eth0"
 
 case "$1" in
   start)

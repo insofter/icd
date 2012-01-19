@@ -1,0 +1,23 @@
+#!/bin/sh
+
+print_info()
+{
+  echo "${program_name}: $1"
+}
+
+warn_on_error()
+{
+  if [ $? -ne 0 ]; then
+    echo "${program_name}: Error! $1"
+  fi
+}
+
+exit_on_error()
+{
+  if [ $? -ne 0 ]; then
+    echo "${program_name}: Error! $1"
+    echo "Program halted"
+    exit 1
+  fi
+}
+
