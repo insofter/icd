@@ -39,19 +39,12 @@ mktarget:
 	cp -au scripts/* output/target/usr/bin/
 	mkdir -p output/target/usr/share/icd
 	cp -au sql/* output/target/usr/share/icd/
+	cp -au install.sh output/target/
+	cp -au uninstall.sh output/target/
 
-scp: mktarget
-	ssh admin@192.168.2.21 \
-	  'rm -Rf ./target;' \
-          'sudo rm -f /usr/bin/icd-*;' \
-	  'sudo rm -Rf /usr/share/icd'
-	scp -r output/target admin@192.168.2.21:~/
-	ssh admin@192.168.2.21 \
-	  'sudo install -d /usr/share/icd;' \
-	  'sudo install -m 644 ./target/usr/share/icd/*sql /usr/share/icd/;' \
-	  'sudo install -m 755 ./target/usr/share/icd/*script /usr/share/icd/;' \
-	  'sudo install ./target/usr/bin/* /usr/bin;' \
-	  'rm -Rf ./target'
+rsync: mktarget
+	rsync -a --delete --progress ./output/target admin@$(ICDTCP3_TARGET_IP):~/
+	ssh admin@$(ICDTCP3_TARGET_IP) 'cd target && sudo ./install.sh'
 
 clean:
 	$(RM) icd-config
