@@ -40,7 +40,7 @@ start_network()
 
   if [ "$dhcp" == "yes" -o "$dhcp" == "true" -o "$dhcp" == "1" ]; then
     print_info "Starting dhcp client..."
-    udhcpc -i ${interface} -t 3 -s "${ICD_SHARE_DIR}/udhcpc.script"
+    udhcpc -i ${interface} -t 3 -R -S -s "${ICD_SHARE_DIR}/udhcpc.script"
     warn_on_error "Starting dhcp client failed"
 
     icd-config --db="${ICD_TEMP_DIR}/live.db" set current ifup yes set current dhcp yes
@@ -54,8 +54,8 @@ start_network()
     warn_on_error "Updating current config failed"
 
   else
-    echo "${program_name}: Error! Reading config entry failed."
-    echo "${program_name}: Program halted."
+    print_info "${program_name}: Error! Reading config entry failed."
+    print_info "${program_name}: Program halted."
     exit 1
 
   fi
@@ -81,8 +81,6 @@ stop_network()
   cmd="icd-config --db=\"${ICD_TEMP_DIR}/live.db\""
   cmd=${cmd}" set current ifup \"\""
   cmd=${cmd}" set current dhcp \"\""
-  cmd=${cmd}" set current dhcp_lease_last_renewal \"\""
-  cmd=${cmd}" set current dhcp_lease_time \"\""
   eval ${cmd}
   warn_on_error "Updating current config failed"
 }
@@ -104,7 +102,7 @@ case "$1" in
     ;;
 
   *)
-    echo "Usage: ${program_name} {start|stop|restart}"
+    print_info "Usage: ${program_name} {start|stop|restart}"
     exit 1
 esac
 
