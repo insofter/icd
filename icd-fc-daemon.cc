@@ -1,11 +1,13 @@
+#include "sqlite3cc.h"
+#include "db-config.h"
+#include "daemonizer.h"
+#include "syslogstream.h"
+
 #include <iostream>
 #include <fstream>
 #include <linux/input.h>
 #include <getopt.h>
 #include <cstdlib>
-
-#include "sqlite3cc.h"
-#include "db-config.h"
 
 #define APP_NAME "icd-fc-daemon"
 #define APP_VERSION "1.0"
@@ -20,7 +22,8 @@ const char *usage =
   "Options:\n"
   "  -d|--db=DB_NAME              Database file path; Mandatory option\n"
   "  -t|--timeout=TIMEOUT_MS      Timeout when waiting for acces to the database in ms\n"
-  "  -c|--cmdline                 Do not daemonize; Run as a command line tool\n"
+  "  -b|--daemon                  Run as a daemon\n"
+  "  -p|--pidfile=FILE            Create pid file (if a daemon)\n"
   "  -h|--help\n"
   "  -v|--version\n"
   "\n";
@@ -39,17 +42,21 @@ void write_lcd_cmd(unsigned char cmd)
 
 int main(int argc, char *argv[])
 {
+  syslogstream syslog(APP_NAME, LOG_PERROR);
+
   try
   {
+    daemonizer daemon;
     std::string db_name;
     int db_timeout = 60000; // default timeout is 60 seconds
-    bool daemonize = true;
+    bool run_as_daemon = false;
     bool exit = false;
 
     struct option long_options[] = {
       { "db", required_argument, 0, 'd' },
       { "timeout", required_argument, 0, 't' },
-      { "cmdline", no_argument, 0, 'c' },
+      { "daemon", no_argument, 0, 'b' },
+      { "pidfile", required_argument, 0, 'p' },
       { "help", no_argument, 0, 'h' },
       { "version", no_argument, 0, 'v' },
       { 0, 0, 0, 0 }
@@ -58,7 +65,7 @@ int main(int argc, char *argv[])
     while(1)
     {
       int option_index = 0;
-      int ch = getopt_long(argc, argv, "d:t:chv", long_options, &option_index);
+      int ch = getopt_long(argc, argv, "d:t:bphv", long_options, &option_index);
       if (ch == -1)
         break;
 
@@ -70,8 +77,11 @@ int main(int argc, char *argv[])
         case 't':
           db_timeout = strtol(optarg, NULL, 0);
           break;
-        case 'c':
-          daemonize = false;
+        case 'b':
+          run_as_daemon = true;
+          break;
+        case 'p':
+          daemon.pid_file(optarg);
           break;
         case 'h':
           std::cout << usage;
@@ -93,17 +103,21 @@ int main(int argc, char *argv[])
         break;
     }
 
+    if (!exit && db_name.empty())
+      throw std::runtime_error("Missing '--db' parameter");
+
+    if (!exit && run_as_daemon)
+      exit = daemon.fork();
+
     if (!exit)
     {
-      if (db_name.empty())
-        throw std::runtime_error("Missing '--db' parameter");
-
       sqlite3cc::conn db;
       db.open(db_name.c_str());
       db.busy_timeout(db_timeout);
 
       std::ofstream lcd;
       lcd.open("/dev/lcd0");
+      write_lcd_cmd(0x0F); // enable display
   
       std::ifstream kbd;
       kbd.open("/dev/input/event0");
@@ -125,7 +139,7 @@ int main(int argc, char *argv[])
               key_down = true;
           }
 
-          std::cout << (*i).section << " " << (*i).key
+          syslog << (*i).section << " " << (*i).key
             << " " << (*i).value << std::endl;
 
           write_lcd_cmd(0x01); // clear display
@@ -142,7 +156,7 @@ int main(int argc, char *argv[])
   }
   catch(std::exception& e)
   {
-    std::cout << APP_NAME" error: " << e.what() << std::endl;
+    syslog << APP_NAME" error: " << e.what() << std::endl;
     return 1;
   }
 

@@ -1,3 +1,8 @@
+#include "sqlite3cc.h"
+#include "db-config.h"
+#include "daemonizer.h"
+#include "syslogstream.h"
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -7,9 +12,6 @@
 #include <time.h>
 #include <sys/time.h>
 #include <getopt.h>
-
-#include "sqlite3cc.h"
-#include "db-config.h"
 
 #define APP_NAME "icd-itd-daemon"
 #define APP_VERSION "1.0"
@@ -27,11 +29,10 @@ const char *usage =
   "  -d|--db=DB_NAME              Database file path; Mandatory option\n"
   "  -t|--timeout=TIMEOUT_MS      Timeout when waiting for acces to the database in ms\n"
   "  -i|--device=DEVICE           Device name; E.g. itd0, itd1... This is mandatory option\n"
-  "                               This tool provides also 2 'emulator' devices:\n"
-  "                               rand - generates input events randomly\n"
-  "                               kbd - generates event when user enters characters\n"
-  "                               on standard input\n"
-  "  -c|--cmdline                 Do not daemonize; Run as a command line tool\n"
+  "  -r|--rand                    Device emulation: generates input events randomly\n"
+  "  -k|--kbd                     Device emulation: generates event when based on keyboard\n"
+  "  -b|--daemon                  Run as a daemon\n"
+  "  -p|--pidfile=FILE            Create pid file (if a daemon)\n"
   "  -h|--help\n"
   "  -v|--version\n"
   "\n";
@@ -365,13 +366,16 @@ void config_itddev(sqlite3cc::conn& db, icd::itd_device& itddev)
 
 int main(int argc, char *argv[])
 {
+  syslogstream syslog(APP_NAME, LOG_PERROR);
+
   try
   {
+    daemonizer daemon;
     std::string db_name;
     int db_timeout = 60000; // default timeout is 60 seconds
     std::string dev_name;
     std::string emulator;
-    bool daemonize = true;
+    bool run_as_daemon = false;
     bool exit = false;
 
     struct option long_options[] = {
@@ -380,7 +384,8 @@ int main(int argc, char *argv[])
       { "device", required_argument, 0, 'i' },
       { "rand", no_argument, 0, 'r' },
       { "kbd", no_argument, 0, 'k' },
-      { "cmdline", no_argument, 0, 'c' },
+      { "daemon", no_argument, 0, 'b' },
+      { "pidfile", required_argument, 0, 'p' },
       { "help", no_argument, 0, 'h' },
       { "version", no_argument, 0, 'v' },
       { 0, 0, 0, 0 }
@@ -389,7 +394,7 @@ int main(int argc, char *argv[])
     while(1)
     {
       int option_index = 0;
-      int ch = getopt_long(argc, argv, "d:t:i:rkchv", long_options, &option_index);
+      int ch = getopt_long(argc, argv, "d:t:i:rkbphv", long_options, &option_index);
       if (ch == -1)
         break;
 
@@ -410,8 +415,11 @@ int main(int argc, char *argv[])
         case 'r':
           emulator = "rand";
           break;
-        case 'c':
-          daemonize = false;
+        case 'b':
+          run_as_daemon = true;
+          break;
+        case 'p':
+          daemon.pid_file(optarg);
           break;
         case 'h':
           std::cout << usage;
@@ -433,14 +441,17 @@ int main(int argc, char *argv[])
         break;
     }
 
+    if (!exit && db_name.empty())
+      throw std::runtime_error("Missing '--db' parameter");
+
+    if (!exit && dev_name.empty())
+      throw std::runtime_error("Missing '--device' parameter");
+
+    if (!exit && run_as_daemon)
+      exit = daemon.fork();
+
     if (!exit)
     {
-      if (db_name.empty())
-        throw std::runtime_error("Missing '--db' parameter");
-
-      if (dev_name.empty())
-        throw std::runtime_error("Missing '--device' parameter");
-
       sqlite3cc::conn db;
       db.open(db_name.c_str());
       db.busy_timeout(db_timeout);
@@ -451,13 +462,14 @@ int main(int argc, char *argv[])
 
       icd::itd_base_device *dev = create_device(db, dev_name, emulator);
 
+
       while(1)
       {
         icd::itd_event e = dev->next();
         std::ostringstream oss;
         oss << e.dtm();
 
-        std::cout << dev_name << " " << e.dtm() << " " << e.state() << std::endl;
+        syslog << dev_name << " " << e.dtm() << " " << e.state() << std::endl;
 
         stmt.bind_text(1, dev_name.c_str());
         stmt.bind_int64(2, (long long)e.dtm().sec() * 1000 + (long long)e.dtm().usec() / 1000);
@@ -479,7 +491,7 @@ int main(int argc, char *argv[])
   }
   catch(std::exception& e)
   {
-    std::cout << APP_NAME" error: " << e.what() << std::endl;
+    syslog << APP_NAME" error: " << e.what()  << std::endl;
     return 1;
   }
 
