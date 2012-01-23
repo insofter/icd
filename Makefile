@@ -39,6 +39,10 @@ mktarget:
 	cp -au scripts/* output/target/usr/bin/
 	mkdir -p output/target/usr/share/icd
 	cp -au sql/* output/target/usr/share/icd/
+	mkdir -p output/target/etc/
+	cp -aur etc/* output/target/etc/
+	mkdir -p output/target/var/www
+	cp -au www/* output/target/var/www/
 	cp -au install.sh output/target/
 	cp -au uninstall.sh output/target/
 
