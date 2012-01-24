@@ -129,6 +129,14 @@ int main(int argc, char *argv[])
         std::vector<icd::config_entry>::iterator i;
         for (i = list.begin() ; i < list.end(); i++)
         {
+          syslog << (*i).section << " " << (*i).key
+            << " " << (*i).value << std::endl;
+
+          write_lcd_cmd(0x01); // clear display
+          lcd << (*i).section << ":" << (*i).key << std::endl;
+          write_lcd_cmd(0xC0); // go to second line
+          lcd << (*i).value << std::endl;
+
           bool key_down = false;
           while(!key_down && !exit)
           {
@@ -138,14 +146,6 @@ int main(int argc, char *argv[])
             else if (ev.code >= 160 && ev.value == 1)
               key_down = true;
           }
-
-          syslog << (*i).section << " " << (*i).key
-            << " " << (*i).value << std::endl;
-
-          write_lcd_cmd(0x01); // clear display
-          lcd << (*i).section << ":" << (*i).key << std::endl;
-          write_lcd_cmd(0xC0); // go to second line
-          lcd << (*i).value << std::endl;
         }
       }
 
