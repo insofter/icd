@@ -25,7 +25,7 @@
   <div id="page">
     <div id="header">
       <h1> Icdtcp3 demo php page </h1>
-      What you is Icdtcp3 device's web page. It prosents the configuration tables stored in sqlite database.
+      What you see is Icdtcp3 device's web page. It prosents the configuration tables stored in sqlite database.
     </div>
     <div id="body">
       <?php
