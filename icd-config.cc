@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <getopt.h>
 
+#include "config.h"
 #include "sqlite3cc.h"
 #include "db-config.h"
 
@@ -151,8 +152,6 @@ void command_parser::run_list_sections()
 //------------------------------------------------------------------------------
 
 #define APP_NAME "icd-config"
-#define APP_VERSION "1.0"
-#define APP_COPYRIGHT "Copyright (c) 2011 Tomasz Rozensztrauch"
 
 const char *usage =
   "\n"
@@ -178,9 +177,6 @@ const char *usage =
   "  -v|--version\n"
   "\n";
 
-const char *version =
-  APP_NAME" "APP_VERSION"\n"
-  APP_COPYRIGHT"\n";
 
 int main(int argc, char *argv[])
 {
@@ -223,7 +219,8 @@ int main(int argc, char *argv[])
           exit = true;
           break;
         case 'v':
-          std::cout << version;
+          std::cout << APP_NAME << " " << ICD_VERSION_MAJOR << "." 
+            << ICD_VERSION_MINOR << " " << ICD_COPYRIGHT << std::endl;
           exit = true;
           break;
         default:
