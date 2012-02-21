@@ -56,28 +56,20 @@ if (NOT (${HAVE_ROXML_H}))
   message(FATAL_ERROR "Missing roxml.h header file")
 endif()
 
+add_subdirectory(src)
 
-add_library(db-config db-config.cc)
-add_library(daemonizer daemonizer.cc)
-add_library(syslogstream syslogstream.cc)
-add_library(transfer-agent transfer-agent.cc)
+#install (TARGETS icd-config icd-sql DESTINATION bin)
+SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "icd")
+SET(CPACK_PACKAGE_VENDOR "Tomasz Rozensztrauch")
+SET(CPACK_SOURCE_PACKAGE_FILE_NAME "icd-${ICD_VERSION_MAJOR}.${ICD_VERSION_MINOR}")
+#SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/ReadMe.txt")
+#SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/Copyright.txt")
+SET(CPACK_PACKAGE_VERSION_MAJOR "${ICD_VERSION_MAJOR}")
+SET(CPACK_PACKAGE_VERSION_MINOR "${ICD_VERSION_MINOR}")
+SET(CPACK_PACKAGE_VERSION_PATCH "0")
+#SET(CPACK_PACKAGE_INSTALL_DIRECTORY "CMake ${CMake_VERSION_MAJOR}.${CMake_VERSION_MINOR}")
 
-add_executable(icd-config icd-config.cc)
-target_link_libraries(icd-config db-config sqlite3)
-
-add_executable(icd-sql icd-sql.cc)
-target_link_libraries(icd-sql sqlite3)
-
-add_executable(icd-itd-daemon icd-itd-daemon.cc)
-target_link_libraries(icd-itd-daemon db-config daemonizer syslogstream sqlite3)
-
-add_executable(icd-fc-daemon icd-fc-daemon.cc)
-target_link_libraries(icd-fc-daemon db-config daemonizer syslogstream sqlite3)
-
-add_executable(icd-transfer-data icd-transfer-data.cc)
-target_link_libraries(icd-transfer-data transfer-agent sqlite3 curl roxml)
-
-
-install (TARGETS icd-config icd-sql DESTINATION bin)
-
+#  SET(CPACK_STRIP_FILES "bin/MyExecutable")
+#  SET(CPACK_SOURCE_STRIP_FILES "")
+#SET(CPACK_PACKAGE_EXECUTABLES "MyExecutable" "My Executable")
 include (CPack)
