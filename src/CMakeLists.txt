@@ -30,4 +30,7 @@ target_link_libraries(icd-fc-daemon db-config daemonizer syslogstream sqlite3)
 add_executable(icd-transfer-data icd-transfer-data.cc)
 target_link_libraries(icd-transfer-data transfer-agent sqlite3 curl roxml)
 
-install (TARGETS icd-config icd-sql DESTINATION bin)
+install (TARGETS icd-config icd-sql icd-itd-daemon icd-fc-daemon
+  icd-transfer-data DESTINATION bin
+  )
+
