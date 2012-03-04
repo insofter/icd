@@ -4,7 +4,7 @@
 #include <cstdlib>
 #include <getopt.h>
 
-#include "config.h"
+#include "version.h"
 #include "sqlite3cc.h"
 #include "db-config.h"
 
@@ -219,8 +219,8 @@ int main(int argc, char *argv[])
           exit = true;
           break;
         case 'v':
-          std::cout << APP_NAME << " " << ICD_VERSION_MAJOR << "." 
-            << ICD_VERSION_MINOR << " " << ICD_COPYRIGHT << std::endl;
+          std::cout << APP_NAME << " " << version << " " << build_date 
+            << "\n" << copyright << std::endl;
           exit = true;
           break;
         default:

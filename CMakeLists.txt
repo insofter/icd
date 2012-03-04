@@ -2,20 +2,6 @@ cmake_minimum_required (VERSION 2.8)
 
 project (icd)
 
-# Version
-set (ICD_VERSION_MAJOR 1)
-set (ICD_VERSION_MINOR 0)
-set (ICD_COPYRIGHT "Copyright (c) 2011-2012 Tomasz Rozensztrauch")
-
-# Configure a header file to pass some of the CMake settings to the source code
-configure_file ("${PROJECT_SOURCE_DIR}/config.h.in"
-  "${PROJECT_BINARY_DIR}/config.h"
-  )
- 
-# Add the binary tree to the search path for include files
-# so that we will find config.h
-include_directories ("${PROJECT_BINARY_DIR}")
-
 include (CheckIncludeFiles)
 include (CheckLibraryExists)
 
