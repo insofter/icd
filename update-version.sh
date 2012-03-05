@@ -21,7 +21,7 @@ exit_on_error()
 {
   if [ $? -ne 0 ]; then
     print_error "$1"
-    echo "Program halted" >2
+    echo "Program halted" >&2
     exit 1
   fi
 }
@@ -37,6 +37,8 @@ print_usage()
   echo "The version is calculated based on git describe. The resulting file"
   echo "is saved in output file (or stdout if none provided)."
   echo ""
+  echo "Note! This tool must be run from the source top directory!"
+  echo ""
   echo "  -o|--output     Output file"
   echo "  -h|--help       show this information"
   echo "  -v|--version    show version information"
@@ -50,7 +52,7 @@ print_version()
 }
 
 program_name=`basename "$0"`
-version=`git describe --dirty || echo "?"`
+version=`git describe --dirty || echo "dirty"`
 build_date=`date`
 
 options=`getopt -o o:hv --long output:,help,version -- "$@"`
