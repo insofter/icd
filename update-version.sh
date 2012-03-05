@@ -50,7 +50,7 @@ print_version()
 }
 
 program_name=`basename "$0"`
-version=`git describe --dirty`
+version=`git describe --dirty || echo "?"`
 build_date=`date`
 
 options=`getopt -o o:hv --long output:,help,version -- "$@"`
