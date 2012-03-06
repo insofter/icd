@@ -64,25 +64,17 @@ install (DIRECTORY www/ DESTINATION /var/www
     GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
   )
 
+# sed:package {
+# This section is removed form exported source package
 # Include 'package' and 'package_source' targets
-
-#set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "icd")
-#set (CPACK_PACKAGE_VENDOR "Tomasz Rozensztrauch")
-#set (CPACK_SOURCE_PACKAGE_FILE_NAME "icd-${ICD_VERSION_MAJOR}.${ICD_VERSION_MINOR}")
-##set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/ReadMe.txt")
-##set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/Copyright.txt")
-#set (CPACK_PACKAGE_VERSION_MAJOR "${ICD_VERSION_MAJOR}")
-#set (CPACK_PACKAGE_VERSION_MINOR "${ICD_VERSION_MINOR}")
-#set (CPACK_PACKAGE_VERSION_PATCH "0")
-##set(CPACK_PACKAGE_INSTALL_DIRECTORY "CMake ${CMake_VERSION_MAJOR}.${CMake_VERSION_MINOR}")
-##  set(CPACK_STRIP_FILES "bin/MyExecutable")
-##  set(CPACK_SOURCE_STRIP_FILES "")
-##set(CPACK_PACKAGE_EXECUTABLES "MyExecutable" "My Executable")
-#set (CPACK_SET_DESTDIR ON)
-#include (CPack)
-
 add_custom_target(package
   COMMAND "${PROJECT_SOURCE_DIR}/make-package.sh"
     -b "${PROJECT_BINARY_DIR}"
   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
   COMMENT "Building binary package")
+add_custom_target(export
+  COMMAND "${PROJECT_SOURCE_DIR}/make-export.sh"
+    -b "${PROJECT_BINARY_DIR}"
+  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+  COMMENT "Building source package")
+# sed:package }

@@ -1,31 +1,5 @@
 #!/bin/sh
 
-print_info()
-{
-  echo "${program_name}: $1" >&2
-}
-
-print_error()
-{
-  echo "${program_name}: Error! $1" >&2
-}
-
-warn_on_error()
-{
-  if [ $? -ne 0 ]; then
-    print_error "$1"
-  fi
-}
-
-exit_on_error()
-{
-  if [ $? -ne 0 ]; then
-    print_error "$1"
-    echo "Program halted" >&2
-    exit 1
-  fi
-}
-
 print_usage()
 {
 >&2 cat <<EOF
@@ -48,33 +22,59 @@ print_version()
 {
 >&2 cat <<EOF
 
-${program_name} ${version} ${build_date}
+${program_name} ${version}
 Copyright (c) 2011-2012 Tomasz Rozensztrauch
 
 EOF
 }
 
+info() 
+{
+  echo "${program_name}: $1" >&2 
+}
+
+error() 
+{
+  echo "${program_name}: Error! $1" >&2
+  exit 1 
+}
+
 program_name=`basename "$0"`
+
+# Get version from git describe command. This produces a version 
+# which is based on last tag in the repositioty. If the currently
+# checked out version is not tagged then a suffix is added
+# indicating the number of commits from the most recent tagged commit
+# plus a unique current commit name plus a 'dirty' flag if the working
+# tree has some uncomited changes.
 version=`git describe --dirty || echo "dirty"`
-build_date=`date`
+
+# The tag is exected to be in v0.0 or v0.0.0 format. If that is the case
+# then the 'v' letter is omitted, otherwies the whole tag is taken as
+# the version.
+version=`echo "${version}" | sed -e 's/^v\(.*\)$/\1/'`
+
 build_dir=`pwd`
 
-options=`getopt -o s:b:hv --long source-dir:,build-dir:,help,version -- "$@"`
+options=`getopt -o b:hv --long build-dir:,help,version -- "$@"`
 eval set -- "$options"
 while true ; do
   case "$1" in
-    -b|--build-dir) build_dir=$2; shift 2 ;;
+    -b|--build-dir) build_dir=`cd "$2" && pwd`;
+       test $? -eq 0 || error "Invalid build directory specified"; shift 2 ;;
     -h|--help) print_usage; exit 0 ;;
     -v|--version) print_version; exit 0 ;;
     --) shift; break ;;
-    *) print_error "Parsing parameters failed at '$1'"; exit 1 ;;
+    *) error "Parsing parameters failed at '$1'" ;;
   esac
 done
 
-cd "${build_dir}"
-exit_on_error "Changing pwd to \'${build_dir}\' failed"
+test "x$1" = "x" || error "Parsing parametes failed at '$1'"
 
-config_file=`mktemp`
+cd "${build_dir}"
+test $? -eq 0 || error "Changing pwd to \'${build_dir}\' failed"
+
+config_file="${build_dir}/icd-${version}-linux.cmake"
 > "${config_file}" cat <<EOF
 SET(CPACK_GENERATOR "STGZ")
 SET(CPACK_CMAKE_GENERATOR "Unix Makefiles")
@@ -85,13 +85,13 @@ SET(CPACK_RESOURCE_FILE_LICENSE "/usr/share/cmake-2.8/Templates/CPack.GenericLic
 SET(CPACK_PACKAGE_NAME "icd")
 SET(CPACK_PACKAGE_VENDOR "Tomasz Rozensztrauch")
 SET(CPACK_PACKAGE_VERSION "${version}")
-SET(CPACK_PACKAGE_FILE_NAME "icd-${version}-Linux")
+SET(CPACK_PACKAGE_FILE_NAME "icd-${version}-linux")
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "icd package")
 SET(CPACK_PACKAGE_DESCRIPTION_FILE "/usr/share/cmake-2.8/Templates/CPack.GenericDescription.txt")
 SET(CPACK_PACKAGE_DEFAULT_LOCATION "/")
 EOF
 
 cpack --config "${config_file}"
-exit_on_error "Running cpack failed"
+test $? -eq 0 || error "Running cpack failed"
 
-rm "${config_file}"
+exit 0
