@@ -58,7 +58,7 @@ version=`git describe --dirty || echo "dirty"`
 # the version.
 version=`echo "${version}" | sed -e 's/^v\(.*\)$/\1/'`
 
-build_date=`date`
+build_date=`date +'%Y/%m/%d %H:%M %Z'`
 
 options=`getopt -o o:hv --long output:,help,version -- "$@"`
 eval set -- "$options"
@@ -83,7 +83,7 @@ test "x$1" = "x" || error "Parsing parametes failed at '$1'"
 info "Updated version: ${version} ${build_date}"
 
 content=`cat "${in_file}" | sed -e 's/@VERSION@/'"${version}"'/' \
-   -e 's/@DATE@/'"${build_date}"'/'`
+   -e 's|@DATE@|'"${build_date}"'|'`
 test "x${content}" != "x" || error "Processing of input file failed"
 
 if [ "${out_file:--}" = "-" ]; then
