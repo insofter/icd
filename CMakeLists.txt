@@ -72,9 +72,9 @@ add_custom_target(package
     -b "${PROJECT_BINARY_DIR}"
   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
   COMMENT "Building binary package")
-add_custom_target(export
-  COMMAND "${PROJECT_SOURCE_DIR}/make-export.sh"
-    -b "${PROJECT_BINARY_DIR}"
+add_custom_target(srcpkg
+  COMMAND "${PROJECT_SOURCE_DIR}/make-srcpkg.sh"
+    -o "${PROJECT_BINARY_DIR}"
   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
   COMMENT "Building source package")
 # sed:package }
