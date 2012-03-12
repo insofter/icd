@@ -84,6 +84,7 @@ test $? -eq 0 || error "Copying package files failed"
 
 cat update-version.sh | sed -e 's/^version=.*$/version="'"${version}"'"/' \
   > ${export_dir}/update-version.sh
+chmod a+x ${export_dir}/update-version.sh
 
 cat CMakeLists.txt | sed -e '/sed:package {/,/sed:package }/ d' \
   > ${export_dir}/CMakeLists.txt
