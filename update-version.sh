@@ -11,11 +11,9 @@ Process the input file (or stdin if not provided) and replaces all
 ocurrences of @VERSION@ and @DATE@ markers with the current version
 and date. The version is calculated based on git describe command.
 The resulting file is saved in the output file (or stdout if not
-provided).
-
-Note! This tool must be run from the source top directory!
+provided). The script must be executed from source top directory.
   
-  -o|--output     Output file
+  -o|--output     output file
   -h|--help       show this information
   -v|--version    show version information
 
@@ -26,7 +24,7 @@ print_version()
 {
 >&2 cat <<EOF
 
-${program_name} ${version} ${build_date}
+${program_name} ${version}
 Copyright (c) 2011-2012 Tomasz Rozensztrauch
 
 EOF
@@ -34,33 +32,23 @@ EOF
 
 info() 
 {
-  echo "${program_name}: $1" >&2 
+  echo "${program_name}: $1" >&2
 }
 
 error() 
 {
   echo "${program_name}: Error! $1" >&2
-  exit 1 
+  if [ "$2" != "noexit" ]; then
+    exit 1;
+  fi
 }
 
 program_name=`basename "$0"`
-
-# Get version from git describe command. This produces a version 
-# which is based on last tag in the repositioty. If the currently
-# checked out version is not tagged then a suffix is added
-# indicating the number of commits from the most recent tagged commit
-# plus a unique current commit name plus a 'dirty' flag if the working
-# tree has some uncomited changes.
-version=`git describe --dirty || echo "dirty"`
-
-# The tag is exected to be in v0.0 or v0.0.0 format. If that is the case
-# then the 'v' letter is omitted, otherwies the whole tag is taken as
-# the version.
-version=`echo "${version}" | sed -e 's/^v\(.*\)$/\1/'`
-
+version=`git describe --dirty | sed -e 's/^v\(.*\)$/\1/'`
 build_date=`date +'%Y/%m/%d %H:%M %Z'`
 
 options=`getopt -o o:hv --long output:,help,version -- "$@"`
+test $? -eq 0 || error "Parsing parameters failed"
 eval set -- "$options"
 while true ; do
   case "$1" in

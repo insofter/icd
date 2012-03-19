@@ -4,14 +4,18 @@ print_usage()
 {
 >&2 cat <<EOF
 
-Usage: ${program_name} [-b|--build-dir BUILD_DIR]
+Usage: ${program_name} [-o|--output-dir OUTPUT_DIR] [-O|--build-dir BUILD_DIR]
   [-h|--help] [-v|--version]
 
-Builds a binary package for icd project.
+Builds a binary package for icd module. When the project build
+directory is different than the source directory (out-of-source build)
+then the build directory may be provided in -O|--build-dir parameter.
+The output directory can be specified by -o|--output-dir parameter.
+If the parameter is not provided then the build directory is used.
+The script must be executed from source top directory.
 
-Note! This tool must be run from the source top directory.
-
-  -b|--build-dir  project build directory; default is current directory
+  -o|--output-dir output directory
+  -O|--build-dir  project build directory
   -h|--help       show this information
   -v|--version    show version information
 
@@ -30,37 +34,31 @@ EOF
 
 info() 
 {
-  echo "${program_name}: $1" >&2 
+  echo "${program_name}: $1" >&2
 }
 
 error() 
 {
   echo "${program_name}: Error! $1" >&2
-  exit 1 
+  if [ "$2" != "noexit" ]; then
+    exit 1;
+  fi
 }
 
 program_name=`basename "$0"`
 
-# Get version from git describe command. This produces a version 
-# which is based on last tag in the repositioty. If the currently
-# checked out version is not tagged then a suffix is added
-# indicating the number of commits from the most recent tagged commit
-# plus a unique current commit name plus a 'dirty' flag if the working
-# tree has some uncomited changes.
-version=`git describe --dirty || echo "dirty"`
-
-# The tag is exected to be in v0.0 or v0.0.0 format. If that is the case
-# then the 'v' letter is omitted, otherwies the whole tag is taken as
-# the version.
-version=`echo "${version}" | sed -e 's/^v\(.*\)$/\1/'`
+version=`git describe --dirty | sed -e 's/^v\(.*\)$/\1/'`
 
 build_dir=`pwd`
 
-options=`getopt -o b:hv --long build-dir:,help,version -- "$@"`
+options=`getopt -o o:O:hv --long output-dir:,build-dir:,help,version -- "$@"`
+test $? -eq 0 || error "Parsing parameters failed"
 eval set -- "$options"
 while true ; do
   case "$1" in
-    -b|--build-dir) build_dir=`cd "$2" && pwd`;
+    -o|--output-dir) output_dir=`eval cd "$2" && pwd`;
+       test $? -eq 0 || error "Invalid output directory specified"; shift 2 ;;
+    -O|--build-dir) build_dir=`eval cd "$2" && pwd`;
        test $? -eq 0 || error "Invalid build directory specified"; shift 2 ;;
     -h|--help) print_usage; exit 0 ;;
     -v|--version) print_version; exit 0 ;;
@@ -69,16 +67,21 @@ while true ; do
   esac
 done
 
-test "x$1" = "x" || error "Parsing parametes failed at '$1'"
+test "x$1" = "x" || error "Parsing parameters failed at '$1'"
 
-cd "${build_dir}"
-test $? -eq 0 || error "Changing pwd to \'${build_dir}\' failed"
+# Let output_dir default to build_dir
+if [ "x${output_dir}" = "x" ]; then
+  output_dir="${build_dir}"
+fi
 
-config_file="${build_dir}/icd-${version}-linux.cmake"
+cd "${output_dir}"
+test $? -eq 0 || error "Changing directory to '${output_dir}' failed"
+
+config_file="${output_dir}/icd-${version}-linux.cmake"
 > "${config_file}" cat <<EOF
 SET(CPACK_GENERATOR "STGZ")
 SET(CPACK_CMAKE_GENERATOR "Unix Makefiles")
-SET(CPACK_INSTALL_CMAKE_PROJECTS "`pwd`;icd;ALL;/")
+SET(CPACK_INSTALL_CMAKE_PROJECTS "${build_dir};icd;ALL;/")
 SET(CPACK_INSTALL_PREFIX "/usr")
 SET(CPACK_SET_DESTDIR "ON")
 SET(CPACK_RESOURCE_FILE_LICENSE "/usr/share/cmake-2.8/Templates/CPack.GenericLicense.txt")
@@ -95,3 +98,4 @@ cpack --config "${config_file}"
 test $? -eq 0 || error "Running cpack failed"
 
 exit 0
+

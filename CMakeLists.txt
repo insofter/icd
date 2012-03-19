@@ -69,7 +69,7 @@ install (DIRECTORY www/ DESTINATION /var/www
 # Include 'package' and 'package_source' targets
 add_custom_target(package
   COMMAND "${PROJECT_SOURCE_DIR}/make-package.sh"
-    -b "${PROJECT_BINARY_DIR}"
+    -O "${PROJECT_BINARY_DIR}"
   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
   COMMENT "Building binary package")
 add_custom_target(srcpkg
