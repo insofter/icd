@@ -74,7 +74,7 @@ test $? -eq 0 || error "Uploading package failed"
 
 info "Running remote install command..."
 cmd="`basename "${package}"` --prefix=/ --skip-license --exclude-subdir"
-ssh "admin@${target_addr}" "sudo /home/admin/${install_cmd}"
+ssh "admin@${target_addr}" "sudo /home/admin/${cmd}"
 test $? -eq 0 || exit "Running remote install command failed"
 
 exit 0
