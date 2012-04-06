@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include <cstdlib>
 #include <getopt.h>
+#include <libgen.h>
 
 #include "version.h"
 #include "sqlite3cc.h"
@@ -151,32 +152,38 @@ void command_parser::run_list_sections()
 
 //------------------------------------------------------------------------------
 
-#define APP_NAME "icd-config"
+void print_usage(char *argv0)
+{
+  std::cerr << 
+    "\n"
+    "Usage: " << basename(argv0) << " OPTION... CMD [ARG]... [CMD [ARG]...]...\n"
+    "\n"
+    "A command line tool for managing icd configuration entries.\n"
+    "\n"
+    "Comands:\n"
+    "  get SECTION KEY\n"
+    "  set SECTION KEY VALUE\n"
+    "  rm SECTION KEY\n"
+    "  list [SECTION]\n"
+    "  list-all\n"
+    "  add-section SECTION\n"
+    "  rm-section SECTION\n"
+    "  list-sections\n"
+    "\n"
+    "Options:\n"
+    "  -d|--db=DB_NAME              Database file path; Mandatory option\n"
+    "  -t|--timeout=TIMEOUT_MS      Timeout when waiting for acces to the database in ms\n"
+    "  -s|--separator=SEPARATOR     Output separator; Default value is ':'\n"
+    "  -h|--help\n"
+    "  -v|--version\n"
+    << std::endl;
+}
 
-const char *usage =
-  "\n"
-  "Usage: "APP_NAME" OPTION... CMD [ARG]... [CMD [ARG]...]...\n"
-  "\n"
-  "A command line tool for managing icd configuration entries.\n"
-  "\n"
-  "Comands:\n"
-  "  get SECTION KEY\n"
-  "  set SECTION KEY VALUE\n"
-  "  rm SECTION KEY\n"
-  "  list [SECTION]\n"
-  "  list-all\n"
-  "  add-section SECTION\n"
-  "  rm-section SECTION\n"
-  "  list-sections\n"
-  "\n"
-  "Options:\n"
-  "  -d|--db=DB_NAME              Database file path; Mandatory option\n"
-  "  -t|--timeout=TIMEOUT_MS      Timeout when waiting for acces to the database in ms\n"
-  "  -s|--separator=SEPARATOR     Output separator; Default value is ':'\n"
-  "  -h|--help\n"
-  "  -v|--version\n"
-  "\n";
-
+void print_version(char *argv0)
+{
+  std::cerr << basename(argv0) << " " << version << "\n"
+    << copyright << std::endl;
+}
 
 int main(int argc, char *argv[])
 {
@@ -215,12 +222,11 @@ int main(int argc, char *argv[])
           separator = optarg;
           break;
         case 'h':
-          std::cout << usage;
+          print_usage(argv[0]);
           exit = true;
           break;
         case 'v':
-          std::cout << APP_NAME << " " << version << " " << build_date 
-            << "\n" << copyright << std::endl;
+          print_version(argv[0]);
           exit = true;
           break;
         default:
@@ -258,7 +264,7 @@ int main(int argc, char *argv[])
   }
   catch(std::exception& e)
   {
-    std::cout << APP_NAME" error: " << e.what() << std::endl;
+    std::cout << basename(argv[0]) << " error: " << e.what() << std::endl;
     return 1;
   }
 

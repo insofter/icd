@@ -4,34 +4,38 @@
 #include <stdexcept>
 #include <cstdlib>
 #include <getopt.h>
+#include <libgen.h>
 
+#include "version.h"
 #include "sqlite3cc.h"
-#define APP_NAME "icd-sql"
-#define APP_VERSION "1.0"
-#define APP_COPYRIGHT "Copyright (c) 2011 Tomasz Rozensztrauch"
 
-const char *usage =
-  "\n"
-  "Usage: "APP_NAME" OPTION... [SCRIPT_FILE]...\n"
-  "\n"
-  "A command line tool for running sqlite SQL scripts. Is reads and executes\n"
-  "provided script file(s). If no script file has been provided the tool\n"
-  "reads standard input. All commands within all files are processes\n"
-  "as a part of a single transaction.\n"
-  "\n"
-  "Options:\n"
-  "  -d|--db=DB_NAME              Database file path; Mandatory option\n"
-  "  -t|--timeout=TIMEOUT_MS      Timeout when waiting for acces to the database in ms\n"
-  "  -s|--separator=SEPARATOR     Output separator; Default value is ':'\n"
-  "  -e|--extern-db=DB_NAME       Second (external) database for commands that\n"
-  "                               performs operations between two databases\n"
-  "  -h|--help\n"
-  "  -v|--version\n"
-  "\n";
+void print_usage(char *argv0)
+{
+  std::cerr <<
+    "\n"
+    "Usage: " << basename(argv0) << " OPTION... [SCRIPT_FILE]...\n"
+    "\n"
+    "A command line tool for running sqlite SQL scripts. Is reads and executes\n"
+    "provided script file(s). If no script file has been provided the tool\n"
+    "reads standard input. All commands within all files are processes\n"
+    "as a part of a single transaction.\n"
+    "\n"
+    "Options:\n"
+    "  -d|--db=DB_NAME              Database file path; Mandatory option\n"
+    "  -t|--timeout=TIMEOUT_MS      Timeout when waiting for acces to the database in ms\n"
+    "  -s|--separator=SEPARATOR     Output separator; Default value is ':'\n"
+    "  -e|--extern-db=DB_NAME       Second (external) database for commands that\n"
+    "                               performs operations between two databases\n"
+    "  -h|--help\n"
+    "  -v|--version\n"
+    << std::endl;
+}
 
-const char *version =
-  APP_NAME" "APP_VERSION"\n"
-  APP_COPYRIGHT"\n";
+void print_version(char *argv0)
+{
+  std::cerr << basename(argv0) << " " << version << "\n"
+    << copyright << std::endl;
+}
 
 int db_exec_cbf(void* data, int cnt, char **values, char** names)
 {
@@ -91,11 +95,11 @@ int main(int argc, char *argv[])
           break;
         }
         case 'h':
-          std::cout << usage;
+          print_usage(argv[0]);
           exit = true;
           break;
         case 'v':
-          std::cout << version;
+          print_version(argv[0]);
           exit = true;
           break;
         default:
@@ -160,7 +164,7 @@ int main(int argc, char *argv[])
   }
   catch(std::exception& e)
   {
-    std::cout << APP_NAME" error: " << e.what() << std::endl;
+    std::cout << basename(argv[0]) << " error: " << e.what() << std::endl;
     return 1;
   }
 

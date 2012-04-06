@@ -1,8 +1,3 @@
-#include "sqlite3cc.h"
-#include "db-config.h"
-#include "daemonizer.h"
-#include "syslogstream.h"
-
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -12,34 +7,42 @@
 #include <time.h>
 #include <sys/time.h>
 #include <getopt.h>
+#include <libgen.h>
 
-#define APP_NAME "icd-itd-daemon"
-#define APP_VERSION "1.0"
-#define APP_COPYRIGHT "Copyright (c) 2012 Tomasz Rozensztrauch"
+#include "version.h"
+#include "sqlite3cc.h"
+#include "db-config.h"
+#include "daemonizer.h"
+#include "syslogstream.h"
 
-const char *usage =
-  "\n"
-  "Usage: "APP_NAME" OPTION...\n"
-  "\n"
-  "A daemon communicating with itd devices. After configuration of\n"
-  "the device the tool reads input events from it and stores them\n"
-  "in the database.\n"
-  "\n"
-  "Options:\n"
-  "  -d|--db=DB_NAME              Database file path; Mandatory option\n"
-  "  -t|--timeout=TIMEOUT_MS      Timeout when waiting for acces to the database in ms\n"
-  "  -i|--device=DEVICE           Device name; E.g. itd0, itd1... This is mandatory option\n"
-  "  -r|--rand                    Device emulation: generates input events randomly\n"
-  "  -k|--kbd                     Device emulation: generates event when based on keyboard\n"
-  "  -b|--daemon                  Run as a daemon\n"
-  "  -p|--pidfile=FILE            Create pid file (if a daemon)\n"
-  "  -h|--help\n"
-  "  -v|--version\n"
-  "\n";
+void print_usage(char *argv0)
+{
+  std::cerr << 
+    "\n"
+    "Usage: " << basename(argv0) << " OPTION...\n"
+    "\n"
+    "A daemon communicating with itd devices. After configuration of\n"
+    "the device the tool reads input events from it and stores them\n"
+    "in the database.\n"
+    "\n"
+    "Options:\n"
+    "  -d|--db=DB_NAME              Database file path; Mandatory option\n"
+    "  -t|--timeout=TIMEOUT_MS      Timeout when waiting for acces to the database in ms\n"
+    "  -i|--device=DEVICE           Device name; E.g. itd0, itd1... This is mandatory option\n"
+    "  -r|--rand                    Device emulation: generates input events randomly\n"
+    "  -k|--kbd                     Device emulation: generates event when based on keyboard\n"
+    "  -b|--daemon                  Run as a daemon\n"
+    "  -p|--pidfile=FILE            Create pid file (if a daemon)\n"
+    "  -h|--help\n"
+    "  -v|--version\n"
+    << std::endl;
+}
 
-const char *version =
-  APP_NAME" "APP_VERSION"\n"
-  APP_COPYRIGHT"\n";
+void print_version(char *argv0)
+{
+  std::cerr << basename(argv0) << " " << version << "\n"
+    << copyright << std::endl;
+}
 
 namespace icd
 {
@@ -366,7 +369,7 @@ void config_itddev(sqlite3cc::conn& db, icd::itd_device& itddev)
 
 int main(int argc, char *argv[])
 {
-  syslogstream syslog(APP_NAME, LOG_PERROR);
+  syslogstream syslog(basename(argv[0]), LOG_PERROR);
 
   try
   {
@@ -422,11 +425,11 @@ int main(int argc, char *argv[])
           daemon.pid_file(optarg);
           break;
         case 'h':
-          std::cout << usage;
+          print_usage(argv[0]);
           exit = true;
           break;
         case 'v':
-          std::cout << version;
+          print_version(argv[0]);
           exit = true;
           break;
         default:
@@ -491,10 +494,9 @@ int main(int argc, char *argv[])
   }
   catch(std::exception& e)
   {
-    syslog << APP_NAME" error: " << e.what()  << std::endl;
+    syslog << basename(argv[0]) << " error: " << e.what()  << std::endl;
     return 1;
   }
 
   return 0;
 }
-

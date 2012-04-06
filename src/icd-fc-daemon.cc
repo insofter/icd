@@ -1,36 +1,39 @@
-#include "sqlite3cc.h"
-#include "db-config.h"
-#include "daemonizer.h"
-#include "syslogstream.h"
-
 #include <iostream>
 #include <fstream>
 #include <linux/input.h>
 #include <getopt.h>
 #include <cstdlib>
+#include <libgen.h>
 
-#define APP_NAME "icd-fc-daemon"
-#define APP_VERSION "1.0"
-#define APP_COPYRIGHT "Copyright (c) 2012 Tomasz Rozensztrauch"
+#include "version.h"
+#include "sqlite3cc.h"
+#include "db-config.h"
+#include "daemonizer.h"
+#include "syslogstream.h"
 
-const char *usage =
-  "\n"
-  "Usage: "APP_NAME" OPTION...\n"
-  "\n"
-  "A front controller daemon. Provides user interface via lcd and buttons.\n"
-  "\n"
-  "Options:\n"
-  "  -d|--db=DB_NAME              Database file path; Mandatory option\n"
-  "  -t|--timeout=TIMEOUT_MS      Timeout when waiting for acces to the database in ms\n"
-  "  -b|--daemon                  Run as a daemon\n"
-  "  -p|--pidfile=FILE            Create pid file (if a daemon)\n"
-  "  -h|--help\n"
-  "  -v|--version\n"
-  "\n";
+void print_usage(char *argv0)
+{
+  std::cerr << 
+    "\n"
+    "Usage: " << basename(argv0) << " OPTION...\n"
+    "\n"
+    "A front controller daemon. Provides user interface via lcd and buttons.\n"
+    "\n"
+    "Options:\n"
+    "  -d|--db=DB_NAME              Database file path; Mandatory option\n"
+    "  -t|--timeout=TIMEOUT_MS      Timeout when waiting for acces to the database in ms\n"
+    "  -b|--daemon                  Run as a daemon\n"
+    "  -p|--pidfile=FILE            Create pid file (if a daemon)\n"
+    "  -h|--help\n"
+    "  -v|--version\n"
+    << std::endl;
+}
 
-const char *version =
-  APP_NAME" "APP_VERSION"\n"
-  APP_COPYRIGHT"\n";
+void print_version(char *argv0)
+{
+  std::cerr << basename(argv0) << " " << version << "\n"
+    << copyright << std::endl;
+}
 
 void write_lcd_cmd(unsigned char cmd)
 {
@@ -42,7 +45,7 @@ void write_lcd_cmd(unsigned char cmd)
 
 int main(int argc, char *argv[])
 {
-  syslogstream syslog(APP_NAME, LOG_PERROR);
+  syslogstream syslog(basename(argv[0]), LOG_PERROR);
 
   try
   {
@@ -84,11 +87,11 @@ int main(int argc, char *argv[])
           daemon.pid_file(optarg);
           break;
         case 'h':
-          std::cout << usage;
+          print_usage(argv[0]);
           exit = true;
           break;
         case 'v':
-          std::cout << version;
+          print_version(argv[0]);
           exit = true;
           break;
         default:
@@ -156,7 +159,7 @@ int main(int argc, char *argv[])
   }
   catch(std::exception& e)
   {
-    syslog << APP_NAME" error: " << e.what() << std::endl;
+    syslog << basename(argv[0]) << " error: " << e.what() << std::endl;
     return 1;
   }
 
