@@ -86,7 +86,11 @@ UPDATE flow SET cnt = flow.cnt + (SELECT count(*) FROM events e1 JOIN events e2
   work_time = work_time + (max(dtm, min(dtm + (SELECT value FROM t WHERE key == "aggr-period-secs"),
       (SELECT value FROM t WHERE key == "current-time")))
     - max(dtm, min(dtm + (SELECT value FROM t WHERE key == "aggr-period-secs"),
-      (SELECT value FROM t WHERE key == "last-aggr-time")))) * 1000
+      (SELECT value FROM t WHERE key == "last-aggr-time")))) * 1000,
+  test = (SELECT t.result FROM tests t
+    WHERE t.dtm == (SELECT MIN(x.dtm) FROM tests x WHERE x.dtm >= flow.dtm AND x.dtm < flow.dtm
+        + (SELECT value FROM t WHERE key == "aggr-period-secs") AND x.itd == t.itd)
+      AND t.itd == flow.itd)
   WHERE flow.dtm >= (SELECT value FROM t WHERE key == "last-entry-time");
 
 -- Mark all events as aggregated; The only exceptions are events that starts

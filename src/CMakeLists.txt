@@ -40,6 +40,9 @@ add_executable(icd-itd-daemon icd-itd-daemon.cc)
 target_link_libraries(icd-itd-daemon db-config daemonizer
   syslogstream sqlite3 version)
 
+add_executable(icd-test icd-test.cc)
+target_link_libraries(icd-test db-config sqlite3 version)
+
 add_executable(icd-fc-daemon icd-fc-daemon.cc)
 target_link_libraries(icd-fc-daemon db-config daemonizer
   syslogstream sqlite3 version)

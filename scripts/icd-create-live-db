@@ -14,6 +14,7 @@ rm -f "${ICD_TEMP_DIR}/live.db"
 
 icd-sql --db="${ICD_TEMP_DIR}/live.db" \
   "${ICD_SHARE_DIR}/create-schema-events.sql" \
+  "${ICD_SHARE_DIR}/create-schema-tests.sql" \
   "${ICD_SHARE_DIR}/create-schema-flow.sql" \
   "${ICD_SHARE_DIR}/create-schema-config.sql"
 check_error

@@ -1,0 +1,2 @@
+SELECT * FROM tests ORDER BY id ASC;
+

@@ -17,7 +17,7 @@ INSERT INTO t (key, value) VALUES (
      WHERE s.name == "device" AND c.key == "flow-entry-retention-period-mins") * 60
 );
 
--- Remove old flow entries
+-- Remove old flow entries (but only those that has been sent to a remote server)
 DELETE FROM flow WHERE dtm < ((SELECT value FROM t WHERE key == "current-time")
   - (SELECT value FROM t WHERE key == "flow-entry-retention-period-sec"))
   AND flags == 0;

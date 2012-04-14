@@ -12,14 +12,14 @@ INSERT INTO t (key, value) VALUES (
 );
 
 INSERT INTO t (key, value) VALUES (
-  "event-retention-period-sec",
+  "test-retention-period-sec",
   (SELECT c.value FROM config c JOIN config_section s ON c.section_id == s.id
-     WHERE s.name == "device" AND c.key == "event-retention-period-mins") * 60
+     WHERE s.name == "device" AND c.key == "test-retention-period-mins") * 60
 );
 
--- Remove old events
-DELETE FROM events WHERE dtmms < ((SELECT value FROM t WHERE key == "current-time")
-  - (SELECT value FROM t WHERE key == "event-retention-period-sec")) * 1000;
+-- Remove old tests
+DELETE FROM tests WHERE dtm < ((SELECT value FROM t WHERE key == "current-time")
+  - (SELECT value FROM t WHERE key == "test-retention-period-sec"));
 
 DROP TABLE t;
 
