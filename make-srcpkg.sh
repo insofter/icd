@@ -43,7 +43,7 @@ error()
 }
 
 program_name=`basename "$0"`
-version=`git describe --dirty | sed -e 's/^v\(.*\)$/\1/'"`
+version=`git describe --dirty | sed -e 's/^v\(.*\)$/\1/'`
 
 output_dir=`pwd`
 
