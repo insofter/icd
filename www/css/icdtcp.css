@@ -1,0 +1,171 @@
+body {
+  width: 770px;
+  margin: auto;
+  margin-top: 0px;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+/*logo*/
+h1 {
+  text-align: center;
+  margin-top: 3px;
+}
+/*koniec logo*/
+
+/*menu*/
+#klikniete {
+  color: green;
+}
+ul.menu, .menu li {
+  list-style-type: none;
+  padding: 0;
+  text-indent: 0;
+}
+.menu li {
+  display: block;
+  float: left;
+/*  width: 110px;*/
+  width: 94px;
+  text-align: center;
+}
+.menu li:hover {
+  background-color: palegreen;
+  color: white;
+}
+.menu a {
+  color: black;
+  text-decoration: none;
+  font-weight: bold;
+  line-height: 26px;
+  font-size: 16px;
+}
+.menu a:hover {
+  text-decoration: underline;
+}
+
+/*koniec menu*/
+/*tresc*/
+#lewy, #prawy {
+  display: block;
+  width: 385px;
+  float: left;
+  height: 400px;
+}
+#tresc {
+  width: 770px;
+}
+
+h3 {
+  color: green;
+  text-align: center;
+  padding-top: 35px;
+  margin-bottom: 30px;
+}
+h4 {
+  background-color: palegreen;
+  text-align: center;
+  padding: 10px;
+}
+#err {
+  background-color: lightcoral;
+  text-align: center;
+  padding: 10px;
+}
+
+.nieaktywne input {
+  background-color: #DDDDDD;
+  color: #555555;
+  border-color: #555555;
+}
+.nieaktywne {
+  color: #777777;
+}
+
+table {
+  margin: auto;
+}
+
+td {
+  text-align: center;
+  width: 100px;
+}
+
+p {
+  font-size: 14px;
+  text-align: justify;
+  text-indent: 30px;
+}
+p a, li a {
+  color: maroon;
+}
+h2 {
+  padding-top: 50px;
+  text-align: center;
+}
+h3 {
+  margin-top: 30px;
+}
+input, select {
+  font-size: 14px;
+  font-family: Arial, sans-serif;
+/*  background-color: #fff;
+  border-width: 1px;
+  border-color: black;
+  border-style: solid;*/
+  text-align: center;
+
+  text-decoration: none;
+  color: black;
+  margin: 1px;
+}
+select {
+  width: 150px;
+}
+.cienki {
+  width: 75px;
+}
+input:hover, select:hover {
+  background-color: palegreen;
+}
+input[type="submit"], input[type="reset"], input[type="button"] {
+  margin-left: 30px;
+}
+input [type="file"] {
+  width: 500px;
+}
+#adres {
+  text-align: center;
+  margin-top: 50px;
+  text-indent: 0;
+}
+ul.log {
+  text-indent: 20px;
+}
+.log a {
+  font-family: monospace;
+  color: black;
+  text-decoration: none;
+}
+.log a:hover {
+  text-decoration: underline;
+}
+pre {
+  width: 770px;
+}
+pre strong {
+  color: red;
+}
+em {
+  color: green;
+  font-weight: bold;
+  font-style: normal;
+}
+/*koniec tresc*/
+/*stopka*/
+#stopka {
+  margin-top: 60px;
+  text-align: center;
+  width: 770px;
+  height: 600px;
+}
+/*koniec stopka*/

@@ -30,6 +30,7 @@ class command_parser
     void check_num_of_args(int expected);
 
     void run_get();
+    void run_sget();
     void run_set();
     void run_rm();
     void run_list();
@@ -45,6 +46,8 @@ void command_parser::run()
   {
     if (std::string(argv[optind]).compare("get") == 0)
       run_get();
+	else if (std::string(argv[optind]).compare("sget") == 0)
+      run_sget();
     else if (std::string(argv[optind]).compare("set") == 0)
       run_set();
     else if (std::string(argv[optind]).compare("rm") == 0)
@@ -81,6 +84,16 @@ void command_parser::run_get()
   std::string key = argv[optind + 2];
   std::string value = config.entry(section, key);
   std::cout << section << separator << key << separator << value << std::endl;
+  optind += 3;
+}
+
+void command_parser::run_sget()
+{
+  check_num_of_args(2);
+  std::string section = argv[optind + 1];
+  std::string key = argv[optind + 2];
+  std::string value = config.entry(section, key);
+  std::cout << value << std::endl;
   optind += 3;
 }
 
