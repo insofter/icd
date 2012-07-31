@@ -64,17 +64,3 @@ install (DIRECTORY www/ DESTINATION /var/www
     GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
   )
 
-# sed:package {
-# This section is removed form exported source package
-# Include 'package' and 'package_source' targets
-add_custom_target(package
-  COMMAND "${PROJECT_SOURCE_DIR}/make-package.sh"
-    -O "${PROJECT_BINARY_DIR}"
-  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-  COMMENT "Building binary package")
-add_custom_target(srcpkg
-  COMMAND "${PROJECT_SOURCE_DIR}/make-srcpkg.sh"
-    -o "${PROJECT_BINARY_DIR}"
-  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-  COMMENT "Building source package")
-# sed:package }
