@@ -44,7 +44,16 @@ error()
 }
 
 program_name=`basename "$0"`
+
 version=`git describe --dirty | sed -e 's/^v\(.*\)$/\1/'`
+if [ "x${version}" = "x" ]; then
+  if [ -f "./VERSION" ]; then
+    version=`cat VERSION`
+  else
+    version="?"
+  fi
+fi
+
 build_date=`date +'%Y/%m/%d %H:%M %Z'`
 
 options=`getopt -o o:hv --long output:,help,version -- "$@"`
