@@ -44,7 +44,7 @@ error()
 }
 
 program_name=`basename "$0"`
-version="0.0-61-g3490052"
+version=`git describe --dirty | sed -e 's/^v\(.*\)$/\1/'`
 build_date=`date +'%Y/%m/%d %H:%M %Z'`
 
 options=`getopt -o o:hv --long output:,help,version -- "$@"`
