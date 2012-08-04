@@ -10,8 +10,12 @@ Usage: ${program_name} [-o|--output OUT_FILE] [IN_FILE]
 Process the input file (or stdin if not provided) and replaces all
 ocurrences of @VERSION@ and @DATE@ markers with the current version
 and date. The version is calculated based on git describe command.
-The resulting file is saved in the output file (or stdout if not
-provided). The script must be executed from source top directory.
+If the command is run outside git repository (e.g. after exporting
+the package as a source tarball) it reads the version from VERSION
+file in the source top directory. If the file is also missing
+then the version is "?". The resulting file is saved in the output
+file (or stdout if not provided). The script must be executed from
+the source top directory.
   
   -o|--output     output file
   -h|--help       show this information
@@ -45,10 +49,10 @@ error()
 
 program_name=`basename "$0"`
 
-version=`git describe --dirty | sed -e 's/^v\(.*\)$/\1/'`
+version=`git describe --dirty 2>/dev/null`
 if [ "x${version}" = "x" ]; then
   if [ -f "./VERSION" ]; then
-    version=`cat VERSION`
+    version=`cat ./VERSION 2>/dev/null`
   else
     version="?"
   fi
