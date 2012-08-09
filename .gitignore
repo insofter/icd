@@ -1,3 +1,8 @@
 output
 _local_build
-
+src/*.a
+src/*
+!src/*.c*
+!src/*.h*
+CMakeFiles
+Makefile

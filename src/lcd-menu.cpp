@@ -5,7 +5,7 @@ CdbParam::CdbParam(): _lastPos(0), _lastSize(0) {
 }
 
 
-CmenuItem::CmenuItem(std::string newname): name(newname) {
+CmenuItem::CmenuItem(std::string newname): name(newname), refCnt(0) {
 }
 
 CmenuItem::~CmenuItem() {
@@ -19,12 +19,17 @@ CmenuList::CmenuList(std::string newname): CmenuItem(newname) {
 CmenuList::~CmenuList() {
   unsigned int i;
   for( i=0; i<_list.size(); ++i ) {
-    delete _list[i];
+    if( _list[i]->refCnt == 1 ) {
+      delete _list[i];
+    } else {
+      --(_list[i]->refCnt);
+    }
   }
 }
 
 int CmenuList::itemAdd(CmenuItem* item) {
   _list.push_back(item);
+  ++(item->refCnt);
   return _list.size()-1;
 }
 
@@ -261,16 +266,33 @@ void CmenuDbParamList::fullEsc() {
 
 
 CmenuContainerNoRoot::CmenuContainerNoRoot(CmenuItem* menu, CmenuItem* item, std::string newname):
-  CmenuContainer(newname), _menu(menu) {
+  CmenuList(newname), _menu(menu) {
   _list.push_back(item);
   _active=0;
+  _fastActive=-1;
 }
 CmenuContainerNoRoot::~CmenuContainerNoRoot() {
   delete _menu;
 }
 
+int CmenuContainerNoRoot::fastAdd(CmenuItem* item) {
+  _fast.push_back(item);
+  ++(item->refCnt);
+  return _fast.size()-1;
+}
+int CmenuContainerNoRoot::fastGoto(int nr) {
+  this->fullEsc();
+  if( nr>=0 && nr<_fast.size() ) {
+    _fastActive=nr;
+  }
+}
 int CmenuContainerNoRoot::up(Clcd *lcd) {
-  if( _in ) {
+  if( _fastActive!=-1 ) {
+    if( _fast[_fastActive]->up(lcd) ) {
+      _fastActive=-1;
+      this->screen(lcd);
+    }
+  } else if( _in ) {
     if( _menu->up(lcd) ) {
       _in=false;
       _active=0;
@@ -288,7 +310,12 @@ int CmenuContainerNoRoot::up(Clcd *lcd) {
 }
 
 int CmenuContainerNoRoot::down(Clcd *lcd) {
-  if( _in ) {
+  if( _fastActive!=-1 ) {
+    if( _fast[_fastActive]->down(lcd) ) {
+      _fastActive=-1;
+      this->screen(lcd);
+    }
+  } else if( _in ) {
     if( _menu->down(lcd) ) {
       _in=false;
       _active=0;
@@ -306,7 +333,10 @@ int CmenuContainerNoRoot::down(Clcd *lcd) {
 }
 
 void CmenuContainerNoRoot::fullEsc() {
-  if( _in ) {
+  if( _fastActive!=-1 ) {
+    _fast[_fastActive]->fullEsc();
+    _fastActive=-1;
+  } else if( _in ) {
     _menu->fullEsc();
   }
   _in=false;
@@ -314,7 +344,12 @@ void CmenuContainerNoRoot::fullEsc() {
 }
 
 int CmenuContainerNoRoot::left(Clcd *lcd) {
-  if( _in ) {
+  if( _fastActive!=-1 ) {
+    if( _fast[_fastActive]->left(lcd) ) {
+      _fastActive=-1;
+      this->screen(lcd);
+    }
+  } else if( _in ) {
     if( _menu->left(lcd) ) {
       _in=false;
       _active=0;
@@ -327,7 +362,12 @@ int CmenuContainerNoRoot::left(Clcd *lcd) {
 }
 
 int CmenuContainerNoRoot::right(Clcd *lcd) {
-  if( _in ) {
+  if( _fastActive!=-1 ) {
+    if( _fast[_fastActive]->right(lcd) ) {
+      _fastActive=-1;
+      this->screen(lcd);
+    }
+  } else if( _in ) {
     if( _menu->right(lcd) ) {
       _in=false;
       _active=0;
@@ -341,7 +381,12 @@ int CmenuContainerNoRoot::right(Clcd *lcd) {
 }
 
 int CmenuContainerNoRoot::enter(Clcd *lcd) {
-  if( _in ) {
+  if( _fastActive!=-1 ) {
+    if( _fast[_fastActive]->enter(lcd) ) {
+      _fastActive=-1;
+      this->screen(lcd);
+    }
+  } else if( _in ) {
     if( _menu->enter(lcd) ) {
       _in=false;
       _active=0;
@@ -355,7 +400,12 @@ int CmenuContainerNoRoot::enter(Clcd *lcd) {
 }
 
 int CmenuContainerNoRoot::esc(Clcd *lcd) {
-  if( _in ) {
+  if( _fastActive!=-1 ) {
+    if( _fast[_fastActive]->esc(lcd) ) {
+      _fastActive=-1;
+      this->screen(lcd);
+    }
+  } else if( _in ) {
     if( _menu->esc(lcd) ) {
       _in=false;
       _active=0;
@@ -368,7 +418,9 @@ int CmenuContainerNoRoot::esc(Clcd *lcd) {
 }
 
 void CmenuContainerNoRoot::screen(Clcd *lcd) {
-  if( _in ) {
+  if( _fastActive!=-1 ) {
+    _fast[_fastActive]->screen(lcd);
+  } else if( _in ) {
     _menu->screen(lcd);
   } else {
     _list[_active]->screen(lcd);

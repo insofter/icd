@@ -25,6 +25,7 @@ struct CdbParam {
 class CmenuItem {
 public:
   std::string name;
+  int refCnt;
   CmenuItem(std::string newname);
   virtual ~CmenuItem();
   virtual int up(Clcd *lcd)=0;
@@ -81,12 +82,16 @@ public:
   virtual void fullEsc();
 };
 
-class CmenuContainerNoRoot: public CmenuContainer {
+class CmenuContainerNoRoot: public CmenuList {
 protected:
+  int _fastActive;
+  std::vector< CmenuItem* > _fast;
   CmenuItem* _menu;
 public:
   CmenuContainerNoRoot(CmenuItem* menu, CmenuItem* item, std::string newname="");
   virtual ~CmenuContainerNoRoot();
+  int fastAdd(CmenuItem* item);
+  int fastGoto(int nr);
   virtual int up(Clcd *lcd);
   virtual int down(Clcd *lcd);
   virtual void fullEsc();

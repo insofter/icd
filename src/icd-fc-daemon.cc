@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
   try {
     daemonizer daemon;
     std::string db_name;
-    int db_timeout = 60000; // default timeout is 60 seconds
+    int db_timeout = 60000; // MIN timeout is 60 seconds
     bool run_as_daemon = false;
     bool exit = false;
 
@@ -91,7 +91,7 @@ int main(int argc, char *argv[]) {
         print_version(argv[0]);
         exit = true;
         break;
-      default:
+      MIN:
         std::ostringstream oss;
         oss << "Unknown option '" << char(ch) << "'";
         throw std::runtime_error(oss.str());
@@ -164,8 +164,12 @@ int main(int argc, char *argv[]) {
     CmenuContainerNoRoot *mainMenu = new CmenuContainerNoRoot(menu, new CmenuItemTimeFoto);
     mainMenu->itemAdd(new CmenuItemIdds);
     mainMenu->itemAdd(new CmenuItemSendStat);
+    int conntestid=mainMenu->fastAdd(new CmenuItemConnectionTest);
 //budowa menu -- koniec
 
+#define MIN_WAIT 333
+#define DEFAULT_WAIT 1000
+#define RETURN_TIME 600000
 
     if (!exit) {
       //glowna petla
@@ -173,7 +177,8 @@ int main(int argc, char *argv[]) {
       db.open(db_name.c_str());
       db.busy_timeout(db_timeout);
       globalConfig=new icd::config(db);
-      int wait=333;
+      int wait=MIN_WAIT;
+      int toReturn;
 
       mainMenu->screen(&lcd);
       lcdDrv.print(lcd);
@@ -184,145 +189,74 @@ int main(int argc, char *argv[]) {
       struct input_event ev;
       struct pollfd fds[1];
 
-
+      int esc=0;
 
       while(!exit) {
-
         fds[0].fd=kbd;
         fds[0].events=POLLIN;
 
+        if( toReturn >= RETURN_TIME ) {
+          mainMenu->fullEsc();
+          mainMenu->screen(&lcd);
+          toReturn=0;
+        }
         poll( fds, 1, wait );
+        toReturn+=wait;
 
         if( fds[0].revents & POLLIN ) {
           read( kbd, (char*)&ev, sizeof(ev) );
-          if( ev.value == 1 ) {
-            switch(ev.code) {//TODO kody klawiszy
-            case 259:
-              mainMenu->up(&lcd);
-              break;
-            case 258:
-              mainMenu->down(&lcd);
-              break;
-            case 1259:// !!
-              mainMenu->left(&lcd);
-              break;
-            case 1258:// !!
-              mainMenu->right(&lcd);
-              break;
-            case 257:
-              mainMenu->enter(&lcd);
-              break;
-            case 256:
-              mainMenu->esc(&lcd);
-              break;
+          if( ev.code!=0 ) {//rzucany pusty event niewiadomo czemu
+            toReturn=0;
+            if( ev.value==1 && ev.code==256 ) {//wciśniecie esc
+              esc=1;
+            } else if( ev.value==0 && ev.code==256 ) {//puszczenie esc
+              if( esc==1 ) {//esc nie uzyty jako shift
+                mainMenu->esc(&lcd);
+              }
+              esc=0;
+            } else if( ev.value==0 ) {//puszczenie innego klawisza
+              if( esc!=0 ) {//esc wcisniety i puszczono inny
+                  esc=2;
+                switch(ev.code) {//TODO kody klawiszy
+                  case 11259: mainMenu->up(&lcd); break;
+                  case 11258: mainMenu->down(&lcd); break;
+                  case 259:   mainMenu->fastGoto(conntestid);
+                              mainMenu->screen(&lcd); break;
+                  case 258:   mainMenu->right(&lcd); break;
+                  case 257:   mainMenu->enter(&lcd); break;
+                }
+              } else {//puszczono inny bez esc
+                switch(ev.code) {//TODO kody klawiszy
+                  case 259:   mainMenu->up(&lcd); break;
+                  case 258:   mainMenu->down(&lcd); break;
+                  case 11259: mainMenu->left(&lcd); break;
+                  case 11258: mainMenu->right(&lcd); break;
+                  case 257:   mainMenu->enter(&lcd); break;
+                }
+              }
             }
             lcdDrv.print(lcd);
-
-            read( kbd, (char*)&ev, sizeof(ev) );//4 eventy na jedno przycisniecie
-            read( kbd, (char*)&ev, sizeof(ev) );
-            read( kbd, (char*)&ev, sizeof(ev) );
           }
-        } else {
+        } else if( lcd._refresh!=0 ) {//skonczony czas bez klawisza
           mainMenu->screen(&lcd);
           lcdDrv.print(lcd);
         }
+
         if( lcd._refresh==0 ) {
-          wait=-1;
-        } else if( lcd._refresh<300 ) {
-          wait=333;
+          wait=DEFAULT_WAIT;
+        } else if( lcd._refresh<MIN_WAIT ) {
+          wait=MIN_WAIT;
         } else {
           wait=lcd._refresh;
         }
+
       }
-
-      /*mainMenu->fullEsc();
-      mainMenu->screen(&lcd);
-      lcdDrv.print(lcd);
-      usleep(333*1000);*/
-
-      /*  if( !kbd.read( (char*)&ev, sizeof(ev) ) ) {
-          exit = true;
-        }
-        else { //} if( ev.code >= 160 && ev.value == 1 ) {
-          sprintf(ss,"code:%i ", ev.code);
-          printf("%s\n",ss);
-          lcd._lcd[0]=ss;
-          sprintf(ss, "value:%i  cnt:%i ", ev.value, i);
-          printf("%s\n",ss);
-          lcd._lcd[1]=ss;
-          ++i;
-          lcdDrv.print(lcd);
-        }*/
-
-      /*while( c!='q' ) {
-        cout << endl;
-        cout << "cur: ";
-        if( lcd._curOn ) {
-          cout << "on";
-        } else {
-          cout << "off";
-        }
-        cout << endl;
-        cout << "----------------" << endl;
-        cout << lcd._lcd[0] << endl;
-        cout << lcd._lcd[1] << endl;
-        if( lcd._static ) {
-          cout << "----------------" << endl;
-        } else {
-          cout << "-------------->>" << endl;
-        }
-        cin >> c;
-        if( c=='w' ) {
-          mainMenu->up(&lcd);
-        } else if( c=='s' ) {
-          mainMenu->down(&lcd);
-        } else if( c=='e' ) {
-          mainMenu->enter(&lcd);
-        } else if( c=='x' ) {
-          mainMenu->esc(&lcd);
-        } else if( c=='a' ) {
-          mainMenu->left(&lcd);
-        } else if( c=='d' ) {
-          mainMenu->right(&lcd);
-        } else if( c=='z' ) {
-          mainMenu->fullEsc();
-          mainMenu->screen(&lcd);
-        } else {
-          mainMenu->screen(&lcd);
-        }*/
-
-      /*for (i = list.begin() ; i < list.end(); i++)
-      {
-        syslog << (*i).section << " " << (*i).key
-        << " " << (*i).value << std::endl;
-
-        write_lcd_cmd(0x01); // clear display
-        lcd << (*i).section << ":" << (*i).key << std::endl;
-        write_lcd_cmd(0xC0); // go to second line
-        lcd << (*i).value << std::endl;
-
-        bool key_down = false;
-        while(!key_down && !exit)
-        {
-          struct input_event ev;
-          if (!kbd.read((char*)&ev, sizeof(ev)))
-            exit = true;
-          else if (ev.code >= 160 && ev.value == 1)
-            key_down = true;
-        }
-      }*/
-
-//glowna petla -- koniec
-
       db.close();
     }
-  }
-  catch(std::exception& e)
-  {
+  } catch(std::exception& e) {
     syslog << basename(argv[0]) << " error: " << e.what() << std::endl;
     return 1;
   }
-
   return 0;
 }
 
