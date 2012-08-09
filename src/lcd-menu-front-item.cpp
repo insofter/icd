@@ -75,23 +75,23 @@ void CmenuItemSendStat::screen(Clcd *lcd) {
 
 
 
-int CmenuItemConnectionTest::down(Clcd *lcd) {
+int CmenuItemRunTestApp::down(Clcd *lcd) {
     return this->up(lcd);
 }
 
-int CmenuItemConnectionTest::left(Clcd *lcd) {
+int CmenuItemRunTestApp::left(Clcd *lcd) {
   return this->up(lcd);
 }
 
-int CmenuItemConnectionTest::right(Clcd *lcd) {
+int CmenuItemRunTestApp::right(Clcd *lcd) {
   return this->up(lcd);
 }
 
-int CmenuItemConnectionTest::enter(Clcd *lcd) {
+int CmenuItemRunTestApp::enter(Clcd *lcd) {
   return this->up(lcd);
 }
 
-int CmenuItemConnectionTest::esc(Clcd *lcd) {
+int CmenuItemRunTestApp::esc(Clcd *lcd) {
   if( _run==0 ) {
     return 1;
   } else {
@@ -99,16 +99,18 @@ int CmenuItemConnectionTest::esc(Clcd *lcd) {
   }
 }
 
-CmenuItemConnectionTest::CmenuItemConnectionTest() {
+CmenuItemRunTestApp::CmenuItemRunTestApp(std::string name, 
+    std::string info, std::string path, std::string head1, std::string head2):
+  _name(name), _info(info), _path(path), _head1(head1), _head2(head2) {
   _app=NULL;
   _smig=0;
   _run=0;
 }
 
-int CmenuItemConnectionTest::up(Clcd *lcd) {
+int CmenuItemRunTestApp::up(Clcd *lcd) {
   if( _run==0 ) {
     _progress=0;
-    _app=popen("/root/icd-conn-test --short", "r");
+    _app=popen( _path.c_str(), "r" );
     _appfd=fileno(_app);
     _tmp=0;
     _run=1;
@@ -120,14 +122,14 @@ int CmenuItemConnectionTest::up(Clcd *lcd) {
   return 0;
 }
 
-void CmenuItemConnectionTest::screen(Clcd *lcd) {
+void CmenuItemRunTestApp::screen(Clcd *lcd) {
   if( _run==0 ) {
-    lcd->_lcd[0]="Test połączenia";
-    lcd->_lcd[1]=">Uruchom";
+    lcd->_lcd[0]=_name;
+    lcd->_lcd[1]=_info;
     lcd->_refresh=0;
     lcd->_curOn=false;
   } else if( _run==2 ) {
-    lcd->_lcd[0]="Test połączenia";
+    lcd->_lcd[0]=_name;
     lcd->_lcd[1]=_buf;
     lcd->_refresh=0;
     lcd->_curOn=false;
@@ -138,10 +140,10 @@ void CmenuItemConnectionTest::screen(Clcd *lcd) {
     int i;
 
     if( _smig ) {
-      lcd->_lcd[0]="Test połączenia>";
+      lcd->_lcd[0]=_head1;
       _smig=0;
     } else {
-      lcd->_lcd[0]="Test połączenia-";
+      lcd->_lcd[0]=_head2;
       _smig=1;
     }
 
@@ -151,8 +153,8 @@ void CmenuItemConnectionTest::screen(Clcd *lcd) {
     poll( fds, 1, 0 );
     while( fds[0].revents & POLLIN ) {
       read( _appfd, &b, 1 );
-      if( b!=' ' && b!='\t' && b!='\n' &&  b!='\r' ) {
-        if( b>='0' && b<'9' ) {
+      if( b!='\t' && b!='\n' &&  b!='\r'/* && b!=' '*/ ) {
+        if( b>='0' && b<='9' ) {
           _tmp*=10;
           _tmp+=(b-'0');
         } else {
@@ -163,9 +165,14 @@ void CmenuItemConnectionTest::screen(Clcd *lcd) {
         }
       } else {
         if( _tmp>_progress ) {
-          _progress=_tmp;
+          if( _tmp > 100 ) {
+            _progress=100;
+          } else {
+            _progress=_tmp;
+          }
         }
         _tmp=0;
+        break;
       }
       poll( fds, 1, 0 );
     }  
@@ -181,7 +188,7 @@ void CmenuItemConnectionTest::screen(Clcd *lcd) {
       _buf[7+i]='%';
     } else {
       _buf[pos]=0;
-      fclose( _app );
+      pclose( _app );
       _app=NULL;
       _run=2;
     }

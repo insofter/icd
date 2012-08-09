@@ -164,7 +164,10 @@ int main(int argc, char *argv[]) {
     CmenuContainerNoRoot *mainMenu = new CmenuContainerNoRoot(menu, new CmenuItemTimeFoto);
     mainMenu->itemAdd(new CmenuItemIdds);
     mainMenu->itemAdd(new CmenuItemSendStat);
-    int conntestid=mainMenu->fastAdd(new CmenuItemConnectionTest);
+    int conntestid=mainMenu->fastAdd( 
+        new CmenuItemRunTestApp( "Test połączenia", "> Uruchom",
+          "/root/icd-conn-test --short", "Test połączenia*",
+          "Test połączenia" ) );
 //budowa menu -- koniec
 
 #define MIN_WAIT 333

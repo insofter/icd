@@ -37,7 +37,7 @@ public:
   virtual void screen(Clcd *lcd);
 };
 
-class CmenuItemConnectionTest: public CmenuItemFrontMenu {
+class CmenuItemRunTestApp: public CmenuItemFrontMenu {
 protected:
   FILE * _app;
   int _run;
@@ -46,8 +46,14 @@ protected:
   int _progress;
   int _tmp;
   char _buf[17];
+  std::string _name;
+  std::string _info;
+  std::string _path;
+  std::string _head1;
+  std::string _head2;
 public:
-  CmenuItemConnectionTest();
+  CmenuItemRunTestApp(std::string name, std::string info,
+      std::string path, std::string head1, std::string head2);
   virtual void screen(Clcd *lcd);
   virtual int up(Clcd *lcd);
   virtual int down(Clcd *lcd);
