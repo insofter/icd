@@ -168,6 +168,11 @@ int main(int argc, char *argv[]) {
         new CmenuItemRunTestApp( "Test połączenia", "> Uruchom",
           "/root/icd-conn-test --short", "Test połączenia*",
           "Test połączenia" ) );
+
+    int fototestid=mainMenu->fastAdd( 
+        new CmenuItemRunTestApp( "Test fotokomórek","> Testuj",
+          "/root/icd-conn-test --foto", "Test fotokomórek",
+          "                " ) );
 //budowa menu -- koniec
 
 #define MIN_WAIT 333
@@ -225,7 +230,8 @@ int main(int argc, char *argv[]) {
                   case 11258: mainMenu->down(&lcd); break;
                   case 259:   mainMenu->fastGoto(conntestid);
                               mainMenu->screen(&lcd); break;
-                  case 258:   mainMenu->right(&lcd); break;
+                  case 258:   mainMenu->fastGoto(fototestid);
+                              mainMenu->screen(&lcd); break;
                   case 257:   mainMenu->enter(&lcd); break;
                 }
               } else {//puszczono inny bez esc
