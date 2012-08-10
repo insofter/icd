@@ -213,7 +213,7 @@ void ClcdDriver::_cmd(int cmd) {
   _cmds << cmd;
 }
 
-void ClcdDriver::addChr(int nr, char * a, int newCurPos) {
+void ClcdDriver::addChr(int nr, char a[8], int newCurPos) {
   if( nr>=0 && nr<8 ) {
     int i;
     _cmd(64+nr*8); //ram addres for char

@@ -1,3 +1,10 @@
+/**
+ * @file lcd-menu-front-item.hpp
+ * @author Piotr Mika
+ * @date VIII 2012r.
+ * Classes for front menu.
+ */
+
 #ifndef LCD_MENU_FRONT_ITEM_HPP
 #define LCD_MENU_FRONT_ITEM_HPP
 #include "lcd-menu.hpp"
