@@ -267,13 +267,28 @@ void CmenuDbParamList::fullEsc() {
 
 CmenuContainerNoRoot::CmenuContainerNoRoot(CmenuItem* menu, CmenuItem* item, std::string newname):
   CmenuList(newname), _menu(menu) {
+   ++(_menu->refCnt);
+   ++(item->refCnt);
   _list.push_back(item);
   _active=0;
   _fastActive=-1;
 }
 CmenuContainerNoRoot::~CmenuContainerNoRoot() {
-  delete _menu;
+  if( _menu->refCnt == 1 ) {
+    delete _menu;
+  } else {
+    --(_menu->refCnt);
+  }
+  unsigned int i;
+  for( i=0; i<_list.size(); ++i ) {
+    if( _fast[i]->refCnt == 1 ) {
+      delete _fast[i];
+    } else {
+      --(_fast[i]->refCnt);
+    }
+  }
 }
+
 
 int CmenuContainerNoRoot::fastAdd(CmenuItem* item) {
   _fast.push_back(item);

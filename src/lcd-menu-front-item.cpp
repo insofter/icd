@@ -111,6 +111,9 @@ int CmenuItemRunTestApp::up(Clcd *lcd) {
   if( _run==0 ) {
     _progress=0;
     _app=popen( _path.c_str(), "r" );
+    if( _app==NULL ) {
+      return 0;
+    }
     _appfd=fileno(_app);
     _tmp=0;
     _run=1;
@@ -151,46 +154,60 @@ void CmenuItemRunTestApp::screen(Clcd *lcd) {
     fds[0].events=POLLIN;
     
     poll( fds, 1, 0 );
-    while( fds[0].revents & POLLIN ) {
-      read( _appfd, &b, 1 );
-      if( b!='\t' && b!='\n' &&  b!='\r'/* && b!=' '*/ ) {
-        if( b>='0' && b<='9' ) {
-          _tmp*=10;
-          _tmp+=(b-'0');
-        } else {
-          if( pos<16 ) {
-            _buf[pos]=b;
-            ++pos;
-          }
-        }
-      } else {
-        if( _tmp>_progress ) {
-          if( _tmp > 100 ) {
-            _progress=100;
-          } else {
-            _progress=_tmp;
-          }
-        }
-        _tmp=0;
-        break;
-      }
-      poll( fds, 1, 0 );
-    }  
-
-    if( pos==0 ) {
-      for( i=0; i<(_progress*16)/100; ++i ) {
-        _buf[i]='#';
-      }
-      for( ; i<16 ; ++i) {
-        _buf[i]='-';
-      }
-      i=sprintf(_buf+7, "%i", _progress);
-      _buf[7+i]='%';
-    } else {
-      _buf[pos]=0;
+    if( fds[0].revents & ( POLLERR | POLLRDHUP | POLLNVAL) ) {
+      sprintf(_buf, "--ERR błąd prog.");
       pclose( _app );
       _app=NULL;
       _run=2;
+    } else {
+      while( fds[0].revents & POLLIN ) {
+        read( _appfd, &b, 1 );
+        if( b!='\t' && b!='\n' &&  b!='\r'/* && b!=' '*/ ) {
+          if( b>='0' && b<='9' ) {
+            _tmp*=10;
+            _tmp+=(b-'0');
+          } else {
+            if( pos<16 ) {
+              _buf[pos]=b;
+              ++pos;
+            }
+          }
+        } else {
+          if( _tmp>_progress ) {
+            if( _tmp > 100 ) {
+              _progress=100;
+            } else {
+              _progress=_tmp;
+            }
+          }
+          _tmp=0;
+          break;
+        }
+        poll( fds, 1, 0 );
+        if( fds[0].revents & ( POLLERR | POLLRDHUP | POLLNVAL) ) {
+          sprintf(_buf, "--ERR błąd prog.");
+          pclose( _app );
+          _app=NULL;
+          _run=2;
+          break;
+        }
+      }  
+
+      if( pos==0 ) {
+        for( i=0; i<(_progress*16)/100; ++i ) {
+          _buf[i]='#';
+        }
+        for( ; i<16 ; ++i) {
+          _buf[i]='-';
+        }
+        i=sprintf(_buf+7, "%i", _progress);
+        _buf[7+i]='%';
+      } else {
+        _buf[pos]=0;
+        pclose( _app );
+        _app=NULL;
+        _run=2;
+      }
     }
     lcd->_lcd[1]=_buf;
     lcd->_refresh=333;
