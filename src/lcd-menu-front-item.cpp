@@ -92,11 +92,7 @@ int CmenuItemRunTestApp::enter(Clcd *lcd) {
 }
 
 int CmenuItemRunTestApp::esc(Clcd *lcd) {
-  if( _run==0 ) {
-    return 1;
-  } else {
-    this->up(lcd);
-  }
+  return 1;
 }
 
 CmenuItemRunTestApp::CmenuItemRunTestApp(std::string name, 
@@ -108,7 +104,7 @@ CmenuItemRunTestApp::CmenuItemRunTestApp(std::string name,
 }
 
 int CmenuItemRunTestApp::up(Clcd *lcd) {
-  if( _run==0 ) {
+  if( _run==0 ) {//state: 'not working', key == start
     _progress=0;
     _app=popen( _path.c_str(), "r" );
     if( _app==NULL ) {
@@ -117,8 +113,7 @@ int CmenuItemRunTestApp::up(Clcd *lcd) {
     _appfd=fileno(_app);
     _tmp=0;
     _run=1;
-  } else if( _run==2 )
-  {
+  } else if( _run==2 ) {//state: 'after work', showing status line
     _run=0;
   }
   this->screen(lcd);
@@ -126,53 +121,55 @@ int CmenuItemRunTestApp::up(Clcd *lcd) {
 }
 
 void CmenuItemRunTestApp::screen(Clcd *lcd) {
-  if( _run==0 ) {
+  if( _run==0 ) {//state: 'not working', show start screen
     lcd->_lcd[0]=_name;
     lcd->_lcd[1]=_info;
     lcd->_refresh=0;
     lcd->_curOn=false;
-  } else if( _run==2 ) {
+  } else if( _run==2 ) {//state: 'after work', show status line
     lcd->_lcd[0]=_name;
     lcd->_lcd[1]=_buf;
     lcd->_refresh=0;
     lcd->_curOn=false;
-  } else {
-    struct pollfd fds[1];
-    char b;
-    int pos=0;
-    int i;
-
-    if( _smig ) {
+  } else {//state: 'working'
+    if( _smig ) {//blinking 
       lcd->_lcd[0]=_head1;
       _smig=0;
     } else {
       lcd->_lcd[0]=_head2;
       _smig=1;
-    }
+    }//end blinking
 
-    fds[0].fd=_appfd;
+    struct pollfd fds[1];
+    char b;
+    int pos=0;
+    int i;
+
+    fds[0].fd=_appfd;//prepare to poll
     fds[0].events=POLLIN;
     
     poll( fds, 1, 0 );
-    if( fds[0].revents & ( POLLERR | POLLRDHUP | POLLNVAL) ) {
-      sprintf(_buf, "--ERR błąd prog.");
-      pclose( _app );
-      _app=NULL;
+
+    if( (!( fds[0].revents & POLLIN)) && fds[0].revents & POLLHUP ) {
+      sprintf(_buf, "--ERR błąd prog.");//HUP without IN means no running app
+      pclose( _app );                   //App ended too fast (ex: without state)
+      _app=NULL;                        //or can't be started (wrong path)
       _run=2;
     } else {
-      while( fds[0].revents & POLLIN ) {
-        read( _appfd, &b, 1 );
-        if( b!='\t' && b!='\n' &&  b!='\r'/* && b!=' '*/ ) {
-          if( b>='0' && b<='9' ) {
+
+      while( fds[0].revents & POLLIN ) {//main loop, read number or status line
+        read( _appfd, &b, 1 );          //without blocking
+        if( b!='\t' && b!='\n' &&  b!='\r') {
+          if( b>='0' && b<='9' ) {//parse number
             _tmp*=10;
             _tmp+=(b-'0');
-          } else {
+          } else {//end number, read state line
             if( pos<32 ) {
               _buf[pos]=b;
               ++pos;
             }
-          }
-        } else {
+          }//end read state line
+        } else {//set progress after read
           if( _tmp>_progress ) {
             if( _tmp > 100 ) {
               _progress=100;
@@ -184,16 +181,9 @@ void CmenuItemRunTestApp::screen(Clcd *lcd) {
           break;
         }
         poll( fds, 1, 0 );
-        if( fds[0].revents & ( POLLERR | POLLRDHUP | POLLNVAL) ) {
-          sprintf(_buf, "--ERR błąd prog.");
-          pclose( _app );
-          _app=NULL;
-          _run=2;
-          break;
-        }
-      }  
+      }// end main loop  
 
-      if( pos==0 ) {
+      if( pos==0 ) {//there was no status line reading, print progressbar
         for( i=0; i<(_progress*16)/100; ++i ) {
           _buf[i]='#';
         }
@@ -203,13 +193,15 @@ void CmenuItemRunTestApp::screen(Clcd *lcd) {
         i=sprintf(_buf+7, "%i", _progress);
         _buf[7+i]='%';
         _buf[16]=0;
-      } else {
+      } else {//there was status line, end of application
         _buf[pos]=0;
         pclose( _app );
         _app=NULL;
         _run=2;
       }
+
     }
+    //put buffer to screen structure
     lcd->_lcd[1]=_buf;
     lcd->_refresh=333;
     lcd->_curOn=false;

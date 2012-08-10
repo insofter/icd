@@ -110,7 +110,60 @@ int main(int argc, char *argv[]) {
     }
 //parametry uruchomienia -- koniec
 
-//budowa menu
+//menu
+/* Menu visualisation
+ * * F - item in shortcuts
+ * * M - menu in main screen
+ *
+ * mainMenu
+ * |
+ * +--CmenuItemTimeFoto
+ * +--CmenuItemIdds
+ * +--CmenuItemSendStat 
+ * |
+ * F--Test połączenia
+ * F--Test fotokomórek
+ * |
+ * M--Menu
+ *    |
+ *    +--TCPIP
+ *    |  |
+ *    |  +--Aktualna
+ *    |  |  |
+ *    |  |  +--DHCP
+ *    |  |  +--Adres IP
+ *    |  |  +--Maska
+ *    |  |  +--Brama
+ *    |  |  +--DNS 1
+ *    |  |  +--DNS 2
+ *    |  |
+ *    |  +--Statyczna
+ *    |  |  |
+ *    |  |  +--DHCP
+ *    |  |  +--Adres IP
+ *    |  |  +--Maska
+ *    |  |  +--Brama
+ *    |  |  +--DNS 1
+ *    |  |  +--DNS 2
+ *    |  |
+ *    |  +--WiFi
+ *    |  |
+ *    |  +--GSM
+ *    |
+ *    +--Wysyłanie
+ *    |  |
+ *    |  +--IDS
+ *    |  +--IDD
+ *    |  +--Adres wysyłania
+ *    |  +--Uzytkownik
+ *    |
+ *    +--Fotokomórki
+ *       |
+ *       +--Nazwa
+ *       +--Nazwa
+ *       +--Nazwa
+ *       +--Nazwa
+ */
     ClcdDriver lcdDrv;
     Clcd lcd;
     CmenuList *menu = new CmenuList("Menu");
@@ -153,7 +206,7 @@ int main(int argc, char *argv[]) {
 
     menu->itemAdd( pl );
 
-    pl=new CmenuDbParamList("Foto");
+    pl=new CmenuDbParamList("Fotokomórki");
     pl->itemAdd("Nazwa", "itd0", "name");
     pl->itemAdd("Nazwa", "itd1", "name");
     pl->itemAdd("Nazwa", "itd2", "name");
@@ -173,7 +226,7 @@ int main(int argc, char *argv[]) {
         new CmenuItemRunTestApp( "Test fotokomórek","> Testuj",
           "/root/icd-conn-test --foto", "Test fotokomórek",
           "                " ) );
-//budowa menu -- koniec
+//end menu
 
 #define MIN_WAIT 333
 #define DEFAULT_WAIT 1000
