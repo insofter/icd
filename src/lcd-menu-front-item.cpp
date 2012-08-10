@@ -167,7 +167,7 @@ void CmenuItemRunTestApp::screen(Clcd *lcd) {
             _tmp*=10;
             _tmp+=(b-'0');
           } else {
-            if( pos<16 ) {
+            if( pos<32 ) {
               _buf[pos]=b;
               ++pos;
             }
@@ -202,6 +202,7 @@ void CmenuItemRunTestApp::screen(Clcd *lcd) {
         }
         i=sprintf(_buf+7, "%i", _progress);
         _buf[7+i]='%';
+        _buf[16]=0;
       } else {
         _buf[pos]=0;
         pclose( _app );
