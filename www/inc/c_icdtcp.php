@@ -47,7 +47,7 @@ class c_icdtcp {
 			1000000=>'1 000 000');
 	        try {
 		//	$this->baza = new PDO( 'mysql:host=localhost;dbname=icdtcp3db','root','');
-			$this->baza = new PDO("sqlite:live.db");
+			$this->baza = new PDO("sqlite:/tmp/live.db");
 		} catch (PDOException $e) {
 			print $e->getMessage();
 		}
@@ -169,7 +169,7 @@ class c_icdtcp {
                 	WHERE cs.name='device' AND ( c.key='ids' OR c.key='idd' OR c.key='address'
 			OR c.key='user' OR c.key='transfer-enabled' OR c.key='aggr-period-mins'
 			OR c.key='event-retention-period-count' OR c.key='flow-entry-retention-period-mins'
-			OR c.key='pass' OR c.key='server-sync-period-mins' )";
+			OR c.key='pass' OR c.key='server-sync-period-mins' OR 'test-retention-period-mins' )";
    		$ans=$this->baza->query($sql);
         	foreach( $ans as $row ) {
                         $tcp[$row['key']]=$row['value'];

@@ -12,6 +12,7 @@ if( isset($_POST['ids']) ) {
 		'aggr-period-mins'=>$_POST['aggr-period-mins'],
 		'server-sync-period-mins'=>$_POST['server-sync-period-mins'],
 		'event-retention-period-count'=>$_POST['event-retention-period-count'],
+    'test-retention-period-mins'=>$_POST['test-retention-period-mins'],
 		'flow-entry-retention-period-mins'=>$_POST['flow-entry-retention-period-mins']);
 	if( isset( $_POST['transfer-enabled'] ) ) {
 		$nowe['transfer-enabled']='yes';
@@ -63,6 +64,16 @@ $tresc.='</select></td></tr>
 foreach( $icdtcp->czas as $wart=>$opis ) {
         $tresc.='<option';
 	if( $wart==$wysylanie['server-sync-period-mins'] ) {
+	        $tresc.=' selected="selected"';
+ 	}
+ 	$tresc.=' value="'.$wart.'">'.$opis.'</option>';
+}
+$tresc.='</select></td></tr>
+<tr><th><label for="test-retention-period-mins">test-retention-period-mins</label> :</th><td>
+<select name="test-retention-period-mins" id="test-retention-period-mins">';
+foreach( $icdtcp->czas as $wart=>$opis ) {
+        $tresc.='<option';
+	if( $wart==$wysylanie['test-retention-period-mins'] ) {
 	        $tresc.=' selected="selected"';
  	}
  	$tresc.=' value="'.$wart.'">'.$opis.'</option>';
