@@ -216,16 +216,22 @@ int main(int argc, char *argv[]) {
 
     CmenuContainerNoRoot *mainMenu = new CmenuContainerNoRoot(menu, new CmenuItemTimeFoto);
     mainMenu->itemAdd(new CmenuItemIdds);
-    mainMenu->itemAdd(new CmenuItemSendStat);
+    mainMenu->itemAdd( new CmenuItemDbParam("Adres IP", "current", "ip") );
+    mainMenu->itemAdd( new CmenuItemDbParam("Status wysyłania", "current", "last-send-status") );
+    std::string cmd;
+    cmd="icd-transfer-data --short --db=\"";
+    cmd+=db_name;
+    cmd+="\"";
     int conntestid=mainMenu->fastAdd( 
         new CmenuItemRunTestApp( "Test połączenia", "> Uruchom",
-          "/root/icd-conn-test --short", "Test połączenia*",
-          "Test połączenia" ) );
+          cmd, "Test połączenia*", "Test połączenia" ) );
 
+    cmd="icd-test --short --db=\"";
+    cmd+=db_name;
+    cmd+="\"";
     int fototestid=mainMenu->fastAdd( 
         new CmenuItemRunTestApp( "Test fotokomórek","> Testuj",
-          "/root/icd-conn-test --foto", "Test fotokomórek",
-          "                " ) );
+          cmd, "Test fotokomórek", "" ) );
 //end menu
 
 #define MIN_WAIT 333

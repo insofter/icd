@@ -50,12 +50,17 @@ public:
 };
 
 /**
- * Screen shows stat of last sending
+ * Show one parameter from database
  */
-class CmenuItemSendStat: public CmenuItemFrontMenu {
+class CmenuItemDbParam: public CmenuItemFrontMenu {
+private:
+  CdbParam _param;
 public:
+  CmenuItemDbParam(std::string name, std::string sect, std::string key);
   virtual void screen(Clcd *lcd);
 };
+
+
 
 /**
  * This class is used to run some application and to show output. It accept keys.

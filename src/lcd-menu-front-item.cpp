@@ -64,15 +64,31 @@ void CmenuItemIdds::screen(Clcd *lcd) {
 }
 
 
-
-void CmenuItemSendStat::screen(Clcd *lcd) {
-  lcd->_lcd[0]="Status wysyłania";
-  lcd->_lcd[1]="--ERR timeout";
-  lcd->_refresh=5000;
-  lcd->_curOn=false;
+CmenuItemDbParam::CmenuItemDbParam(std::string name, 
+    std::string sect, std::string key) {
+  _param._key=key;
+  _param._sect=sect;
+  _param._name=name;
 }
 
-
+void CmenuItemDbParam::screen(Clcd *lcd) {
+  std::string val;
+  lcd->_lcd[0]=_param._name;
+  val=globalConfig->entry(_param._sect, _param._key);
+  if( val.size()>16 ) {
+    lcd->_refresh=2000;
+    if( val.size()!=_param._lastSize || _param._lastPos>=val.size() ) {
+      _param._lastPos=0;
+      _param._lastSize=val.size();
+    }
+    lcd->_lcd[1]=val.substr(_param._lastPos, 16);
+    _param._lastPos+=16;
+  } else {
+    lcd->_refresh=0;
+    lcd->_lcd[1]=val;
+  }
+  lcd->_curOn=false;
+}
 
 
 int CmenuItemRunTestApp::down(Clcd *lcd) {
