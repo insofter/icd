@@ -119,7 +119,8 @@ int main(int argc, char *argv[]) {
  * |
  * +--CmenuItemTimeFoto
  * +--CmenuItemIdds
- * +--CmenuItemSendStat 
+ * +--CmenuItemDbParam: Adres IP 
+ * +--CmenuItemDbParam: Status wysyłania
  * |
  * F--Test połączenia
  * F--Test fotokomórek
