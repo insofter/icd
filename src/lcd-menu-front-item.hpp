@@ -32,12 +32,20 @@ public:
 
 /**
  * Default screen with date, time and two counters.
- * TODO param for AB or CD.
  */
 class CmenuItemTimeFoto: public CmenuItemFrontMenu {
 protected:
+  int _a;
+  int _b;
 
 public:
+  /**
+   * Constructor
+   * @param a Id of first detector
+   * @param b Id of second detector
+   */
+  CmenuItemTimeFoto(int a, int b);
+
   virtual void screen(Clcd *lcd);
 };
 

@@ -30,7 +30,12 @@ int CmenuItemFrontMenu::esc(Clcd *lcd) {
 void CmenuItemFrontMenu::fullEsc() {
 }
 
+
+CmenuItemTimeFoto::CmenuItemTimeFoto(int a, int b): _a(a), _b(b) {
+}
+
 void CmenuItemTimeFoto::screen(Clcd *lcd) {
+  /*TODO pobranie danych z bazy*/
   int i=23;
   char buf[17];
   char timebuf[9];
@@ -42,12 +47,12 @@ void CmenuItemTimeFoto::screen(Clcd *lcd) {
 
   strftime(timebuf,8,"%y.%m.%d",timeinfo);
   timebuf[8]=0;
-  sprintf(buf, "%s %c:%5i", timebuf, 'A', i);
+  sprintf(buf, "%s %c:%5i", timebuf, 'A'+_a, i);
   lcd->_lcd[0]=buf;
 
   strftime(timebuf,8,"%H:%M:%S",timeinfo);
   timebuf[8]=0;
-  sprintf(buf, "%s %c:%5i", timebuf, 'B', i+3423);
+  sprintf(buf, "%s %c:%5i", timebuf, 'A'+_b, i+3423);
   lcd->_lcd[1]=buf;
 
   lcd->_refresh=300;
@@ -57,8 +62,22 @@ void CmenuItemTimeFoto::screen(Clcd *lcd) {
 
 
 void CmenuItemIdds::screen(Clcd *lcd) {
-  lcd->_lcd[0]="ids:        PL15";
-  lcd->_lcd[1]="idd:     0123456";
+  std::string val;
+
+  val=globalConfig->entry( "device", "ids" );
+  lcd->_lcd[0]="ids:";
+  if( val.size()<=12 ) {
+    lcd->_lcd[0].append( 12-val.size(), ' ' );
+  }
+  lcd->_lcd[0]+=val;
+
+  val=globalConfig->entry( "device", "idd" );
+  lcd->_lcd[1]="idd:";
+  if( val.size()<=12 ) {
+    lcd->_lcd[1].append( 12-val.size(), ' ' );
+  }
+  lcd->_lcd[1]+=val;
+
   lcd->_refresh=0;
   lcd->_curOn=false;
 }

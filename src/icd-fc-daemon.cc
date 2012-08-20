@@ -117,7 +117,8 @@ int main(int argc, char *argv[]) {
  *
  * mainMenu
  * |
- * +--CmenuItemTimeFoto
+ * +--CmenuItemTimeFoto AB
+ * +--CmenuItemTimeFoto CD
  * +--CmenuItemIdds
  * +--CmenuItemDbParam: Adres IP 
  * +--CmenuItemDbParam: Status wysyłania
@@ -215,8 +216,9 @@ int main(int argc, char *argv[]) {
 
     menu->itemAdd( pl );
 
-    CmenuContainerNoRoot *mainMenu = new CmenuContainerNoRoot(menu, new CmenuItemTimeFoto);
-    mainMenu->itemAdd(new CmenuItemIdds);
+    CmenuContainerNoRoot *mainMenu = new CmenuContainerNoRoot( menu, new CmenuItemTimeFoto(0, 1) );
+    mainMenu->itemAdd( new CmenuItemTimeFoto(2, 3) );
+    mainMenu->itemAdd( new CmenuItemIdds );
     mainMenu->itemAdd( new CmenuItemDbParam("Adres IP", "current", "ip") );
     mainMenu->itemAdd( new CmenuItemDbParam("Status wysyłania", "current", "last-send-status") );
     std::string cmd;
