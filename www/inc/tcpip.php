@@ -5,7 +5,7 @@ $icdtcp = new c_icdtcp();
 
 if( isset($_POST['dhcp_toggle']) ) {
         $icdtcp->dhcp_ustaw($_POST['dhcp_toggle']);
-        $info='<h4>Zmodyfikowano konfiguracjê</h4>';
+        $info='<h4>Zmodyfikowano konfiguracjÄ™</h4>';
 } else if( isset($_POST['ip']) ) {
 	$nowe=array('ip'=>$_POST['ip'],
                 'mask'=>$_POST['mask'],
@@ -15,7 +15,7 @@ if( isset($_POST['dhcp_toggle']) ) {
                 'net-name'=>$_POST['net-name'],
                 'mac'=>$_POST['mac']);
 	$icdtcp->tcpip_ustaw($nowe);
-	$info='<h4>Zmodyfikowano konfiguracjê</h4>';
+	$info='<h4>Zmodyfikowano konfiguracjÄ™</h4>';
 } else {
 	$info='';
 }
@@ -30,16 +30,16 @@ $dhcp=$icdtcp->dhcp_pobierz();
 
 
 $tresc='<div id="tresc">
-<h3>Po³±czenie sieciowe</h3>
+<h3>PoÅ‚Ä…czenie sieciowe</h3>
 '.$info.'<form action="./?strona=tcpip" method="POST">
 <table><tr><th>DHCP : ';
 if( $dhcp['dhcp']=='yes' ) {
 	$tresc.='aktywne
-</th><td><input type="submit" value="Wy³±cz DHCP">
+</th><td><input type="submit" value="WyÅ‚Ä…cz DHCP">
 <input type="hidden" name="dhcp_toggle" value="no">';
 } else {
 	$tresc.='nieaktywne
-</th><td><input type="submit" value="W³±cz DHCP">
+</th><td><input type="submit" value="WÅ‚Ä…cz DHCP">
 <input type="hidden" name="dhcp_toggle" value="yes">';
 }
 $tresc.='</td></tr></table></form><br><br>';
@@ -67,7 +67,7 @@ $tresc.='<table>
 <input type="text" name="net-name" id="net-name" value="'.$tcpip['net-name'].'"></td></tr>
 <tr><th><label for="mac">MAC</label> :<br><br></th><td>
 <input type="text" name="mac" id="mac" value="'.$tcpip['mac'].'"><br><br></td></tr>
-<tr><th colspan="2"><input type="submit" value="Zmieñ konfiguracjê"></th></tr></table>';
+<tr><th colspan="2"><input type="submit" value="ZmieÅ„ konfiguracjÄ™"></th></tr></table>';
 
 
 

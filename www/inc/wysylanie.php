@@ -20,7 +20,7 @@ if( isset($_POST['ids']) ) {
 		$nowe['transfer-enabled']='no';
 	}
 	$icdtcp->wysylanie_ustaw($nowe);
-	$info='<h4>Zmodyfikowano konfiguracjê</h4>';
+	$info='<h4>Zmodyfikowano konfiguracjÄ™</h4>';
 } else {
 	$info='';
 }
@@ -28,7 +28,7 @@ if( isset($_POST['ids']) ) {
 $wysylanie=$icdtcp->wysylanie_pobierz();
 
 $tresc='<div id="tresc"><form action="./?strona=wysylanie" method="POST">
-<h3>Konfiguracja parametrów wysy³ania</h3>
+<h3>Konfiguracja parametrÃ³w wysyÅ‚ania</h3>
 '.$info.'
 <table>
 <tr><th><label for="ids">ids</label> :</th><td>
@@ -101,7 +101,7 @@ foreach( $icdtcp->czas_dlugi as $wart=>$opis ) {
 $tresc.='</select></td></tr>
 <tr><th><input type="submit" value="Ustaw">
 <input type="reset" value="Anuluj">
-<input type="button" value="Test wysy³ania"></th><td>&nbsp;
+<input type="button" value="Test wysyÅ‚ania"></th><td>&nbsp;
 
 </td></tr>
 </table></form></div>';

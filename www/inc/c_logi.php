@@ -6,7 +6,7 @@ class c_logi {
 	public $katalog_logow;
 	public $err;
 	public $ook;
-	
+
 	function __construct() {
 	        $this->katalog_logow='/var/log';
 	        $this->err=array('WW', 'EE', 'WARNING', ':', 'Failed');
@@ -25,7 +25,7 @@ class c_logi {
 	}
 	function log($nazwa) {
 	        $tab=array( '>'=>'&gt;', '<'=>'&lt;');
-	        
+
 		foreach( $this->err as $e ) {
 		        $tab[$e]='<strong>'.$e.'</strong>';
 		}

@@ -32,7 +32,7 @@ $tresc='<div id="tresc">
 <ul class="log">';
 	$lista=$logi->lista();
 	foreach( $lista as $log ) {
-		$tresc.='<li><a href="./?strona=log&amp;log='.$log.'">'.$log.'</a> &nbsp; &nbsp; &nbsp; &nbsp; 
+		$tresc.='<li><a href="./?strona=log&amp;log='.$log.'">'.$log.'</a> &nbsp; &nbsp; &nbsp; &nbsp;
 			<a href="./?strona=log&amp;pobierz='.$log.'"><small>(pobierz)</small></a> </li>';
 	}
 	$tresc.='</ul></div>';

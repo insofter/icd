@@ -21,8 +21,8 @@ if( isset( $_GET['wlacz'] ) ) {
 
 
 if( isset( $_GET['dodaj'] ) ) {
-	
-	if( $_GET['dodaj']=='' ) { 
+
+	if( $_GET['dodaj']=='' ) {
 
 	if( !isset( $_SESSION['lastscan'] ) || time()-$_SESSION['lastscan']>30 ) {
 		$wpa->scan();
@@ -32,10 +32,10 @@ if( isset( $_GET['dodaj'] ) ) {
 	$scan=$wpa->rscn();//scan();
 //	$wpa->scan();
 //	print_r($scan);
-	
+
 	$naglowekcd.='<meta http-equiv="refresh" content="10">';
 
-	$tresc='<div id="tresc"><h3>Dodaj sieæ</h3><table>
+	$tresc='<div id="tresc"><h3>Dodaj sieÄ‡</h3><table>
 		<tr><th colspan="3">Wyniki skanowania</th>';
 
 	foreach($scan as $s) {
@@ -44,7 +44,7 @@ if( isset( $_GET['dodaj'] ) ) {
 	}
 	$tresc.='</table></div>';
 	} else {
-		$tresc='<div id="tresc"><h3>Dodaj sieæ</h3>
+		$tresc='<div id="tresc"><h3>Dodaj sieÄ‡</h3>
 <form action="./?strona=wpa" method="POST">
 <table>
 <tr><th><label for="ssid">SSID</label></th><td>
@@ -68,7 +68,7 @@ if( isset( $_GET['dodaj'] ) ) {
 
 	if( isset( $_POST['ssid'] ) ) {
 		$wpa->addn( $_POST['ssid'], $_POST['psk'] );
-		$tresc.='<h4>Dodano sieæ: '.$_POST['ssid'].'</h4>';
+		$tresc.='<h4>Dodano sieÄ‡: '.$_POST['ssid'].'</h4>';
 	}
 
 	$tresc.='<table><tr><th colspan="2">Stan</th></tr>';
@@ -94,23 +94,23 @@ if( isset( $_GET['dodaj'] ) ) {
 					$tresc.='aktywna';
 					break;
 				case '[CURRENT]':
-					$tresc.='<em>po³±czona</em>';
+					$tresc.='<em>poÅ‚Ä…czona</em>';
 					break;
 			}
 		} else {
 			$tresc.='aktywna';
 		}
 		$tresc.='</td><td>
-			<a onclick="return confirm(\'Usun±æ sieæ '.$net[1].'?\');" href="./?strona=wpa&amp;usun='.$net[0].'">usuñ</a>';
+			<a onclick="return confirm(\'UsunÄ…Ä‡ sieÄ‡ '.$net[1].'?\');" href="./?strona=wpa&amp;usun='.$net[0].'">usuÅ„</a>';
 		if( isset( $net[3] ) && $net[3]=='[DISABLED]' ) {
-			$tresc.=' <a href="./?strona=wpa&amp;wlacz='.$net[0].'">w³±cz</a>';
+			$tresc.=' <a href="./?strona=wpa&amp;wlacz='.$net[0].'">wÅ‚Ä…cz</a>';
 		} else {
-			$tresc.=' <a href="./?strona=wpa&amp;wylacz='.$net[0].'">wy³±cz</a>';
+			$tresc.=' <a href="./?strona=wpa&amp;wylacz='.$net[0].'">wyÅ‚Ä…cz</a>';
 		}
 		$tresc.='</td></tr>';
 	}
 
-	$tresc.='<tr><th colspan="3"><a href="./?strona=wpa&amp;dodaj">Dodaj sieæ</a></th><td></td></tr>';
+	$tresc.='<tr><th colspan="3"><a href="./?strona=wpa&amp;dodaj">Dodaj sieÄ‡</a></th><td></td></tr>';
 	$tresc.='</table></div>';
 }
 ?>

@@ -31,14 +31,14 @@ class c_icdtcp {
 			480=>'8 godzin',
 			720=>'12 godzin',
 			1440=>'24 godziny');
-		$this->czas_dlugi=array( 1440=>'1 dzieñ',
+		$this->czas_dlugi=array( 1440=>'1 dzieÅ„',
 			2880=>'2 dni',
 			100080=>'7 dni',
 			20160=>'14 dni',
 			43200=>'30 dni',
-			129600=>'3 miesi±ce',
-			259200=>'6 miesiêcy',
-			518400=>'12 miesiêcy');
+			129600=>'3 miesiÄ…ce',
+			259200=>'6 miesiÄ™cy',
+			518400=>'12 miesiÄ™cy');
 		$this->ilosc=array( 1000=>'1 000',
 			10000=>'10 000',
 			100000=>'100 000',
@@ -52,7 +52,7 @@ class c_icdtcp {
 			print $e->getMessage();
 		}
 	}
-	
+
 	function info() {
         	$sql="SELECT `key`, `value` FROM config_section cs LEFT JOIN config c on cs.id=c.section_id
                         WHERE cs.name='device' AND (c.key='idd' OR c.key='ids' OR c.key='address')";
@@ -60,17 +60,17 @@ class c_icdtcp {
         	foreach( $ans as $row ) {
                         $info[$row['key']]=$row['value'];
         	}
-        	
+
         	for( $i=0; $i<$this->il_foto; ++$i ) {
                 	$sql="SELECT `key`, `value` FROM config_section cs LEFT JOIN config c on cs.id=c.section_id
                                 WHERE cs.name='itd$i' AND (c.key='name' OR c.key='enabled' ) ";
         	        $ans=$this->baza->query($sql);
-        	
+
         	        foreach( $ans as $row ) {
                                 $licznik[$row['key']]=$row['value'];
                         }
                         $licznik['nr']=$i;
-                        
+
                         $sql="SELECT `cnt` FROM flow WHERE itd='itd$i' ORDER BY `dtm` DESC LIMIT 1";
         	        $ans=$this->baza->query($sql);
         	        $licznik['cnt_last']=0;
@@ -97,7 +97,7 @@ class c_icdtcp {
 	        $info['liczniki']=$liczniki;
 	        return $info;
 	}
-	
+
 	function tcpip_pobierz($typ) {
 	        if( $typ!='current' ) {
 			$typ='tcpip';
@@ -110,7 +110,7 @@ class c_icdtcp {
                                 $tcp[$row['key']]=$row['value'];
 			}
        		return $tcp;
-	
+
 	}
 	function dhcp_pobierz() {
                 $sql="SELECT `key`, `value` FROM config_section cs LEFT JOIN config c ON cs.id=c.section_id
@@ -128,7 +128,7 @@ class c_icdtcp {
 		$sql="UPDATE config SET `value`='$co' WHERE section_id=(SELECT `id` FROM config_section WHERE name='tcpip') AND `key`='dhcp'";
 		$ans=$this->baza->query($sql);
 	}
-		
+
 	function tcpip_ustaw($nowe) {
 	        foreach( $nowe as $pole=>$wart ) {
 	                $sql="UPDATE config SET `value`=".$this->baza->quote($wart)."
@@ -137,7 +137,7 @@ class c_icdtcp {
 			$this->baza->query($sql);
 		}
 	}
-	
+
 	function liczniki_pobierz()
 	{
 	        for( $i=0; $i<$this->il_foto; ++$i ) {
@@ -152,7 +152,7 @@ class c_icdtcp {
 		}
  		return $liczniki;
 	}
-	
+
 	function liczniki_ustaw($nowe) {
 	        for( $i=0; $i<$this->il_foto; ++$i ) {
 		        foreach( $nowe[$i] as $pole=>$wart ) {
@@ -162,9 +162,9 @@ class c_icdtcp {
 			$this->baza->query($sql);
 		} }
 	}
-	
+
 	function wysylanie_pobierz()
-	{//wysy³a has³o jawnie...
+	{//wysyÅ‚a hasÅ‚o jawnie...
 	        $sql="SELECT `key`, `value` FROM config_section cs LEFT JOIN config c ON cs.id=c.section_id
                 	WHERE cs.name='device' AND ( c.key='ids' OR c.key='idd' OR c.key='address'
 			OR c.key='user' OR c.key='transfer-enabled' OR c.key='aggr-period-mins'
@@ -186,11 +186,11 @@ class c_icdtcp {
 		}
 	}
 	function konfiguracja_pobierz()
-	{//wysy³a wszystko jawnie!!!
+	{//wysyÅ‚a wszystko jawnie!!!
 	        $cfg['__dane_eksportu']['eksport']='';
 	        $cfg['__dane_eksportu']['skrypt']='';
 	        $cfg['__dane_eksportu']['klasa']=$this->o_mnie;
-	        
+
 	        $sql="SELECT `key`, `value`, `name`  FROM config_section cs LEFT JOIN config c ON cs.id=c.section_id";
    		$ans=$this->baza->query($sql);
         	foreach( $ans as $row ) {

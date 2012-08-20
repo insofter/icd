@@ -23,7 +23,7 @@ $tresc.='
 <input type="text" name="ids" id="ids" readonly="readonly" value="'.$info['ids'].'" size="40">
 </td></tr>
 <tr><th>
-<label for="idd">ID urz±dzenia</label> :
+<label for="idd">ID urzƒÖdzenia</label> :
 </th><td>
 <input type="text" name="idd" id="idd" readonly="readonly" value="'.$info['idd'].'" size="40">
 </td></tr>
@@ -31,7 +31,7 @@ $tresc.='
 <br><br>
 ';
 $tresc.='</form><table>
-<caption>Stan czujnikÛw</caption>
+<caption>Stan czujnik√≥w</caption>
 <tr>
 <th>Numer</th><th>Nazwa</th><th>Ostatni pomiar</th><th>Pomiar dzienny</th><th>Stan</th></tr>';
 foreach($info['liczniki'] as $licznik) {
@@ -48,7 +48,7 @@ foreach($info['liczniki'] as $licznik) {
 	} else {
 	        $tresc.='red';
 	}
-	
+
 	 $tresc.='.gif" alt="'.$licznik['state'].'"></td></tr>';
 }
 
@@ -56,8 +56,8 @@ foreach($info['liczniki'] as $licznik) {
 $tresc.='</table>
 <p id="adres">
 Insofter<br>
-ul. Sk≥odowskiej-Curie 55/61<br>
-50-950 Wroc≥aw<br>
+ul. Sk≈Çodowskiej-Curie 55/61<br>
+50-950 Wroc≈Çaw<br>
 tel./fax +48 (071) 328 23 41<br>
 e-mail: <a href="mailto:liczniki@insofter.pl">liczniki@insofter.pl</a>
 </p>

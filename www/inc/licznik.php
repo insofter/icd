@@ -19,21 +19,21 @@ if( isset( $_POST['name'] ) ) {
 //todo kierunek, drzwi
 	}
 	$icdtcp->liczniki_ustaw($liczniki);
-	$info='<h4>Zmodyfikowano konfiguracjê</h4>';
+	$info='<h4>Zmodyfikowano konfiguracjÄ™</h4>';
 } else {
         $info='';
 }
 $liczniki=$icdtcp->liczniki_pobierz();
 
 $tresc='<div id="tresc">
-<h3>Stan czujników</h3>
+<h3>Stan czujnikÃ³w</h3>
 '.$info.'
 <form action="./?strona=licznik" method="POST">
 <table>
 <tr>
-<th>Numer</th><th>Nazwa</th><th>W³±czona</th>
-<th>Czas zw³oki</th><th>Czas opó¼nienia</th><th>Stan aktywny</th>
-<th>Wykrywanie kierunku</th><th>Wykrywanie podwójne</th></tr>';
+<th>Numer</th><th>Nazwa</th><th>WÅ‚Ä…czona</th>
+<th>Czas zwÅ‚oki</th><th>Czas opÃ³Åºnienia</th><th>Stan aktywny</th>
+<th>Wykrywanie kierunku</th><th>Wykrywanie podwÃ³jne</th></tr>';
 
 foreach( $liczniki as $licznik ) {
 $tresc.='<tr><td>'.chr(ord('A')+$licznik['nr']).'</td>
@@ -77,7 +77,7 @@ $tresc.='
 <br>
 <input type="submit" value="Ustaw">
 <input type="reset" value="Anuluj">
-<input type="button" value="Test fotokomórek">
+<input type="button" value="Test fotokomÃ³rek">
 </form></div>';
 
 

@@ -13,7 +13,7 @@ $o_mnie=array('nazwa'=>'ICDTCP3',
 require_once('inc/c_icdtcp.php');
 
 $naglowek='<!DOCTYPE html><html><head>
-<meta http-equiv="content-type" content="text/html; charset=iso-8859-2">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
 <meta name="Keywords" content="">
 <title>';
 $tytul=$o_mnie['nazwa'];
@@ -35,7 +35,7 @@ Prosimy o nie dokonywanie zmian w konfiguracji bez konsultacji z administratorem
 $menulista=array('tcpip'=>'TCPIP',
 	'wpa'=>'WiFi',
 	'licznik'=>'Licznik',
-	'wysylanie'=>'Wysyłanie',
+	'wysylanie'=>'WysyĹanie',
 	'wyniki'=>'Wyniki',
 	'log'=>'Logi',
 	'plik_konf'=>'Plik konf.'

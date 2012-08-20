@@ -6,7 +6,7 @@ class c_wpa {
 	public $polecenie;
 	public $err;
 	public $ook;
-	
+
 	function __construct() {
 	        $this->polecenie='sudo icd-wpa';
  	}
@@ -14,7 +14,7 @@ class c_wpa {
 	function start() {
 		exec( $this->polecenie.' start' );
 	}
-		
+
 	function stop() {
 		exec( $this->polecenie.' stop' );
 	}
@@ -67,6 +67,6 @@ class c_wpa {
 	function cfg_from_db() {
 		exec( $this->polecenie.' cfg-from-db' );
 	}
-		
-		
+
+
 }
