@@ -235,6 +235,10 @@ int main(int argc, char *argv[]) {
     int fototestid=mainMenu->fastAdd( 
         new CmenuItemRunTestApp( "Test fotokomórek","> Testuj",
           cmd, "Test fotokomórek", "" ) );
+
+    int poweroff=mainMenu->fastAdd(
+        new CmenuItemRunTestApp( "Wyłącz ICDTCP3", "> Wyłącz",
+          "icd-shutdown", "Wyłączanie  - -", "Wyłączanie   - -" ) );
 //end menu
 
 #define MIN_WAIT 333
@@ -290,11 +294,12 @@ int main(int argc, char *argv[]) {
                 switch(ev.code) {//TODO kody klawiszy
                   case 11259: mainMenu->up(&lcd); break;
                   case 11258: mainMenu->down(&lcd); break;
-                  case 259:   mainMenu->fastGoto(conntestid);
+                  case 259:   mainMenu->fastGoto( conntestid );
                               mainMenu->screen(&lcd); break;
-                  case 258:   mainMenu->fastGoto(fototestid);
+                  case 258:   mainMenu->fastGoto( fototestid );
                               mainMenu->screen(&lcd); break;
-                  case 257:   mainMenu->enter(&lcd); break;
+                  case 257:   mainMenu->fastGoto( poweroff );
+                              mainMenu->screen(&lcd); break;
                 }
               } else {//puszczono inny bez esc
                 switch(ev.code) {//TODO kody klawiszy

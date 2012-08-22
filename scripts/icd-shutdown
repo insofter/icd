@@ -1,0 +1,23 @@
+#!/bin/sh
+
+source "/etc/profile.d/icd.sh"
+
+
+if icd-config --db="${ICD_TEMP_DIR}/live.db" sget current last-send-status | grep -q "??" 
+then  
+  echo "--ERR Poł. w tle"
+  exit 1
+fi
+
+echo 0
+
+#icd-sync-db
+echo 50
+
+
+sync
+echo 100
+
+
+halt -d 1 &
+echo "Wyłączam się..."
