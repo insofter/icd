@@ -97,6 +97,8 @@ protected:
   std::string _path;
   std::string _head1;
   std::string _head2;
+
+public:
   /**
    * Constructor.
    * @param name Name of application for screen first line.
