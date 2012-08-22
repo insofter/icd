@@ -17,8 +17,18 @@
  * Cursor position
  */
 struct Ccur {
+  enum cursor {
+    none = 0, // cmd 12
+    blink = 1, // cmd 13
+    line = 2, // cmd 14
+    blinkLine = 3 //cmd 15
+  };
   int _x;
   int _y;
+  /**
+   * Visibility of cursor.
+   */
+  cursor _car;
 };
 
 /**
@@ -92,10 +102,6 @@ struct Clcd {
    * Refresh counter delay in miliseconds, 0 means no refresh
    */
   int _refresh;
-  /**
-   * Visibility of cursor.
-   */
-  bool _curOn;
   /**
    * Cursor position (if visible).
    */

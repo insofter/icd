@@ -56,7 +56,7 @@ void CmenuItemTimeFoto::screen(Clcd *lcd) {
   lcd->_lcd[1]=buf;
 
   lcd->_refresh=300;
-  lcd->_curOn=false;
+  lcd->_cur._car=Ccur::none;
 }
 
 
@@ -79,7 +79,7 @@ void CmenuItemIdds::screen(Clcd *lcd) {
   lcd->_lcd[1]+=val;
 
   lcd->_refresh=0;
-  lcd->_curOn=false;
+  lcd->_cur._car=Ccur::none;
 }
 
 
@@ -106,7 +106,7 @@ void CmenuItemDbParam::screen(Clcd *lcd) {
     lcd->_refresh=0;
     lcd->_lcd[1]=val;
   }
-  lcd->_curOn=false;
+  lcd->_cur._car=Ccur::none;
 }
 
 
@@ -135,11 +135,11 @@ CmenuItemRunTestApp::CmenuItemRunTestApp(std::string name,
   _name(name), _info(info), _path(path), _head1(head1), _head2(head2) {
   _app=NULL;
   _smig=0;
-  _run=0;
+  _run=CmenuItemRunTestApp::idle;
 }
 
 int CmenuItemRunTestApp::up(Clcd *lcd) {
-  if( _run==0 ) {//state: 'not working', key == start
+  if( _run==CmenuItemRunTestApp::idle ) {//state: 'not working', key == start
     _progress=0;
     _app=popen( _path.c_str(), "r" );
     if( _app==NULL ) {
@@ -147,25 +147,25 @@ int CmenuItemRunTestApp::up(Clcd *lcd) {
     }
     _appfd=fileno(_app);
     _tmp=0;
-    _run=1;
-  } else if( _run==2 ) {//state: 'after work', showing status line
-    _run=0;
+    _run=CmenuItemRunTestApp::running;
+  } else if( _run==CmenuItemRunTestApp::done ) {//state: 'after work', showing status line
+    _run=CmenuItemRunTestApp::idle;
   }
   this->screen(lcd);
   return 0;
 }
 
 void CmenuItemRunTestApp::screen(Clcd *lcd) {
-  if( _run==0 ) {//state: 'not working', show start screen
+  if( _run==CmenuItemRunTestApp::idle ) {//state: 'not working', show start screen
     lcd->_lcd[0]=_name;
     lcd->_lcd[1]=_info;
     lcd->_refresh=0;
-    lcd->_curOn=false;
-  } else if( _run==2 ) {//state: 'after work', show status line
+    lcd->_cur._car=Ccur::none;
+  } else if( _run==CmenuItemRunTestApp::done ) {//state: 'after work', show status line
     lcd->_lcd[0]=_name;
     lcd->_lcd[1]=_buf;
     lcd->_refresh=0;
-    lcd->_curOn=false;
+    lcd->_cur._car=Ccur::none;
   } else {//state: 'working'
     if( _smig ) {//blinking 
       lcd->_lcd[0]=_head1;
@@ -189,7 +189,7 @@ void CmenuItemRunTestApp::screen(Clcd *lcd) {
       sprintf(_buf, "--ERR błąd prog.");//HUP without IN means no running app
       pclose( _app );                   //App ended too fast (ex: without state)
       _app=NULL;                        //or can't be started (wrong path)
-      _run=2;
+      _run=CmenuItemRunTestApp::done;
     } else {
 
       while( fds[0].revents & POLLIN ) {//main loop, read number or status line
@@ -232,13 +232,13 @@ void CmenuItemRunTestApp::screen(Clcd *lcd) {
         _buf[pos]=0;
         pclose( _app );
         _app=NULL;
-        _run=2;
+        _run=CmenuItemRunTestApp::done;
       }
 
     }
     //put buffer to screen structure
     lcd->_lcd[1]=_buf;
     lcd->_refresh=333;
-    lcd->_curOn=false;
+    lcd->_cur._car=Ccur::none;
   }
 }

@@ -80,8 +80,13 @@ public:
  */
 class CmenuItemRunTestApp: public CmenuItemFrontMenu {
 protected:
+  enum appState {
+    idle,
+    running,
+    done
+  };
   FILE * _app;
-  int _run;
+  appState _run;
   int _appfd;
   int _smig;
   int _progress;
@@ -92,7 +97,6 @@ protected:
   std::string _path;
   std::string _head1;
   std::string _head2;
-public:
   /**
    * Constructor.
    * @param name Name of application for screen first line.

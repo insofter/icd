@@ -267,10 +267,19 @@ void ClcdDriver::print(const Clcd & lcd) {
       _data << " ";
     }
   }
-  if( lcd._curOn && ( lcd._cur._y==0 || lcd._cur._y==1 )
+  if( lcd._cur._car!=Ccur::none && ( lcd._cur._y==0 || lcd._cur._y==1 )
       && ( lcd._cur._x>=0 && lcd._cur._x<16 ) ) {
+    
     _cmd(128 + lcd._cur._y*64 + lcd._cur._x);
-    _cmd(15); //cur on + blink
+
+    if( lcd._cur._car==Ccur::line ) {
+      _cmd(14);
+    } else if( lcd._cur._car==Ccur::blink ) {
+      _cmd(13);
+    } else {
+      _cmd(15); 
+    }
+
   } else {
     _cmd(12); //cur off
   }

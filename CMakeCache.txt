@@ -28,7 +28,7 @@ CMAKE_COLOR_MAKEFILE:BOOL=ON
 CMAKE_CXX_COMPILER:FILEPATH=/home/insofter/projects/buildroot/output/host/usr/bin/arm-unknown-linux-uclibcgnueabi-g++
 
 //Icd CXXFLAGS
-CMAKE_CXX_FLAGS:STRING=' -pipe -Os  -pipe -Os '
+CMAKE_CXX_FLAGS:STRING=' -pipe -Os  -pipe -Os  -pipe -Os  -pipe -Os '
 
 //Flags used by the compiler during debug builds.
 CMAKE_CXX_FLAGS_DEBUG:STRING=-g
@@ -48,7 +48,7 @@ CMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING=-O2 -g
 CMAKE_C_COMPILER:FILEPATH=/home/insofter/projects/buildroot/output/host/usr/bin/arm-unknown-linux-uclibcgnueabi-gcc
 
 //Icd CFLAGS
-CMAKE_C_FLAGS:STRING=' -pipe -Os  -pipe -Os '
+CMAKE_C_FLAGS:STRING=' -pipe -Os  -pipe -Os  -pipe -Os  -pipe -Os '
 
 //Flags used by the compiler during debug builds.
 CMAKE_C_FLAGS_DEBUG:STRING=-g
@@ -206,7 +206,7 @@ CMAKE_CACHE_MAJOR_VERSION:INTERNAL=2
 //Minor version of cmake used to create the current loaded cache
 CMAKE_CACHE_MINOR_VERSION:INTERNAL=8
 //Patch version of cmake used to create the current loaded cache
-CMAKE_CACHE_PATCH_VERSION:INTERNAL=8
+CMAKE_CACHE_PATCH_VERSION:INTERNAL=9
 //ADVANCED property for variable: CMAKE_COLOR_MAKEFILE
 CMAKE_COLOR_MAKEFILE-ADVANCED:INTERNAL=1
 //Path to CMake executable.

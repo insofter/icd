@@ -1,4 +1,5 @@
 #include "lcd-menu.hpp"
+#include <cmath>
 
 
 CdbParam::CdbParam(): _lastPos(0), _lastSize(0) {
@@ -140,7 +141,7 @@ void CmenuList::screen(Clcd *lcd) {
       lcd->_lcd[1]+=_list[_active]->name;
     }
     lcd->_refresh=0;
-    lcd->_curOn=false;
+    lcd->_cur._car=Ccur::none;
   }
 }
 
@@ -203,12 +204,19 @@ void CmenuDbParamList::screen(Clcd *lcd) {
         _list[_active]._lastSize=val.size();
       }
       lcd->_lcd[1]=val.substr(_list[_active]._lastPos, 16);
+
+      lcd->_cur._x=( ( std::floor( _list[_active]._lastPos/16 )+1 )
+        / std::ceil( _list[_active]._lastSize/16 ) * 16 )-1;
+      lcd->_cur._y=1;
+      lcd->_cur._car=Ccur::line;
+
       _list[_active]._lastPos+=16;
+
     } else {
       lcd->_refresh=0;
       lcd->_lcd[1]=val;
+      lcd->_cur._car=Ccur::none;
     }
-    lcd->_curOn=false;
   }
 }
 
