@@ -19,5 +19,5 @@ sync
 echo 100
 
 
-halt -d 1 &
+halt -d 3 &
 echo "Wyłączam się..."
