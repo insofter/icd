@@ -226,7 +226,7 @@ int main(int argc, char *argv[]) {
     cmd+=db_name;
     cmd+="\"";
     int conntestid=mainMenu->fastAdd( 
-        new CmenuItemRunTestApp( "Test połączenia", "> Uruchom",
+        new CmenuItemRunTestApp( "Test połączenia", "> Uruchomić?",
           cmd, "Test połączenia*", "Test połączenia" ) );
 
     cmd="icd-test --short --db=\"";
@@ -234,10 +234,10 @@ int main(int argc, char *argv[]) {
     cmd+="\"";
     int fototestid=mainMenu->fastAdd( 
         new CmenuItemRunTestApp( "Test fotokomórek","> Testuj",
-          cmd, "Test fotokomórek", "" ) );
+          cmd, "Test fotokomórek", "", true ) );
 
     int poweroff=mainMenu->fastAdd(
-        new CmenuItemRunTestApp( "Wyłącz ICDTCP3", "> Wyłącz",
+        new CmenuItemRunTestApp( "Wyłącz ICDTCP3", "> Wyłączyć?",
           "icd-shutdown", "Wyłączanie  - -", "Wyłączanie   - -" ) );
 //end menu
 

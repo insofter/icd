@@ -101,13 +101,25 @@ void CmenuItemDbParam::screen(Clcd *lcd) {
       _param._lastSize=val.size();
     }
     lcd->_lcd[1]=val.substr(_param._lastPos, 16);
+    
+    int ilCzesci=std::ceil( ((float)_param._lastSize)/16 );
+    int ktora=std::floor( _param._lastPos/16 )+1;
+
+    lcd->_cur._x=(( ktora*16 ) / ilCzesci)-1;
+
+    lcd->_cur._y=1;
+    lcd->_cur._car=Ccur::line;
+
     _param._lastPos+=16;
   } else {
     lcd->_refresh=0;
     lcd->_lcd[1]=val;
+    lcd->_cur._car=Ccur::none;
   }
-  lcd->_cur._car=Ccur::none;
 }
+
+
+
 
 
 int CmenuItemRunTestApp::down(Clcd *lcd) {
@@ -127,12 +139,16 @@ int CmenuItemRunTestApp::enter(Clcd *lcd) {
 }
 
 int CmenuItemRunTestApp::esc(Clcd *lcd) {
+  if( _run==CmenuItemRunTestApp::done ) {
+    _run=CmenuItemRunTestApp::idle;
+  }
   return 1;
 }
 
 CmenuItemRunTestApp::CmenuItemRunTestApp(std::string name, 
-    std::string info, std::string path, std::string head1, std::string head2):
-  _name(name), _info(info), _path(path), _head1(head1), _head2(head2) {
+    std::string info, std::string path, std::string head1, std::string head2,
+    bool autoStart ): _autoStart(autoStart), _name(name), _info(info), 
+    _path(path), _head1(head1), _head2(head2) {
   _app=NULL;
   _smig=0;
   _run=CmenuItemRunTestApp::idle;
@@ -156,6 +172,11 @@ int CmenuItemRunTestApp::up(Clcd *lcd) {
 }
 
 void CmenuItemRunTestApp::screen(Clcd *lcd) {
+  if( _autoStart && _run==CmenuItemRunTestApp::idle ) {//for autostart we emulate keypress
+    this->up(lcd);
+    return;
+  }
+
   if( _run==CmenuItemRunTestApp::idle ) {//state: 'not working', show start screen
     lcd->_lcd[0]=_name;
     lcd->_lcd[1]=_info;

@@ -10,6 +10,7 @@
 #include "lcd-menu.hpp"
 #include <cstdio>
 #include <ctime>
+#include <cmath>
 #include <poll.h>
 
 /**
@@ -87,6 +88,7 @@ protected:
   };
   FILE * _app;
   appState _run;
+  bool _autoStart;
   int _appfd;
   int _smig;
   int _progress;
@@ -106,9 +108,11 @@ public:
    * @param path Correct path for applicaton, used by popen() function.
    * @param head1 First line on screen while running, switched with head2 to blinking.
    * @param head2 First line on screen while running, switched with head1 to blinking.
+   * @param autoStart Don't go to idle state, start immediately.
    */
   CmenuItemRunTestApp(std::string name, std::string info,
-      std::string path, std::string head1, std::string head2);
+      std::string path, std::string head1, std::string head2, 
+      bool autoStart=false );
   virtual void screen(Clcd *lcd);
   virtual int up(Clcd *lcd);
   virtual int down(Clcd *lcd);
