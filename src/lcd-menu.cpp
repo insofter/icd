@@ -208,7 +208,7 @@ void CmenuDbParamList::screen(Clcd *lcd) {
       int ilCzesci=std::ceil( ((float)_list[_active]._lastSize)/16 );
       int ktora=std::floor( _list[_active]._lastPos/16 )+1;
 
-      lcd->_cur._x=( ktora*16 ) / ilCzesci;
+      lcd->_cur._x=(( ktora*16 ) / ilCzesci)-1;
         
       lcd->_cur._y=1;
       lcd->_cur._car=Ccur::line;
