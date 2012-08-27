@@ -1,5 +1,5 @@
 output
-_local_build
+_local
 src/*.a
 src/*
 !src/*.c*

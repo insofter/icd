@@ -5,6 +5,11 @@
 #include <stdexcept>
 #include <sys/stat.h>
 
+#ifdef DESKTOP//different headers on arm and desktop,
+              //use -DDESKTOP durng compilation on desktop
+  #include <unistd.h>
+#endif
+
 daemonizer::~daemonizer()
 {
   // If we are executing as daemon and pid file was created

@@ -12,6 +12,10 @@
 #include <ctime>
 #include <cmath>
 #include <poll.h>
+#ifdef DESKTOP//different headers on arm and desktop,
+              //use -DDESKTOP durng compilation on desktop 
+  #include <unistd.h>
+#endif
 
 /**
  * Class describes interface for items in front menu. For example: date and time, Counters stats etc.
