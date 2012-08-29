@@ -1,4 +1,35 @@
-//#include <iostream>
+#include "gsoap/Service1SoapProxy.h"
+#include "gsoap/Service1Soap.nsmap"
+
+//gsoap/soapStub.h -- klasy parametrów
+//gsoap/soapService1SoapProxy.h -- funkcje serwera
+
+
+int main() {
+  Service1SoapProxy service;
+
+  _icd1__HelloWorld a; 
+  _icd1__HelloWorldResponse b;
+
+  std::cout << 0 << std::endl;
+
+  if( service.HelloWorld(&a, &b) == SOAP_OK ) {
+    std::cout << 100 << std::endl;
+//    std::cout << "SOAP_OK" << std::endl;
+    std::cout << *(b.HelloWorldResult) << std::endl;
+  } else {
+    service.soap_stream_fault(std::cout); 
+  }
+
+
+}
+
+
+
+
+/*
+
+ //#include <iostream>
 //#include <vector>
 //#include <list>
 
@@ -64,3 +95,4 @@ int main(int argc, char* argv[])
 
   return 0;
 }
+*/

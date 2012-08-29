@@ -49,6 +49,21 @@ add_executable(icd-test icd-test.cc)
 target_link_libraries(icd-test db-config sqlite3 version)
 
 
+
+#gsoap
+add_library(gsoap_C gsoap/C.cpp)
+add_library(gsoap_Service1SoapProxy gsoap/Service1SoapProxy.cpp)
+add_library(gsoap_stdsoap2 gsoap/stdsoap2.cpp)
+
+add_executable(icd-transfer-data icd-transfer-data.cc)
+target_link_libraries(icd-transfer-data transfer-agent
+  sqlite3 curl version gsoap_C 
+  gsoap_Service1SoapProxy gsoap_stdsoap2)
+#roxml
+
+
+
+
 #add_executable(icd-fc-daemon icd-fc-daemon.cc)
 #target_link_libraries(icd-fc-daemon db-config daemonizer
 #  syslogstream sqlite3 version)
@@ -59,9 +74,6 @@ target_link_libraries(icd-fc-daemon db-config daemonizer
   syslogstream sqlite3 version lcd-driver lcd-menu lcd-menu-front-item)
 
 
-add_executable(icd-transfer-data icd-transfer-data.cc)
-target_link_libraries(icd-transfer-data transfer-agent
-  sqlite3 curl roxml version)
 
 install (TARGETS icd-config icd-sql icd-itd-daemon icd-fc-daemon
   icd-transfer-data DESTINATION bin)

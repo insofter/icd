@@ -1,8 +1,10 @@
 output
 _local
+soap
 src/*.a
 src/*
 !src/*.c*
 !src/*.h*
+!src/gsoap
 CMakeFiles
 Makefile
