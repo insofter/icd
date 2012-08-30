@@ -125,6 +125,7 @@ int main(int argc, char *argv[]) {
  * |
  * F--Test połączenia
  * F--Test fotokomórek
+ * F--Wyłączanie
  * |
  * M--Menu
  *    |
