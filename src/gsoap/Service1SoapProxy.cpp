@@ -118,7 +118,7 @@ int Service1SoapProxy::HelloWorld(const char *endpoint, const char *soap_action,
 	if (endpoint)
 		soap_endpoint = endpoint;
 	if (!soap_endpoint)
-		soap_endpoint = "http://www.insofter.pl/icdtcp3webservice/Service1.asmx";
+		soap_endpoint = "http://192.168.123.4/icdtcp3webservice/Service1.asmx";
 	if (!soap_action)
 		soap_action = "http://tempuri.org/icdtcpwebservice/icdtcpws/HelloWorld";
 	soap->encodingStyle = NULL;
@@ -172,7 +172,7 @@ int Service1SoapProxy::GetTime(const char *endpoint, const char *soap_action, _i
 	if (endpoint)
 		soap_endpoint = endpoint;
 	if (!soap_endpoint)
-		soap_endpoint = "http://www.insofter.pl/icdtcp3webservice/Service1.asmx";
+		soap_endpoint = "http://192.168.123.4/icdtcp3webservice/Service1.asmx";
 	if (!soap_action)
 		soap_action = "http://tempuri.org/icdtcpwebservice/icdtcpws/GetTime";
 	soap->encodingStyle = NULL;
@@ -226,7 +226,7 @@ int Service1SoapProxy::GetTime2(const char *endpoint, const char *soap_action, _
 	if (endpoint)
 		soap_endpoint = endpoint;
 	if (!soap_endpoint)
-		soap_endpoint = "http://www.insofter.pl/icdtcp3webservice/Service1.asmx";
+		soap_endpoint = "http://192.168.123.4/icdtcp3webservice/Service1.asmx";
 	if (!soap_action)
 		soap_action = "http://tempuri.org/icdtcpwebservice/icdtcpws/GetTime2";
 	soap->encodingStyle = NULL;
@@ -280,7 +280,7 @@ int Service1SoapProxy::TestSession(const char *endpoint, const char *soap_action
 	if (endpoint)
 		soap_endpoint = endpoint;
 	if (!soap_endpoint)
-		soap_endpoint = "http://www.insofter.pl/icdtcp3webservice/Service1.asmx";
+		soap_endpoint = "http://192.168.123.4/icdtcp3webservice/Service1.asmx";
 	if (!soap_action)
 		soap_action = "http://tempuri.org/icdtcpwebservice/icdtcpws/TestSession";
 	soap->encodingStyle = NULL;
@@ -334,7 +334,7 @@ int Service1SoapProxy::OutDevice(const char *endpoint, const char *soap_action, 
 	if (endpoint)
 		soap_endpoint = endpoint;
 	if (!soap_endpoint)
-		soap_endpoint = "http://www.insofter.pl/icdtcp3webservice/Service1.asmx";
+		soap_endpoint = "http://192.168.123.4/icdtcp3webservice/Service1.asmx";
 	if (!soap_action)
 		soap_action = "http://tempuri.org/icdtcpwebservice/icdtcpws/OutDevice";
 	soap->encodingStyle = NULL;
@@ -388,7 +388,7 @@ int Service1SoapProxy::LoginDevice(const char *endpoint, const char *soap_action
 	if (endpoint)
 		soap_endpoint = endpoint;
 	if (!soap_endpoint)
-		soap_endpoint = "http://www.insofter.pl/icdtcp3webservice/Service1.asmx";
+		soap_endpoint = "http://192.168.123.4/icdtcp3webservice/Service1.asmx";
 	if (!soap_action)
 		soap_action = "http://tempuri.org/icdtcpwebservice/icdtcpws/LoginDevice";
 	soap->encodingStyle = NULL;
@@ -442,7 +442,7 @@ int Service1SoapProxy::GetUpdateDataBin(const char *endpoint, const char *soap_a
 	if (endpoint)
 		soap_endpoint = endpoint;
 	if (!soap_endpoint)
-		soap_endpoint = "http://www.insofter.pl/icdtcp3webservice/Service1.asmx";
+		soap_endpoint = "http://192.168.123.4/icdtcp3webservice/Service1.asmx";
 	if (!soap_action)
 		soap_action = "http://tempuri.org/icdtcpwebservice/icdtcpws/GetUpdateDataBin";
 	soap->encodingStyle = NULL;
@@ -496,7 +496,7 @@ int Service1SoapProxy::HasUpdateBin(const char *endpoint, const char *soap_actio
 	if (endpoint)
 		soap_endpoint = endpoint;
 	if (!soap_endpoint)
-		soap_endpoint = "http://www.insofter.pl/icdtcp3webservice/Service1.asmx";
+		soap_endpoint = "http://192.168.123.4/icdtcp3webservice/Service1.asmx";
 	if (!soap_action)
 		soap_action = "http://tempuri.org/icdtcpwebservice/icdtcpws/HasUpdateBin";
 	soap->encodingStyle = NULL;
@@ -550,7 +550,7 @@ int Service1SoapProxy::SendData(const char *endpoint, const char *soap_action, _
 	if (endpoint)
 		soap_endpoint = endpoint;
 	if (!soap_endpoint)
-		soap_endpoint = "http://www.insofter.pl/icdtcp3webservice/Service1.asmx";
+		soap_endpoint = "http://192.168.123.4/icdtcp3webservice/Service1.asmx";
 	if (!soap_action)
 		soap_action = "http://tempuri.org/icdtcpwebservice/icdtcpws/SendData";
 	soap->encodingStyle = NULL;

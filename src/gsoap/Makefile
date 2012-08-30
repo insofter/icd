@@ -1,13 +1,17 @@
 
-#WSDL_PATH=http://192.168.123.4/icdtcp3webservice/Service1.asmx?WSDL
+WSDL_PATH=http://192.168.123.4/icdtcp3webservice/Service1.asmx?WSDL
 #WSDL_PATH=http://79.110.195.114/icdtcp3webservice/Service1.asmx?WSDL
 #WSDL_PATH=http://79.110.195.114/icdtcp3webservice/Service1.asmx?WSDL
-WSDL_PATH=http://www.insofter.pl/icdtcp3webservice/Service1.asmx?WSDL
+#WSDL_PATH=http://www.insofter.pl/icdtcp3webservice/Service1.asmx?WSDL
+
+#WSDL_PATH=http://192.168.123.194:8732/Design_Time_Addresses/wcfServicelibrary1/Service1/mex
+
 XXSOAPPROXY_H=Service1SoapProxy.h
 STUB_H=Stub.h
+HEADER=kom.h
 
 
-all: wget wsdl soapcpp human_stub human_soapproxy list
+all: wget wsdl soapcpp stdsoap human_stub human_soapproxy list
 
 wget: rm_schem
 	wget ${WSDL_PATH} -O schem.wsdl
@@ -17,12 +21,16 @@ rm_schem:
 
 
 wsdl: 
-	./wsdl2h -o kom.h -nicd schem.wsdl
+	./wsdl2h -o ${HEADER} -nicd schem.wsdl
 
 soapcpp:
-	./soapcpp2 -i -C -Iimport -p "" -x kom.h 
+	./soapcpp2 -i -C -Iimport -p "" -x ${HEADER}
 
+stdsoap: stdsoap_h
+	cp import/stdsoap2.c* ./
 
+stdsoap_h:
+	echo "#define WITH_COOKIES" > stdsoap2.h && cat import/stdsoap2.h >> stdsoap2.h
 
 #only useful information from Stub.h == class variables
 human_stub: human_stub_head

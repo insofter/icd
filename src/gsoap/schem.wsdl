@@ -558,13 +558,13 @@
   </wsdl:binding>
   <wsdl:service name="Service1">
     <wsdl:port name="Service1Soap" binding="tns:Service1Soap">
-      <soap:address location="http://www.insofter.pl/icdtcp3webservice/Service1.asmx" />
+      <soap:address location="http://192.168.123.4/icdtcp3webservice/Service1.asmx" />
     </wsdl:port>
     <wsdl:port name="Service1Soap12" binding="tns:Service1Soap12">
-      <soap12:address location="http://www.insofter.pl/icdtcp3webservice/Service1.asmx" />
+      <soap12:address location="http://192.168.123.4/icdtcp3webservice/Service1.asmx" />
     </wsdl:port>
     <wsdl:port name="Service1HttpPost" binding="tns:Service1HttpPost">
-      <http:address location="http://www.insofter.pl/icdtcp3webservice/Service1.asmx" />
+      <http:address location="http://192.168.123.4/icdtcp3webservice/Service1.asmx" />
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>

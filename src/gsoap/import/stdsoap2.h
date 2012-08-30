@@ -1,4 +1,3 @@
-#define WITH_COOKIES
 /*
 	stdsoap2.h 2.8.8
 
