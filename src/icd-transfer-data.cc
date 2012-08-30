@@ -41,31 +41,51 @@ int main() {
   _icd1__HelloWorld a; 
   _icd1__HelloWorldResponse b;
 
- /* for( int i = 0; i<10 ; ++i )
-  {
-    sleep(1);
-    int x=print_percent(10*i);
-    if( x!=-1 ) {
-      std::cerr << "print " << x << std::endl;
-    } else {
-      std::cerr << "not print" << std::endl;
-    }
-  }
-
-  return 0;*/
 
   if( service.HelloWorld(&a, &b) == SOAP_OK ) {
-    print_percent(100);
-//    std::cout << "SOAP_OK" << std::endl;
-    std::cout << *(b.HelloWorldResult) << std::endl;
+    std::cerr << "SOAP_OK" << std::endl;
+    std::cerr << *(b.HelloWorldResult) << std::endl;
   } else {
-    service.soap_stream_fault(std::cout); 
+    service.soap_stream_fault(std::cerr); 
   }
+
+
+  _icd1__TestSession c;
+  _icd1__TestSessionResponse d;
+
+
+  if( service.TestSession(&c, &d) == SOAP_OK ) {
+    std::cerr << "SOAP_OK" << std::endl;
+    std::cerr << d.TestSessionResult << std::endl;
+  } else {
+    service.soap_stream_fault(std::cerr);
+  }
+
+
+  _icd1__GetTime e;
+  _icd1__GetTimeResponse f;
+
+  if( service.GetTime(&e, &f) == SOAP_OK ) {
+    std::cerr << "SOAP_OK" << std::endl;
+    std::cerr << *(f.GetTimeResult) << std::endl;
+  } else {
+    service.soap_stream_fault(std::cerr);
+  }
+
+
+
+
+  if( service.TestSession(&c, &d) == SOAP_OK ) {
+    std::cerr << "SOAP_OK" << std::endl;
+    std::cerr << d.TestSessionResult << std::endl;
+  } else {
+    service.soap_stream_fault(std::cerr);
+  }
+
+
 
 
 }
-
-
 
 
 /*

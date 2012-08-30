@@ -7,4 +7,4 @@ src/*
 !src/*.h*
 !src/gsoap
 CMakeFiles
-Makefile
+/Makefile
