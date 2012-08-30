@@ -15,10 +15,8 @@
 #include "daemonizer.h"
 #include "syslogstream.h"
 
-//#include <unistd.h>
 #include <poll.h>
 #include <fcntl.h>
-
 
 icd::config *globalConfig;
 
@@ -43,6 +41,8 @@ void print_version(char *argv0) {
   std::cerr << basename(argv0) << " " << version << "\n"
             << copyright << std::endl;
 }
+
+
 
 int main(int argc, char *argv[]) {
   syslogstream syslog(basename(argv[0]), LOG_PERROR);

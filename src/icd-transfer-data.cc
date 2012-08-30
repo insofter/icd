@@ -1,8 +1,38 @@
 #include "gsoap/Service1SoapProxy.h"
 #include "gsoap/Service1Soap.nsmap"
+/*#ifdef DESKTOP//different headers on arm and desktop,
+              //use -DDESKTOP durng compilation on desktop 
+#include <unistd.h>
+#endif
+*/
 
-//gsoap/soapStub.h -- klasy parametrów
-//gsoap/soapService1SoapProxy.h -- funkcje serwera
+//gsoap/_Stub.h -- klasy parametrów
+//gsoap/_Service1SoapProxy.h -- funkcje serwera
+//
+//
+//
+int print_percent(int perc) {
+  struct pollfd fds[1];
+
+  fds[0].fd=STDOUT_FILENO;
+  fds[0].events=POLLOUT;
+  poll( fds, 1, 0 );
+
+  if( fds[0].revents & POLLOUT ) {
+    char buf[5];
+    int x;
+  
+    if( perc > 100 ) {
+      perc=100;
+    } else if( perc < 0 ) {
+      perc=0;
+    }
+    x=sprintf( buf,"%i\n", perc );
+    write(STDOUT_FILENO, buf, x );
+    return perc;
+  }
+  return -1;
+}
 
 
 int main() {
@@ -11,10 +41,10 @@ int main() {
   _icd1__HelloWorld a; 
   _icd1__HelloWorldResponse b;
 
-  std::cout << 0 << std::endl;
+  print_percent(0);
 
   if( service.HelloWorld(&a, &b) == SOAP_OK ) {
-    std::cout << 100 << std::endl;
+    print_percent(100);
 //    std::cout << "SOAP_OK" << std::endl;
     std::cout << *(b.HelloWorldResult) << std::endl;
   } else {
