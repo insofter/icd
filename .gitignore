@@ -1,5 +1,5 @@
 output
-_local
+_local_
 soap
 src/*.a
 src/*

@@ -41,7 +41,18 @@ int main() {
   _icd1__HelloWorld a; 
   _icd1__HelloWorldResponse b;
 
-  print_percent(0);
+ /* for( int i = 0; i<10 ; ++i )
+  {
+    sleep(1);
+    int x=print_percent(10*i);
+    if( x!=-1 ) {
+      std::cerr << "print " << x << std::endl;
+    } else {
+      std::cerr << "not print" << std::endl;
+    }
+  }
+
+  return 0;*/
 
   if( service.HelloWorld(&a, &b) == SOAP_OK ) {
     print_percent(100);
