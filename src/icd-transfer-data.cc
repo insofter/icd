@@ -3,14 +3,12 @@
 /*#ifdef DESKTOP//different headers on arm and desktop,
               //use -DDESKTOP durng compilation on desktop 
 #include <unistd.h>
-#endif
-*/
+#endif*/
 
 //gsoap/_Stub.h -- klasy parametrów
 //gsoap/_Service1SoapProxy.h -- funkcje serwera
-//
-//
-//
+
+
 int print_percent(int perc) {
   struct pollfd fds[1];
 
@@ -88,9 +86,9 @@ int main() {
 }
 
 
-/*
 
- //#include <iostream>
+/*
+//#include <iostream>
 //#include <vector>
 //#include <list>
 

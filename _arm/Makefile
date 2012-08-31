@@ -4,7 +4,7 @@
 # Default target executed when no arguments are given to make.
 default_target: all
 .PHONY : default_target
- 
+
 #=============================================================================
 # Special targets provided by cmake.
 
@@ -45,7 +45,7 @@ CMAKE_EDIT_COMMAND = /usr/bin/ccmake
 CMAKE_SOURCE_DIR = /home/insofter/projects/icd
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/insofter/projects/icd/_local
+CMAKE_BINARY_DIR = /home/insofter/projects/icd/_arm
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -113,9 +113,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/insofter/projects/icd/_local/CMakeFiles /home/insofter/projects/icd/_local/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/insofter/projects/icd/_arm/CMakeFiles /home/insofter/projects/icd/_arm/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/insofter/projects/icd/_local/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/insofter/projects/icd/_arm/CMakeFiles 0
 .PHONY : all
 
 # The main clean target

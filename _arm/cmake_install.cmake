@@ -54,7 +54,7 @@ ENDIF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unsp
 
 IF(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  INCLUDE("/home/insofter/projects/icd/src/cmake_install.cmake")
+  INCLUDE("/home/insofter/projects/icd/_arm/src/cmake_install.cmake")
 
 ENDIF(NOT CMAKE_INSTALL_LOCAL_ONLY)
 
@@ -64,7 +64,7 @@ ELSE(CMAKE_INSTALL_COMPONENT)
   SET(CMAKE_INSTALL_MANIFEST "install_manifest.txt")
 ENDIF(CMAKE_INSTALL_COMPONENT)
 
-FILE(WRITE "/home/insofter/projects/icd/${CMAKE_INSTALL_MANIFEST}" "")
+FILE(WRITE "/home/insofter/projects/icd/_arm/${CMAKE_INSTALL_MANIFEST}" "")
 FOREACH(file ${CMAKE_INSTALL_MANIFEST_FILES})
-  FILE(APPEND "/home/insofter/projects/icd/${CMAKE_INSTALL_MANIFEST}" "${file}\n")
+  FILE(APPEND "/home/insofter/projects/icd/_arm/${CMAKE_INSTALL_MANIFEST}" "${file}\n")
 ENDFOREACH(file)
