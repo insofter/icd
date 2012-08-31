@@ -32,7 +32,12 @@ ClcdDriver::ClcdDriver(const char * cmd_path, const char * data_path) {
   _cmd(1); //reset + cur na 0,0
   _cmd(12); //cur off
 
-  _letters.push_back( new Cletter("ł"," ",
+  char tmp[3];
+  tmp[0]=Cletter::byte1;
+  tmp[2]=0;
+
+  tmp[1]=Cletter::byte2Gsm;
+  _letters.push_back( new Cletter(tmp,"G",
                                   0b00001,
                                   0b00001,
                                   0b11111,
@@ -41,7 +46,9 @@ ClcdDriver::ClcdDriver(const char * cmd_path, const char * data_path) {
                                   0b11111,
                                   0b11111,
                                   0b11111 ));
-  _letters.push_back( new Cletter("ą"," ",
+  
+  tmp[1]=Cletter::byte2Wifi;
+  _letters.push_back( new Cletter(tmp,"W",
                                   0b11100,
                                   0b00010,
                                   0b11001,
@@ -50,7 +57,8 @@ ClcdDriver::ClcdDriver(const char * cmd_path, const char * data_path) {
                                   0b00101,
                                   0b11001,
                                   0b00010 ));
-  _letters.push_back( new Cletter("ć"," ",
+  tmp[1]=Cletter::byte2Eth;
+  _letters.push_back( new Cletter(tmp,"E",
                                   0b11111,
                                   0b00100,
                                   0b11111,

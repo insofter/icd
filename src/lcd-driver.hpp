@@ -36,6 +36,22 @@ struct Ccur {
  */
 struct Cletter {
   /**
+   * First byte of special sign.
+   */
+  static const char byte1 = 0b11000010;
+  /*
+   * Second byte of special sign - ethernet.
+   */
+  static const char byte2Eth = 0b10000000;
+  /*
+   * Second byte of special sign - wifi.
+   */
+  static const char byte2Wifi = 0b10000001;
+  /*
+   * Second byte of special sign - gsm.
+   */
+  static const char byte2Gsm = 0b10000010;
+  /**
    * Letter in two-byte UTF-8
    */
   char _utf[2];//2-byte UTF-8 character
@@ -70,8 +86,8 @@ struct Cletter {
    *    0b01110,
    *    0b00000 );
    * @endcode
-   * @param utf Polish language special character.
-   * @param ascii ASCII 7-bit eqivalent.
+   * @param utf Polish language special character (3-byte C style 0-ended string or 2-byte std::string).
+   * @param ascii ASCII 7-bit eqivalent. 
    * @param a First line of character. 
    * @param b Second line.
    * @param c Third line.
@@ -103,7 +119,7 @@ struct Clcd {
    */
   int _refresh;
   /**
-   * Cursor position (if visible).
+   * Cursor.
    */
   Ccur _cur;
 };
