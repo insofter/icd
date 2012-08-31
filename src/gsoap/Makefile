@@ -1,27 +1,65 @@
-
+#configurable variables begin
 WSDL_PATH=http://192.168.123.4/icdtcp3webservice/Service1.asmx?WSDL
-#WSDL_PATH=http://79.110.195.114/icdtcp3webservice/Service1.asmx?WSDL
-#WSDL_PATH=http://79.110.195.114/icdtcp3webservice/Service1.asmx?WSDL
-#WSDL_PATH=http://www.insofter.pl/icdtcp3webservice/Service1.asmx?WSDL
-
-#WSDL_PATH=http://192.168.123.194:8732/Design_Time_Addresses/wcfServicelibrary1/Service1/mex
-
 XXSOAPPROXY_H=Service1SoapProxy.h
+#configurable variables end
+
 STUB_H=Stub.h
-HEADER=kom.h
+HEADER=schem.h
+SCHEM=schem.wsdl
+XMLNAMESPACE=icd
 
 
 all: wget wsdl soapcpp stdsoap human_stub human_soapproxy list
 
+
+help:
+	@echo ''
+	@echo '    This  Makefile is used to create gSOAP headers and sources. It'
+	@echo '    connects  to server, and downloads  WSDL  schema file. Path is'
+	@echo '    configured by WSDL_PATH variable.'
+	@echo ''
+	@echo '    Next  it  generates "human readable" headers  from  STUB_H and'
+	@echo '    XXSOAPPROXY_H where XX means your service name. Human readable'
+	@echo '    headers names start with "_" so we can find them easily.'
+	@echo '    _XXSoapProxy.h contains list of server  functions with params.'
+	@echo '    _Stub.h contains parameter classes needed by server functions.'
+	@echo ''
+	@echo '    Usage:'
+	@echo '       make            for create all files'
+	@echo '       make clean      for delete all files'
+	@echo ''
+	@echo '    Cleaned, copied directory can be used fo  another project. You'
+	@echo "    shouldn't run this make during compilation because it needs to"
+	@echo '    connect to configured  server. This makefile was made for make'
+	@echo '    life easier. Cookies  are enabled by "#define WITH_COOKIES" in'
+	@echo '    stdsoap2.h according to documentation.'
+	@echo ''
+	@echo '    Headers: You have to include two files to your project:'
+	@echo '       #include "gsoap/XXSoapProxy.h"'
+	@echo '       #include "gsoapXXSoap.nsmap"'
+	@echo ''
+	@echo '    Compilation:  You have to compile and link following  files to'
+	@echo '    your project:'
+	@echo '       gsoap/C.cpp'
+	@echo '       gsoap/Service1SoapProxy.cpp'
+	@echo '       gsoap/stdsoap2.cpp'
+	@echo '         (gSOAP is statically  compiled  into  your  project, see'
+	@echo '          documentation and "-lgsoap++" option for shared library)'
+	@echo ''
+	@echo '    Binaries  wsdl2h and soapcpp2 are compiled for i386 GNU/Linux.'
+	@echo '    For other versions visit http://gsoap2.sourceforge.net/ .'
+	@echo ''
+
+
 wget: rm_schem
-	wget ${WSDL_PATH} -O schem.wsdl
+	wget ${WSDL_PATH} -O ${SCHEM}
 
 rm_schem:
-	-rm schem.wsdl &> /dev/null
+	-rm ${SCHEM} &> /dev/null
 
 
 wsdl: 
-	./wsdl2h -o ${HEADER} -nicd schem.wsdl
+	./wsdl2h -o ${HEADER} -n${XMLNAMESPACE} ${SCHEM}
 
 soapcpp:
 	./soapcpp2 -i -C -Iimport -p "" -x ${HEADER}
@@ -69,4 +107,7 @@ list:
 
 
 clean:
-	-rm *.h *.c *.cpp *.nsmap schem.wsdl &> /dev/null
+	-rm *.h *.c *.cpp *.nsmap ${SCHEM} &> /dev/null
+
+
+
