@@ -122,16 +122,31 @@ int main( int argc, char *argv[] ) {
 
   log.okServerAns( 10, "Żyję" );
 
-  log.errParams( 13, "GetTime", "Pusta baza danych", "emptyDb" );
-  
-  log.errSoap( 17, "tcp_connect() error", 404, "Brak połączenia z internetem" );
+  srand( time(NULL) );
 
-  log.errServerAns( 20, "Server ans: NO BEER", "NO BEER", "GT",
+  switch( rand()%5 ) {
+    case 0:
+      log.errParams( 13, "GetTime", "Pusta baza danych", "emptyDb" );
+      break;
+
+    case 1:
+      log.errSoap( 17, "tcp_connect() error", 404, "Brak połączenia z internetem" );
+      break;
+    case 2:
+      log.errServerAns( 20, "Server ans: NO BEER", "NO BEER", "GT",
       "Błąd, skończyło się piwo" );
-      
-  log.done();
+      break;
 
-  log.done(11);
+    case 3:
+      log.done();
+      break;
+
+    case 4:
+      log.done(11);
+      break;
+  }
+
+
 
 
     exit(2);

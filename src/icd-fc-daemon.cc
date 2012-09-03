@@ -223,7 +223,7 @@ int main(int argc, char *argv[]) {
     mainMenu->itemAdd( new CmenuItemDbParam("Adres IP", "current", "ip") );
     mainMenu->itemAdd( new CmenuItemDbParam("Status wysyłania", "current", "last-send-status") );
     std::string cmd;
-    cmd="icd-transfer-data --short --db=\"";
+    cmd="icd-transfer-data --log=short --db=\"";
     cmd+=db_name;
     cmd+="\"";
     int conntestid=mainMenu->fastAdd( 

@@ -145,7 +145,7 @@ void Clog::done( int warn ) {
       if( warn == 0 ) {
         std::cout << "++OK Transfer OK" << std::endl;
       } else {
-        std::cout << "++WARN: " << warn << std::endl;
+        std::cout << "++WARNINGS: " << warn << std::endl;
       }
       break;
     case LONG:

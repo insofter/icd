@@ -222,7 +222,7 @@ void CmenuItemRunTestApp::screen(Clcd *lcd) {
       while( fds[0].revents & POLLIN ) {//main loop, read number or status line
         read( _appfd, &b, 1 );          //without blocking
         if( b!='\t' && b!='\n' &&  b!='\r') {
-          if( b>='0' && b<='9' ) {//parse number
+          if( pos==0 && b>='0' && b<='9' ) {//parse number
             _tmp*=10;
             _tmp+=(b-'0');
           } else {//end number, read state line
