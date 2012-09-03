@@ -54,9 +54,9 @@ ClcdDriver::ClcdDriver(const char * cmd_path, const char * data_path) {
                                   0b11001,
                                   0b00101,
                                   0b10101,
-                                  0b00101,
-                                  0b11001,
-                                  0b00010 ));
+                                  0b10000,
+                                  0b11000,
+                                  0b11000 ));
   tmp[1]=Cletter::byte2Eth;
   _letters.push_back( new Cletter(tmp,"E",
                                   0b11111,

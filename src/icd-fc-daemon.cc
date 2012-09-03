@@ -29,7 +29,7 @@ void print_usage(char *argv0) {
             "\n"
             "Options:\n"
             "  -d|--db=DB_NAME              Database file path; Mandatory option\n"
-            "  -t|--timeout=TIMEOUT_MS      Timeout when waiting for acces to the database in ms\n"
+            "  -t|--timeout=TIMEOUT_MS      Timeout for access to the database in ms\n"
             "  -b|--daemon                  Run as a daemon\n"
             "  -p|--pidfile=FILE            Create pid file (if a daemon)\n"
             "  -h|--help\n"

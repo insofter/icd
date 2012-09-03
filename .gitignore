@@ -1,7 +1,7 @@
 output
 _local_
 soap
-src/*.a
+*.a
 src/*
 !src/*.c*
 !src/*.h*
