@@ -114,9 +114,9 @@ public:
    * @param head2 First line on screen while running, switched with head1 to blinking.
    * @param autoStart Don't go to idle state, start immediately.
    */
-  CmenuItemRunTestApp(std::string name, std::string info,
-      std::string path, std::string head1, std::string head2, 
-      bool autoStart=false );
+  CmenuItemRunTestApp(const std::string & name, const std::string & info,
+      const std::string & path, const std::string & head1, 
+      const std::string & head2, bool autoStart=false );
   virtual void screen(Clcd *lcd);
   virtual int up(Clcd *lcd);
   virtual int down(Clcd *lcd);

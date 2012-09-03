@@ -339,6 +339,20 @@ lcd-menu-front-item/fast:
 .PHONY : lcd-menu-front-item/fast
 
 # Convenience name for target.
+src/CMakeFiles/logger.dir/rule:
+	cd /home/insofter/projects/icd/_local && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/logger.dir/rule
+.PHONY : src/CMakeFiles/logger.dir/rule
+
+# Convenience name for target.
+logger: src/CMakeFiles/logger.dir/rule
+.PHONY : logger
+
+# fast build rule for target.
+logger/fast:
+	cd /home/insofter/projects/icd/_local && $(MAKE) -f src/CMakeFiles/logger.dir/build.make src/CMakeFiles/logger.dir/build
+.PHONY : logger/fast
+
+# Convenience name for target.
 src/CMakeFiles/syslogstream.dir/rule:
 	cd /home/insofter/projects/icd/_local && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/syslogstream.dir/rule
 .PHONY : src/CMakeFiles/syslogstream.dir/rule
@@ -351,20 +365,6 @@ syslogstream: src/CMakeFiles/syslogstream.dir/rule
 syslogstream/fast:
 	cd /home/insofter/projects/icd/_local && $(MAKE) -f src/CMakeFiles/syslogstream.dir/build.make src/CMakeFiles/syslogstream.dir/build
 .PHONY : syslogstream/fast
-
-# Convenience name for target.
-src/CMakeFiles/transfer-agent.dir/rule:
-	cd /home/insofter/projects/icd/_local && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/transfer-agent.dir/rule
-.PHONY : src/CMakeFiles/transfer-agent.dir/rule
-
-# Convenience name for target.
-transfer-agent: src/CMakeFiles/transfer-agent.dir/rule
-.PHONY : transfer-agent
-
-# fast build rule for target.
-transfer-agent/fast:
-	cd /home/insofter/projects/icd/_local && $(MAKE) -f src/CMakeFiles/transfer-agent.dir/build.make src/CMakeFiles/transfer-agent.dir/build
-.PHONY : transfer-agent/fast
 
 # Convenience name for target.
 src/CMakeFiles/update-version.dir/rule:
@@ -730,6 +730,30 @@ lcd-menu.cpp.s:
 	cd /home/insofter/projects/icd/_local && $(MAKE) -f src/CMakeFiles/lcd-menu.dir/build.make src/CMakeFiles/lcd-menu.dir/lcd-menu.cpp.s
 .PHONY : lcd-menu.cpp.s
 
+logger.o: logger.cpp.o
+.PHONY : logger.o
+
+# target to build an object file
+logger.cpp.o:
+	cd /home/insofter/projects/icd/_local && $(MAKE) -f src/CMakeFiles/logger.dir/build.make src/CMakeFiles/logger.dir/logger.cpp.o
+.PHONY : logger.cpp.o
+
+logger.i: logger.cpp.i
+.PHONY : logger.i
+
+# target to preprocess a source file
+logger.cpp.i:
+	cd /home/insofter/projects/icd/_local && $(MAKE) -f src/CMakeFiles/logger.dir/build.make src/CMakeFiles/logger.dir/logger.cpp.i
+.PHONY : logger.cpp.i
+
+logger.s: logger.cpp.s
+.PHONY : logger.s
+
+# target to generate assembly for a file
+logger.cpp.s:
+	cd /home/insofter/projects/icd/_local && $(MAKE) -f src/CMakeFiles/logger.dir/build.make src/CMakeFiles/logger.dir/logger.cpp.s
+.PHONY : logger.cpp.s
+
 syslogstream.o: syslogstream.cc.o
 .PHONY : syslogstream.o
 
@@ -753,30 +777,6 @@ syslogstream.s: syslogstream.cc.s
 syslogstream.cc.s:
 	cd /home/insofter/projects/icd/_local && $(MAKE) -f src/CMakeFiles/syslogstream.dir/build.make src/CMakeFiles/syslogstream.dir/syslogstream.cc.s
 .PHONY : syslogstream.cc.s
-
-transfer-agent.o: transfer-agent.cc.o
-.PHONY : transfer-agent.o
-
-# target to build an object file
-transfer-agent.cc.o:
-	cd /home/insofter/projects/icd/_local && $(MAKE) -f src/CMakeFiles/transfer-agent.dir/build.make src/CMakeFiles/transfer-agent.dir/transfer-agent.cc.o
-.PHONY : transfer-agent.cc.o
-
-transfer-agent.i: transfer-agent.cc.i
-.PHONY : transfer-agent.i
-
-# target to preprocess a source file
-transfer-agent.cc.i:
-	cd /home/insofter/projects/icd/_local && $(MAKE) -f src/CMakeFiles/transfer-agent.dir/build.make src/CMakeFiles/transfer-agent.dir/transfer-agent.cc.i
-.PHONY : transfer-agent.cc.i
-
-transfer-agent.s: transfer-agent.cc.s
-.PHONY : transfer-agent.s
-
-# target to generate assembly for a file
-transfer-agent.cc.s:
-	cd /home/insofter/projects/icd/_local && $(MAKE) -f src/CMakeFiles/transfer-agent.dir/build.make src/CMakeFiles/transfer-agent.dir/transfer-agent.cc.s
-.PHONY : transfer-agent.cc.s
 
 version.o: version.cc.o
 .PHONY : version.o
@@ -827,9 +827,9 @@ help:
 	@echo "... lcd-menu"
 	@echo "... lcd-menu-front-item"
 	@echo "... list_install_components"
+	@echo "... logger"
 	@echo "... rebuild_cache"
 	@echo "... syslogstream"
-	@echo "... transfer-agent"
 	@echo "... update-version"
 	@echo "... version"
 	@echo "... daemonizer.o"
@@ -874,12 +874,12 @@ help:
 	@echo "... lcd-menu.o"
 	@echo "... lcd-menu.i"
 	@echo "... lcd-menu.s"
+	@echo "... logger.o"
+	@echo "... logger.i"
+	@echo "... logger.s"
 	@echo "... syslogstream.o"
 	@echo "... syslogstream.i"
 	@echo "... syslogstream.s"
-	@echo "... transfer-agent.o"
-	@echo "... transfer-agent.i"
-	@echo "... transfer-agent.s"
 	@echo "... version.o"
 	@echo "... version.i"
 	@echo "... version.s"

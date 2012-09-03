@@ -230,7 +230,7 @@ int main(int argc, char *argv[]) {
         new CmenuItemRunTestApp( "Test połączenia", "> Uruchomić?",
           cmd, "Test połączenia*", "Test połączenia" ) );
 
-    cmd="icd-test --short --db=\"";
+    cmd="icd-test --log=short --db=\"";
     cmd+=db_name;
     cmd+="\"";
     int fototestid=mainMenu->fastAdd( 

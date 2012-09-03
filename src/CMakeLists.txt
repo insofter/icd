@@ -28,7 +28,7 @@ add_dependencies(version update-version)
 add_library(db-config db-config.cc)
 add_library(daemonizer daemonizer.cc)
 add_library(syslogstream syslogstream.cc)
-add_library(transfer-agent transfer-agent.cc)
+#add_library(transfer-agent transfer-agent.cc)
 #nowe lcd
 add_library(lcd-driver lcd-driver.cpp)
 add_library(lcd-menu lcd-menu.cpp)
@@ -55,10 +55,12 @@ add_library(gsoap_C gsoap/C.cpp)
 add_library(gsoap_Service1SoapProxy gsoap/Service1SoapProxy.cpp)
 add_library(gsoap_stdsoap2 gsoap/stdsoap2.cpp)
 
+add_library(logger logger.cpp)
+
 add_executable(icd-transfer-data icd-transfer-data.cc)
-target_link_libraries(icd-transfer-data transfer-agent
-  sqlite3 curl version gsoap_C 
-  gsoap_Service1SoapProxy gsoap_stdsoap2)
+target_link_libraries(icd-transfer-data 
+  sqlite3 curl version gsoap_C gsoap_Service1SoapProxy
+  gsoap_stdsoap2 logger)
 #roxml
 
 

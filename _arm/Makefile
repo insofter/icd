@@ -338,6 +338,19 @@ lcd-menu-front-item/fast:
 .PHONY : lcd-menu-front-item/fast
 
 #=============================================================================
+# Target rules for targets named logger
+
+# Build rule for target.
+logger: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 logger
+.PHONY : logger
+
+# fast build rule for target.
+logger/fast:
+	$(MAKE) -f src/CMakeFiles/logger.dir/build.make src/CMakeFiles/logger.dir/build
+.PHONY : logger/fast
+
+#=============================================================================
 # Target rules for targets named syslogstream
 
 # Build rule for target.
@@ -349,19 +362,6 @@ syslogstream: cmake_check_build_system
 syslogstream/fast:
 	$(MAKE) -f src/CMakeFiles/syslogstream.dir/build.make src/CMakeFiles/syslogstream.dir/build
 .PHONY : syslogstream/fast
-
-#=============================================================================
-# Target rules for targets named transfer-agent
-
-# Build rule for target.
-transfer-agent: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 transfer-agent
-.PHONY : transfer-agent
-
-# fast build rule for target.
-transfer-agent/fast:
-	$(MAKE) -f src/CMakeFiles/transfer-agent.dir/build.make src/CMakeFiles/transfer-agent.dir/build
-.PHONY : transfer-agent/fast
 
 #=============================================================================
 # Target rules for targets named update-version
@@ -416,8 +416,8 @@ help:
 	@echo "... lcd-driver"
 	@echo "... lcd-menu"
 	@echo "... lcd-menu-front-item"
+	@echo "... logger"
 	@echo "... syslogstream"
-	@echo "... transfer-agent"
 	@echo "... update-version"
 	@echo "... version"
 .PHONY : help

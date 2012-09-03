@@ -150,8 +150,9 @@ int CmenuItemRunTestApp::esc(Clcd *lcd) {
   return 1;
 }
 
-CmenuItemRunTestApp::CmenuItemRunTestApp(std::string name, 
-    std::string info, std::string path, std::string head1, std::string head2,
+CmenuItemRunTestApp::CmenuItemRunTestApp(const std::string & name, 
+    const std::string & info, const std::string & path, 
+    const std::string & head1, const std::string & head2,
     bool autoStart ): _autoStart(autoStart), _name(name), _info(info), 
     _path(path), _head1(head1), _head2(head2) {
   _app=NULL;

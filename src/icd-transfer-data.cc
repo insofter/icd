@@ -2,14 +2,8 @@
 #include "sqlite3cc.h"
 #include "db-config.h"
 #include "daemonizer.h"
-#include <poll.h>
-#include <fcntl.h>
+#include "logger.hpp"
 #include <getopt.h>
-
-#ifdef DESKTOP//different headers on arm and desktop,
-              //use -DDESKTOP durng compilation on desktop 
-#include <unistd.h>
-#endif
 
 #include "gsoap/Service1SoapProxy.h"
 #include "gsoap/Service1Soap.nsmap"
@@ -17,35 +11,6 @@
 //gsoap/_Stub.h -- klasy parametrów
 //gsoap/_Service1SoapProxy.h -- funkcje serwera
 
-class Clog {
-public:
-  enum log_type { SILENT, SHORT, LONG };
-
-protected:
-  log_type _log;
-
-public:
-  Clog( log_type log=SILENT ): _log(log) {
-  }
-  void okParams( int percent );
-  void okSoap( int percent, std::string cmd, std::string soapVal );
-  void okServerAns( int percent, std::string servAns );
-
-  void errParams( int percent, std::string err );
-  void errSoap( int percent, std::string soapTxt, int soapCode, std::string errName );
-  void errServerAns( int percent, std::string servAns, std::string shortAns, std::string errName );
-  //0123456789012345//
-  //--ERR CR. PARAM.//
-  //--ERR SOAP: 123 //
-  //--ERR LD: no dev//
-  //--ERR GT:       //
-  //--ERR SD:too old//
-  //--ERR AF:       //
-  //--ERR LO: I.S.E //
-  //--ERR           //
-  //--ERR           //
-  //--ERR           //
-};
 
 
 
@@ -87,28 +52,6 @@ void print_usage(char *argv0) {
 
 
 
-int print_percent(int perc) {
-  struct pollfd fds[1];
-
-  fds[0].fd=STDOUT_FILENO;
-  fds[0].events=POLLOUT;
-  poll( fds, 1, 0 );
-
-  if( fds[0].revents & POLLOUT ) {
-    char buf[5];
-    int x;
-  
-    if( perc > 100 ) {
-      perc=100;
-    } else if( perc < 0 ) {
-      perc=0;
-    }
-    x=sprintf( buf,"%i\n", perc );
-    write(STDOUT_FILENO, buf, x );
-    return perc;
-  }
-  return -1;
-}
 
 
 int main( int argc, char *argv[] ) {
@@ -130,7 +73,7 @@ int main( int argc, char *argv[] ) {
 
     while( 1==1 ) {
       int option_index = 0;
-      int ch = getopt_long(argc, argv, "d:t:lhv", long_options, &option_index);
+      int ch = getopt_long(argc, argv, "d:t:l::hv", long_options, &option_index);
       if (ch == -1)
         break;
       switch(ch) {
@@ -141,6 +84,7 @@ int main( int argc, char *argv[] ) {
         db_timeout = strtol(optarg, NULL, 0);
         break;
       case 'l':
+        //printf("%s", optarg);
         if( strcmp(optarg, "short")==0 ) {
           log=Clog(Clog::SHORT);
         } else if( strcmp(optarg, "long")==0 ) {
@@ -172,8 +116,25 @@ int main( int argc, char *argv[] ) {
 
 
 
+  log.okParams( 3, "LoginDevice" );
+
+  log.okSoap( 7, "Hej Zenek, jak się masz?" );
+
+  log.okServerAns( 10, "Żyję" );
+
+  log.errParams( 13, "GetTime", "Pusta baza danych", "emptyDb" );
+  
+  log.errSoap( 17, "tcp_connect() error", 404, "Brak połączenia z internetem" );
+
+  log.errServerAns( 20, "Server ans: NO BEER", "NO BEER", "GT",
+      "Błąd, skończyło się piwo" );
+      
+  log.done();
+
+  log.done(11);
 
 
+    exit(2);
 
   Service1SoapProxy service;
   int ans;
@@ -192,7 +153,6 @@ int main( int argc, char *argv[] ) {
 //    service.soap_stream_fault(std::cerr); 
 
     std::cout << "Błąd połączenia: " << service.soap_fault_detail() << std::endl;
-    exit(2);
   }
 
 
