@@ -47,12 +47,17 @@ void CmenuItemTimeFoto::screen(Clcd *lcd) {
 
   strftime(timebuf,8,"%y.%m.%d",timeinfo);
   timebuf[8]=0;
-  sprintf(buf, "%s %c:%5i", timebuf, 'A'+_a, i);
+  sprintf(buf, "%s%c%c%c:%5i", timebuf, Cletter::byte1, Cletter::byte2Eth, 'A'+_a, i);
   lcd->_lcd[0]=buf;
 
   strftime(timebuf,8,"%H:%M:%S",timeinfo);
   timebuf[8]=0;
-  sprintf(buf, "%s %c:%5i", timebuf, 'A'+_b, i+3423);
+  if( rawtime%10 > 5 )
+  {
+    sprintf(buf, "%s%c%c%c:%5i", timebuf, Cletter::byte1, Cletter::byte2Wifi, 'A'+_b, i+3423);
+  } else {
+    sprintf(buf, "%s%c%c%c:%5i", timebuf, Cletter::byte1, Cletter::byte2Gsm, 'A'+_b, i+3423);
+  }
   lcd->_lcd[1]=buf;
 
   lcd->_refresh=300;
