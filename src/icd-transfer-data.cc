@@ -115,105 +115,102 @@ int main( int argc, char *argv[] ) {
 //parametry uruchomienia -- koniec
 
 
-/*
-  log.okParams( 3, "LoginDevice" );
-
-  log.okSoap( 7, "Hej Zenek, jak się masz?" );
-
-  log.okServerAns( 10, "Żyję" );
-
-  srand( time(NULL) );
-
-  switch( rand()%5 ) {
-    case 0:
-      log.errParams( 13, "GetTime", "Pusta baza danych", "emptyDb" );
-      break;
-
-    case 1:
-      log.errSoap( 17, "tcp_connect() error", 404, "Brak połączenia z internetem" );
-      break;
-    case 2:
-      log.errServerAns( 20, "Server ans: NO BEER", "NO BEER", "GT",
-      "Błąd, skończyło się piwo" );
-      break;
-
-    case 3:
-      log.done();
-      break;
-
-    case 4:
-      log.done(11);
-      break;
-  }
 
 
-    exit(2);
-*/
-  Service1SoapProxy service("http://www.insofter.pl/pawo/icdtcp3webservice/Service1.asmx");
+
+
+  Service1SoapProxy service;//("http://www.insofter.pl/pawo/icdtcp3webservice/Service1.asmx");
   int ans;
+
 
   _icd1__LoginDevice login;
   _icd1__LoginDeviceResponse rlogin;
 
-  login.idd=2;
+  login.idd=3;
   login.name=new std::string("Piotr");
   login.DevInfo=new std::string("icdtcp3");
 
+  log.okParams( 3, "LoginDevice" );
+
   ans=service.LoginDevice( &login, &rlogin );
-  delete  login.name;
+
 
   if( ans!=SOAP_OK ) {
-//    service.soap_stream_fault(std::cerr); 
-
-    std::cout << "Błąd połączenia: " << service.soap_fault_detail() << std::endl;
+    log.errSoap( 7, service.soap_fault_detail(), ans, "Błąd transmisji" );
+    exit(1);
   }
+  log.okSoap( 7, *(login.name) );
+
+  delete login.name;
+  delete login.DevInfo;
+
+//  if( rlogin.exitCode ) {
+  log.okServerAns( 10, *(rlogin.LoginDeviceResult) );
 
 
-  std::cout << "Odp serwera: " << *(rlogin.LoginDeviceResult) << std::endl;
 
-  exit(0);
-  _icd1__HelloWorld a; 
-  _icd1__HelloWorldResponse b;
+  _icd1__GetTime time;
+  _icd1__GetTimeResponse rtime;
 
+  log.okParams( 13, "GetTime" );
 
-  if( service.HelloWorld(&a, &b) == SOAP_OK ) {
-    std::cerr << "SOAP_OK" << std::endl;
-    std::cerr << *(b.HelloWorldResult) << std::endl;
-  } else {
-    service.soap_stream_fault(std::cerr); 
+  ans=service.GetTime(&time, &rtime);
+
+  if( ans!=SOAP_OK ) {
+    log.errSoap( 17, service.soap_fault_detail(), ans, "Błąd transmisji" );
+    exit(1);
   }
+  log.okSoap( 17, "GetTime" );
 
-  _icd1__TestSession c;
-  _icd1__TestSessionResponse d;
-  if( service.TestSession(&c, &d) == SOAP_OK ) {
-    std::cerr << "SOAP_OK" << std::endl;
-    std::cerr << d.TestSessionResult << std::endl;
-  } else {
-    service.soap_stream_fault(std::cerr);
+//  if( rlogin.exitCode ) {
+  log.okServerAns( 10, *(rtime.GetTimeResult) );
+
+
+
+  _icd1__SendData data;
+  _icd1__SendDataResponse rdata;
+
+  std::string pack("2012-08-03 11:28:28 5;0;0;0;0;399600;0;0;0;0;2;2;2;2;Com2");
+
+  data.data = &pack;
+
+  log.okParams( 23, "SendData" );
+
+
+  ans=service.SendData(&data, &rdata);
+
+  if( ans!=SOAP_OK ) {
+    log.errSoap( 27, service.soap_fault_detail(), ans, "Błąd transmisji" );
+    exit(1);
   }
+  log.okSoap( 27, pack );
+
+//  if( rlogin.exitCode ) {
+  log.okServerAns( 30, *(rdata.SendDataResult) );
 
 
-  _icd1__GetTime e;
-  _icd1__GetTimeResponse f;
 
-  if( service.GetTime(&e, &f) == SOAP_OK ) {
-    std::cerr << "SOAP_OK" << std::endl;
-    std::cerr << *(f.GetTimeResult) << std::endl;
-  } else {
-    service.soap_stream_fault(std::cerr);
+
+  _icd1__OutDevice out;
+  _icd1__OutDeviceResponse rout;
+  out.ErrorNo=0;
+
+  log.okParams( 93, "OutDevice" );
+
+
+  ans=service.OutDevice(&out, &rout);
+
+  if( ans!=SOAP_OK ) {
+    log.errSoap( 97, service.soap_fault_detail(), ans, "Błąd transmisji" );
+    exit(1);
   }
+  log.okSoap( 97, "OutDevice" );
 
 
+//  if( rlogin.exitCode ) {
+  log.okServerAns( 99, *(rout.OutDeviceResult) );
 
-
-  if( service.TestSession(&c, &d) == SOAP_OK ) {
-    std::cerr << "SOAP_OK" << std::endl;
-    std::cerr << d.TestSessionResult << std::endl;
-  } else {
-    service.soap_stream_fault(std::cerr);
-  }
-
-
+  log.done();
 
 
 }

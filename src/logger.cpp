@@ -36,7 +36,7 @@ void Clog::okParams( int percent, const std::string & cmd ) {
       break;
 
     case LONG:
-      std::cout << "[" << percent << "%] " << std::endl
+      std::cout << std::endl << "[" << percent << "%] " << std::endl
         << "++OK Utworzono parametry dla \"" << cmd << "\""
         << std::endl; 
       break;
@@ -89,7 +89,7 @@ void Clog::errParams( int percent, const std::string & cmd,
       break;
 
     case LONG:
-      std::cout << "[" << percent << "%] " << std::endl
+      std::cout << std::endl << "[" << percent << "%] " << std::endl
         << "--ERR Błąd przygotowania danych dla polecenia \""
         << cmd << "\":" << std::endl << "    "
         << err
@@ -149,7 +149,7 @@ void Clog::done( int warn ) {
       }
       break;
     case LONG:
-      std::cout << "[100%] " << std::endl;
+      std::cout << std::endl << "[100%] " << std::endl;
       if( warn == 0 ) {
         std::cout << "++OK Transfer OK" << std::endl;
       } else {
