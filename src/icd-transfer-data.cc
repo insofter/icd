@@ -115,7 +115,7 @@ int main( int argc, char *argv[] ) {
 //parametry uruchomienia -- koniec
 
 
-
+/*
   log.okParams( 3, "LoginDevice" );
 
   log.okSoap( 7, "Hej Zenek, jak się masz?" );
@@ -147,19 +147,17 @@ int main( int argc, char *argv[] ) {
   }
 
 
-
-
     exit(2);
-
-  Service1SoapProxy service;
+*/
+  Service1SoapProxy service("http://www.insofter.pl/pawo/icdtcp3webservice/Service1.asmx");
   int ans;
 
   _icd1__LoginDevice login;
   _icd1__LoginDeviceResponse rlogin;
 
-  login.idd=0;
-  login.name=new std::string("idd3");
-
+  login.idd=2;
+  login.name=new std::string("Piotr");
+  login.DevInfo=new std::string("icdtcp3");
 
   ans=service.LoginDevice( &login, &rlogin );
   delete  login.name;
