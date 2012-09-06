@@ -1,6 +1,7 @@
 #configurable variables begin
-WSDL_PATH=http://192.168.123.4/icdtcp3webservice/Service1.asmx?WSDL
-XXSOAPPROXY_H=Service1SoapProxy.h
+#WSDL_PATH=http://192.168.123.4/icdtcp3webservice/Service1.asmx?WSDL
+WSDL_PATH=http://192.168.123.194/icdtcp3/icdtcp3.asmx?WSDL
+XXSOAPPROXY_H=icdtcp3SoapProxy.h
 #configurable variables end
 
 STUB_H=Stub.h

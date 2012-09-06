@@ -15,7 +15,7 @@ compiling, linking, and/or using OpenSSL is allowed.
 
 #include "H.h"
 
-SOAP_SOURCE_STAMP("@(#) C.cpp ver 2.8.8 2012-08-31 09:02:58 GMT")
+SOAP_SOURCE_STAMP("@(#) C.cpp ver 2.8.8 2012-09-06 12:36:13 GMT")
 
 
 #ifndef WITH_NOGLOBAL
@@ -195,42 +195,22 @@ SOAP_FMAC3 void * SOAP_FMAC4 soap_getelement(struct soap *soap, int *type)
 		return soap_in_int(soap, NULL, NULL, "xsd:int");
 	case SOAP_TYPE_std__string:
 		return soap_in_std__string(soap, NULL, NULL, "xsd:string");
+	case SOAP_TYPE_PointerTo_icd1__LogoutDeviceResponse:
+		return soap_in_PointerTo_icd1__LogoutDeviceResponse(soap, NULL, NULL, "icd1:LogoutDeviceResponse");
+	case SOAP_TYPE_PointerTo_icd1__LogoutDevice:
+		return soap_in_PointerTo_icd1__LogoutDevice(soap, NULL, NULL, "icd1:LogoutDevice");
 	case SOAP_TYPE_PointerTo_icd1__SendDataResponse:
 		return soap_in_PointerTo_icd1__SendDataResponse(soap, NULL, NULL, "icd1:SendDataResponse");
 	case SOAP_TYPE_PointerTo_icd1__SendData:
 		return soap_in_PointerTo_icd1__SendData(soap, NULL, NULL, "icd1:SendData");
-	case SOAP_TYPE_PointerTo_icd1__HasUpdateBinResponse:
-		return soap_in_PointerTo_icd1__HasUpdateBinResponse(soap, NULL, NULL, "icd1:HasUpdateBinResponse");
-	case SOAP_TYPE_PointerTo_icd1__HasUpdateBin:
-		return soap_in_PointerTo_icd1__HasUpdateBin(soap, NULL, NULL, "icd1:HasUpdateBin");
-	case SOAP_TYPE_PointerTo_icd1__GetUpdateDataBinResponse:
-		return soap_in_PointerTo_icd1__GetUpdateDataBinResponse(soap, NULL, NULL, "icd1:GetUpdateDataBinResponse");
-	case SOAP_TYPE_PointerTo_icd1__GetUpdateDataBin:
-		return soap_in_PointerTo_icd1__GetUpdateDataBin(soap, NULL, NULL, "icd1:GetUpdateDataBin");
 	case SOAP_TYPE_PointerTo_icd1__LoginDeviceResponse:
 		return soap_in_PointerTo_icd1__LoginDeviceResponse(soap, NULL, NULL, "icd1:LoginDeviceResponse");
 	case SOAP_TYPE_PointerTo_icd1__LoginDevice:
 		return soap_in_PointerTo_icd1__LoginDevice(soap, NULL, NULL, "icd1:LoginDevice");
-	case SOAP_TYPE_PointerTo_icd1__OutDeviceResponse:
-		return soap_in_PointerTo_icd1__OutDeviceResponse(soap, NULL, NULL, "icd1:OutDeviceResponse");
-	case SOAP_TYPE_PointerTo_icd1__OutDevice:
-		return soap_in_PointerTo_icd1__OutDevice(soap, NULL, NULL, "icd1:OutDevice");
-	case SOAP_TYPE_PointerTo_icd1__TestSessionResponse:
-		return soap_in_PointerTo_icd1__TestSessionResponse(soap, NULL, NULL, "icd1:TestSessionResponse");
-	case SOAP_TYPE_PointerTo_icd1__TestSession:
-		return soap_in_PointerTo_icd1__TestSession(soap, NULL, NULL, "icd1:TestSession");
-	case SOAP_TYPE_PointerTo_icd1__GetTime2Response:
-		return soap_in_PointerTo_icd1__GetTime2Response(soap, NULL, NULL, "icd1:GetTime2Response");
-	case SOAP_TYPE_PointerTo_icd1__GetTime2:
-		return soap_in_PointerTo_icd1__GetTime2(soap, NULL, NULL, "icd1:GetTime2");
 	case SOAP_TYPE_PointerTo_icd1__GetTimeResponse:
 		return soap_in_PointerTo_icd1__GetTimeResponse(soap, NULL, NULL, "icd1:GetTimeResponse");
 	case SOAP_TYPE_PointerTo_icd1__GetTime:
 		return soap_in_PointerTo_icd1__GetTime(soap, NULL, NULL, "icd1:GetTime");
-	case SOAP_TYPE_PointerTo_icd1__HelloWorldResponse:
-		return soap_in_PointerTo_icd1__HelloWorldResponse(soap, NULL, NULL, "icd1:HelloWorldResponse");
-	case SOAP_TYPE_PointerTo_icd1__HelloWorld:
-		return soap_in_PointerTo_icd1__HelloWorld(soap, NULL, NULL, "icd1:HelloWorld");
 	case SOAP_TYPE_PointerTostd__string:
 		return soap_in_PointerTostd__string(soap, NULL, NULL, "xsd:string");
 	case SOAP_TYPE__QName:
@@ -272,6 +252,14 @@ SOAP_FMAC3 void * SOAP_FMAC4 soap_getelement(struct soap *soap, int *type)
 			return s ? *s : NULL;
 		}
 		t = soap->tag;
+		if (!soap_match_tag(soap, t, "icd1:LogoutDeviceResponse"))
+		{	*type = SOAP_TYPE__icd1__LogoutDeviceResponse;
+			return soap_in__icd1__LogoutDeviceResponse(soap, NULL, NULL, NULL);
+		}
+		if (!soap_match_tag(soap, t, "icd1:LogoutDevice"))
+		{	*type = SOAP_TYPE__icd1__LogoutDevice;
+			return soap_in__icd1__LogoutDevice(soap, NULL, NULL, NULL);
+		}
 		if (!soap_match_tag(soap, t, "icd1:SendDataResponse"))
 		{	*type = SOAP_TYPE__icd1__SendDataResponse;
 			return soap_in__icd1__SendDataResponse(soap, NULL, NULL, NULL);
@@ -279,22 +267,6 @@ SOAP_FMAC3 void * SOAP_FMAC4 soap_getelement(struct soap *soap, int *type)
 		if (!soap_match_tag(soap, t, "icd1:SendData"))
 		{	*type = SOAP_TYPE__icd1__SendData;
 			return soap_in__icd1__SendData(soap, NULL, NULL, NULL);
-		}
-		if (!soap_match_tag(soap, t, "icd1:HasUpdateBinResponse"))
-		{	*type = SOAP_TYPE__icd1__HasUpdateBinResponse;
-			return soap_in__icd1__HasUpdateBinResponse(soap, NULL, NULL, NULL);
-		}
-		if (!soap_match_tag(soap, t, "icd1:HasUpdateBin"))
-		{	*type = SOAP_TYPE__icd1__HasUpdateBin;
-			return soap_in__icd1__HasUpdateBin(soap, NULL, NULL, NULL);
-		}
-		if (!soap_match_tag(soap, t, "icd1:GetUpdateDataBinResponse"))
-		{	*type = SOAP_TYPE__icd1__GetUpdateDataBinResponse;
-			return soap_in__icd1__GetUpdateDataBinResponse(soap, NULL, NULL, NULL);
-		}
-		if (!soap_match_tag(soap, t, "icd1:GetUpdateDataBin"))
-		{	*type = SOAP_TYPE__icd1__GetUpdateDataBin;
-			return soap_in__icd1__GetUpdateDataBin(soap, NULL, NULL, NULL);
 		}
 		if (!soap_match_tag(soap, t, "icd1:LoginDeviceResponse"))
 		{	*type = SOAP_TYPE__icd1__LoginDeviceResponse;
@@ -304,30 +276,6 @@ SOAP_FMAC3 void * SOAP_FMAC4 soap_getelement(struct soap *soap, int *type)
 		{	*type = SOAP_TYPE__icd1__LoginDevice;
 			return soap_in__icd1__LoginDevice(soap, NULL, NULL, NULL);
 		}
-		if (!soap_match_tag(soap, t, "icd1:OutDeviceResponse"))
-		{	*type = SOAP_TYPE__icd1__OutDeviceResponse;
-			return soap_in__icd1__OutDeviceResponse(soap, NULL, NULL, NULL);
-		}
-		if (!soap_match_tag(soap, t, "icd1:OutDevice"))
-		{	*type = SOAP_TYPE__icd1__OutDevice;
-			return soap_in__icd1__OutDevice(soap, NULL, NULL, NULL);
-		}
-		if (!soap_match_tag(soap, t, "icd1:TestSessionResponse"))
-		{	*type = SOAP_TYPE__icd1__TestSessionResponse;
-			return soap_in__icd1__TestSessionResponse(soap, NULL, NULL, NULL);
-		}
-		if (!soap_match_tag(soap, t, "icd1:TestSession"))
-		{	*type = SOAP_TYPE__icd1__TestSession;
-			return soap_in__icd1__TestSession(soap, NULL, NULL, NULL);
-		}
-		if (!soap_match_tag(soap, t, "icd1:GetTime2Response"))
-		{	*type = SOAP_TYPE__icd1__GetTime2Response;
-			return soap_in__icd1__GetTime2Response(soap, NULL, NULL, NULL);
-		}
-		if (!soap_match_tag(soap, t, "icd1:GetTime2"))
-		{	*type = SOAP_TYPE__icd1__GetTime2;
-			return soap_in__icd1__GetTime2(soap, NULL, NULL, NULL);
-		}
 		if (!soap_match_tag(soap, t, "icd1:GetTimeResponse"))
 		{	*type = SOAP_TYPE__icd1__GetTimeResponse;
 			return soap_in__icd1__GetTimeResponse(soap, NULL, NULL, NULL);
@@ -335,14 +283,6 @@ SOAP_FMAC3 void * SOAP_FMAC4 soap_getelement(struct soap *soap, int *type)
 		if (!soap_match_tag(soap, t, "icd1:GetTime"))
 		{	*type = SOAP_TYPE__icd1__GetTime;
 			return soap_in__icd1__GetTime(soap, NULL, NULL, NULL);
-		}
-		if (!soap_match_tag(soap, t, "icd1:HelloWorldResponse"))
-		{	*type = SOAP_TYPE__icd1__HelloWorldResponse;
-			return soap_in__icd1__HelloWorldResponse(soap, NULL, NULL, NULL);
-		}
-		if (!soap_match_tag(soap, t, "icd1:HelloWorld"))
-		{	*type = SOAP_TYPE__icd1__HelloWorld;
-			return soap_in__icd1__HelloWorld(soap, NULL, NULL, NULL);
 		}
 	}
 	}
@@ -415,78 +355,38 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_putelement(struct soap *soap, const void *ptr, co
 		return soap_out_int(soap, tag, id, (const int *)ptr, "xsd:int");
 	case SOAP_TYPE_std__string:
 		return soap_out_std__string(soap, tag, id, (const std::string *)ptr, "xsd:string");
+	case SOAP_TYPE__icd1__LogoutDeviceResponse:
+		return ((_icd1__LogoutDeviceResponse *)ptr)->soap_out(soap, "icd1:LogoutDeviceResponse", id, NULL);
+	case SOAP_TYPE__icd1__LogoutDevice:
+		return ((_icd1__LogoutDevice *)ptr)->soap_out(soap, "icd1:LogoutDevice", id, NULL);
 	case SOAP_TYPE__icd1__SendDataResponse:
 		return ((_icd1__SendDataResponse *)ptr)->soap_out(soap, "icd1:SendDataResponse", id, NULL);
 	case SOAP_TYPE__icd1__SendData:
 		return ((_icd1__SendData *)ptr)->soap_out(soap, "icd1:SendData", id, NULL);
-	case SOAP_TYPE__icd1__HasUpdateBinResponse:
-		return ((_icd1__HasUpdateBinResponse *)ptr)->soap_out(soap, "icd1:HasUpdateBinResponse", id, NULL);
-	case SOAP_TYPE__icd1__HasUpdateBin:
-		return ((_icd1__HasUpdateBin *)ptr)->soap_out(soap, "icd1:HasUpdateBin", id, NULL);
-	case SOAP_TYPE__icd1__GetUpdateDataBinResponse:
-		return ((_icd1__GetUpdateDataBinResponse *)ptr)->soap_out(soap, "icd1:GetUpdateDataBinResponse", id, NULL);
-	case SOAP_TYPE__icd1__GetUpdateDataBin:
-		return ((_icd1__GetUpdateDataBin *)ptr)->soap_out(soap, "icd1:GetUpdateDataBin", id, NULL);
 	case SOAP_TYPE__icd1__LoginDeviceResponse:
 		return ((_icd1__LoginDeviceResponse *)ptr)->soap_out(soap, "icd1:LoginDeviceResponse", id, NULL);
 	case SOAP_TYPE__icd1__LoginDevice:
 		return ((_icd1__LoginDevice *)ptr)->soap_out(soap, "icd1:LoginDevice", id, NULL);
-	case SOAP_TYPE__icd1__OutDeviceResponse:
-		return ((_icd1__OutDeviceResponse *)ptr)->soap_out(soap, "icd1:OutDeviceResponse", id, NULL);
-	case SOAP_TYPE__icd1__OutDevice:
-		return ((_icd1__OutDevice *)ptr)->soap_out(soap, "icd1:OutDevice", id, NULL);
-	case SOAP_TYPE__icd1__TestSessionResponse:
-		return ((_icd1__TestSessionResponse *)ptr)->soap_out(soap, "icd1:TestSessionResponse", id, NULL);
-	case SOAP_TYPE__icd1__TestSession:
-		return ((_icd1__TestSession *)ptr)->soap_out(soap, "icd1:TestSession", id, NULL);
-	case SOAP_TYPE__icd1__GetTime2Response:
-		return ((_icd1__GetTime2Response *)ptr)->soap_out(soap, "icd1:GetTime2Response", id, NULL);
-	case SOAP_TYPE__icd1__GetTime2:
-		return ((_icd1__GetTime2 *)ptr)->soap_out(soap, "icd1:GetTime2", id, NULL);
 	case SOAP_TYPE__icd1__GetTimeResponse:
 		return ((_icd1__GetTimeResponse *)ptr)->soap_out(soap, "icd1:GetTimeResponse", id, NULL);
 	case SOAP_TYPE__icd1__GetTime:
 		return ((_icd1__GetTime *)ptr)->soap_out(soap, "icd1:GetTime", id, NULL);
-	case SOAP_TYPE__icd1__HelloWorldResponse:
-		return ((_icd1__HelloWorldResponse *)ptr)->soap_out(soap, "icd1:HelloWorldResponse", id, NULL);
-	case SOAP_TYPE__icd1__HelloWorld:
-		return ((_icd1__HelloWorld *)ptr)->soap_out(soap, "icd1:HelloWorld", id, NULL);
+	case SOAP_TYPE_PointerTo_icd1__LogoutDeviceResponse:
+		return soap_out_PointerTo_icd1__LogoutDeviceResponse(soap, tag, id, (_icd1__LogoutDeviceResponse *const*)ptr, "icd1:LogoutDeviceResponse");
+	case SOAP_TYPE_PointerTo_icd1__LogoutDevice:
+		return soap_out_PointerTo_icd1__LogoutDevice(soap, tag, id, (_icd1__LogoutDevice *const*)ptr, "icd1:LogoutDevice");
 	case SOAP_TYPE_PointerTo_icd1__SendDataResponse:
 		return soap_out_PointerTo_icd1__SendDataResponse(soap, tag, id, (_icd1__SendDataResponse *const*)ptr, "icd1:SendDataResponse");
 	case SOAP_TYPE_PointerTo_icd1__SendData:
 		return soap_out_PointerTo_icd1__SendData(soap, tag, id, (_icd1__SendData *const*)ptr, "icd1:SendData");
-	case SOAP_TYPE_PointerTo_icd1__HasUpdateBinResponse:
-		return soap_out_PointerTo_icd1__HasUpdateBinResponse(soap, tag, id, (_icd1__HasUpdateBinResponse *const*)ptr, "icd1:HasUpdateBinResponse");
-	case SOAP_TYPE_PointerTo_icd1__HasUpdateBin:
-		return soap_out_PointerTo_icd1__HasUpdateBin(soap, tag, id, (_icd1__HasUpdateBin *const*)ptr, "icd1:HasUpdateBin");
-	case SOAP_TYPE_PointerTo_icd1__GetUpdateDataBinResponse:
-		return soap_out_PointerTo_icd1__GetUpdateDataBinResponse(soap, tag, id, (_icd1__GetUpdateDataBinResponse *const*)ptr, "icd1:GetUpdateDataBinResponse");
-	case SOAP_TYPE_PointerTo_icd1__GetUpdateDataBin:
-		return soap_out_PointerTo_icd1__GetUpdateDataBin(soap, tag, id, (_icd1__GetUpdateDataBin *const*)ptr, "icd1:GetUpdateDataBin");
 	case SOAP_TYPE_PointerTo_icd1__LoginDeviceResponse:
 		return soap_out_PointerTo_icd1__LoginDeviceResponse(soap, tag, id, (_icd1__LoginDeviceResponse *const*)ptr, "icd1:LoginDeviceResponse");
 	case SOAP_TYPE_PointerTo_icd1__LoginDevice:
 		return soap_out_PointerTo_icd1__LoginDevice(soap, tag, id, (_icd1__LoginDevice *const*)ptr, "icd1:LoginDevice");
-	case SOAP_TYPE_PointerTo_icd1__OutDeviceResponse:
-		return soap_out_PointerTo_icd1__OutDeviceResponse(soap, tag, id, (_icd1__OutDeviceResponse *const*)ptr, "icd1:OutDeviceResponse");
-	case SOAP_TYPE_PointerTo_icd1__OutDevice:
-		return soap_out_PointerTo_icd1__OutDevice(soap, tag, id, (_icd1__OutDevice *const*)ptr, "icd1:OutDevice");
-	case SOAP_TYPE_PointerTo_icd1__TestSessionResponse:
-		return soap_out_PointerTo_icd1__TestSessionResponse(soap, tag, id, (_icd1__TestSessionResponse *const*)ptr, "icd1:TestSessionResponse");
-	case SOAP_TYPE_PointerTo_icd1__TestSession:
-		return soap_out_PointerTo_icd1__TestSession(soap, tag, id, (_icd1__TestSession *const*)ptr, "icd1:TestSession");
-	case SOAP_TYPE_PointerTo_icd1__GetTime2Response:
-		return soap_out_PointerTo_icd1__GetTime2Response(soap, tag, id, (_icd1__GetTime2Response *const*)ptr, "icd1:GetTime2Response");
-	case SOAP_TYPE_PointerTo_icd1__GetTime2:
-		return soap_out_PointerTo_icd1__GetTime2(soap, tag, id, (_icd1__GetTime2 *const*)ptr, "icd1:GetTime2");
 	case SOAP_TYPE_PointerTo_icd1__GetTimeResponse:
 		return soap_out_PointerTo_icd1__GetTimeResponse(soap, tag, id, (_icd1__GetTimeResponse *const*)ptr, "icd1:GetTimeResponse");
 	case SOAP_TYPE_PointerTo_icd1__GetTime:
 		return soap_out_PointerTo_icd1__GetTime(soap, tag, id, (_icd1__GetTime *const*)ptr, "icd1:GetTime");
-	case SOAP_TYPE_PointerTo_icd1__HelloWorldResponse:
-		return soap_out_PointerTo_icd1__HelloWorldResponse(soap, tag, id, (_icd1__HelloWorldResponse *const*)ptr, "icd1:HelloWorldResponse");
-	case SOAP_TYPE_PointerTo_icd1__HelloWorld:
-		return soap_out_PointerTo_icd1__HelloWorld(soap, tag, id, (_icd1__HelloWorld *const*)ptr, "icd1:HelloWorld");
 	case SOAP_TYPE_PointerTostd__string:
 		return soap_out_PointerTostd__string(soap, tag, id, (std::string *const*)ptr, "xsd:string");
 	case SOAP_TYPE__QName:
@@ -515,23 +415,17 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_markelement(struct soap *soap, const void *ptr, 
 	case SOAP_TYPE_std__string:
 		soap_serialize_std__string(soap, (const std::string *)ptr);
 		break;
+	case SOAP_TYPE__icd1__LogoutDeviceResponse:
+		((_icd1__LogoutDeviceResponse *)ptr)->soap_serialize(soap);
+		break;
+	case SOAP_TYPE__icd1__LogoutDevice:
+		((_icd1__LogoutDevice *)ptr)->soap_serialize(soap);
+		break;
 	case SOAP_TYPE__icd1__SendDataResponse:
 		((_icd1__SendDataResponse *)ptr)->soap_serialize(soap);
 		break;
 	case SOAP_TYPE__icd1__SendData:
 		((_icd1__SendData *)ptr)->soap_serialize(soap);
-		break;
-	case SOAP_TYPE__icd1__HasUpdateBinResponse:
-		((_icd1__HasUpdateBinResponse *)ptr)->soap_serialize(soap);
-		break;
-	case SOAP_TYPE__icd1__HasUpdateBin:
-		((_icd1__HasUpdateBin *)ptr)->soap_serialize(soap);
-		break;
-	case SOAP_TYPE__icd1__GetUpdateDataBinResponse:
-		((_icd1__GetUpdateDataBinResponse *)ptr)->soap_serialize(soap);
-		break;
-	case SOAP_TYPE__icd1__GetUpdateDataBin:
-		((_icd1__GetUpdateDataBin *)ptr)->soap_serialize(soap);
 		break;
 	case SOAP_TYPE__icd1__LoginDeviceResponse:
 		((_icd1__LoginDeviceResponse *)ptr)->soap_serialize(soap);
@@ -539,89 +433,41 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_markelement(struct soap *soap, const void *ptr, 
 	case SOAP_TYPE__icd1__LoginDevice:
 		((_icd1__LoginDevice *)ptr)->soap_serialize(soap);
 		break;
-	case SOAP_TYPE__icd1__OutDeviceResponse:
-		((_icd1__OutDeviceResponse *)ptr)->soap_serialize(soap);
-		break;
-	case SOAP_TYPE__icd1__OutDevice:
-		((_icd1__OutDevice *)ptr)->soap_serialize(soap);
-		break;
-	case SOAP_TYPE__icd1__TestSessionResponse:
-		((_icd1__TestSessionResponse *)ptr)->soap_serialize(soap);
-		break;
-	case SOAP_TYPE__icd1__TestSession:
-		((_icd1__TestSession *)ptr)->soap_serialize(soap);
-		break;
-	case SOAP_TYPE__icd1__GetTime2Response:
-		((_icd1__GetTime2Response *)ptr)->soap_serialize(soap);
-		break;
-	case SOAP_TYPE__icd1__GetTime2:
-		((_icd1__GetTime2 *)ptr)->soap_serialize(soap);
-		break;
 	case SOAP_TYPE__icd1__GetTimeResponse:
 		((_icd1__GetTimeResponse *)ptr)->soap_serialize(soap);
 		break;
 	case SOAP_TYPE__icd1__GetTime:
 		((_icd1__GetTime *)ptr)->soap_serialize(soap);
 		break;
-	case SOAP_TYPE__icd1__HelloWorldResponse:
-		((_icd1__HelloWorldResponse *)ptr)->soap_serialize(soap);
-		break;
-	case SOAP_TYPE__icd1__HelloWorld:
-		((_icd1__HelloWorld *)ptr)->soap_serialize(soap);
+	case SOAP_TYPE___icd3__LogoutDevice:
+		soap_serialize___icd3__LogoutDevice(soap, (const struct __icd3__LogoutDevice *)ptr);
 		break;
 	case SOAP_TYPE___icd3__SendData:
 		soap_serialize___icd3__SendData(soap, (const struct __icd3__SendData *)ptr);
 		break;
-	case SOAP_TYPE___icd3__HasUpdateBin:
-		soap_serialize___icd3__HasUpdateBin(soap, (const struct __icd3__HasUpdateBin *)ptr);
-		break;
-	case SOAP_TYPE___icd3__GetUpdateDataBin:
-		soap_serialize___icd3__GetUpdateDataBin(soap, (const struct __icd3__GetUpdateDataBin *)ptr);
-		break;
 	case SOAP_TYPE___icd3__LoginDevice:
 		soap_serialize___icd3__LoginDevice(soap, (const struct __icd3__LoginDevice *)ptr);
-		break;
-	case SOAP_TYPE___icd3__OutDevice:
-		soap_serialize___icd3__OutDevice(soap, (const struct __icd3__OutDevice *)ptr);
-		break;
-	case SOAP_TYPE___icd3__TestSession:
-		soap_serialize___icd3__TestSession(soap, (const struct __icd3__TestSession *)ptr);
-		break;
-	case SOAP_TYPE___icd3__GetTime2:
-		soap_serialize___icd3__GetTime2(soap, (const struct __icd3__GetTime2 *)ptr);
 		break;
 	case SOAP_TYPE___icd3__GetTime:
 		soap_serialize___icd3__GetTime(soap, (const struct __icd3__GetTime *)ptr);
 		break;
-	case SOAP_TYPE___icd3__HelloWorld:
-		soap_serialize___icd3__HelloWorld(soap, (const struct __icd3__HelloWorld *)ptr);
+	case SOAP_TYPE___icd2__LogoutDevice:
+		soap_serialize___icd2__LogoutDevice(soap, (const struct __icd2__LogoutDevice *)ptr);
 		break;
 	case SOAP_TYPE___icd2__SendData:
 		soap_serialize___icd2__SendData(soap, (const struct __icd2__SendData *)ptr);
 		break;
-	case SOAP_TYPE___icd2__HasUpdateBin:
-		soap_serialize___icd2__HasUpdateBin(soap, (const struct __icd2__HasUpdateBin *)ptr);
-		break;
-	case SOAP_TYPE___icd2__GetUpdateDataBin:
-		soap_serialize___icd2__GetUpdateDataBin(soap, (const struct __icd2__GetUpdateDataBin *)ptr);
-		break;
 	case SOAP_TYPE___icd2__LoginDevice:
 		soap_serialize___icd2__LoginDevice(soap, (const struct __icd2__LoginDevice *)ptr);
-		break;
-	case SOAP_TYPE___icd2__OutDevice:
-		soap_serialize___icd2__OutDevice(soap, (const struct __icd2__OutDevice *)ptr);
-		break;
-	case SOAP_TYPE___icd2__TestSession:
-		soap_serialize___icd2__TestSession(soap, (const struct __icd2__TestSession *)ptr);
-		break;
-	case SOAP_TYPE___icd2__GetTime2:
-		soap_serialize___icd2__GetTime2(soap, (const struct __icd2__GetTime2 *)ptr);
 		break;
 	case SOAP_TYPE___icd2__GetTime:
 		soap_serialize___icd2__GetTime(soap, (const struct __icd2__GetTime *)ptr);
 		break;
-	case SOAP_TYPE___icd2__HelloWorld:
-		soap_serialize___icd2__HelloWorld(soap, (const struct __icd2__HelloWorld *)ptr);
+	case SOAP_TYPE_PointerTo_icd1__LogoutDeviceResponse:
+		soap_serialize_PointerTo_icd1__LogoutDeviceResponse(soap, (_icd1__LogoutDeviceResponse *const*)ptr);
+		break;
+	case SOAP_TYPE_PointerTo_icd1__LogoutDevice:
+		soap_serialize_PointerTo_icd1__LogoutDevice(soap, (_icd1__LogoutDevice *const*)ptr);
 		break;
 	case SOAP_TYPE_PointerTo_icd1__SendDataResponse:
 		soap_serialize_PointerTo_icd1__SendDataResponse(soap, (_icd1__SendDataResponse *const*)ptr);
@@ -629,53 +475,17 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_markelement(struct soap *soap, const void *ptr, 
 	case SOAP_TYPE_PointerTo_icd1__SendData:
 		soap_serialize_PointerTo_icd1__SendData(soap, (_icd1__SendData *const*)ptr);
 		break;
-	case SOAP_TYPE_PointerTo_icd1__HasUpdateBinResponse:
-		soap_serialize_PointerTo_icd1__HasUpdateBinResponse(soap, (_icd1__HasUpdateBinResponse *const*)ptr);
-		break;
-	case SOAP_TYPE_PointerTo_icd1__HasUpdateBin:
-		soap_serialize_PointerTo_icd1__HasUpdateBin(soap, (_icd1__HasUpdateBin *const*)ptr);
-		break;
-	case SOAP_TYPE_PointerTo_icd1__GetUpdateDataBinResponse:
-		soap_serialize_PointerTo_icd1__GetUpdateDataBinResponse(soap, (_icd1__GetUpdateDataBinResponse *const*)ptr);
-		break;
-	case SOAP_TYPE_PointerTo_icd1__GetUpdateDataBin:
-		soap_serialize_PointerTo_icd1__GetUpdateDataBin(soap, (_icd1__GetUpdateDataBin *const*)ptr);
-		break;
 	case SOAP_TYPE_PointerTo_icd1__LoginDeviceResponse:
 		soap_serialize_PointerTo_icd1__LoginDeviceResponse(soap, (_icd1__LoginDeviceResponse *const*)ptr);
 		break;
 	case SOAP_TYPE_PointerTo_icd1__LoginDevice:
 		soap_serialize_PointerTo_icd1__LoginDevice(soap, (_icd1__LoginDevice *const*)ptr);
 		break;
-	case SOAP_TYPE_PointerTo_icd1__OutDeviceResponse:
-		soap_serialize_PointerTo_icd1__OutDeviceResponse(soap, (_icd1__OutDeviceResponse *const*)ptr);
-		break;
-	case SOAP_TYPE_PointerTo_icd1__OutDevice:
-		soap_serialize_PointerTo_icd1__OutDevice(soap, (_icd1__OutDevice *const*)ptr);
-		break;
-	case SOAP_TYPE_PointerTo_icd1__TestSessionResponse:
-		soap_serialize_PointerTo_icd1__TestSessionResponse(soap, (_icd1__TestSessionResponse *const*)ptr);
-		break;
-	case SOAP_TYPE_PointerTo_icd1__TestSession:
-		soap_serialize_PointerTo_icd1__TestSession(soap, (_icd1__TestSession *const*)ptr);
-		break;
-	case SOAP_TYPE_PointerTo_icd1__GetTime2Response:
-		soap_serialize_PointerTo_icd1__GetTime2Response(soap, (_icd1__GetTime2Response *const*)ptr);
-		break;
-	case SOAP_TYPE_PointerTo_icd1__GetTime2:
-		soap_serialize_PointerTo_icd1__GetTime2(soap, (_icd1__GetTime2 *const*)ptr);
-		break;
 	case SOAP_TYPE_PointerTo_icd1__GetTimeResponse:
 		soap_serialize_PointerTo_icd1__GetTimeResponse(soap, (_icd1__GetTimeResponse *const*)ptr);
 		break;
 	case SOAP_TYPE_PointerTo_icd1__GetTime:
 		soap_serialize_PointerTo_icd1__GetTime(soap, (_icd1__GetTime *const*)ptr);
-		break;
-	case SOAP_TYPE_PointerTo_icd1__HelloWorldResponse:
-		soap_serialize_PointerTo_icd1__HelloWorldResponse(soap, (_icd1__HelloWorldResponse *const*)ptr);
-		break;
-	case SOAP_TYPE_PointerTo_icd1__HelloWorld:
-		soap_serialize_PointerTo_icd1__HelloWorld(soap, (_icd1__HelloWorld *const*)ptr);
 		break;
 	case SOAP_TYPE_PointerTostd__string:
 		soap_serialize_PointerTostd__string(soap, (std::string *const*)ptr);
@@ -698,80 +508,40 @@ SOAP_FMAC3 void * SOAP_FMAC4 _instantiate(struct soap *soap, int t, const char *
 {	(void)type;
 	switch (t)
 	{
-	case SOAP_TYPE__icd1__HelloWorld:
-		return (void*)soap_instantiate__icd1__HelloWorld(soap, -1, type, arrayType, n);
-	case SOAP_TYPE_std__string:
-		return (void*)soap_instantiate_std__string(soap, -1, type, arrayType, n);
-	case SOAP_TYPE__icd1__HelloWorldResponse:
-		return (void*)soap_instantiate__icd1__HelloWorldResponse(soap, -1, type, arrayType, n);
 	case SOAP_TYPE__icd1__GetTime:
 		return (void*)soap_instantiate__icd1__GetTime(soap, -1, type, arrayType, n);
+	case SOAP_TYPE_std__string:
+		return (void*)soap_instantiate_std__string(soap, -1, type, arrayType, n);
 	case SOAP_TYPE__icd1__GetTimeResponse:
 		return (void*)soap_instantiate__icd1__GetTimeResponse(soap, -1, type, arrayType, n);
-	case SOAP_TYPE__icd1__GetTime2:
-		return (void*)soap_instantiate__icd1__GetTime2(soap, -1, type, arrayType, n);
-	case SOAP_TYPE__icd1__GetTime2Response:
-		return (void*)soap_instantiate__icd1__GetTime2Response(soap, -1, type, arrayType, n);
-	case SOAP_TYPE__icd1__TestSession:
-		return (void*)soap_instantiate__icd1__TestSession(soap, -1, type, arrayType, n);
-	case SOAP_TYPE__icd1__TestSessionResponse:
-		return (void*)soap_instantiate__icd1__TestSessionResponse(soap, -1, type, arrayType, n);
-	case SOAP_TYPE__icd1__OutDevice:
-		return (void*)soap_instantiate__icd1__OutDevice(soap, -1, type, arrayType, n);
-	case SOAP_TYPE__icd1__OutDeviceResponse:
-		return (void*)soap_instantiate__icd1__OutDeviceResponse(soap, -1, type, arrayType, n);
 	case SOAP_TYPE__icd1__LoginDevice:
 		return (void*)soap_instantiate__icd1__LoginDevice(soap, -1, type, arrayType, n);
 	case SOAP_TYPE__icd1__LoginDeviceResponse:
 		return (void*)soap_instantiate__icd1__LoginDeviceResponse(soap, -1, type, arrayType, n);
-	case SOAP_TYPE__icd1__GetUpdateDataBin:
-		return (void*)soap_instantiate__icd1__GetUpdateDataBin(soap, -1, type, arrayType, n);
-	case SOAP_TYPE__icd1__GetUpdateDataBinResponse:
-		return (void*)soap_instantiate__icd1__GetUpdateDataBinResponse(soap, -1, type, arrayType, n);
-	case SOAP_TYPE__icd1__HasUpdateBin:
-		return (void*)soap_instantiate__icd1__HasUpdateBin(soap, -1, type, arrayType, n);
-	case SOAP_TYPE__icd1__HasUpdateBinResponse:
-		return (void*)soap_instantiate__icd1__HasUpdateBinResponse(soap, -1, type, arrayType, n);
 	case SOAP_TYPE__icd1__SendData:
 		return (void*)soap_instantiate__icd1__SendData(soap, -1, type, arrayType, n);
 	case SOAP_TYPE__icd1__SendDataResponse:
 		return (void*)soap_instantiate__icd1__SendDataResponse(soap, -1, type, arrayType, n);
-	case SOAP_TYPE___icd2__HelloWorld:
-		return (void*)soap_instantiate___icd2__HelloWorld(soap, -1, type, arrayType, n);
+	case SOAP_TYPE__icd1__LogoutDevice:
+		return (void*)soap_instantiate__icd1__LogoutDevice(soap, -1, type, arrayType, n);
+	case SOAP_TYPE__icd1__LogoutDeviceResponse:
+		return (void*)soap_instantiate__icd1__LogoutDeviceResponse(soap, -1, type, arrayType, n);
 	case SOAP_TYPE___icd2__GetTime:
 		return (void*)soap_instantiate___icd2__GetTime(soap, -1, type, arrayType, n);
-	case SOAP_TYPE___icd2__GetTime2:
-		return (void*)soap_instantiate___icd2__GetTime2(soap, -1, type, arrayType, n);
-	case SOAP_TYPE___icd2__TestSession:
-		return (void*)soap_instantiate___icd2__TestSession(soap, -1, type, arrayType, n);
-	case SOAP_TYPE___icd2__OutDevice:
-		return (void*)soap_instantiate___icd2__OutDevice(soap, -1, type, arrayType, n);
 	case SOAP_TYPE___icd2__LoginDevice:
 		return (void*)soap_instantiate___icd2__LoginDevice(soap, -1, type, arrayType, n);
-	case SOAP_TYPE___icd2__GetUpdateDataBin:
-		return (void*)soap_instantiate___icd2__GetUpdateDataBin(soap, -1, type, arrayType, n);
-	case SOAP_TYPE___icd2__HasUpdateBin:
-		return (void*)soap_instantiate___icd2__HasUpdateBin(soap, -1, type, arrayType, n);
 	case SOAP_TYPE___icd2__SendData:
 		return (void*)soap_instantiate___icd2__SendData(soap, -1, type, arrayType, n);
-	case SOAP_TYPE___icd3__HelloWorld:
-		return (void*)soap_instantiate___icd3__HelloWorld(soap, -1, type, arrayType, n);
+	case SOAP_TYPE___icd2__LogoutDevice:
+		return (void*)soap_instantiate___icd2__LogoutDevice(soap, -1, type, arrayType, n);
 	case SOAP_TYPE___icd3__GetTime:
 		return (void*)soap_instantiate___icd3__GetTime(soap, -1, type, arrayType, n);
-	case SOAP_TYPE___icd3__GetTime2:
-		return (void*)soap_instantiate___icd3__GetTime2(soap, -1, type, arrayType, n);
-	case SOAP_TYPE___icd3__TestSession:
-		return (void*)soap_instantiate___icd3__TestSession(soap, -1, type, arrayType, n);
-	case SOAP_TYPE___icd3__OutDevice:
-		return (void*)soap_instantiate___icd3__OutDevice(soap, -1, type, arrayType, n);
 	case SOAP_TYPE___icd3__LoginDevice:
 		return (void*)soap_instantiate___icd3__LoginDevice(soap, -1, type, arrayType, n);
-	case SOAP_TYPE___icd3__GetUpdateDataBin:
-		return (void*)soap_instantiate___icd3__GetUpdateDataBin(soap, -1, type, arrayType, n);
-	case SOAP_TYPE___icd3__HasUpdateBin:
-		return (void*)soap_instantiate___icd3__HasUpdateBin(soap, -1, type, arrayType, n);
 	case SOAP_TYPE___icd3__SendData:
 		return (void*)soap_instantiate___icd3__SendData(soap, -1, type, arrayType, n);
+	case SOAP_TYPE___icd3__LogoutDevice:
+		return (void*)soap_instantiate___icd3__LogoutDevice(soap, -1, type, arrayType, n);
 #ifndef WITH_NOGLOBAL
 	case SOAP_TYPE_SOAP_ENV__Header:
 		return (void*)soap_instantiate_SOAP_ENV__Header(soap, -1, type, arrayType, n);
@@ -799,11 +569,11 @@ SOAP_FMAC3 void * SOAP_FMAC4 _instantiate(struct soap *soap, int t, const char *
 SOAP_FMAC3 int SOAP_FMAC4 _fdelete(struct soap_clist *p)
 {	switch (p->type)
 	{
-	case SOAP_TYPE__icd1__HelloWorld:
+	case SOAP_TYPE__icd1__GetTime:
 		if (p->size < 0)
-			SOAP_DELETE((_icd1__HelloWorld*)p->ptr);
+			SOAP_DELETE((_icd1__GetTime*)p->ptr);
 		else
-			SOAP_DELETE_ARRAY((_icd1__HelloWorld*)p->ptr);
+			SOAP_DELETE_ARRAY((_icd1__GetTime*)p->ptr);
 		break;
 	case SOAP_TYPE_std__string:
 		if (p->size < 0)
@@ -811,59 +581,11 @@ SOAP_FMAC3 int SOAP_FMAC4 _fdelete(struct soap_clist *p)
 		else
 			SOAP_DELETE_ARRAY((std::string*)p->ptr);
 		break;
-	case SOAP_TYPE__icd1__HelloWorldResponse:
-		if (p->size < 0)
-			SOAP_DELETE((_icd1__HelloWorldResponse*)p->ptr);
-		else
-			SOAP_DELETE_ARRAY((_icd1__HelloWorldResponse*)p->ptr);
-		break;
-	case SOAP_TYPE__icd1__GetTime:
-		if (p->size < 0)
-			SOAP_DELETE((_icd1__GetTime*)p->ptr);
-		else
-			SOAP_DELETE_ARRAY((_icd1__GetTime*)p->ptr);
-		break;
 	case SOAP_TYPE__icd1__GetTimeResponse:
 		if (p->size < 0)
 			SOAP_DELETE((_icd1__GetTimeResponse*)p->ptr);
 		else
 			SOAP_DELETE_ARRAY((_icd1__GetTimeResponse*)p->ptr);
-		break;
-	case SOAP_TYPE__icd1__GetTime2:
-		if (p->size < 0)
-			SOAP_DELETE((_icd1__GetTime2*)p->ptr);
-		else
-			SOAP_DELETE_ARRAY((_icd1__GetTime2*)p->ptr);
-		break;
-	case SOAP_TYPE__icd1__GetTime2Response:
-		if (p->size < 0)
-			SOAP_DELETE((_icd1__GetTime2Response*)p->ptr);
-		else
-			SOAP_DELETE_ARRAY((_icd1__GetTime2Response*)p->ptr);
-		break;
-	case SOAP_TYPE__icd1__TestSession:
-		if (p->size < 0)
-			SOAP_DELETE((_icd1__TestSession*)p->ptr);
-		else
-			SOAP_DELETE_ARRAY((_icd1__TestSession*)p->ptr);
-		break;
-	case SOAP_TYPE__icd1__TestSessionResponse:
-		if (p->size < 0)
-			SOAP_DELETE((_icd1__TestSessionResponse*)p->ptr);
-		else
-			SOAP_DELETE_ARRAY((_icd1__TestSessionResponse*)p->ptr);
-		break;
-	case SOAP_TYPE__icd1__OutDevice:
-		if (p->size < 0)
-			SOAP_DELETE((_icd1__OutDevice*)p->ptr);
-		else
-			SOAP_DELETE_ARRAY((_icd1__OutDevice*)p->ptr);
-		break;
-	case SOAP_TYPE__icd1__OutDeviceResponse:
-		if (p->size < 0)
-			SOAP_DELETE((_icd1__OutDeviceResponse*)p->ptr);
-		else
-			SOAP_DELETE_ARRAY((_icd1__OutDeviceResponse*)p->ptr);
 		break;
 	case SOAP_TYPE__icd1__LoginDevice:
 		if (p->size < 0)
@@ -877,30 +599,6 @@ SOAP_FMAC3 int SOAP_FMAC4 _fdelete(struct soap_clist *p)
 		else
 			SOAP_DELETE_ARRAY((_icd1__LoginDeviceResponse*)p->ptr);
 		break;
-	case SOAP_TYPE__icd1__GetUpdateDataBin:
-		if (p->size < 0)
-			SOAP_DELETE((_icd1__GetUpdateDataBin*)p->ptr);
-		else
-			SOAP_DELETE_ARRAY((_icd1__GetUpdateDataBin*)p->ptr);
-		break;
-	case SOAP_TYPE__icd1__GetUpdateDataBinResponse:
-		if (p->size < 0)
-			SOAP_DELETE((_icd1__GetUpdateDataBinResponse*)p->ptr);
-		else
-			SOAP_DELETE_ARRAY((_icd1__GetUpdateDataBinResponse*)p->ptr);
-		break;
-	case SOAP_TYPE__icd1__HasUpdateBin:
-		if (p->size < 0)
-			SOAP_DELETE((_icd1__HasUpdateBin*)p->ptr);
-		else
-			SOAP_DELETE_ARRAY((_icd1__HasUpdateBin*)p->ptr);
-		break;
-	case SOAP_TYPE__icd1__HasUpdateBinResponse:
-		if (p->size < 0)
-			SOAP_DELETE((_icd1__HasUpdateBinResponse*)p->ptr);
-		else
-			SOAP_DELETE_ARRAY((_icd1__HasUpdateBinResponse*)p->ptr);
-		break;
 	case SOAP_TYPE__icd1__SendData:
 		if (p->size < 0)
 			SOAP_DELETE((_icd1__SendData*)p->ptr);
@@ -913,11 +611,17 @@ SOAP_FMAC3 int SOAP_FMAC4 _fdelete(struct soap_clist *p)
 		else
 			SOAP_DELETE_ARRAY((_icd1__SendDataResponse*)p->ptr);
 		break;
-	case SOAP_TYPE___icd2__HelloWorld:
+	case SOAP_TYPE__icd1__LogoutDevice:
 		if (p->size < 0)
-			SOAP_DELETE((struct __icd2__HelloWorld*)p->ptr);
+			SOAP_DELETE((_icd1__LogoutDevice*)p->ptr);
 		else
-			SOAP_DELETE_ARRAY((struct __icd2__HelloWorld*)p->ptr);
+			SOAP_DELETE_ARRAY((_icd1__LogoutDevice*)p->ptr);
+		break;
+	case SOAP_TYPE__icd1__LogoutDeviceResponse:
+		if (p->size < 0)
+			SOAP_DELETE((_icd1__LogoutDeviceResponse*)p->ptr);
+		else
+			SOAP_DELETE_ARRAY((_icd1__LogoutDeviceResponse*)p->ptr);
 		break;
 	case SOAP_TYPE___icd2__GetTime:
 		if (p->size < 0)
@@ -925,41 +629,11 @@ SOAP_FMAC3 int SOAP_FMAC4 _fdelete(struct soap_clist *p)
 		else
 			SOAP_DELETE_ARRAY((struct __icd2__GetTime*)p->ptr);
 		break;
-	case SOAP_TYPE___icd2__GetTime2:
-		if (p->size < 0)
-			SOAP_DELETE((struct __icd2__GetTime2*)p->ptr);
-		else
-			SOAP_DELETE_ARRAY((struct __icd2__GetTime2*)p->ptr);
-		break;
-	case SOAP_TYPE___icd2__TestSession:
-		if (p->size < 0)
-			SOAP_DELETE((struct __icd2__TestSession*)p->ptr);
-		else
-			SOAP_DELETE_ARRAY((struct __icd2__TestSession*)p->ptr);
-		break;
-	case SOAP_TYPE___icd2__OutDevice:
-		if (p->size < 0)
-			SOAP_DELETE((struct __icd2__OutDevice*)p->ptr);
-		else
-			SOAP_DELETE_ARRAY((struct __icd2__OutDevice*)p->ptr);
-		break;
 	case SOAP_TYPE___icd2__LoginDevice:
 		if (p->size < 0)
 			SOAP_DELETE((struct __icd2__LoginDevice*)p->ptr);
 		else
 			SOAP_DELETE_ARRAY((struct __icd2__LoginDevice*)p->ptr);
-		break;
-	case SOAP_TYPE___icd2__GetUpdateDataBin:
-		if (p->size < 0)
-			SOAP_DELETE((struct __icd2__GetUpdateDataBin*)p->ptr);
-		else
-			SOAP_DELETE_ARRAY((struct __icd2__GetUpdateDataBin*)p->ptr);
-		break;
-	case SOAP_TYPE___icd2__HasUpdateBin:
-		if (p->size < 0)
-			SOAP_DELETE((struct __icd2__HasUpdateBin*)p->ptr);
-		else
-			SOAP_DELETE_ARRAY((struct __icd2__HasUpdateBin*)p->ptr);
 		break;
 	case SOAP_TYPE___icd2__SendData:
 		if (p->size < 0)
@@ -967,11 +641,11 @@ SOAP_FMAC3 int SOAP_FMAC4 _fdelete(struct soap_clist *p)
 		else
 			SOAP_DELETE_ARRAY((struct __icd2__SendData*)p->ptr);
 		break;
-	case SOAP_TYPE___icd3__HelloWorld:
+	case SOAP_TYPE___icd2__LogoutDevice:
 		if (p->size < 0)
-			SOAP_DELETE((struct __icd3__HelloWorld*)p->ptr);
+			SOAP_DELETE((struct __icd2__LogoutDevice*)p->ptr);
 		else
-			SOAP_DELETE_ARRAY((struct __icd3__HelloWorld*)p->ptr);
+			SOAP_DELETE_ARRAY((struct __icd2__LogoutDevice*)p->ptr);
 		break;
 	case SOAP_TYPE___icd3__GetTime:
 		if (p->size < 0)
@@ -979,47 +653,23 @@ SOAP_FMAC3 int SOAP_FMAC4 _fdelete(struct soap_clist *p)
 		else
 			SOAP_DELETE_ARRAY((struct __icd3__GetTime*)p->ptr);
 		break;
-	case SOAP_TYPE___icd3__GetTime2:
-		if (p->size < 0)
-			SOAP_DELETE((struct __icd3__GetTime2*)p->ptr);
-		else
-			SOAP_DELETE_ARRAY((struct __icd3__GetTime2*)p->ptr);
-		break;
-	case SOAP_TYPE___icd3__TestSession:
-		if (p->size < 0)
-			SOAP_DELETE((struct __icd3__TestSession*)p->ptr);
-		else
-			SOAP_DELETE_ARRAY((struct __icd3__TestSession*)p->ptr);
-		break;
-	case SOAP_TYPE___icd3__OutDevice:
-		if (p->size < 0)
-			SOAP_DELETE((struct __icd3__OutDevice*)p->ptr);
-		else
-			SOAP_DELETE_ARRAY((struct __icd3__OutDevice*)p->ptr);
-		break;
 	case SOAP_TYPE___icd3__LoginDevice:
 		if (p->size < 0)
 			SOAP_DELETE((struct __icd3__LoginDevice*)p->ptr);
 		else
 			SOAP_DELETE_ARRAY((struct __icd3__LoginDevice*)p->ptr);
 		break;
-	case SOAP_TYPE___icd3__GetUpdateDataBin:
-		if (p->size < 0)
-			SOAP_DELETE((struct __icd3__GetUpdateDataBin*)p->ptr);
-		else
-			SOAP_DELETE_ARRAY((struct __icd3__GetUpdateDataBin*)p->ptr);
-		break;
-	case SOAP_TYPE___icd3__HasUpdateBin:
-		if (p->size < 0)
-			SOAP_DELETE((struct __icd3__HasUpdateBin*)p->ptr);
-		else
-			SOAP_DELETE_ARRAY((struct __icd3__HasUpdateBin*)p->ptr);
-		break;
 	case SOAP_TYPE___icd3__SendData:
 		if (p->size < 0)
 			SOAP_DELETE((struct __icd3__SendData*)p->ptr);
 		else
 			SOAP_DELETE_ARRAY((struct __icd3__SendData*)p->ptr);
+		break;
+	case SOAP_TYPE___icd3__LogoutDevice:
+		if (p->size < 0)
+			SOAP_DELETE((struct __icd3__LogoutDevice*)p->ptr);
+		else
+			SOAP_DELETE_ARRAY((struct __icd3__LogoutDevice*)p->ptr);
 		break;
 #ifndef WITH_NOGLOBAL
 	case SOAP_TYPE_SOAP_ENV__Header:
@@ -1257,17 +907,291 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy_std__string(struct soap *soap, int st, int 
 	*(std::string*)p = *(std::string*)q;
 }
 
+void _icd1__LogoutDeviceResponse::soap_default(struct soap *soap)
+{
+	this->soap = soap;
+	soap_default_int(soap, &this->_icd1__LogoutDeviceResponse::LogoutDeviceResult);
+	this->_icd1__LogoutDeviceResponse::message = NULL;
+	/* transient soap skipped */
+}
+
+void _icd1__LogoutDeviceResponse::soap_serialize(struct soap *soap) const
+{
+	(void)soap; /* appease -Wall -Werror */
+	soap_serialize_PointerTostd__string(soap, &this->_icd1__LogoutDeviceResponse::message);
+	/* transient soap skipped */
+}
+
+int _icd1__LogoutDeviceResponse::soap_out(struct soap *soap, const char *tag, int id, const char *type) const
+{
+	return soap_out__icd1__LogoutDeviceResponse(soap, tag, id, this, type);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out__icd1__LogoutDeviceResponse(struct soap *soap, const char *tag, int id, const _icd1__LogoutDeviceResponse *a, const char *type)
+{
+	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE__icd1__LogoutDeviceResponse), type))
+		return soap->error;
+	soap_element_result(soap, "icd1:LogoutDeviceResult");
+	if (soap_out_int(soap, "icd1:LogoutDeviceResult", -1, &(a->_icd1__LogoutDeviceResponse::LogoutDeviceResult), ""))
+		return soap->error;
+	if (soap_out_PointerTostd__string(soap, "icd1:message", -1, &(a->_icd1__LogoutDeviceResponse::message), ""))
+		return soap->error;
+	/* transient soap skipped */
+	return soap_element_end_out(soap, tag);
+}
+
+void *_icd1__LogoutDeviceResponse::soap_in(struct soap *soap, const char *tag, const char *type)
+{	return soap_in__icd1__LogoutDeviceResponse(soap, tag, this, type);
+}
+
+SOAP_FMAC3 _icd1__LogoutDeviceResponse * SOAP_FMAC4 soap_in__icd1__LogoutDeviceResponse(struct soap *soap, const char *tag, _icd1__LogoutDeviceResponse *a, const char *type)
+{
+	(void)type; /* appease -Wall -Werror */
+	if (soap_element_begin_in(soap, tag, 0, NULL))
+		return NULL;
+	a = (_icd1__LogoutDeviceResponse *)soap_class_id_enter(soap, soap->id, a, SOAP_TYPE__icd1__LogoutDeviceResponse, sizeof(_icd1__LogoutDeviceResponse), soap->type, soap->arrayType);
+	if (!a)
+		return NULL;
+	if (soap->alloced)
+	{	a->soap_default(soap);
+		if (soap->clist->type != SOAP_TYPE__icd1__LogoutDeviceResponse)
+		{	soap_revert(soap);
+			*soap->id = '\0';
+			return (_icd1__LogoutDeviceResponse *)a->soap_in(soap, tag, type);
+		}
+	}
+	size_t soap_flag_LogoutDeviceResult1 = 1;
+	size_t soap_flag_message1 = 1;
+	if (soap->body && !*soap->href)
+	{
+		for (;;)
+		{	soap->error = SOAP_TAG_MISMATCH;
+			if (soap_flag_LogoutDeviceResult1 && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_int(soap, "icd1:LogoutDeviceResult", &(a->_icd1__LogoutDeviceResponse::LogoutDeviceResult), "xsd:int"))
+				{	soap_flag_LogoutDeviceResult1--;
+					continue;
+				}
+			if (soap_flag_message1 && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
+				if (soap_in_PointerTostd__string(soap, "icd1:message", &(a->_icd1__LogoutDeviceResponse::message), "xsd:string"))
+				{	soap_flag_message1--;
+					continue;
+				}
+			/* transient soap skipped */
+			soap_check_result(soap, "icd1:LogoutDeviceResult");
+			if (soap->error == SOAP_TAG_MISMATCH)
+				soap->error = soap_ignore_element(soap);
+			if (soap->error == SOAP_NO_TAG)
+				break;
+			if (soap->error)
+				return NULL;
+		}
+		if (soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	else
+	{	a = (_icd1__LogoutDeviceResponse *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE__icd1__LogoutDeviceResponse, 0, sizeof(_icd1__LogoutDeviceResponse), 0, soap_copy__icd1__LogoutDeviceResponse);
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	if ((soap->mode & SOAP_XML_STRICT) && (soap_flag_LogoutDeviceResult1 > 0))
+	{	soap->error = SOAP_OCCURS;
+		return NULL;
+	}
+	return a;
+}
+
+int _icd1__LogoutDeviceResponse::soap_put(struct soap *soap, const char *tag, const  char *type) const
+{
+	register int id = soap_embed(soap, (void*)this, NULL, 0, tag, SOAP_TYPE__icd1__LogoutDeviceResponse);
+	if (this->soap_out(soap, tag?tag:"icd1:LogoutDeviceResponse", id, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+void *_icd1__LogoutDeviceResponse::soap_get(struct soap *soap, const char *tag, const char *type)
+{
+	return soap_get__icd1__LogoutDeviceResponse(soap, this, tag, type);
+}
+
+SOAP_FMAC3 _icd1__LogoutDeviceResponse * SOAP_FMAC4 soap_get__icd1__LogoutDeviceResponse(struct soap *soap, _icd1__LogoutDeviceResponse *p, const char *tag, const char *type)
+{
+	if ((p = soap_in__icd1__LogoutDeviceResponse(soap, tag, p, type)))
+		if (soap_getindependent(soap))
+			return NULL;
+	return p;
+}
+
+SOAP_FMAC1 _icd1__LogoutDeviceResponse * SOAP_FMAC2 soap_instantiate__icd1__LogoutDeviceResponse(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+{
+	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate__icd1__LogoutDeviceResponse(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE__icd1__LogoutDeviceResponse, n, _fdelete);
+	if (!cp)
+		return NULL;
+	if (n < 0)
+	{	cp->ptr = (void*)SOAP_NEW(_icd1__LogoutDeviceResponse);
+		if (size)
+			*size = sizeof(_icd1__LogoutDeviceResponse);
+		((_icd1__LogoutDeviceResponse*)cp->ptr)->soap = soap;
+	}
+	else
+	{	cp->ptr = (void*)SOAP_NEW(_icd1__LogoutDeviceResponse[n]);
+		if (!cp->ptr)
+		{	soap->error = SOAP_EOM;
+			return NULL;
+		}
+		if (size)
+			*size = n * sizeof(_icd1__LogoutDeviceResponse);
+		for (int i = 0; i < n; i++)
+			((_icd1__LogoutDeviceResponse*)cp->ptr)[i].soap = soap;
+	}
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
+	return (_icd1__LogoutDeviceResponse*)cp->ptr;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy__icd1__LogoutDeviceResponse(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+{
+	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying _icd1__LogoutDeviceResponse %p -> %p\n", q, p));
+	*(_icd1__LogoutDeviceResponse*)p = *(_icd1__LogoutDeviceResponse*)q;
+}
+
+void _icd1__LogoutDevice::soap_default(struct soap *soap)
+{
+	this->soap = soap;
+	/* transient soap skipped */
+}
+
+void _icd1__LogoutDevice::soap_serialize(struct soap *soap) const
+{
+	(void)soap; /* appease -Wall -Werror */
+	/* transient soap skipped */
+}
+
+int _icd1__LogoutDevice::soap_out(struct soap *soap, const char *tag, int id, const char *type) const
+{
+	return soap_out__icd1__LogoutDevice(soap, tag, id, this, type);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out__icd1__LogoutDevice(struct soap *soap, const char *tag, int id, const _icd1__LogoutDevice *a, const char *type)
+{
+	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE__icd1__LogoutDevice), type))
+		return soap->error;
+	/* transient soap skipped */
+	return soap_element_end_out(soap, tag);
+}
+
+void *_icd1__LogoutDevice::soap_in(struct soap *soap, const char *tag, const char *type)
+{	return soap_in__icd1__LogoutDevice(soap, tag, this, type);
+}
+
+SOAP_FMAC3 _icd1__LogoutDevice * SOAP_FMAC4 soap_in__icd1__LogoutDevice(struct soap *soap, const char *tag, _icd1__LogoutDevice *a, const char *type)
+{
+	(void)type; /* appease -Wall -Werror */
+	if (soap_element_begin_in(soap, tag, 0, NULL))
+		return NULL;
+	a = (_icd1__LogoutDevice *)soap_class_id_enter(soap, soap->id, a, SOAP_TYPE__icd1__LogoutDevice, sizeof(_icd1__LogoutDevice), soap->type, soap->arrayType);
+	if (!a)
+		return NULL;
+	if (soap->alloced)
+	{	a->soap_default(soap);
+		if (soap->clist->type != SOAP_TYPE__icd1__LogoutDevice)
+		{	soap_revert(soap);
+			*soap->id = '\0';
+			return (_icd1__LogoutDevice *)a->soap_in(soap, tag, type);
+		}
+	}
+	if (soap->body && !*soap->href)
+	{
+		for (;;)
+		{	soap->error = SOAP_TAG_MISMATCH;
+			/* transient soap skipped */
+			if (soap->error == SOAP_TAG_MISMATCH)
+				soap->error = soap_ignore_element(soap);
+			if (soap->error == SOAP_NO_TAG)
+				break;
+			if (soap->error)
+				return NULL;
+		}
+		if (soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	else
+	{	a = (_icd1__LogoutDevice *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE__icd1__LogoutDevice, 0, sizeof(_icd1__LogoutDevice), 0, soap_copy__icd1__LogoutDevice);
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	return a;
+}
+
+int _icd1__LogoutDevice::soap_put(struct soap *soap, const char *tag, const  char *type) const
+{
+	register int id = soap_embed(soap, (void*)this, NULL, 0, tag, SOAP_TYPE__icd1__LogoutDevice);
+	if (this->soap_out(soap, tag?tag:"icd1:LogoutDevice", id, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+void *_icd1__LogoutDevice::soap_get(struct soap *soap, const char *tag, const char *type)
+{
+	return soap_get__icd1__LogoutDevice(soap, this, tag, type);
+}
+
+SOAP_FMAC3 _icd1__LogoutDevice * SOAP_FMAC4 soap_get__icd1__LogoutDevice(struct soap *soap, _icd1__LogoutDevice *p, const char *tag, const char *type)
+{
+	if ((p = soap_in__icd1__LogoutDevice(soap, tag, p, type)))
+		if (soap_getindependent(soap))
+			return NULL;
+	return p;
+}
+
+SOAP_FMAC1 _icd1__LogoutDevice * SOAP_FMAC2 soap_instantiate__icd1__LogoutDevice(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+{
+	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate__icd1__LogoutDevice(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE__icd1__LogoutDevice, n, _fdelete);
+	if (!cp)
+		return NULL;
+	if (n < 0)
+	{	cp->ptr = (void*)SOAP_NEW(_icd1__LogoutDevice);
+		if (size)
+			*size = sizeof(_icd1__LogoutDevice);
+		((_icd1__LogoutDevice*)cp->ptr)->soap = soap;
+	}
+	else
+	{	cp->ptr = (void*)SOAP_NEW(_icd1__LogoutDevice[n]);
+		if (!cp->ptr)
+		{	soap->error = SOAP_EOM;
+			return NULL;
+		}
+		if (size)
+			*size = n * sizeof(_icd1__LogoutDevice);
+		for (int i = 0; i < n; i++)
+			((_icd1__LogoutDevice*)cp->ptr)[i].soap = soap;
+	}
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
+	return (_icd1__LogoutDevice*)cp->ptr;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy__icd1__LogoutDevice(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+{
+	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying _icd1__LogoutDevice %p -> %p\n", q, p));
+	*(_icd1__LogoutDevice*)p = *(_icd1__LogoutDevice*)q;
+}
+
 void _icd1__SendDataResponse::soap_default(struct soap *soap)
 {
 	this->soap = soap;
-	this->_icd1__SendDataResponse::SendDataResult = NULL;
+	soap_default_int(soap, &this->_icd1__SendDataResponse::SendDataResult);
+	this->_icd1__SendDataResponse::message = NULL;
 	/* transient soap skipped */
 }
 
 void _icd1__SendDataResponse::soap_serialize(struct soap *soap) const
 {
 	(void)soap; /* appease -Wall -Werror */
-	soap_serialize_PointerTostd__string(soap, &this->_icd1__SendDataResponse::SendDataResult);
+	soap_serialize_PointerTostd__string(soap, &this->_icd1__SendDataResponse::message);
 	/* transient soap skipped */
 }
 
@@ -1280,9 +1204,10 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_out__icd1__SendDataResponse(struct soap *soap, co
 {
 	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE__icd1__SendDataResponse), type))
 		return soap->error;
-	if (a->SendDataResult)
-		soap_element_result(soap, "icd1:SendDataResult");
-	if (soap_out_PointerTostd__string(soap, "icd1:SendDataResult", -1, &(a->_icd1__SendDataResponse::SendDataResult), ""))
+	soap_element_result(soap, "icd1:SendDataResult");
+	if (soap_out_int(soap, "icd1:SendDataResult", -1, &(a->_icd1__SendDataResponse::SendDataResult), ""))
+		return soap->error;
+	if (soap_out_PointerTostd__string(soap, "icd1:message", -1, &(a->_icd1__SendDataResponse::message), ""))
 		return soap->error;
 	/* transient soap skipped */
 	return soap_element_end_out(soap, tag);
@@ -1309,13 +1234,19 @@ SOAP_FMAC3 _icd1__SendDataResponse * SOAP_FMAC4 soap_in__icd1__SendDataResponse(
 		}
 	}
 	size_t soap_flag_SendDataResult1 = 1;
+	size_t soap_flag_message1 = 1;
 	if (soap->body && !*soap->href)
 	{
 		for (;;)
 		{	soap->error = SOAP_TAG_MISMATCH;
-			if (soap_flag_SendDataResult1 && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
-				if (soap_in_PointerTostd__string(soap, "icd1:SendDataResult", &(a->_icd1__SendDataResponse::SendDataResult), "xsd:string"))
+			if (soap_flag_SendDataResult1 && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_int(soap, "icd1:SendDataResult", &(a->_icd1__SendDataResponse::SendDataResult), "xsd:int"))
 				{	soap_flag_SendDataResult1--;
+					continue;
+				}
+			if (soap_flag_message1 && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
+				if (soap_in_PointerTostd__string(soap, "icd1:message", &(a->_icd1__SendDataResponse::message), "xsd:string"))
+				{	soap_flag_message1--;
 					continue;
 				}
 			/* transient soap skipped */
@@ -1334,6 +1265,10 @@ SOAP_FMAC3 _icd1__SendDataResponse * SOAP_FMAC4 soap_in__icd1__SendDataResponse(
 	{	a = (_icd1__SendDataResponse *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE__icd1__SendDataResponse, 0, sizeof(_icd1__SendDataResponse), 0, soap_copy__icd1__SendDataResponse);
 		if (soap->body && soap_element_end_in(soap, tag))
 			return NULL;
+	}
+	if ((soap->mode & SOAP_XML_STRICT) && (soap_flag_SendDataResult1 > 0))
+	{	soap->error = SOAP_OCCURS;
+		return NULL;
 	}
 	return a;
 }
@@ -1528,571 +1463,18 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy__icd1__SendData(struct soap *soap, int st, 
 	*(_icd1__SendData*)p = *(_icd1__SendData*)q;
 }
 
-void _icd1__HasUpdateBinResponse::soap_default(struct soap *soap)
-{
-	this->soap = soap;
-	this->_icd1__HasUpdateBinResponse::HasUpdateBinResult = NULL;
-	/* transient soap skipped */
-}
-
-void _icd1__HasUpdateBinResponse::soap_serialize(struct soap *soap) const
-{
-	(void)soap; /* appease -Wall -Werror */
-	soap_serialize_PointerTostd__string(soap, &this->_icd1__HasUpdateBinResponse::HasUpdateBinResult);
-	/* transient soap skipped */
-}
-
-int _icd1__HasUpdateBinResponse::soap_out(struct soap *soap, const char *tag, int id, const char *type) const
-{
-	return soap_out__icd1__HasUpdateBinResponse(soap, tag, id, this, type);
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_out__icd1__HasUpdateBinResponse(struct soap *soap, const char *tag, int id, const _icd1__HasUpdateBinResponse *a, const char *type)
-{
-	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE__icd1__HasUpdateBinResponse), type))
-		return soap->error;
-	if (a->HasUpdateBinResult)
-		soap_element_result(soap, "icd1:HasUpdateBinResult");
-	if (soap_out_PointerTostd__string(soap, "icd1:HasUpdateBinResult", -1, &(a->_icd1__HasUpdateBinResponse::HasUpdateBinResult), ""))
-		return soap->error;
-	/* transient soap skipped */
-	return soap_element_end_out(soap, tag);
-}
-
-void *_icd1__HasUpdateBinResponse::soap_in(struct soap *soap, const char *tag, const char *type)
-{	return soap_in__icd1__HasUpdateBinResponse(soap, tag, this, type);
-}
-
-SOAP_FMAC3 _icd1__HasUpdateBinResponse * SOAP_FMAC4 soap_in__icd1__HasUpdateBinResponse(struct soap *soap, const char *tag, _icd1__HasUpdateBinResponse *a, const char *type)
-{
-	(void)type; /* appease -Wall -Werror */
-	if (soap_element_begin_in(soap, tag, 0, NULL))
-		return NULL;
-	a = (_icd1__HasUpdateBinResponse *)soap_class_id_enter(soap, soap->id, a, SOAP_TYPE__icd1__HasUpdateBinResponse, sizeof(_icd1__HasUpdateBinResponse), soap->type, soap->arrayType);
-	if (!a)
-		return NULL;
-	if (soap->alloced)
-	{	a->soap_default(soap);
-		if (soap->clist->type != SOAP_TYPE__icd1__HasUpdateBinResponse)
-		{	soap_revert(soap);
-			*soap->id = '\0';
-			return (_icd1__HasUpdateBinResponse *)a->soap_in(soap, tag, type);
-		}
-	}
-	size_t soap_flag_HasUpdateBinResult1 = 1;
-	if (soap->body && !*soap->href)
-	{
-		for (;;)
-		{	soap->error = SOAP_TAG_MISMATCH;
-			if (soap_flag_HasUpdateBinResult1 && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
-				if (soap_in_PointerTostd__string(soap, "icd1:HasUpdateBinResult", &(a->_icd1__HasUpdateBinResponse::HasUpdateBinResult), "xsd:string"))
-				{	soap_flag_HasUpdateBinResult1--;
-					continue;
-				}
-			/* transient soap skipped */
-			soap_check_result(soap, "icd1:HasUpdateBinResult");
-			if (soap->error == SOAP_TAG_MISMATCH)
-				soap->error = soap_ignore_element(soap);
-			if (soap->error == SOAP_NO_TAG)
-				break;
-			if (soap->error)
-				return NULL;
-		}
-		if (soap_element_end_in(soap, tag))
-			return NULL;
-	}
-	else
-	{	a = (_icd1__HasUpdateBinResponse *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE__icd1__HasUpdateBinResponse, 0, sizeof(_icd1__HasUpdateBinResponse), 0, soap_copy__icd1__HasUpdateBinResponse);
-		if (soap->body && soap_element_end_in(soap, tag))
-			return NULL;
-	}
-	return a;
-}
-
-int _icd1__HasUpdateBinResponse::soap_put(struct soap *soap, const char *tag, const  char *type) const
-{
-	register int id = soap_embed(soap, (void*)this, NULL, 0, tag, SOAP_TYPE__icd1__HasUpdateBinResponse);
-	if (this->soap_out(soap, tag?tag:"icd1:HasUpdateBinResponse", id, type))
-		return soap->error;
-	return soap_putindependent(soap);
-}
-
-void *_icd1__HasUpdateBinResponse::soap_get(struct soap *soap, const char *tag, const char *type)
-{
-	return soap_get__icd1__HasUpdateBinResponse(soap, this, tag, type);
-}
-
-SOAP_FMAC3 _icd1__HasUpdateBinResponse * SOAP_FMAC4 soap_get__icd1__HasUpdateBinResponse(struct soap *soap, _icd1__HasUpdateBinResponse *p, const char *tag, const char *type)
-{
-	if ((p = soap_in__icd1__HasUpdateBinResponse(soap, tag, p, type)))
-		if (soap_getindependent(soap))
-			return NULL;
-	return p;
-}
-
-SOAP_FMAC1 _icd1__HasUpdateBinResponse * SOAP_FMAC2 soap_instantiate__icd1__HasUpdateBinResponse(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
-{
-	(void)type; (void)arrayType; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate__icd1__HasUpdateBinResponse(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE__icd1__HasUpdateBinResponse, n, _fdelete);
-	if (!cp)
-		return NULL;
-	if (n < 0)
-	{	cp->ptr = (void*)SOAP_NEW(_icd1__HasUpdateBinResponse);
-		if (size)
-			*size = sizeof(_icd1__HasUpdateBinResponse);
-		((_icd1__HasUpdateBinResponse*)cp->ptr)->soap = soap;
-	}
-	else
-	{	cp->ptr = (void*)SOAP_NEW(_icd1__HasUpdateBinResponse[n]);
-		if (!cp->ptr)
-		{	soap->error = SOAP_EOM;
-			return NULL;
-		}
-		if (size)
-			*size = n * sizeof(_icd1__HasUpdateBinResponse);
-		for (int i = 0; i < n; i++)
-			((_icd1__HasUpdateBinResponse*)cp->ptr)[i].soap = soap;
-	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (_icd1__HasUpdateBinResponse*)cp->ptr;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy__icd1__HasUpdateBinResponse(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
-{
-	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying _icd1__HasUpdateBinResponse %p -> %p\n", q, p));
-	*(_icd1__HasUpdateBinResponse*)p = *(_icd1__HasUpdateBinResponse*)q;
-}
-
-void _icd1__HasUpdateBin::soap_default(struct soap *soap)
-{
-	this->soap = soap;
-	this->_icd1__HasUpdateBin::DevVer = NULL;
-	/* transient soap skipped */
-}
-
-void _icd1__HasUpdateBin::soap_serialize(struct soap *soap) const
-{
-	(void)soap; /* appease -Wall -Werror */
-	soap_serialize_PointerTostd__string(soap, &this->_icd1__HasUpdateBin::DevVer);
-	/* transient soap skipped */
-}
-
-int _icd1__HasUpdateBin::soap_out(struct soap *soap, const char *tag, int id, const char *type) const
-{
-	return soap_out__icd1__HasUpdateBin(soap, tag, id, this, type);
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_out__icd1__HasUpdateBin(struct soap *soap, const char *tag, int id, const _icd1__HasUpdateBin *a, const char *type)
-{
-	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE__icd1__HasUpdateBin), type))
-		return soap->error;
-	if (soap_out_PointerTostd__string(soap, "icd1:DevVer", -1, &(a->_icd1__HasUpdateBin::DevVer), ""))
-		return soap->error;
-	/* transient soap skipped */
-	return soap_element_end_out(soap, tag);
-}
-
-void *_icd1__HasUpdateBin::soap_in(struct soap *soap, const char *tag, const char *type)
-{	return soap_in__icd1__HasUpdateBin(soap, tag, this, type);
-}
-
-SOAP_FMAC3 _icd1__HasUpdateBin * SOAP_FMAC4 soap_in__icd1__HasUpdateBin(struct soap *soap, const char *tag, _icd1__HasUpdateBin *a, const char *type)
-{
-	(void)type; /* appease -Wall -Werror */
-	if (soap_element_begin_in(soap, tag, 0, NULL))
-		return NULL;
-	a = (_icd1__HasUpdateBin *)soap_class_id_enter(soap, soap->id, a, SOAP_TYPE__icd1__HasUpdateBin, sizeof(_icd1__HasUpdateBin), soap->type, soap->arrayType);
-	if (!a)
-		return NULL;
-	if (soap->alloced)
-	{	a->soap_default(soap);
-		if (soap->clist->type != SOAP_TYPE__icd1__HasUpdateBin)
-		{	soap_revert(soap);
-			*soap->id = '\0';
-			return (_icd1__HasUpdateBin *)a->soap_in(soap, tag, type);
-		}
-	}
-	size_t soap_flag_DevVer1 = 1;
-	if (soap->body && !*soap->href)
-	{
-		for (;;)
-		{	soap->error = SOAP_TAG_MISMATCH;
-			if (soap_flag_DevVer1 && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
-				if (soap_in_PointerTostd__string(soap, "icd1:DevVer", &(a->_icd1__HasUpdateBin::DevVer), "xsd:string"))
-				{	soap_flag_DevVer1--;
-					continue;
-				}
-			/* transient soap skipped */
-			if (soap->error == SOAP_TAG_MISMATCH)
-				soap->error = soap_ignore_element(soap);
-			if (soap->error == SOAP_NO_TAG)
-				break;
-			if (soap->error)
-				return NULL;
-		}
-		if (soap_element_end_in(soap, tag))
-			return NULL;
-	}
-	else
-	{	a = (_icd1__HasUpdateBin *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE__icd1__HasUpdateBin, 0, sizeof(_icd1__HasUpdateBin), 0, soap_copy__icd1__HasUpdateBin);
-		if (soap->body && soap_element_end_in(soap, tag))
-			return NULL;
-	}
-	return a;
-}
-
-int _icd1__HasUpdateBin::soap_put(struct soap *soap, const char *tag, const  char *type) const
-{
-	register int id = soap_embed(soap, (void*)this, NULL, 0, tag, SOAP_TYPE__icd1__HasUpdateBin);
-	if (this->soap_out(soap, tag?tag:"icd1:HasUpdateBin", id, type))
-		return soap->error;
-	return soap_putindependent(soap);
-}
-
-void *_icd1__HasUpdateBin::soap_get(struct soap *soap, const char *tag, const char *type)
-{
-	return soap_get__icd1__HasUpdateBin(soap, this, tag, type);
-}
-
-SOAP_FMAC3 _icd1__HasUpdateBin * SOAP_FMAC4 soap_get__icd1__HasUpdateBin(struct soap *soap, _icd1__HasUpdateBin *p, const char *tag, const char *type)
-{
-	if ((p = soap_in__icd1__HasUpdateBin(soap, tag, p, type)))
-		if (soap_getindependent(soap))
-			return NULL;
-	return p;
-}
-
-SOAP_FMAC1 _icd1__HasUpdateBin * SOAP_FMAC2 soap_instantiate__icd1__HasUpdateBin(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
-{
-	(void)type; (void)arrayType; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate__icd1__HasUpdateBin(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE__icd1__HasUpdateBin, n, _fdelete);
-	if (!cp)
-		return NULL;
-	if (n < 0)
-	{	cp->ptr = (void*)SOAP_NEW(_icd1__HasUpdateBin);
-		if (size)
-			*size = sizeof(_icd1__HasUpdateBin);
-		((_icd1__HasUpdateBin*)cp->ptr)->soap = soap;
-	}
-	else
-	{	cp->ptr = (void*)SOAP_NEW(_icd1__HasUpdateBin[n]);
-		if (!cp->ptr)
-		{	soap->error = SOAP_EOM;
-			return NULL;
-		}
-		if (size)
-			*size = n * sizeof(_icd1__HasUpdateBin);
-		for (int i = 0; i < n; i++)
-			((_icd1__HasUpdateBin*)cp->ptr)[i].soap = soap;
-	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (_icd1__HasUpdateBin*)cp->ptr;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy__icd1__HasUpdateBin(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
-{
-	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying _icd1__HasUpdateBin %p -> %p\n", q, p));
-	*(_icd1__HasUpdateBin*)p = *(_icd1__HasUpdateBin*)q;
-}
-
-void _icd1__GetUpdateDataBinResponse::soap_default(struct soap *soap)
-{
-	this->soap = soap;
-	this->_icd1__GetUpdateDataBinResponse::GetUpdateDataBinResult = NULL;
-	/* transient soap skipped */
-}
-
-void _icd1__GetUpdateDataBinResponse::soap_serialize(struct soap *soap) const
-{
-	(void)soap; /* appease -Wall -Werror */
-	soap_serialize_PointerTostd__string(soap, &this->_icd1__GetUpdateDataBinResponse::GetUpdateDataBinResult);
-	/* transient soap skipped */
-}
-
-int _icd1__GetUpdateDataBinResponse::soap_out(struct soap *soap, const char *tag, int id, const char *type) const
-{
-	return soap_out__icd1__GetUpdateDataBinResponse(soap, tag, id, this, type);
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_out__icd1__GetUpdateDataBinResponse(struct soap *soap, const char *tag, int id, const _icd1__GetUpdateDataBinResponse *a, const char *type)
-{
-	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE__icd1__GetUpdateDataBinResponse), type))
-		return soap->error;
-	if (a->GetUpdateDataBinResult)
-		soap_element_result(soap, "icd1:GetUpdateDataBinResult");
-	if (soap_out_PointerTostd__string(soap, "icd1:GetUpdateDataBinResult", -1, &(a->_icd1__GetUpdateDataBinResponse::GetUpdateDataBinResult), ""))
-		return soap->error;
-	/* transient soap skipped */
-	return soap_element_end_out(soap, tag);
-}
-
-void *_icd1__GetUpdateDataBinResponse::soap_in(struct soap *soap, const char *tag, const char *type)
-{	return soap_in__icd1__GetUpdateDataBinResponse(soap, tag, this, type);
-}
-
-SOAP_FMAC3 _icd1__GetUpdateDataBinResponse * SOAP_FMAC4 soap_in__icd1__GetUpdateDataBinResponse(struct soap *soap, const char *tag, _icd1__GetUpdateDataBinResponse *a, const char *type)
-{
-	(void)type; /* appease -Wall -Werror */
-	if (soap_element_begin_in(soap, tag, 0, NULL))
-		return NULL;
-	a = (_icd1__GetUpdateDataBinResponse *)soap_class_id_enter(soap, soap->id, a, SOAP_TYPE__icd1__GetUpdateDataBinResponse, sizeof(_icd1__GetUpdateDataBinResponse), soap->type, soap->arrayType);
-	if (!a)
-		return NULL;
-	if (soap->alloced)
-	{	a->soap_default(soap);
-		if (soap->clist->type != SOAP_TYPE__icd1__GetUpdateDataBinResponse)
-		{	soap_revert(soap);
-			*soap->id = '\0';
-			return (_icd1__GetUpdateDataBinResponse *)a->soap_in(soap, tag, type);
-		}
-	}
-	size_t soap_flag_GetUpdateDataBinResult1 = 1;
-	if (soap->body && !*soap->href)
-	{
-		for (;;)
-		{	soap->error = SOAP_TAG_MISMATCH;
-			if (soap_flag_GetUpdateDataBinResult1 && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
-				if (soap_in_PointerTostd__string(soap, "icd1:GetUpdateDataBinResult", &(a->_icd1__GetUpdateDataBinResponse::GetUpdateDataBinResult), "xsd:string"))
-				{	soap_flag_GetUpdateDataBinResult1--;
-					continue;
-				}
-			/* transient soap skipped */
-			soap_check_result(soap, "icd1:GetUpdateDataBinResult");
-			if (soap->error == SOAP_TAG_MISMATCH)
-				soap->error = soap_ignore_element(soap);
-			if (soap->error == SOAP_NO_TAG)
-				break;
-			if (soap->error)
-				return NULL;
-		}
-		if (soap_element_end_in(soap, tag))
-			return NULL;
-	}
-	else
-	{	a = (_icd1__GetUpdateDataBinResponse *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE__icd1__GetUpdateDataBinResponse, 0, sizeof(_icd1__GetUpdateDataBinResponse), 0, soap_copy__icd1__GetUpdateDataBinResponse);
-		if (soap->body && soap_element_end_in(soap, tag))
-			return NULL;
-	}
-	return a;
-}
-
-int _icd1__GetUpdateDataBinResponse::soap_put(struct soap *soap, const char *tag, const  char *type) const
-{
-	register int id = soap_embed(soap, (void*)this, NULL, 0, tag, SOAP_TYPE__icd1__GetUpdateDataBinResponse);
-	if (this->soap_out(soap, tag?tag:"icd1:GetUpdateDataBinResponse", id, type))
-		return soap->error;
-	return soap_putindependent(soap);
-}
-
-void *_icd1__GetUpdateDataBinResponse::soap_get(struct soap *soap, const char *tag, const char *type)
-{
-	return soap_get__icd1__GetUpdateDataBinResponse(soap, this, tag, type);
-}
-
-SOAP_FMAC3 _icd1__GetUpdateDataBinResponse * SOAP_FMAC4 soap_get__icd1__GetUpdateDataBinResponse(struct soap *soap, _icd1__GetUpdateDataBinResponse *p, const char *tag, const char *type)
-{
-	if ((p = soap_in__icd1__GetUpdateDataBinResponse(soap, tag, p, type)))
-		if (soap_getindependent(soap))
-			return NULL;
-	return p;
-}
-
-SOAP_FMAC1 _icd1__GetUpdateDataBinResponse * SOAP_FMAC2 soap_instantiate__icd1__GetUpdateDataBinResponse(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
-{
-	(void)type; (void)arrayType; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate__icd1__GetUpdateDataBinResponse(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE__icd1__GetUpdateDataBinResponse, n, _fdelete);
-	if (!cp)
-		return NULL;
-	if (n < 0)
-	{	cp->ptr = (void*)SOAP_NEW(_icd1__GetUpdateDataBinResponse);
-		if (size)
-			*size = sizeof(_icd1__GetUpdateDataBinResponse);
-		((_icd1__GetUpdateDataBinResponse*)cp->ptr)->soap = soap;
-	}
-	else
-	{	cp->ptr = (void*)SOAP_NEW(_icd1__GetUpdateDataBinResponse[n]);
-		if (!cp->ptr)
-		{	soap->error = SOAP_EOM;
-			return NULL;
-		}
-		if (size)
-			*size = n * sizeof(_icd1__GetUpdateDataBinResponse);
-		for (int i = 0; i < n; i++)
-			((_icd1__GetUpdateDataBinResponse*)cp->ptr)[i].soap = soap;
-	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (_icd1__GetUpdateDataBinResponse*)cp->ptr;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy__icd1__GetUpdateDataBinResponse(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
-{
-	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying _icd1__GetUpdateDataBinResponse %p -> %p\n", q, p));
-	*(_icd1__GetUpdateDataBinResponse*)p = *(_icd1__GetUpdateDataBinResponse*)q;
-}
-
-void _icd1__GetUpdateDataBin::soap_default(struct soap *soap)
-{
-	this->soap = soap;
-	soap_default_int(soap, &this->_icd1__GetUpdateDataBin::nPage);
-	soap_default_int(soap, &this->_icd1__GetUpdateDataBin::nSize);
-	/* transient soap skipped */
-}
-
-void _icd1__GetUpdateDataBin::soap_serialize(struct soap *soap) const
-{
-	(void)soap; /* appease -Wall -Werror */
-	/* transient soap skipped */
-}
-
-int _icd1__GetUpdateDataBin::soap_out(struct soap *soap, const char *tag, int id, const char *type) const
-{
-	return soap_out__icd1__GetUpdateDataBin(soap, tag, id, this, type);
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_out__icd1__GetUpdateDataBin(struct soap *soap, const char *tag, int id, const _icd1__GetUpdateDataBin *a, const char *type)
-{
-	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE__icd1__GetUpdateDataBin), type))
-		return soap->error;
-	if (soap_out_int(soap, "icd1:nPage", -1, &(a->_icd1__GetUpdateDataBin::nPage), ""))
-		return soap->error;
-	if (soap_out_int(soap, "icd1:nSize", -1, &(a->_icd1__GetUpdateDataBin::nSize), ""))
-		return soap->error;
-	/* transient soap skipped */
-	return soap_element_end_out(soap, tag);
-}
-
-void *_icd1__GetUpdateDataBin::soap_in(struct soap *soap, const char *tag, const char *type)
-{	return soap_in__icd1__GetUpdateDataBin(soap, tag, this, type);
-}
-
-SOAP_FMAC3 _icd1__GetUpdateDataBin * SOAP_FMAC4 soap_in__icd1__GetUpdateDataBin(struct soap *soap, const char *tag, _icd1__GetUpdateDataBin *a, const char *type)
-{
-	(void)type; /* appease -Wall -Werror */
-	if (soap_element_begin_in(soap, tag, 0, NULL))
-		return NULL;
-	a = (_icd1__GetUpdateDataBin *)soap_class_id_enter(soap, soap->id, a, SOAP_TYPE__icd1__GetUpdateDataBin, sizeof(_icd1__GetUpdateDataBin), soap->type, soap->arrayType);
-	if (!a)
-		return NULL;
-	if (soap->alloced)
-	{	a->soap_default(soap);
-		if (soap->clist->type != SOAP_TYPE__icd1__GetUpdateDataBin)
-		{	soap_revert(soap);
-			*soap->id = '\0';
-			return (_icd1__GetUpdateDataBin *)a->soap_in(soap, tag, type);
-		}
-	}
-	size_t soap_flag_nPage1 = 1;
-	size_t soap_flag_nSize1 = 1;
-	if (soap->body && !*soap->href)
-	{
-		for (;;)
-		{	soap->error = SOAP_TAG_MISMATCH;
-			if (soap_flag_nPage1 && soap->error == SOAP_TAG_MISMATCH)
-				if (soap_in_int(soap, "icd1:nPage", &(a->_icd1__GetUpdateDataBin::nPage), "xsd:int"))
-				{	soap_flag_nPage1--;
-					continue;
-				}
-			if (soap_flag_nSize1 && soap->error == SOAP_TAG_MISMATCH)
-				if (soap_in_int(soap, "icd1:nSize", &(a->_icd1__GetUpdateDataBin::nSize), "xsd:int"))
-				{	soap_flag_nSize1--;
-					continue;
-				}
-			/* transient soap skipped */
-			if (soap->error == SOAP_TAG_MISMATCH)
-				soap->error = soap_ignore_element(soap);
-			if (soap->error == SOAP_NO_TAG)
-				break;
-			if (soap->error)
-				return NULL;
-		}
-		if (soap_element_end_in(soap, tag))
-			return NULL;
-	}
-	else
-	{	a = (_icd1__GetUpdateDataBin *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE__icd1__GetUpdateDataBin, 0, sizeof(_icd1__GetUpdateDataBin), 0, soap_copy__icd1__GetUpdateDataBin);
-		if (soap->body && soap_element_end_in(soap, tag))
-			return NULL;
-	}
-	if ((soap->mode & SOAP_XML_STRICT) && (soap_flag_nPage1 > 0 || soap_flag_nSize1 > 0))
-	{	soap->error = SOAP_OCCURS;
-		return NULL;
-	}
-	return a;
-}
-
-int _icd1__GetUpdateDataBin::soap_put(struct soap *soap, const char *tag, const  char *type) const
-{
-	register int id = soap_embed(soap, (void*)this, NULL, 0, tag, SOAP_TYPE__icd1__GetUpdateDataBin);
-	if (this->soap_out(soap, tag?tag:"icd1:GetUpdateDataBin", id, type))
-		return soap->error;
-	return soap_putindependent(soap);
-}
-
-void *_icd1__GetUpdateDataBin::soap_get(struct soap *soap, const char *tag, const char *type)
-{
-	return soap_get__icd1__GetUpdateDataBin(soap, this, tag, type);
-}
-
-SOAP_FMAC3 _icd1__GetUpdateDataBin * SOAP_FMAC4 soap_get__icd1__GetUpdateDataBin(struct soap *soap, _icd1__GetUpdateDataBin *p, const char *tag, const char *type)
-{
-	if ((p = soap_in__icd1__GetUpdateDataBin(soap, tag, p, type)))
-		if (soap_getindependent(soap))
-			return NULL;
-	return p;
-}
-
-SOAP_FMAC1 _icd1__GetUpdateDataBin * SOAP_FMAC2 soap_instantiate__icd1__GetUpdateDataBin(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
-{
-	(void)type; (void)arrayType; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate__icd1__GetUpdateDataBin(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE__icd1__GetUpdateDataBin, n, _fdelete);
-	if (!cp)
-		return NULL;
-	if (n < 0)
-	{	cp->ptr = (void*)SOAP_NEW(_icd1__GetUpdateDataBin);
-		if (size)
-			*size = sizeof(_icd1__GetUpdateDataBin);
-		((_icd1__GetUpdateDataBin*)cp->ptr)->soap = soap;
-	}
-	else
-	{	cp->ptr = (void*)SOAP_NEW(_icd1__GetUpdateDataBin[n]);
-		if (!cp->ptr)
-		{	soap->error = SOAP_EOM;
-			return NULL;
-		}
-		if (size)
-			*size = n * sizeof(_icd1__GetUpdateDataBin);
-		for (int i = 0; i < n; i++)
-			((_icd1__GetUpdateDataBin*)cp->ptr)[i].soap = soap;
-	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (_icd1__GetUpdateDataBin*)cp->ptr;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy__icd1__GetUpdateDataBin(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
-{
-	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying _icd1__GetUpdateDataBin %p -> %p\n", q, p));
-	*(_icd1__GetUpdateDataBin*)p = *(_icd1__GetUpdateDataBin*)q;
-}
-
 void _icd1__LoginDeviceResponse::soap_default(struct soap *soap)
 {
 	this->soap = soap;
-	this->_icd1__LoginDeviceResponse::LoginDeviceResult = NULL;
+	soap_default_int(soap, &this->_icd1__LoginDeviceResponse::LoginDeviceResult);
+	this->_icd1__LoginDeviceResponse::message = NULL;
 	/* transient soap skipped */
 }
 
 void _icd1__LoginDeviceResponse::soap_serialize(struct soap *soap) const
 {
 	(void)soap; /* appease -Wall -Werror */
-	soap_serialize_PointerTostd__string(soap, &this->_icd1__LoginDeviceResponse::LoginDeviceResult);
+	soap_serialize_PointerTostd__string(soap, &this->_icd1__LoginDeviceResponse::message);
 	/* transient soap skipped */
 }
 
@@ -2105,9 +1487,10 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_out__icd1__LoginDeviceResponse(struct soap *soap,
 {
 	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE__icd1__LoginDeviceResponse), type))
 		return soap->error;
-	if (a->LoginDeviceResult)
-		soap_element_result(soap, "icd1:LoginDeviceResult");
-	if (soap_out_PointerTostd__string(soap, "icd1:LoginDeviceResult", -1, &(a->_icd1__LoginDeviceResponse::LoginDeviceResult), ""))
+	soap_element_result(soap, "icd1:LoginDeviceResult");
+	if (soap_out_int(soap, "icd1:LoginDeviceResult", -1, &(a->_icd1__LoginDeviceResponse::LoginDeviceResult), ""))
+		return soap->error;
+	if (soap_out_PointerTostd__string(soap, "icd1:message", -1, &(a->_icd1__LoginDeviceResponse::message), ""))
 		return soap->error;
 	/* transient soap skipped */
 	return soap_element_end_out(soap, tag);
@@ -2134,13 +1517,19 @@ SOAP_FMAC3 _icd1__LoginDeviceResponse * SOAP_FMAC4 soap_in__icd1__LoginDeviceRes
 		}
 	}
 	size_t soap_flag_LoginDeviceResult1 = 1;
+	size_t soap_flag_message1 = 1;
 	if (soap->body && !*soap->href)
 	{
 		for (;;)
 		{	soap->error = SOAP_TAG_MISMATCH;
-			if (soap_flag_LoginDeviceResult1 && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
-				if (soap_in_PointerTostd__string(soap, "icd1:LoginDeviceResult", &(a->_icd1__LoginDeviceResponse::LoginDeviceResult), "xsd:string"))
+			if (soap_flag_LoginDeviceResult1 && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_int(soap, "icd1:LoginDeviceResult", &(a->_icd1__LoginDeviceResponse::LoginDeviceResult), "xsd:int"))
 				{	soap_flag_LoginDeviceResult1--;
+					continue;
+				}
+			if (soap_flag_message1 && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
+				if (soap_in_PointerTostd__string(soap, "icd1:message", &(a->_icd1__LoginDeviceResponse::message), "xsd:string"))
+				{	soap_flag_message1--;
 					continue;
 				}
 			/* transient soap skipped */
@@ -2159,6 +1548,10 @@ SOAP_FMAC3 _icd1__LoginDeviceResponse * SOAP_FMAC4 soap_in__icd1__LoginDeviceRes
 	{	a = (_icd1__LoginDeviceResponse *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE__icd1__LoginDeviceResponse, 0, sizeof(_icd1__LoginDeviceResponse), 0, soap_copy__icd1__LoginDeviceResponse);
 		if (soap->body && soap_element_end_in(soap, tag))
 			return NULL;
+	}
+	if ((soap->mode & SOAP_XML_STRICT) && (soap_flag_LoginDeviceResult1 > 0))
+	{	soap->error = SOAP_OCCURS;
+		return NULL;
 	}
 	return a;
 }
@@ -2224,7 +1617,7 @@ void _icd1__LoginDevice::soap_default(struct soap *soap)
 	this->soap = soap;
 	soap_default_int(soap, &this->_icd1__LoginDevice::idd);
 	this->_icd1__LoginDevice::name = NULL;
-	this->_icd1__LoginDevice::DevInfo = NULL;
+	this->_icd1__LoginDevice::devInfo = NULL;
 	/* transient soap skipped */
 }
 
@@ -2232,7 +1625,7 @@ void _icd1__LoginDevice::soap_serialize(struct soap *soap) const
 {
 	(void)soap; /* appease -Wall -Werror */
 	soap_serialize_PointerTostd__string(soap, &this->_icd1__LoginDevice::name);
-	soap_serialize_PointerTostd__string(soap, &this->_icd1__LoginDevice::DevInfo);
+	soap_serialize_PointerTostd__string(soap, &this->_icd1__LoginDevice::devInfo);
 	/* transient soap skipped */
 }
 
@@ -2249,7 +1642,7 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_out__icd1__LoginDevice(struct soap *soap, const c
 		return soap->error;
 	if (soap_out_PointerTostd__string(soap, "icd1:name", -1, &(a->_icd1__LoginDevice::name), ""))
 		return soap->error;
-	if (soap_out_PointerTostd__string(soap, "icd1:DevInfo", -1, &(a->_icd1__LoginDevice::DevInfo), ""))
+	if (soap_out_PointerTostd__string(soap, "icd1:devInfo", -1, &(a->_icd1__LoginDevice::devInfo), ""))
 		return soap->error;
 	/* transient soap skipped */
 	return soap_element_end_out(soap, tag);
@@ -2277,7 +1670,7 @@ SOAP_FMAC3 _icd1__LoginDevice * SOAP_FMAC4 soap_in__icd1__LoginDevice(struct soa
 	}
 	size_t soap_flag_idd1 = 1;
 	size_t soap_flag_name1 = 1;
-	size_t soap_flag_DevInfo1 = 1;
+	size_t soap_flag_devInfo1 = 1;
 	if (soap->body && !*soap->href)
 	{
 		for (;;)
@@ -2292,9 +1685,9 @@ SOAP_FMAC3 _icd1__LoginDevice * SOAP_FMAC4 soap_in__icd1__LoginDevice(struct soa
 				{	soap_flag_name1--;
 					continue;
 				}
-			if (soap_flag_DevInfo1 && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
-				if (soap_in_PointerTostd__string(soap, "icd1:DevInfo", &(a->_icd1__LoginDevice::DevInfo), "xsd:string"))
-				{	soap_flag_DevInfo1--;
+			if (soap_flag_devInfo1 && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
+				if (soap_in_PointerTostd__string(soap, "icd1:devInfo", &(a->_icd1__LoginDevice::devInfo), "xsd:string"))
+				{	soap_flag_devInfo1--;
 					continue;
 				}
 			/* transient soap skipped */
@@ -2374,817 +1767,6 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy__icd1__LoginDevice(struct soap *soap, int s
 	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying _icd1__LoginDevice %p -> %p\n", q, p));
 	*(_icd1__LoginDevice*)p = *(_icd1__LoginDevice*)q;
-}
-
-void _icd1__OutDeviceResponse::soap_default(struct soap *soap)
-{
-	this->soap = soap;
-	this->_icd1__OutDeviceResponse::OutDeviceResult = NULL;
-	/* transient soap skipped */
-}
-
-void _icd1__OutDeviceResponse::soap_serialize(struct soap *soap) const
-{
-	(void)soap; /* appease -Wall -Werror */
-	soap_serialize_PointerTostd__string(soap, &this->_icd1__OutDeviceResponse::OutDeviceResult);
-	/* transient soap skipped */
-}
-
-int _icd1__OutDeviceResponse::soap_out(struct soap *soap, const char *tag, int id, const char *type) const
-{
-	return soap_out__icd1__OutDeviceResponse(soap, tag, id, this, type);
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_out__icd1__OutDeviceResponse(struct soap *soap, const char *tag, int id, const _icd1__OutDeviceResponse *a, const char *type)
-{
-	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE__icd1__OutDeviceResponse), type))
-		return soap->error;
-	if (a->OutDeviceResult)
-		soap_element_result(soap, "icd1:OutDeviceResult");
-	if (soap_out_PointerTostd__string(soap, "icd1:OutDeviceResult", -1, &(a->_icd1__OutDeviceResponse::OutDeviceResult), ""))
-		return soap->error;
-	/* transient soap skipped */
-	return soap_element_end_out(soap, tag);
-}
-
-void *_icd1__OutDeviceResponse::soap_in(struct soap *soap, const char *tag, const char *type)
-{	return soap_in__icd1__OutDeviceResponse(soap, tag, this, type);
-}
-
-SOAP_FMAC3 _icd1__OutDeviceResponse * SOAP_FMAC4 soap_in__icd1__OutDeviceResponse(struct soap *soap, const char *tag, _icd1__OutDeviceResponse *a, const char *type)
-{
-	(void)type; /* appease -Wall -Werror */
-	if (soap_element_begin_in(soap, tag, 0, NULL))
-		return NULL;
-	a = (_icd1__OutDeviceResponse *)soap_class_id_enter(soap, soap->id, a, SOAP_TYPE__icd1__OutDeviceResponse, sizeof(_icd1__OutDeviceResponse), soap->type, soap->arrayType);
-	if (!a)
-		return NULL;
-	if (soap->alloced)
-	{	a->soap_default(soap);
-		if (soap->clist->type != SOAP_TYPE__icd1__OutDeviceResponse)
-		{	soap_revert(soap);
-			*soap->id = '\0';
-			return (_icd1__OutDeviceResponse *)a->soap_in(soap, tag, type);
-		}
-	}
-	size_t soap_flag_OutDeviceResult1 = 1;
-	if (soap->body && !*soap->href)
-	{
-		for (;;)
-		{	soap->error = SOAP_TAG_MISMATCH;
-			if (soap_flag_OutDeviceResult1 && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
-				if (soap_in_PointerTostd__string(soap, "icd1:OutDeviceResult", &(a->_icd1__OutDeviceResponse::OutDeviceResult), "xsd:string"))
-				{	soap_flag_OutDeviceResult1--;
-					continue;
-				}
-			/* transient soap skipped */
-			soap_check_result(soap, "icd1:OutDeviceResult");
-			if (soap->error == SOAP_TAG_MISMATCH)
-				soap->error = soap_ignore_element(soap);
-			if (soap->error == SOAP_NO_TAG)
-				break;
-			if (soap->error)
-				return NULL;
-		}
-		if (soap_element_end_in(soap, tag))
-			return NULL;
-	}
-	else
-	{	a = (_icd1__OutDeviceResponse *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE__icd1__OutDeviceResponse, 0, sizeof(_icd1__OutDeviceResponse), 0, soap_copy__icd1__OutDeviceResponse);
-		if (soap->body && soap_element_end_in(soap, tag))
-			return NULL;
-	}
-	return a;
-}
-
-int _icd1__OutDeviceResponse::soap_put(struct soap *soap, const char *tag, const  char *type) const
-{
-	register int id = soap_embed(soap, (void*)this, NULL, 0, tag, SOAP_TYPE__icd1__OutDeviceResponse);
-	if (this->soap_out(soap, tag?tag:"icd1:OutDeviceResponse", id, type))
-		return soap->error;
-	return soap_putindependent(soap);
-}
-
-void *_icd1__OutDeviceResponse::soap_get(struct soap *soap, const char *tag, const char *type)
-{
-	return soap_get__icd1__OutDeviceResponse(soap, this, tag, type);
-}
-
-SOAP_FMAC3 _icd1__OutDeviceResponse * SOAP_FMAC4 soap_get__icd1__OutDeviceResponse(struct soap *soap, _icd1__OutDeviceResponse *p, const char *tag, const char *type)
-{
-	if ((p = soap_in__icd1__OutDeviceResponse(soap, tag, p, type)))
-		if (soap_getindependent(soap))
-			return NULL;
-	return p;
-}
-
-SOAP_FMAC1 _icd1__OutDeviceResponse * SOAP_FMAC2 soap_instantiate__icd1__OutDeviceResponse(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
-{
-	(void)type; (void)arrayType; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate__icd1__OutDeviceResponse(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE__icd1__OutDeviceResponse, n, _fdelete);
-	if (!cp)
-		return NULL;
-	if (n < 0)
-	{	cp->ptr = (void*)SOAP_NEW(_icd1__OutDeviceResponse);
-		if (size)
-			*size = sizeof(_icd1__OutDeviceResponse);
-		((_icd1__OutDeviceResponse*)cp->ptr)->soap = soap;
-	}
-	else
-	{	cp->ptr = (void*)SOAP_NEW(_icd1__OutDeviceResponse[n]);
-		if (!cp->ptr)
-		{	soap->error = SOAP_EOM;
-			return NULL;
-		}
-		if (size)
-			*size = n * sizeof(_icd1__OutDeviceResponse);
-		for (int i = 0; i < n; i++)
-			((_icd1__OutDeviceResponse*)cp->ptr)[i].soap = soap;
-	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (_icd1__OutDeviceResponse*)cp->ptr;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy__icd1__OutDeviceResponse(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
-{
-	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying _icd1__OutDeviceResponse %p -> %p\n", q, p));
-	*(_icd1__OutDeviceResponse*)p = *(_icd1__OutDeviceResponse*)q;
-}
-
-void _icd1__OutDevice::soap_default(struct soap *soap)
-{
-	this->soap = soap;
-	soap_default_int(soap, &this->_icd1__OutDevice::ErrorNo);
-	/* transient soap skipped */
-}
-
-void _icd1__OutDevice::soap_serialize(struct soap *soap) const
-{
-	(void)soap; /* appease -Wall -Werror */
-	/* transient soap skipped */
-}
-
-int _icd1__OutDevice::soap_out(struct soap *soap, const char *tag, int id, const char *type) const
-{
-	return soap_out__icd1__OutDevice(soap, tag, id, this, type);
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_out__icd1__OutDevice(struct soap *soap, const char *tag, int id, const _icd1__OutDevice *a, const char *type)
-{
-	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE__icd1__OutDevice), type))
-		return soap->error;
-	if (soap_out_int(soap, "icd1:ErrorNo", -1, &(a->_icd1__OutDevice::ErrorNo), ""))
-		return soap->error;
-	/* transient soap skipped */
-	return soap_element_end_out(soap, tag);
-}
-
-void *_icd1__OutDevice::soap_in(struct soap *soap, const char *tag, const char *type)
-{	return soap_in__icd1__OutDevice(soap, tag, this, type);
-}
-
-SOAP_FMAC3 _icd1__OutDevice * SOAP_FMAC4 soap_in__icd1__OutDevice(struct soap *soap, const char *tag, _icd1__OutDevice *a, const char *type)
-{
-	(void)type; /* appease -Wall -Werror */
-	if (soap_element_begin_in(soap, tag, 0, NULL))
-		return NULL;
-	a = (_icd1__OutDevice *)soap_class_id_enter(soap, soap->id, a, SOAP_TYPE__icd1__OutDevice, sizeof(_icd1__OutDevice), soap->type, soap->arrayType);
-	if (!a)
-		return NULL;
-	if (soap->alloced)
-	{	a->soap_default(soap);
-		if (soap->clist->type != SOAP_TYPE__icd1__OutDevice)
-		{	soap_revert(soap);
-			*soap->id = '\0';
-			return (_icd1__OutDevice *)a->soap_in(soap, tag, type);
-		}
-	}
-	size_t soap_flag_ErrorNo1 = 1;
-	if (soap->body && !*soap->href)
-	{
-		for (;;)
-		{	soap->error = SOAP_TAG_MISMATCH;
-			if (soap_flag_ErrorNo1 && soap->error == SOAP_TAG_MISMATCH)
-				if (soap_in_int(soap, "icd1:ErrorNo", &(a->_icd1__OutDevice::ErrorNo), "xsd:int"))
-				{	soap_flag_ErrorNo1--;
-					continue;
-				}
-			/* transient soap skipped */
-			if (soap->error == SOAP_TAG_MISMATCH)
-				soap->error = soap_ignore_element(soap);
-			if (soap->error == SOAP_NO_TAG)
-				break;
-			if (soap->error)
-				return NULL;
-		}
-		if (soap_element_end_in(soap, tag))
-			return NULL;
-	}
-	else
-	{	a = (_icd1__OutDevice *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE__icd1__OutDevice, 0, sizeof(_icd1__OutDevice), 0, soap_copy__icd1__OutDevice);
-		if (soap->body && soap_element_end_in(soap, tag))
-			return NULL;
-	}
-	if ((soap->mode & SOAP_XML_STRICT) && (soap_flag_ErrorNo1 > 0))
-	{	soap->error = SOAP_OCCURS;
-		return NULL;
-	}
-	return a;
-}
-
-int _icd1__OutDevice::soap_put(struct soap *soap, const char *tag, const  char *type) const
-{
-	register int id = soap_embed(soap, (void*)this, NULL, 0, tag, SOAP_TYPE__icd1__OutDevice);
-	if (this->soap_out(soap, tag?tag:"icd1:OutDevice", id, type))
-		return soap->error;
-	return soap_putindependent(soap);
-}
-
-void *_icd1__OutDevice::soap_get(struct soap *soap, const char *tag, const char *type)
-{
-	return soap_get__icd1__OutDevice(soap, this, tag, type);
-}
-
-SOAP_FMAC3 _icd1__OutDevice * SOAP_FMAC4 soap_get__icd1__OutDevice(struct soap *soap, _icd1__OutDevice *p, const char *tag, const char *type)
-{
-	if ((p = soap_in__icd1__OutDevice(soap, tag, p, type)))
-		if (soap_getindependent(soap))
-			return NULL;
-	return p;
-}
-
-SOAP_FMAC1 _icd1__OutDevice * SOAP_FMAC2 soap_instantiate__icd1__OutDevice(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
-{
-	(void)type; (void)arrayType; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate__icd1__OutDevice(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE__icd1__OutDevice, n, _fdelete);
-	if (!cp)
-		return NULL;
-	if (n < 0)
-	{	cp->ptr = (void*)SOAP_NEW(_icd1__OutDevice);
-		if (size)
-			*size = sizeof(_icd1__OutDevice);
-		((_icd1__OutDevice*)cp->ptr)->soap = soap;
-	}
-	else
-	{	cp->ptr = (void*)SOAP_NEW(_icd1__OutDevice[n]);
-		if (!cp->ptr)
-		{	soap->error = SOAP_EOM;
-			return NULL;
-		}
-		if (size)
-			*size = n * sizeof(_icd1__OutDevice);
-		for (int i = 0; i < n; i++)
-			((_icd1__OutDevice*)cp->ptr)[i].soap = soap;
-	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (_icd1__OutDevice*)cp->ptr;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy__icd1__OutDevice(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
-{
-	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying _icd1__OutDevice %p -> %p\n", q, p));
-	*(_icd1__OutDevice*)p = *(_icd1__OutDevice*)q;
-}
-
-void _icd1__TestSessionResponse::soap_default(struct soap *soap)
-{
-	this->soap = soap;
-	soap_default_int(soap, &this->_icd1__TestSessionResponse::TestSessionResult);
-	/* transient soap skipped */
-}
-
-void _icd1__TestSessionResponse::soap_serialize(struct soap *soap) const
-{
-	(void)soap; /* appease -Wall -Werror */
-	/* transient soap skipped */
-}
-
-int _icd1__TestSessionResponse::soap_out(struct soap *soap, const char *tag, int id, const char *type) const
-{
-	return soap_out__icd1__TestSessionResponse(soap, tag, id, this, type);
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_out__icd1__TestSessionResponse(struct soap *soap, const char *tag, int id, const _icd1__TestSessionResponse *a, const char *type)
-{
-	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE__icd1__TestSessionResponse), type))
-		return soap->error;
-	soap_element_result(soap, "icd1:TestSessionResult");
-	if (soap_out_int(soap, "icd1:TestSessionResult", -1, &(a->_icd1__TestSessionResponse::TestSessionResult), ""))
-		return soap->error;
-	/* transient soap skipped */
-	return soap_element_end_out(soap, tag);
-}
-
-void *_icd1__TestSessionResponse::soap_in(struct soap *soap, const char *tag, const char *type)
-{	return soap_in__icd1__TestSessionResponse(soap, tag, this, type);
-}
-
-SOAP_FMAC3 _icd1__TestSessionResponse * SOAP_FMAC4 soap_in__icd1__TestSessionResponse(struct soap *soap, const char *tag, _icd1__TestSessionResponse *a, const char *type)
-{
-	(void)type; /* appease -Wall -Werror */
-	if (soap_element_begin_in(soap, tag, 0, NULL))
-		return NULL;
-	a = (_icd1__TestSessionResponse *)soap_class_id_enter(soap, soap->id, a, SOAP_TYPE__icd1__TestSessionResponse, sizeof(_icd1__TestSessionResponse), soap->type, soap->arrayType);
-	if (!a)
-		return NULL;
-	if (soap->alloced)
-	{	a->soap_default(soap);
-		if (soap->clist->type != SOAP_TYPE__icd1__TestSessionResponse)
-		{	soap_revert(soap);
-			*soap->id = '\0';
-			return (_icd1__TestSessionResponse *)a->soap_in(soap, tag, type);
-		}
-	}
-	size_t soap_flag_TestSessionResult1 = 1;
-	if (soap->body && !*soap->href)
-	{
-		for (;;)
-		{	soap->error = SOAP_TAG_MISMATCH;
-			if (soap_flag_TestSessionResult1 && soap->error == SOAP_TAG_MISMATCH)
-				if (soap_in_int(soap, "icd1:TestSessionResult", &(a->_icd1__TestSessionResponse::TestSessionResult), "xsd:int"))
-				{	soap_flag_TestSessionResult1--;
-					continue;
-				}
-			/* transient soap skipped */
-			soap_check_result(soap, "icd1:TestSessionResult");
-			if (soap->error == SOAP_TAG_MISMATCH)
-				soap->error = soap_ignore_element(soap);
-			if (soap->error == SOAP_NO_TAG)
-				break;
-			if (soap->error)
-				return NULL;
-		}
-		if (soap_element_end_in(soap, tag))
-			return NULL;
-	}
-	else
-	{	a = (_icd1__TestSessionResponse *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE__icd1__TestSessionResponse, 0, sizeof(_icd1__TestSessionResponse), 0, soap_copy__icd1__TestSessionResponse);
-		if (soap->body && soap_element_end_in(soap, tag))
-			return NULL;
-	}
-	if ((soap->mode & SOAP_XML_STRICT) && (soap_flag_TestSessionResult1 > 0))
-	{	soap->error = SOAP_OCCURS;
-		return NULL;
-	}
-	return a;
-}
-
-int _icd1__TestSessionResponse::soap_put(struct soap *soap, const char *tag, const  char *type) const
-{
-	register int id = soap_embed(soap, (void*)this, NULL, 0, tag, SOAP_TYPE__icd1__TestSessionResponse);
-	if (this->soap_out(soap, tag?tag:"icd1:TestSessionResponse", id, type))
-		return soap->error;
-	return soap_putindependent(soap);
-}
-
-void *_icd1__TestSessionResponse::soap_get(struct soap *soap, const char *tag, const char *type)
-{
-	return soap_get__icd1__TestSessionResponse(soap, this, tag, type);
-}
-
-SOAP_FMAC3 _icd1__TestSessionResponse * SOAP_FMAC4 soap_get__icd1__TestSessionResponse(struct soap *soap, _icd1__TestSessionResponse *p, const char *tag, const char *type)
-{
-	if ((p = soap_in__icd1__TestSessionResponse(soap, tag, p, type)))
-		if (soap_getindependent(soap))
-			return NULL;
-	return p;
-}
-
-SOAP_FMAC1 _icd1__TestSessionResponse * SOAP_FMAC2 soap_instantiate__icd1__TestSessionResponse(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
-{
-	(void)type; (void)arrayType; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate__icd1__TestSessionResponse(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE__icd1__TestSessionResponse, n, _fdelete);
-	if (!cp)
-		return NULL;
-	if (n < 0)
-	{	cp->ptr = (void*)SOAP_NEW(_icd1__TestSessionResponse);
-		if (size)
-			*size = sizeof(_icd1__TestSessionResponse);
-		((_icd1__TestSessionResponse*)cp->ptr)->soap = soap;
-	}
-	else
-	{	cp->ptr = (void*)SOAP_NEW(_icd1__TestSessionResponse[n]);
-		if (!cp->ptr)
-		{	soap->error = SOAP_EOM;
-			return NULL;
-		}
-		if (size)
-			*size = n * sizeof(_icd1__TestSessionResponse);
-		for (int i = 0; i < n; i++)
-			((_icd1__TestSessionResponse*)cp->ptr)[i].soap = soap;
-	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (_icd1__TestSessionResponse*)cp->ptr;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy__icd1__TestSessionResponse(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
-{
-	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying _icd1__TestSessionResponse %p -> %p\n", q, p));
-	*(_icd1__TestSessionResponse*)p = *(_icd1__TestSessionResponse*)q;
-}
-
-void _icd1__TestSession::soap_default(struct soap *soap)
-{
-	this->soap = soap;
-	/* transient soap skipped */
-}
-
-void _icd1__TestSession::soap_serialize(struct soap *soap) const
-{
-	(void)soap; /* appease -Wall -Werror */
-	/* transient soap skipped */
-}
-
-int _icd1__TestSession::soap_out(struct soap *soap, const char *tag, int id, const char *type) const
-{
-	return soap_out__icd1__TestSession(soap, tag, id, this, type);
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_out__icd1__TestSession(struct soap *soap, const char *tag, int id, const _icd1__TestSession *a, const char *type)
-{
-	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE__icd1__TestSession), type))
-		return soap->error;
-	/* transient soap skipped */
-	return soap_element_end_out(soap, tag);
-}
-
-void *_icd1__TestSession::soap_in(struct soap *soap, const char *tag, const char *type)
-{	return soap_in__icd1__TestSession(soap, tag, this, type);
-}
-
-SOAP_FMAC3 _icd1__TestSession * SOAP_FMAC4 soap_in__icd1__TestSession(struct soap *soap, const char *tag, _icd1__TestSession *a, const char *type)
-{
-	(void)type; /* appease -Wall -Werror */
-	if (soap_element_begin_in(soap, tag, 0, NULL))
-		return NULL;
-	a = (_icd1__TestSession *)soap_class_id_enter(soap, soap->id, a, SOAP_TYPE__icd1__TestSession, sizeof(_icd1__TestSession), soap->type, soap->arrayType);
-	if (!a)
-		return NULL;
-	if (soap->alloced)
-	{	a->soap_default(soap);
-		if (soap->clist->type != SOAP_TYPE__icd1__TestSession)
-		{	soap_revert(soap);
-			*soap->id = '\0';
-			return (_icd1__TestSession *)a->soap_in(soap, tag, type);
-		}
-	}
-	if (soap->body && !*soap->href)
-	{
-		for (;;)
-		{	soap->error = SOAP_TAG_MISMATCH;
-			/* transient soap skipped */
-			if (soap->error == SOAP_TAG_MISMATCH)
-				soap->error = soap_ignore_element(soap);
-			if (soap->error == SOAP_NO_TAG)
-				break;
-			if (soap->error)
-				return NULL;
-		}
-		if (soap_element_end_in(soap, tag))
-			return NULL;
-	}
-	else
-	{	a = (_icd1__TestSession *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE__icd1__TestSession, 0, sizeof(_icd1__TestSession), 0, soap_copy__icd1__TestSession);
-		if (soap->body && soap_element_end_in(soap, tag))
-			return NULL;
-	}
-	return a;
-}
-
-int _icd1__TestSession::soap_put(struct soap *soap, const char *tag, const  char *type) const
-{
-	register int id = soap_embed(soap, (void*)this, NULL, 0, tag, SOAP_TYPE__icd1__TestSession);
-	if (this->soap_out(soap, tag?tag:"icd1:TestSession", id, type))
-		return soap->error;
-	return soap_putindependent(soap);
-}
-
-void *_icd1__TestSession::soap_get(struct soap *soap, const char *tag, const char *type)
-{
-	return soap_get__icd1__TestSession(soap, this, tag, type);
-}
-
-SOAP_FMAC3 _icd1__TestSession * SOAP_FMAC4 soap_get__icd1__TestSession(struct soap *soap, _icd1__TestSession *p, const char *tag, const char *type)
-{
-	if ((p = soap_in__icd1__TestSession(soap, tag, p, type)))
-		if (soap_getindependent(soap))
-			return NULL;
-	return p;
-}
-
-SOAP_FMAC1 _icd1__TestSession * SOAP_FMAC2 soap_instantiate__icd1__TestSession(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
-{
-	(void)type; (void)arrayType; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate__icd1__TestSession(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE__icd1__TestSession, n, _fdelete);
-	if (!cp)
-		return NULL;
-	if (n < 0)
-	{	cp->ptr = (void*)SOAP_NEW(_icd1__TestSession);
-		if (size)
-			*size = sizeof(_icd1__TestSession);
-		((_icd1__TestSession*)cp->ptr)->soap = soap;
-	}
-	else
-	{	cp->ptr = (void*)SOAP_NEW(_icd1__TestSession[n]);
-		if (!cp->ptr)
-		{	soap->error = SOAP_EOM;
-			return NULL;
-		}
-		if (size)
-			*size = n * sizeof(_icd1__TestSession);
-		for (int i = 0; i < n; i++)
-			((_icd1__TestSession*)cp->ptr)[i].soap = soap;
-	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (_icd1__TestSession*)cp->ptr;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy__icd1__TestSession(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
-{
-	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying _icd1__TestSession %p -> %p\n", q, p));
-	*(_icd1__TestSession*)p = *(_icd1__TestSession*)q;
-}
-
-void _icd1__GetTime2Response::soap_default(struct soap *soap)
-{
-	this->soap = soap;
-	this->_icd1__GetTime2Response::GetTime2Result = NULL;
-	/* transient soap skipped */
-}
-
-void _icd1__GetTime2Response::soap_serialize(struct soap *soap) const
-{
-	(void)soap; /* appease -Wall -Werror */
-	soap_serialize_PointerTostd__string(soap, &this->_icd1__GetTime2Response::GetTime2Result);
-	/* transient soap skipped */
-}
-
-int _icd1__GetTime2Response::soap_out(struct soap *soap, const char *tag, int id, const char *type) const
-{
-	return soap_out__icd1__GetTime2Response(soap, tag, id, this, type);
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_out__icd1__GetTime2Response(struct soap *soap, const char *tag, int id, const _icd1__GetTime2Response *a, const char *type)
-{
-	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE__icd1__GetTime2Response), type))
-		return soap->error;
-	if (a->GetTime2Result)
-		soap_element_result(soap, "icd1:GetTime2Result");
-	if (soap_out_PointerTostd__string(soap, "icd1:GetTime2Result", -1, &(a->_icd1__GetTime2Response::GetTime2Result), ""))
-		return soap->error;
-	/* transient soap skipped */
-	return soap_element_end_out(soap, tag);
-}
-
-void *_icd1__GetTime2Response::soap_in(struct soap *soap, const char *tag, const char *type)
-{	return soap_in__icd1__GetTime2Response(soap, tag, this, type);
-}
-
-SOAP_FMAC3 _icd1__GetTime2Response * SOAP_FMAC4 soap_in__icd1__GetTime2Response(struct soap *soap, const char *tag, _icd1__GetTime2Response *a, const char *type)
-{
-	(void)type; /* appease -Wall -Werror */
-	if (soap_element_begin_in(soap, tag, 0, NULL))
-		return NULL;
-	a = (_icd1__GetTime2Response *)soap_class_id_enter(soap, soap->id, a, SOAP_TYPE__icd1__GetTime2Response, sizeof(_icd1__GetTime2Response), soap->type, soap->arrayType);
-	if (!a)
-		return NULL;
-	if (soap->alloced)
-	{	a->soap_default(soap);
-		if (soap->clist->type != SOAP_TYPE__icd1__GetTime2Response)
-		{	soap_revert(soap);
-			*soap->id = '\0';
-			return (_icd1__GetTime2Response *)a->soap_in(soap, tag, type);
-		}
-	}
-	size_t soap_flag_GetTime2Result1 = 1;
-	if (soap->body && !*soap->href)
-	{
-		for (;;)
-		{	soap->error = SOAP_TAG_MISMATCH;
-			if (soap_flag_GetTime2Result1 && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
-				if (soap_in_PointerTostd__string(soap, "icd1:GetTime2Result", &(a->_icd1__GetTime2Response::GetTime2Result), "xsd:string"))
-				{	soap_flag_GetTime2Result1--;
-					continue;
-				}
-			/* transient soap skipped */
-			soap_check_result(soap, "icd1:GetTime2Result");
-			if (soap->error == SOAP_TAG_MISMATCH)
-				soap->error = soap_ignore_element(soap);
-			if (soap->error == SOAP_NO_TAG)
-				break;
-			if (soap->error)
-				return NULL;
-		}
-		if (soap_element_end_in(soap, tag))
-			return NULL;
-	}
-	else
-	{	a = (_icd1__GetTime2Response *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE__icd1__GetTime2Response, 0, sizeof(_icd1__GetTime2Response), 0, soap_copy__icd1__GetTime2Response);
-		if (soap->body && soap_element_end_in(soap, tag))
-			return NULL;
-	}
-	return a;
-}
-
-int _icd1__GetTime2Response::soap_put(struct soap *soap, const char *tag, const  char *type) const
-{
-	register int id = soap_embed(soap, (void*)this, NULL, 0, tag, SOAP_TYPE__icd1__GetTime2Response);
-	if (this->soap_out(soap, tag?tag:"icd1:GetTime2Response", id, type))
-		return soap->error;
-	return soap_putindependent(soap);
-}
-
-void *_icd1__GetTime2Response::soap_get(struct soap *soap, const char *tag, const char *type)
-{
-	return soap_get__icd1__GetTime2Response(soap, this, tag, type);
-}
-
-SOAP_FMAC3 _icd1__GetTime2Response * SOAP_FMAC4 soap_get__icd1__GetTime2Response(struct soap *soap, _icd1__GetTime2Response *p, const char *tag, const char *type)
-{
-	if ((p = soap_in__icd1__GetTime2Response(soap, tag, p, type)))
-		if (soap_getindependent(soap))
-			return NULL;
-	return p;
-}
-
-SOAP_FMAC1 _icd1__GetTime2Response * SOAP_FMAC2 soap_instantiate__icd1__GetTime2Response(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
-{
-	(void)type; (void)arrayType; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate__icd1__GetTime2Response(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE__icd1__GetTime2Response, n, _fdelete);
-	if (!cp)
-		return NULL;
-	if (n < 0)
-	{	cp->ptr = (void*)SOAP_NEW(_icd1__GetTime2Response);
-		if (size)
-			*size = sizeof(_icd1__GetTime2Response);
-		((_icd1__GetTime2Response*)cp->ptr)->soap = soap;
-	}
-	else
-	{	cp->ptr = (void*)SOAP_NEW(_icd1__GetTime2Response[n]);
-		if (!cp->ptr)
-		{	soap->error = SOAP_EOM;
-			return NULL;
-		}
-		if (size)
-			*size = n * sizeof(_icd1__GetTime2Response);
-		for (int i = 0; i < n; i++)
-			((_icd1__GetTime2Response*)cp->ptr)[i].soap = soap;
-	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (_icd1__GetTime2Response*)cp->ptr;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy__icd1__GetTime2Response(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
-{
-	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying _icd1__GetTime2Response %p -> %p\n", q, p));
-	*(_icd1__GetTime2Response*)p = *(_icd1__GetTime2Response*)q;
-}
-
-void _icd1__GetTime2::soap_default(struct soap *soap)
-{
-	this->soap = soap;
-	soap_default_int(soap, &this->_icd1__GetTime2::l);
-	/* transient soap skipped */
-}
-
-void _icd1__GetTime2::soap_serialize(struct soap *soap) const
-{
-	(void)soap; /* appease -Wall -Werror */
-	/* transient soap skipped */
-}
-
-int _icd1__GetTime2::soap_out(struct soap *soap, const char *tag, int id, const char *type) const
-{
-	return soap_out__icd1__GetTime2(soap, tag, id, this, type);
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_out__icd1__GetTime2(struct soap *soap, const char *tag, int id, const _icd1__GetTime2 *a, const char *type)
-{
-	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE__icd1__GetTime2), type))
-		return soap->error;
-	if (soap_out_int(soap, "icd1:l", -1, &(a->_icd1__GetTime2::l), ""))
-		return soap->error;
-	/* transient soap skipped */
-	return soap_element_end_out(soap, tag);
-}
-
-void *_icd1__GetTime2::soap_in(struct soap *soap, const char *tag, const char *type)
-{	return soap_in__icd1__GetTime2(soap, tag, this, type);
-}
-
-SOAP_FMAC3 _icd1__GetTime2 * SOAP_FMAC4 soap_in__icd1__GetTime2(struct soap *soap, const char *tag, _icd1__GetTime2 *a, const char *type)
-{
-	(void)type; /* appease -Wall -Werror */
-	if (soap_element_begin_in(soap, tag, 0, NULL))
-		return NULL;
-	a = (_icd1__GetTime2 *)soap_class_id_enter(soap, soap->id, a, SOAP_TYPE__icd1__GetTime2, sizeof(_icd1__GetTime2), soap->type, soap->arrayType);
-	if (!a)
-		return NULL;
-	if (soap->alloced)
-	{	a->soap_default(soap);
-		if (soap->clist->type != SOAP_TYPE__icd1__GetTime2)
-		{	soap_revert(soap);
-			*soap->id = '\0';
-			return (_icd1__GetTime2 *)a->soap_in(soap, tag, type);
-		}
-	}
-	size_t soap_flag_l1 = 1;
-	if (soap->body && !*soap->href)
-	{
-		for (;;)
-		{	soap->error = SOAP_TAG_MISMATCH;
-			if (soap_flag_l1 && soap->error == SOAP_TAG_MISMATCH)
-				if (soap_in_int(soap, "icd1:l", &(a->_icd1__GetTime2::l), "xsd:int"))
-				{	soap_flag_l1--;
-					continue;
-				}
-			/* transient soap skipped */
-			if (soap->error == SOAP_TAG_MISMATCH)
-				soap->error = soap_ignore_element(soap);
-			if (soap->error == SOAP_NO_TAG)
-				break;
-			if (soap->error)
-				return NULL;
-		}
-		if (soap_element_end_in(soap, tag))
-			return NULL;
-	}
-	else
-	{	a = (_icd1__GetTime2 *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE__icd1__GetTime2, 0, sizeof(_icd1__GetTime2), 0, soap_copy__icd1__GetTime2);
-		if (soap->body && soap_element_end_in(soap, tag))
-			return NULL;
-	}
-	if ((soap->mode & SOAP_XML_STRICT) && (soap_flag_l1 > 0))
-	{	soap->error = SOAP_OCCURS;
-		return NULL;
-	}
-	return a;
-}
-
-int _icd1__GetTime2::soap_put(struct soap *soap, const char *tag, const  char *type) const
-{
-	register int id = soap_embed(soap, (void*)this, NULL, 0, tag, SOAP_TYPE__icd1__GetTime2);
-	if (this->soap_out(soap, tag?tag:"icd1:GetTime2", id, type))
-		return soap->error;
-	return soap_putindependent(soap);
-}
-
-void *_icd1__GetTime2::soap_get(struct soap *soap, const char *tag, const char *type)
-{
-	return soap_get__icd1__GetTime2(soap, this, tag, type);
-}
-
-SOAP_FMAC3 _icd1__GetTime2 * SOAP_FMAC4 soap_get__icd1__GetTime2(struct soap *soap, _icd1__GetTime2 *p, const char *tag, const char *type)
-{
-	if ((p = soap_in__icd1__GetTime2(soap, tag, p, type)))
-		if (soap_getindependent(soap))
-			return NULL;
-	return p;
-}
-
-SOAP_FMAC1 _icd1__GetTime2 * SOAP_FMAC2 soap_instantiate__icd1__GetTime2(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
-{
-	(void)type; (void)arrayType; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate__icd1__GetTime2(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE__icd1__GetTime2, n, _fdelete);
-	if (!cp)
-		return NULL;
-	if (n < 0)
-	{	cp->ptr = (void*)SOAP_NEW(_icd1__GetTime2);
-		if (size)
-			*size = sizeof(_icd1__GetTime2);
-		((_icd1__GetTime2*)cp->ptr)->soap = soap;
-	}
-	else
-	{	cp->ptr = (void*)SOAP_NEW(_icd1__GetTime2[n]);
-		if (!cp->ptr)
-		{	soap->error = SOAP_EOM;
-			return NULL;
-		}
-		if (size)
-			*size = n * sizeof(_icd1__GetTime2);
-		for (int i = 0; i < n; i++)
-			((_icd1__GetTime2*)cp->ptr)[i].soap = soap;
-	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (_icd1__GetTime2*)cp->ptr;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy__icd1__GetTime2(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
-{
-	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying _icd1__GetTime2 %p -> %p\n", q, p));
-	*(_icd1__GetTime2*)p = *(_icd1__GetTime2*)q;
 }
 
 void _icd1__GetTimeResponse::soap_default(struct soap *soap)
@@ -3446,267 +2028,6 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy__icd1__GetTime(struct soap *soap, int st, i
 	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying _icd1__GetTime %p -> %p\n", q, p));
 	*(_icd1__GetTime*)p = *(_icd1__GetTime*)q;
-}
-
-void _icd1__HelloWorldResponse::soap_default(struct soap *soap)
-{
-	this->soap = soap;
-	this->_icd1__HelloWorldResponse::HelloWorldResult = NULL;
-	/* transient soap skipped */
-}
-
-void _icd1__HelloWorldResponse::soap_serialize(struct soap *soap) const
-{
-	(void)soap; /* appease -Wall -Werror */
-	soap_serialize_PointerTostd__string(soap, &this->_icd1__HelloWorldResponse::HelloWorldResult);
-	/* transient soap skipped */
-}
-
-int _icd1__HelloWorldResponse::soap_out(struct soap *soap, const char *tag, int id, const char *type) const
-{
-	return soap_out__icd1__HelloWorldResponse(soap, tag, id, this, type);
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_out__icd1__HelloWorldResponse(struct soap *soap, const char *tag, int id, const _icd1__HelloWorldResponse *a, const char *type)
-{
-	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE__icd1__HelloWorldResponse), type))
-		return soap->error;
-	if (a->HelloWorldResult)
-		soap_element_result(soap, "icd1:HelloWorldResult");
-	if (soap_out_PointerTostd__string(soap, "icd1:HelloWorldResult", -1, &(a->_icd1__HelloWorldResponse::HelloWorldResult), ""))
-		return soap->error;
-	/* transient soap skipped */
-	return soap_element_end_out(soap, tag);
-}
-
-void *_icd1__HelloWorldResponse::soap_in(struct soap *soap, const char *tag, const char *type)
-{	return soap_in__icd1__HelloWorldResponse(soap, tag, this, type);
-}
-
-SOAP_FMAC3 _icd1__HelloWorldResponse * SOAP_FMAC4 soap_in__icd1__HelloWorldResponse(struct soap *soap, const char *tag, _icd1__HelloWorldResponse *a, const char *type)
-{
-	(void)type; /* appease -Wall -Werror */
-	if (soap_element_begin_in(soap, tag, 0, NULL))
-		return NULL;
-	a = (_icd1__HelloWorldResponse *)soap_class_id_enter(soap, soap->id, a, SOAP_TYPE__icd1__HelloWorldResponse, sizeof(_icd1__HelloWorldResponse), soap->type, soap->arrayType);
-	if (!a)
-		return NULL;
-	if (soap->alloced)
-	{	a->soap_default(soap);
-		if (soap->clist->type != SOAP_TYPE__icd1__HelloWorldResponse)
-		{	soap_revert(soap);
-			*soap->id = '\0';
-			return (_icd1__HelloWorldResponse *)a->soap_in(soap, tag, type);
-		}
-	}
-	size_t soap_flag_HelloWorldResult1 = 1;
-	if (soap->body && !*soap->href)
-	{
-		for (;;)
-		{	soap->error = SOAP_TAG_MISMATCH;
-			if (soap_flag_HelloWorldResult1 && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
-				if (soap_in_PointerTostd__string(soap, "icd1:HelloWorldResult", &(a->_icd1__HelloWorldResponse::HelloWorldResult), "xsd:string"))
-				{	soap_flag_HelloWorldResult1--;
-					continue;
-				}
-			/* transient soap skipped */
-			soap_check_result(soap, "icd1:HelloWorldResult");
-			if (soap->error == SOAP_TAG_MISMATCH)
-				soap->error = soap_ignore_element(soap);
-			if (soap->error == SOAP_NO_TAG)
-				break;
-			if (soap->error)
-				return NULL;
-		}
-		if (soap_element_end_in(soap, tag))
-			return NULL;
-	}
-	else
-	{	a = (_icd1__HelloWorldResponse *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE__icd1__HelloWorldResponse, 0, sizeof(_icd1__HelloWorldResponse), 0, soap_copy__icd1__HelloWorldResponse);
-		if (soap->body && soap_element_end_in(soap, tag))
-			return NULL;
-	}
-	return a;
-}
-
-int _icd1__HelloWorldResponse::soap_put(struct soap *soap, const char *tag, const  char *type) const
-{
-	register int id = soap_embed(soap, (void*)this, NULL, 0, tag, SOAP_TYPE__icd1__HelloWorldResponse);
-	if (this->soap_out(soap, tag?tag:"icd1:HelloWorldResponse", id, type))
-		return soap->error;
-	return soap_putindependent(soap);
-}
-
-void *_icd1__HelloWorldResponse::soap_get(struct soap *soap, const char *tag, const char *type)
-{
-	return soap_get__icd1__HelloWorldResponse(soap, this, tag, type);
-}
-
-SOAP_FMAC3 _icd1__HelloWorldResponse * SOAP_FMAC4 soap_get__icd1__HelloWorldResponse(struct soap *soap, _icd1__HelloWorldResponse *p, const char *tag, const char *type)
-{
-	if ((p = soap_in__icd1__HelloWorldResponse(soap, tag, p, type)))
-		if (soap_getindependent(soap))
-			return NULL;
-	return p;
-}
-
-SOAP_FMAC1 _icd1__HelloWorldResponse * SOAP_FMAC2 soap_instantiate__icd1__HelloWorldResponse(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
-{
-	(void)type; (void)arrayType; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate__icd1__HelloWorldResponse(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE__icd1__HelloWorldResponse, n, _fdelete);
-	if (!cp)
-		return NULL;
-	if (n < 0)
-	{	cp->ptr = (void*)SOAP_NEW(_icd1__HelloWorldResponse);
-		if (size)
-			*size = sizeof(_icd1__HelloWorldResponse);
-		((_icd1__HelloWorldResponse*)cp->ptr)->soap = soap;
-	}
-	else
-	{	cp->ptr = (void*)SOAP_NEW(_icd1__HelloWorldResponse[n]);
-		if (!cp->ptr)
-		{	soap->error = SOAP_EOM;
-			return NULL;
-		}
-		if (size)
-			*size = n * sizeof(_icd1__HelloWorldResponse);
-		for (int i = 0; i < n; i++)
-			((_icd1__HelloWorldResponse*)cp->ptr)[i].soap = soap;
-	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (_icd1__HelloWorldResponse*)cp->ptr;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy__icd1__HelloWorldResponse(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
-{
-	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying _icd1__HelloWorldResponse %p -> %p\n", q, p));
-	*(_icd1__HelloWorldResponse*)p = *(_icd1__HelloWorldResponse*)q;
-}
-
-void _icd1__HelloWorld::soap_default(struct soap *soap)
-{
-	this->soap = soap;
-	/* transient soap skipped */
-}
-
-void _icd1__HelloWorld::soap_serialize(struct soap *soap) const
-{
-	(void)soap; /* appease -Wall -Werror */
-	/* transient soap skipped */
-}
-
-int _icd1__HelloWorld::soap_out(struct soap *soap, const char *tag, int id, const char *type) const
-{
-	return soap_out__icd1__HelloWorld(soap, tag, id, this, type);
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_out__icd1__HelloWorld(struct soap *soap, const char *tag, int id, const _icd1__HelloWorld *a, const char *type)
-{
-	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE__icd1__HelloWorld), type))
-		return soap->error;
-	/* transient soap skipped */
-	return soap_element_end_out(soap, tag);
-}
-
-void *_icd1__HelloWorld::soap_in(struct soap *soap, const char *tag, const char *type)
-{	return soap_in__icd1__HelloWorld(soap, tag, this, type);
-}
-
-SOAP_FMAC3 _icd1__HelloWorld * SOAP_FMAC4 soap_in__icd1__HelloWorld(struct soap *soap, const char *tag, _icd1__HelloWorld *a, const char *type)
-{
-	(void)type; /* appease -Wall -Werror */
-	if (soap_element_begin_in(soap, tag, 0, NULL))
-		return NULL;
-	a = (_icd1__HelloWorld *)soap_class_id_enter(soap, soap->id, a, SOAP_TYPE__icd1__HelloWorld, sizeof(_icd1__HelloWorld), soap->type, soap->arrayType);
-	if (!a)
-		return NULL;
-	if (soap->alloced)
-	{	a->soap_default(soap);
-		if (soap->clist->type != SOAP_TYPE__icd1__HelloWorld)
-		{	soap_revert(soap);
-			*soap->id = '\0';
-			return (_icd1__HelloWorld *)a->soap_in(soap, tag, type);
-		}
-	}
-	if (soap->body && !*soap->href)
-	{
-		for (;;)
-		{	soap->error = SOAP_TAG_MISMATCH;
-			/* transient soap skipped */
-			if (soap->error == SOAP_TAG_MISMATCH)
-				soap->error = soap_ignore_element(soap);
-			if (soap->error == SOAP_NO_TAG)
-				break;
-			if (soap->error)
-				return NULL;
-		}
-		if (soap_element_end_in(soap, tag))
-			return NULL;
-	}
-	else
-	{	a = (_icd1__HelloWorld *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE__icd1__HelloWorld, 0, sizeof(_icd1__HelloWorld), 0, soap_copy__icd1__HelloWorld);
-		if (soap->body && soap_element_end_in(soap, tag))
-			return NULL;
-	}
-	return a;
-}
-
-int _icd1__HelloWorld::soap_put(struct soap *soap, const char *tag, const  char *type) const
-{
-	register int id = soap_embed(soap, (void*)this, NULL, 0, tag, SOAP_TYPE__icd1__HelloWorld);
-	if (this->soap_out(soap, tag?tag:"icd1:HelloWorld", id, type))
-		return soap->error;
-	return soap_putindependent(soap);
-}
-
-void *_icd1__HelloWorld::soap_get(struct soap *soap, const char *tag, const char *type)
-{
-	return soap_get__icd1__HelloWorld(soap, this, tag, type);
-}
-
-SOAP_FMAC3 _icd1__HelloWorld * SOAP_FMAC4 soap_get__icd1__HelloWorld(struct soap *soap, _icd1__HelloWorld *p, const char *tag, const char *type)
-{
-	if ((p = soap_in__icd1__HelloWorld(soap, tag, p, type)))
-		if (soap_getindependent(soap))
-			return NULL;
-	return p;
-}
-
-SOAP_FMAC1 _icd1__HelloWorld * SOAP_FMAC2 soap_instantiate__icd1__HelloWorld(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
-{
-	(void)type; (void)arrayType; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate__icd1__HelloWorld(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE__icd1__HelloWorld, n, _fdelete);
-	if (!cp)
-		return NULL;
-	if (n < 0)
-	{	cp->ptr = (void*)SOAP_NEW(_icd1__HelloWorld);
-		if (size)
-			*size = sizeof(_icd1__HelloWorld);
-		((_icd1__HelloWorld*)cp->ptr)->soap = soap;
-	}
-	else
-	{	cp->ptr = (void*)SOAP_NEW(_icd1__HelloWorld[n]);
-		if (!cp->ptr)
-		{	soap->error = SOAP_EOM;
-			return NULL;
-		}
-		if (size)
-			*size = n * sizeof(_icd1__HelloWorld);
-		for (int i = 0; i < n; i++)
-			((_icd1__HelloWorld*)cp->ptr)[i].soap = soap;
-	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (_icd1__HelloWorld*)cp->ptr;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy__icd1__HelloWorld(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
-{
-	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying _icd1__HelloWorld %p -> %p\n", q, p));
-	*(_icd1__HelloWorld*)p = *(_icd1__HelloWorld*)q;
 }
 
 #ifndef WITH_NOGLOBAL
@@ -4352,6 +2673,102 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy_SOAP_ENV__Header(struct soap *soap, int st,
 
 #endif
 
+SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd3__LogoutDevice(struct soap *soap, struct __icd3__LogoutDevice *a)
+{
+	(void)soap; (void)a; /* appease -Wall -Werror */
+	a->icd1__LogoutDevice = NULL;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___icd3__LogoutDevice(struct soap *soap, const struct __icd3__LogoutDevice *a)
+{
+	(void)soap; (void)a; /* appease -Wall -Werror */
+	soap_serialize_PointerTo_icd1__LogoutDevice(soap, &a->icd1__LogoutDevice);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out___icd3__LogoutDevice(struct soap *soap, const char *tag, int id, const struct __icd3__LogoutDevice *a, const char *type)
+{
+	(void)soap; (void)tag; (void)id; (void)type;
+	if (soap_out_PointerTo_icd1__LogoutDevice(soap, "icd1:LogoutDevice", -1, &a->icd1__LogoutDevice, ""))
+		return soap->error;
+	return SOAP_OK;
+}
+
+SOAP_FMAC3 struct __icd3__LogoutDevice * SOAP_FMAC4 soap_in___icd3__LogoutDevice(struct soap *soap, const char *tag, struct __icd3__LogoutDevice *a, const char *type)
+{
+	size_t soap_flag_icd1__LogoutDevice = 1;
+	short soap_flag;
+	a = (struct __icd3__LogoutDevice *)soap_id_enter(soap, "", a, SOAP_TYPE___icd3__LogoutDevice, sizeof(struct __icd3__LogoutDevice), 0, NULL, NULL, NULL);
+	if (!a)
+		return NULL;
+	soap_default___icd3__LogoutDevice(soap, a);
+		for (soap_flag = 0;; soap_flag = 1)
+		{	soap->error = SOAP_TAG_MISMATCH;
+			if (soap_flag_icd1__LogoutDevice && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_PointerTo_icd1__LogoutDevice(soap, "icd1:LogoutDevice", &a->icd1__LogoutDevice, ""))
+				{	soap_flag_icd1__LogoutDevice--;
+					continue;
+				}
+			if (soap->error == SOAP_TAG_MISMATCH)
+				if (soap_flag)
+				{	soap->error = SOAP_OK;
+					break;
+				}
+			if (soap_flag && soap->error == SOAP_NO_TAG)
+				break;
+			if (soap->error)
+				return NULL;
+		}
+	return a;
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_put___icd3__LogoutDevice(struct soap *soap, const struct __icd3__LogoutDevice *a, const char *tag, const char *type)
+{
+	register int id = 0;
+	if (soap_out___icd3__LogoutDevice(soap, tag?tag:"-icd3:LogoutDevice", id, a, type))
+		return soap->error;
+	return SOAP_OK;
+}
+
+SOAP_FMAC3 struct __icd3__LogoutDevice * SOAP_FMAC4 soap_get___icd3__LogoutDevice(struct soap *soap, struct __icd3__LogoutDevice *p, const char *tag, const char *type)
+{
+	if ((p = soap_in___icd3__LogoutDevice(soap, tag, p, type)))
+		if (soap_getindependent(soap))
+			return NULL;
+	return p;
+}
+
+SOAP_FMAC1 struct __icd3__LogoutDevice * SOAP_FMAC2 soap_instantiate___icd3__LogoutDevice(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+{
+	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___icd3__LogoutDevice(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___icd3__LogoutDevice, n, _fdelete);
+	if (!cp)
+		return NULL;
+	if (n < 0)
+	{	cp->ptr = (void*)SOAP_NEW(struct __icd3__LogoutDevice);
+		if (size)
+			*size = sizeof(struct __icd3__LogoutDevice);
+	}
+	else
+	{	cp->ptr = (void*)SOAP_NEW(struct __icd3__LogoutDevice[n]);
+		if (!cp->ptr)
+		{	soap->error = SOAP_EOM;
+			return NULL;
+		}
+		if (size)
+			*size = n * sizeof(struct __icd3__LogoutDevice);
+	}
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
+	return (struct __icd3__LogoutDevice*)cp->ptr;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd3__LogoutDevice(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+{
+	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __icd3__LogoutDevice %p -> %p\n", q, p));
+	*(struct __icd3__LogoutDevice*)p = *(struct __icd3__LogoutDevice*)q;
+}
+
 SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd3__SendData(struct soap *soap, struct __icd3__SendData *a)
 {
 	(void)soap; (void)a; /* appease -Wall -Werror */
@@ -4446,198 +2863,6 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd3__SendData(struct soap *soap, int st,
 	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __icd3__SendData %p -> %p\n", q, p));
 	*(struct __icd3__SendData*)p = *(struct __icd3__SendData*)q;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd3__HasUpdateBin(struct soap *soap, struct __icd3__HasUpdateBin *a)
-{
-	(void)soap; (void)a; /* appease -Wall -Werror */
-	a->icd1__HasUpdateBin = NULL;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___icd3__HasUpdateBin(struct soap *soap, const struct __icd3__HasUpdateBin *a)
-{
-	(void)soap; (void)a; /* appease -Wall -Werror */
-	soap_serialize_PointerTo_icd1__HasUpdateBin(soap, &a->icd1__HasUpdateBin);
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_out___icd3__HasUpdateBin(struct soap *soap, const char *tag, int id, const struct __icd3__HasUpdateBin *a, const char *type)
-{
-	(void)soap; (void)tag; (void)id; (void)type;
-	if (soap_out_PointerTo_icd1__HasUpdateBin(soap, "icd1:HasUpdateBin", -1, &a->icd1__HasUpdateBin, ""))
-		return soap->error;
-	return SOAP_OK;
-}
-
-SOAP_FMAC3 struct __icd3__HasUpdateBin * SOAP_FMAC4 soap_in___icd3__HasUpdateBin(struct soap *soap, const char *tag, struct __icd3__HasUpdateBin *a, const char *type)
-{
-	size_t soap_flag_icd1__HasUpdateBin = 1;
-	short soap_flag;
-	a = (struct __icd3__HasUpdateBin *)soap_id_enter(soap, "", a, SOAP_TYPE___icd3__HasUpdateBin, sizeof(struct __icd3__HasUpdateBin), 0, NULL, NULL, NULL);
-	if (!a)
-		return NULL;
-	soap_default___icd3__HasUpdateBin(soap, a);
-		for (soap_flag = 0;; soap_flag = 1)
-		{	soap->error = SOAP_TAG_MISMATCH;
-			if (soap_flag_icd1__HasUpdateBin && soap->error == SOAP_TAG_MISMATCH)
-				if (soap_in_PointerTo_icd1__HasUpdateBin(soap, "icd1:HasUpdateBin", &a->icd1__HasUpdateBin, ""))
-				{	soap_flag_icd1__HasUpdateBin--;
-					continue;
-				}
-			if (soap->error == SOAP_TAG_MISMATCH)
-				if (soap_flag)
-				{	soap->error = SOAP_OK;
-					break;
-				}
-			if (soap_flag && soap->error == SOAP_NO_TAG)
-				break;
-			if (soap->error)
-				return NULL;
-		}
-	return a;
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_put___icd3__HasUpdateBin(struct soap *soap, const struct __icd3__HasUpdateBin *a, const char *tag, const char *type)
-{
-	register int id = 0;
-	if (soap_out___icd3__HasUpdateBin(soap, tag?tag:"-icd3:HasUpdateBin", id, a, type))
-		return soap->error;
-	return SOAP_OK;
-}
-
-SOAP_FMAC3 struct __icd3__HasUpdateBin * SOAP_FMAC4 soap_get___icd3__HasUpdateBin(struct soap *soap, struct __icd3__HasUpdateBin *p, const char *tag, const char *type)
-{
-	if ((p = soap_in___icd3__HasUpdateBin(soap, tag, p, type)))
-		if (soap_getindependent(soap))
-			return NULL;
-	return p;
-}
-
-SOAP_FMAC1 struct __icd3__HasUpdateBin * SOAP_FMAC2 soap_instantiate___icd3__HasUpdateBin(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
-{
-	(void)type; (void)arrayType; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___icd3__HasUpdateBin(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___icd3__HasUpdateBin, n, _fdelete);
-	if (!cp)
-		return NULL;
-	if (n < 0)
-	{	cp->ptr = (void*)SOAP_NEW(struct __icd3__HasUpdateBin);
-		if (size)
-			*size = sizeof(struct __icd3__HasUpdateBin);
-	}
-	else
-	{	cp->ptr = (void*)SOAP_NEW(struct __icd3__HasUpdateBin[n]);
-		if (!cp->ptr)
-		{	soap->error = SOAP_EOM;
-			return NULL;
-		}
-		if (size)
-			*size = n * sizeof(struct __icd3__HasUpdateBin);
-	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (struct __icd3__HasUpdateBin*)cp->ptr;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd3__HasUpdateBin(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
-{
-	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __icd3__HasUpdateBin %p -> %p\n", q, p));
-	*(struct __icd3__HasUpdateBin*)p = *(struct __icd3__HasUpdateBin*)q;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd3__GetUpdateDataBin(struct soap *soap, struct __icd3__GetUpdateDataBin *a)
-{
-	(void)soap; (void)a; /* appease -Wall -Werror */
-	a->icd1__GetUpdateDataBin = NULL;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___icd3__GetUpdateDataBin(struct soap *soap, const struct __icd3__GetUpdateDataBin *a)
-{
-	(void)soap; (void)a; /* appease -Wall -Werror */
-	soap_serialize_PointerTo_icd1__GetUpdateDataBin(soap, &a->icd1__GetUpdateDataBin);
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_out___icd3__GetUpdateDataBin(struct soap *soap, const char *tag, int id, const struct __icd3__GetUpdateDataBin *a, const char *type)
-{
-	(void)soap; (void)tag; (void)id; (void)type;
-	if (soap_out_PointerTo_icd1__GetUpdateDataBin(soap, "icd1:GetUpdateDataBin", -1, &a->icd1__GetUpdateDataBin, ""))
-		return soap->error;
-	return SOAP_OK;
-}
-
-SOAP_FMAC3 struct __icd3__GetUpdateDataBin * SOAP_FMAC4 soap_in___icd3__GetUpdateDataBin(struct soap *soap, const char *tag, struct __icd3__GetUpdateDataBin *a, const char *type)
-{
-	size_t soap_flag_icd1__GetUpdateDataBin = 1;
-	short soap_flag;
-	a = (struct __icd3__GetUpdateDataBin *)soap_id_enter(soap, "", a, SOAP_TYPE___icd3__GetUpdateDataBin, sizeof(struct __icd3__GetUpdateDataBin), 0, NULL, NULL, NULL);
-	if (!a)
-		return NULL;
-	soap_default___icd3__GetUpdateDataBin(soap, a);
-		for (soap_flag = 0;; soap_flag = 1)
-		{	soap->error = SOAP_TAG_MISMATCH;
-			if (soap_flag_icd1__GetUpdateDataBin && soap->error == SOAP_TAG_MISMATCH)
-				if (soap_in_PointerTo_icd1__GetUpdateDataBin(soap, "icd1:GetUpdateDataBin", &a->icd1__GetUpdateDataBin, ""))
-				{	soap_flag_icd1__GetUpdateDataBin--;
-					continue;
-				}
-			if (soap->error == SOAP_TAG_MISMATCH)
-				if (soap_flag)
-				{	soap->error = SOAP_OK;
-					break;
-				}
-			if (soap_flag && soap->error == SOAP_NO_TAG)
-				break;
-			if (soap->error)
-				return NULL;
-		}
-	return a;
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_put___icd3__GetUpdateDataBin(struct soap *soap, const struct __icd3__GetUpdateDataBin *a, const char *tag, const char *type)
-{
-	register int id = 0;
-	if (soap_out___icd3__GetUpdateDataBin(soap, tag?tag:"-icd3:GetUpdateDataBin", id, a, type))
-		return soap->error;
-	return SOAP_OK;
-}
-
-SOAP_FMAC3 struct __icd3__GetUpdateDataBin * SOAP_FMAC4 soap_get___icd3__GetUpdateDataBin(struct soap *soap, struct __icd3__GetUpdateDataBin *p, const char *tag, const char *type)
-{
-	if ((p = soap_in___icd3__GetUpdateDataBin(soap, tag, p, type)))
-		if (soap_getindependent(soap))
-			return NULL;
-	return p;
-}
-
-SOAP_FMAC1 struct __icd3__GetUpdateDataBin * SOAP_FMAC2 soap_instantiate___icd3__GetUpdateDataBin(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
-{
-	(void)type; (void)arrayType; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___icd3__GetUpdateDataBin(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___icd3__GetUpdateDataBin, n, _fdelete);
-	if (!cp)
-		return NULL;
-	if (n < 0)
-	{	cp->ptr = (void*)SOAP_NEW(struct __icd3__GetUpdateDataBin);
-		if (size)
-			*size = sizeof(struct __icd3__GetUpdateDataBin);
-	}
-	else
-	{	cp->ptr = (void*)SOAP_NEW(struct __icd3__GetUpdateDataBin[n]);
-		if (!cp->ptr)
-		{	soap->error = SOAP_EOM;
-			return NULL;
-		}
-		if (size)
-			*size = n * sizeof(struct __icd3__GetUpdateDataBin);
-	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (struct __icd3__GetUpdateDataBin*)cp->ptr;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd3__GetUpdateDataBin(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
-{
-	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __icd3__GetUpdateDataBin %p -> %p\n", q, p));
-	*(struct __icd3__GetUpdateDataBin*)p = *(struct __icd3__GetUpdateDataBin*)q;
 }
 
 SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd3__LoginDevice(struct soap *soap, struct __icd3__LoginDevice *a)
@@ -4736,294 +2961,6 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd3__LoginDevice(struct soap *soap, int 
 	*(struct __icd3__LoginDevice*)p = *(struct __icd3__LoginDevice*)q;
 }
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd3__OutDevice(struct soap *soap, struct __icd3__OutDevice *a)
-{
-	(void)soap; (void)a; /* appease -Wall -Werror */
-	a->icd1__OutDevice = NULL;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___icd3__OutDevice(struct soap *soap, const struct __icd3__OutDevice *a)
-{
-	(void)soap; (void)a; /* appease -Wall -Werror */
-	soap_serialize_PointerTo_icd1__OutDevice(soap, &a->icd1__OutDevice);
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_out___icd3__OutDevice(struct soap *soap, const char *tag, int id, const struct __icd3__OutDevice *a, const char *type)
-{
-	(void)soap; (void)tag; (void)id; (void)type;
-	if (soap_out_PointerTo_icd1__OutDevice(soap, "icd1:OutDevice", -1, &a->icd1__OutDevice, ""))
-		return soap->error;
-	return SOAP_OK;
-}
-
-SOAP_FMAC3 struct __icd3__OutDevice * SOAP_FMAC4 soap_in___icd3__OutDevice(struct soap *soap, const char *tag, struct __icd3__OutDevice *a, const char *type)
-{
-	size_t soap_flag_icd1__OutDevice = 1;
-	short soap_flag;
-	a = (struct __icd3__OutDevice *)soap_id_enter(soap, "", a, SOAP_TYPE___icd3__OutDevice, sizeof(struct __icd3__OutDevice), 0, NULL, NULL, NULL);
-	if (!a)
-		return NULL;
-	soap_default___icd3__OutDevice(soap, a);
-		for (soap_flag = 0;; soap_flag = 1)
-		{	soap->error = SOAP_TAG_MISMATCH;
-			if (soap_flag_icd1__OutDevice && soap->error == SOAP_TAG_MISMATCH)
-				if (soap_in_PointerTo_icd1__OutDevice(soap, "icd1:OutDevice", &a->icd1__OutDevice, ""))
-				{	soap_flag_icd1__OutDevice--;
-					continue;
-				}
-			if (soap->error == SOAP_TAG_MISMATCH)
-				if (soap_flag)
-				{	soap->error = SOAP_OK;
-					break;
-				}
-			if (soap_flag && soap->error == SOAP_NO_TAG)
-				break;
-			if (soap->error)
-				return NULL;
-		}
-	return a;
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_put___icd3__OutDevice(struct soap *soap, const struct __icd3__OutDevice *a, const char *tag, const char *type)
-{
-	register int id = 0;
-	if (soap_out___icd3__OutDevice(soap, tag?tag:"-icd3:OutDevice", id, a, type))
-		return soap->error;
-	return SOAP_OK;
-}
-
-SOAP_FMAC3 struct __icd3__OutDevice * SOAP_FMAC4 soap_get___icd3__OutDevice(struct soap *soap, struct __icd3__OutDevice *p, const char *tag, const char *type)
-{
-	if ((p = soap_in___icd3__OutDevice(soap, tag, p, type)))
-		if (soap_getindependent(soap))
-			return NULL;
-	return p;
-}
-
-SOAP_FMAC1 struct __icd3__OutDevice * SOAP_FMAC2 soap_instantiate___icd3__OutDevice(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
-{
-	(void)type; (void)arrayType; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___icd3__OutDevice(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___icd3__OutDevice, n, _fdelete);
-	if (!cp)
-		return NULL;
-	if (n < 0)
-	{	cp->ptr = (void*)SOAP_NEW(struct __icd3__OutDevice);
-		if (size)
-			*size = sizeof(struct __icd3__OutDevice);
-	}
-	else
-	{	cp->ptr = (void*)SOAP_NEW(struct __icd3__OutDevice[n]);
-		if (!cp->ptr)
-		{	soap->error = SOAP_EOM;
-			return NULL;
-		}
-		if (size)
-			*size = n * sizeof(struct __icd3__OutDevice);
-	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (struct __icd3__OutDevice*)cp->ptr;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd3__OutDevice(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
-{
-	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __icd3__OutDevice %p -> %p\n", q, p));
-	*(struct __icd3__OutDevice*)p = *(struct __icd3__OutDevice*)q;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd3__TestSession(struct soap *soap, struct __icd3__TestSession *a)
-{
-	(void)soap; (void)a; /* appease -Wall -Werror */
-	a->icd1__TestSession = NULL;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___icd3__TestSession(struct soap *soap, const struct __icd3__TestSession *a)
-{
-	(void)soap; (void)a; /* appease -Wall -Werror */
-	soap_serialize_PointerTo_icd1__TestSession(soap, &a->icd1__TestSession);
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_out___icd3__TestSession(struct soap *soap, const char *tag, int id, const struct __icd3__TestSession *a, const char *type)
-{
-	(void)soap; (void)tag; (void)id; (void)type;
-	if (soap_out_PointerTo_icd1__TestSession(soap, "icd1:TestSession", -1, &a->icd1__TestSession, ""))
-		return soap->error;
-	return SOAP_OK;
-}
-
-SOAP_FMAC3 struct __icd3__TestSession * SOAP_FMAC4 soap_in___icd3__TestSession(struct soap *soap, const char *tag, struct __icd3__TestSession *a, const char *type)
-{
-	size_t soap_flag_icd1__TestSession = 1;
-	short soap_flag;
-	a = (struct __icd3__TestSession *)soap_id_enter(soap, "", a, SOAP_TYPE___icd3__TestSession, sizeof(struct __icd3__TestSession), 0, NULL, NULL, NULL);
-	if (!a)
-		return NULL;
-	soap_default___icd3__TestSession(soap, a);
-		for (soap_flag = 0;; soap_flag = 1)
-		{	soap->error = SOAP_TAG_MISMATCH;
-			if (soap_flag_icd1__TestSession && soap->error == SOAP_TAG_MISMATCH)
-				if (soap_in_PointerTo_icd1__TestSession(soap, "icd1:TestSession", &a->icd1__TestSession, ""))
-				{	soap_flag_icd1__TestSession--;
-					continue;
-				}
-			if (soap->error == SOAP_TAG_MISMATCH)
-				if (soap_flag)
-				{	soap->error = SOAP_OK;
-					break;
-				}
-			if (soap_flag && soap->error == SOAP_NO_TAG)
-				break;
-			if (soap->error)
-				return NULL;
-		}
-	return a;
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_put___icd3__TestSession(struct soap *soap, const struct __icd3__TestSession *a, const char *tag, const char *type)
-{
-	register int id = 0;
-	if (soap_out___icd3__TestSession(soap, tag?tag:"-icd3:TestSession", id, a, type))
-		return soap->error;
-	return SOAP_OK;
-}
-
-SOAP_FMAC3 struct __icd3__TestSession * SOAP_FMAC4 soap_get___icd3__TestSession(struct soap *soap, struct __icd3__TestSession *p, const char *tag, const char *type)
-{
-	if ((p = soap_in___icd3__TestSession(soap, tag, p, type)))
-		if (soap_getindependent(soap))
-			return NULL;
-	return p;
-}
-
-SOAP_FMAC1 struct __icd3__TestSession * SOAP_FMAC2 soap_instantiate___icd3__TestSession(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
-{
-	(void)type; (void)arrayType; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___icd3__TestSession(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___icd3__TestSession, n, _fdelete);
-	if (!cp)
-		return NULL;
-	if (n < 0)
-	{	cp->ptr = (void*)SOAP_NEW(struct __icd3__TestSession);
-		if (size)
-			*size = sizeof(struct __icd3__TestSession);
-	}
-	else
-	{	cp->ptr = (void*)SOAP_NEW(struct __icd3__TestSession[n]);
-		if (!cp->ptr)
-		{	soap->error = SOAP_EOM;
-			return NULL;
-		}
-		if (size)
-			*size = n * sizeof(struct __icd3__TestSession);
-	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (struct __icd3__TestSession*)cp->ptr;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd3__TestSession(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
-{
-	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __icd3__TestSession %p -> %p\n", q, p));
-	*(struct __icd3__TestSession*)p = *(struct __icd3__TestSession*)q;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd3__GetTime2(struct soap *soap, struct __icd3__GetTime2 *a)
-{
-	(void)soap; (void)a; /* appease -Wall -Werror */
-	a->icd1__GetTime2 = NULL;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___icd3__GetTime2(struct soap *soap, const struct __icd3__GetTime2 *a)
-{
-	(void)soap; (void)a; /* appease -Wall -Werror */
-	soap_serialize_PointerTo_icd1__GetTime2(soap, &a->icd1__GetTime2);
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_out___icd3__GetTime2(struct soap *soap, const char *tag, int id, const struct __icd3__GetTime2 *a, const char *type)
-{
-	(void)soap; (void)tag; (void)id; (void)type;
-	if (soap_out_PointerTo_icd1__GetTime2(soap, "icd1:GetTime2", -1, &a->icd1__GetTime2, ""))
-		return soap->error;
-	return SOAP_OK;
-}
-
-SOAP_FMAC3 struct __icd3__GetTime2 * SOAP_FMAC4 soap_in___icd3__GetTime2(struct soap *soap, const char *tag, struct __icd3__GetTime2 *a, const char *type)
-{
-	size_t soap_flag_icd1__GetTime2 = 1;
-	short soap_flag;
-	a = (struct __icd3__GetTime2 *)soap_id_enter(soap, "", a, SOAP_TYPE___icd3__GetTime2, sizeof(struct __icd3__GetTime2), 0, NULL, NULL, NULL);
-	if (!a)
-		return NULL;
-	soap_default___icd3__GetTime2(soap, a);
-		for (soap_flag = 0;; soap_flag = 1)
-		{	soap->error = SOAP_TAG_MISMATCH;
-			if (soap_flag_icd1__GetTime2 && soap->error == SOAP_TAG_MISMATCH)
-				if (soap_in_PointerTo_icd1__GetTime2(soap, "icd1:GetTime2", &a->icd1__GetTime2, ""))
-				{	soap_flag_icd1__GetTime2--;
-					continue;
-				}
-			if (soap->error == SOAP_TAG_MISMATCH)
-				if (soap_flag)
-				{	soap->error = SOAP_OK;
-					break;
-				}
-			if (soap_flag && soap->error == SOAP_NO_TAG)
-				break;
-			if (soap->error)
-				return NULL;
-		}
-	return a;
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_put___icd3__GetTime2(struct soap *soap, const struct __icd3__GetTime2 *a, const char *tag, const char *type)
-{
-	register int id = 0;
-	if (soap_out___icd3__GetTime2(soap, tag?tag:"-icd3:GetTime2", id, a, type))
-		return soap->error;
-	return SOAP_OK;
-}
-
-SOAP_FMAC3 struct __icd3__GetTime2 * SOAP_FMAC4 soap_get___icd3__GetTime2(struct soap *soap, struct __icd3__GetTime2 *p, const char *tag, const char *type)
-{
-	if ((p = soap_in___icd3__GetTime2(soap, tag, p, type)))
-		if (soap_getindependent(soap))
-			return NULL;
-	return p;
-}
-
-SOAP_FMAC1 struct __icd3__GetTime2 * SOAP_FMAC2 soap_instantiate___icd3__GetTime2(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
-{
-	(void)type; (void)arrayType; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___icd3__GetTime2(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___icd3__GetTime2, n, _fdelete);
-	if (!cp)
-		return NULL;
-	if (n < 0)
-	{	cp->ptr = (void*)SOAP_NEW(struct __icd3__GetTime2);
-		if (size)
-			*size = sizeof(struct __icd3__GetTime2);
-	}
-	else
-	{	cp->ptr = (void*)SOAP_NEW(struct __icd3__GetTime2[n]);
-		if (!cp->ptr)
-		{	soap->error = SOAP_EOM;
-			return NULL;
-		}
-		if (size)
-			*size = n * sizeof(struct __icd3__GetTime2);
-	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (struct __icd3__GetTime2*)cp->ptr;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd3__GetTime2(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
-{
-	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __icd3__GetTime2 %p -> %p\n", q, p));
-	*(struct __icd3__GetTime2*)p = *(struct __icd3__GetTime2*)q;
-}
-
 SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd3__GetTime(struct soap *soap, struct __icd3__GetTime *a)
 {
 	(void)soap; (void)a; /* appease -Wall -Werror */
@@ -5120,39 +3057,39 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd3__GetTime(struct soap *soap, int st, 
 	*(struct __icd3__GetTime*)p = *(struct __icd3__GetTime*)q;
 }
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd3__HelloWorld(struct soap *soap, struct __icd3__HelloWorld *a)
+SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd2__LogoutDevice(struct soap *soap, struct __icd2__LogoutDevice *a)
 {
 	(void)soap; (void)a; /* appease -Wall -Werror */
-	a->icd1__HelloWorld = NULL;
+	a->icd1__LogoutDevice = NULL;
 }
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___icd3__HelloWorld(struct soap *soap, const struct __icd3__HelloWorld *a)
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___icd2__LogoutDevice(struct soap *soap, const struct __icd2__LogoutDevice *a)
 {
 	(void)soap; (void)a; /* appease -Wall -Werror */
-	soap_serialize_PointerTo_icd1__HelloWorld(soap, &a->icd1__HelloWorld);
+	soap_serialize_PointerTo_icd1__LogoutDevice(soap, &a->icd1__LogoutDevice);
 }
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_out___icd3__HelloWorld(struct soap *soap, const char *tag, int id, const struct __icd3__HelloWorld *a, const char *type)
+SOAP_FMAC3 int SOAP_FMAC4 soap_out___icd2__LogoutDevice(struct soap *soap, const char *tag, int id, const struct __icd2__LogoutDevice *a, const char *type)
 {
 	(void)soap; (void)tag; (void)id; (void)type;
-	if (soap_out_PointerTo_icd1__HelloWorld(soap, "icd1:HelloWorld", -1, &a->icd1__HelloWorld, ""))
+	if (soap_out_PointerTo_icd1__LogoutDevice(soap, "icd1:LogoutDevice", -1, &a->icd1__LogoutDevice, ""))
 		return soap->error;
 	return SOAP_OK;
 }
 
-SOAP_FMAC3 struct __icd3__HelloWorld * SOAP_FMAC4 soap_in___icd3__HelloWorld(struct soap *soap, const char *tag, struct __icd3__HelloWorld *a, const char *type)
+SOAP_FMAC3 struct __icd2__LogoutDevice * SOAP_FMAC4 soap_in___icd2__LogoutDevice(struct soap *soap, const char *tag, struct __icd2__LogoutDevice *a, const char *type)
 {
-	size_t soap_flag_icd1__HelloWorld = 1;
+	size_t soap_flag_icd1__LogoutDevice = 1;
 	short soap_flag;
-	a = (struct __icd3__HelloWorld *)soap_id_enter(soap, "", a, SOAP_TYPE___icd3__HelloWorld, sizeof(struct __icd3__HelloWorld), 0, NULL, NULL, NULL);
+	a = (struct __icd2__LogoutDevice *)soap_id_enter(soap, "", a, SOAP_TYPE___icd2__LogoutDevice, sizeof(struct __icd2__LogoutDevice), 0, NULL, NULL, NULL);
 	if (!a)
 		return NULL;
-	soap_default___icd3__HelloWorld(soap, a);
+	soap_default___icd2__LogoutDevice(soap, a);
 		for (soap_flag = 0;; soap_flag = 1)
 		{	soap->error = SOAP_TAG_MISMATCH;
-			if (soap_flag_icd1__HelloWorld && soap->error == SOAP_TAG_MISMATCH)
-				if (soap_in_PointerTo_icd1__HelloWorld(soap, "icd1:HelloWorld", &a->icd1__HelloWorld, ""))
-				{	soap_flag_icd1__HelloWorld--;
+			if (soap_flag_icd1__LogoutDevice && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_PointerTo_icd1__LogoutDevice(soap, "icd1:LogoutDevice", &a->icd1__LogoutDevice, ""))
+				{	soap_flag_icd1__LogoutDevice--;
 					continue;
 				}
 			if (soap->error == SOAP_TAG_MISMATCH)
@@ -5168,52 +3105,52 @@ SOAP_FMAC3 struct __icd3__HelloWorld * SOAP_FMAC4 soap_in___icd3__HelloWorld(str
 	return a;
 }
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_put___icd3__HelloWorld(struct soap *soap, const struct __icd3__HelloWorld *a, const char *tag, const char *type)
+SOAP_FMAC3 int SOAP_FMAC4 soap_put___icd2__LogoutDevice(struct soap *soap, const struct __icd2__LogoutDevice *a, const char *tag, const char *type)
 {
 	register int id = 0;
-	if (soap_out___icd3__HelloWorld(soap, tag?tag:"-icd3:HelloWorld", id, a, type))
+	if (soap_out___icd2__LogoutDevice(soap, tag?tag:"-icd2:LogoutDevice", id, a, type))
 		return soap->error;
 	return SOAP_OK;
 }
 
-SOAP_FMAC3 struct __icd3__HelloWorld * SOAP_FMAC4 soap_get___icd3__HelloWorld(struct soap *soap, struct __icd3__HelloWorld *p, const char *tag, const char *type)
+SOAP_FMAC3 struct __icd2__LogoutDevice * SOAP_FMAC4 soap_get___icd2__LogoutDevice(struct soap *soap, struct __icd2__LogoutDevice *p, const char *tag, const char *type)
 {
-	if ((p = soap_in___icd3__HelloWorld(soap, tag, p, type)))
+	if ((p = soap_in___icd2__LogoutDevice(soap, tag, p, type)))
 		if (soap_getindependent(soap))
 			return NULL;
 	return p;
 }
 
-SOAP_FMAC1 struct __icd3__HelloWorld * SOAP_FMAC2 soap_instantiate___icd3__HelloWorld(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+SOAP_FMAC1 struct __icd2__LogoutDevice * SOAP_FMAC2 soap_instantiate___icd2__LogoutDevice(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
 	(void)type; (void)arrayType; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___icd3__HelloWorld(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___icd3__HelloWorld, n, _fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___icd2__LogoutDevice(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___icd2__LogoutDevice, n, _fdelete);
 	if (!cp)
 		return NULL;
 	if (n < 0)
-	{	cp->ptr = (void*)SOAP_NEW(struct __icd3__HelloWorld);
+	{	cp->ptr = (void*)SOAP_NEW(struct __icd2__LogoutDevice);
 		if (size)
-			*size = sizeof(struct __icd3__HelloWorld);
+			*size = sizeof(struct __icd2__LogoutDevice);
 	}
 	else
-	{	cp->ptr = (void*)SOAP_NEW(struct __icd3__HelloWorld[n]);
+	{	cp->ptr = (void*)SOAP_NEW(struct __icd2__LogoutDevice[n]);
 		if (!cp->ptr)
 		{	soap->error = SOAP_EOM;
 			return NULL;
 		}
 		if (size)
-			*size = n * sizeof(struct __icd3__HelloWorld);
+			*size = n * sizeof(struct __icd2__LogoutDevice);
 	}
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (struct __icd3__HelloWorld*)cp->ptr;
+	return (struct __icd2__LogoutDevice*)cp->ptr;
 }
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd3__HelloWorld(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd2__LogoutDevice(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
 {
 	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __icd3__HelloWorld %p -> %p\n", q, p));
-	*(struct __icd3__HelloWorld*)p = *(struct __icd3__HelloWorld*)q;
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __icd2__LogoutDevice %p -> %p\n", q, p));
+	*(struct __icd2__LogoutDevice*)p = *(struct __icd2__LogoutDevice*)q;
 }
 
 SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd2__SendData(struct soap *soap, struct __icd2__SendData *a)
@@ -5312,198 +3249,6 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd2__SendData(struct soap *soap, int st,
 	*(struct __icd2__SendData*)p = *(struct __icd2__SendData*)q;
 }
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd2__HasUpdateBin(struct soap *soap, struct __icd2__HasUpdateBin *a)
-{
-	(void)soap; (void)a; /* appease -Wall -Werror */
-	a->icd1__HasUpdateBin = NULL;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___icd2__HasUpdateBin(struct soap *soap, const struct __icd2__HasUpdateBin *a)
-{
-	(void)soap; (void)a; /* appease -Wall -Werror */
-	soap_serialize_PointerTo_icd1__HasUpdateBin(soap, &a->icd1__HasUpdateBin);
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_out___icd2__HasUpdateBin(struct soap *soap, const char *tag, int id, const struct __icd2__HasUpdateBin *a, const char *type)
-{
-	(void)soap; (void)tag; (void)id; (void)type;
-	if (soap_out_PointerTo_icd1__HasUpdateBin(soap, "icd1:HasUpdateBin", -1, &a->icd1__HasUpdateBin, ""))
-		return soap->error;
-	return SOAP_OK;
-}
-
-SOAP_FMAC3 struct __icd2__HasUpdateBin * SOAP_FMAC4 soap_in___icd2__HasUpdateBin(struct soap *soap, const char *tag, struct __icd2__HasUpdateBin *a, const char *type)
-{
-	size_t soap_flag_icd1__HasUpdateBin = 1;
-	short soap_flag;
-	a = (struct __icd2__HasUpdateBin *)soap_id_enter(soap, "", a, SOAP_TYPE___icd2__HasUpdateBin, sizeof(struct __icd2__HasUpdateBin), 0, NULL, NULL, NULL);
-	if (!a)
-		return NULL;
-	soap_default___icd2__HasUpdateBin(soap, a);
-		for (soap_flag = 0;; soap_flag = 1)
-		{	soap->error = SOAP_TAG_MISMATCH;
-			if (soap_flag_icd1__HasUpdateBin && soap->error == SOAP_TAG_MISMATCH)
-				if (soap_in_PointerTo_icd1__HasUpdateBin(soap, "icd1:HasUpdateBin", &a->icd1__HasUpdateBin, ""))
-				{	soap_flag_icd1__HasUpdateBin--;
-					continue;
-				}
-			if (soap->error == SOAP_TAG_MISMATCH)
-				if (soap_flag)
-				{	soap->error = SOAP_OK;
-					break;
-				}
-			if (soap_flag && soap->error == SOAP_NO_TAG)
-				break;
-			if (soap->error)
-				return NULL;
-		}
-	return a;
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_put___icd2__HasUpdateBin(struct soap *soap, const struct __icd2__HasUpdateBin *a, const char *tag, const char *type)
-{
-	register int id = 0;
-	if (soap_out___icd2__HasUpdateBin(soap, tag?tag:"-icd2:HasUpdateBin", id, a, type))
-		return soap->error;
-	return SOAP_OK;
-}
-
-SOAP_FMAC3 struct __icd2__HasUpdateBin * SOAP_FMAC4 soap_get___icd2__HasUpdateBin(struct soap *soap, struct __icd2__HasUpdateBin *p, const char *tag, const char *type)
-{
-	if ((p = soap_in___icd2__HasUpdateBin(soap, tag, p, type)))
-		if (soap_getindependent(soap))
-			return NULL;
-	return p;
-}
-
-SOAP_FMAC1 struct __icd2__HasUpdateBin * SOAP_FMAC2 soap_instantiate___icd2__HasUpdateBin(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
-{
-	(void)type; (void)arrayType; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___icd2__HasUpdateBin(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___icd2__HasUpdateBin, n, _fdelete);
-	if (!cp)
-		return NULL;
-	if (n < 0)
-	{	cp->ptr = (void*)SOAP_NEW(struct __icd2__HasUpdateBin);
-		if (size)
-			*size = sizeof(struct __icd2__HasUpdateBin);
-	}
-	else
-	{	cp->ptr = (void*)SOAP_NEW(struct __icd2__HasUpdateBin[n]);
-		if (!cp->ptr)
-		{	soap->error = SOAP_EOM;
-			return NULL;
-		}
-		if (size)
-			*size = n * sizeof(struct __icd2__HasUpdateBin);
-	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (struct __icd2__HasUpdateBin*)cp->ptr;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd2__HasUpdateBin(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
-{
-	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __icd2__HasUpdateBin %p -> %p\n", q, p));
-	*(struct __icd2__HasUpdateBin*)p = *(struct __icd2__HasUpdateBin*)q;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd2__GetUpdateDataBin(struct soap *soap, struct __icd2__GetUpdateDataBin *a)
-{
-	(void)soap; (void)a; /* appease -Wall -Werror */
-	a->icd1__GetUpdateDataBin = NULL;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___icd2__GetUpdateDataBin(struct soap *soap, const struct __icd2__GetUpdateDataBin *a)
-{
-	(void)soap; (void)a; /* appease -Wall -Werror */
-	soap_serialize_PointerTo_icd1__GetUpdateDataBin(soap, &a->icd1__GetUpdateDataBin);
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_out___icd2__GetUpdateDataBin(struct soap *soap, const char *tag, int id, const struct __icd2__GetUpdateDataBin *a, const char *type)
-{
-	(void)soap; (void)tag; (void)id; (void)type;
-	if (soap_out_PointerTo_icd1__GetUpdateDataBin(soap, "icd1:GetUpdateDataBin", -1, &a->icd1__GetUpdateDataBin, ""))
-		return soap->error;
-	return SOAP_OK;
-}
-
-SOAP_FMAC3 struct __icd2__GetUpdateDataBin * SOAP_FMAC4 soap_in___icd2__GetUpdateDataBin(struct soap *soap, const char *tag, struct __icd2__GetUpdateDataBin *a, const char *type)
-{
-	size_t soap_flag_icd1__GetUpdateDataBin = 1;
-	short soap_flag;
-	a = (struct __icd2__GetUpdateDataBin *)soap_id_enter(soap, "", a, SOAP_TYPE___icd2__GetUpdateDataBin, sizeof(struct __icd2__GetUpdateDataBin), 0, NULL, NULL, NULL);
-	if (!a)
-		return NULL;
-	soap_default___icd2__GetUpdateDataBin(soap, a);
-		for (soap_flag = 0;; soap_flag = 1)
-		{	soap->error = SOAP_TAG_MISMATCH;
-			if (soap_flag_icd1__GetUpdateDataBin && soap->error == SOAP_TAG_MISMATCH)
-				if (soap_in_PointerTo_icd1__GetUpdateDataBin(soap, "icd1:GetUpdateDataBin", &a->icd1__GetUpdateDataBin, ""))
-				{	soap_flag_icd1__GetUpdateDataBin--;
-					continue;
-				}
-			if (soap->error == SOAP_TAG_MISMATCH)
-				if (soap_flag)
-				{	soap->error = SOAP_OK;
-					break;
-				}
-			if (soap_flag && soap->error == SOAP_NO_TAG)
-				break;
-			if (soap->error)
-				return NULL;
-		}
-	return a;
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_put___icd2__GetUpdateDataBin(struct soap *soap, const struct __icd2__GetUpdateDataBin *a, const char *tag, const char *type)
-{
-	register int id = 0;
-	if (soap_out___icd2__GetUpdateDataBin(soap, tag?tag:"-icd2:GetUpdateDataBin", id, a, type))
-		return soap->error;
-	return SOAP_OK;
-}
-
-SOAP_FMAC3 struct __icd2__GetUpdateDataBin * SOAP_FMAC4 soap_get___icd2__GetUpdateDataBin(struct soap *soap, struct __icd2__GetUpdateDataBin *p, const char *tag, const char *type)
-{
-	if ((p = soap_in___icd2__GetUpdateDataBin(soap, tag, p, type)))
-		if (soap_getindependent(soap))
-			return NULL;
-	return p;
-}
-
-SOAP_FMAC1 struct __icd2__GetUpdateDataBin * SOAP_FMAC2 soap_instantiate___icd2__GetUpdateDataBin(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
-{
-	(void)type; (void)arrayType; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___icd2__GetUpdateDataBin(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___icd2__GetUpdateDataBin, n, _fdelete);
-	if (!cp)
-		return NULL;
-	if (n < 0)
-	{	cp->ptr = (void*)SOAP_NEW(struct __icd2__GetUpdateDataBin);
-		if (size)
-			*size = sizeof(struct __icd2__GetUpdateDataBin);
-	}
-	else
-	{	cp->ptr = (void*)SOAP_NEW(struct __icd2__GetUpdateDataBin[n]);
-		if (!cp->ptr)
-		{	soap->error = SOAP_EOM;
-			return NULL;
-		}
-		if (size)
-			*size = n * sizeof(struct __icd2__GetUpdateDataBin);
-	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (struct __icd2__GetUpdateDataBin*)cp->ptr;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd2__GetUpdateDataBin(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
-{
-	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __icd2__GetUpdateDataBin %p -> %p\n", q, p));
-	*(struct __icd2__GetUpdateDataBin*)p = *(struct __icd2__GetUpdateDataBin*)q;
-}
-
 SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd2__LoginDevice(struct soap *soap, struct __icd2__LoginDevice *a)
 {
 	(void)soap; (void)a; /* appease -Wall -Werror */
@@ -5600,294 +3345,6 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd2__LoginDevice(struct soap *soap, int 
 	*(struct __icd2__LoginDevice*)p = *(struct __icd2__LoginDevice*)q;
 }
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd2__OutDevice(struct soap *soap, struct __icd2__OutDevice *a)
-{
-	(void)soap; (void)a; /* appease -Wall -Werror */
-	a->icd1__OutDevice = NULL;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___icd2__OutDevice(struct soap *soap, const struct __icd2__OutDevice *a)
-{
-	(void)soap; (void)a; /* appease -Wall -Werror */
-	soap_serialize_PointerTo_icd1__OutDevice(soap, &a->icd1__OutDevice);
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_out___icd2__OutDevice(struct soap *soap, const char *tag, int id, const struct __icd2__OutDevice *a, const char *type)
-{
-	(void)soap; (void)tag; (void)id; (void)type;
-	if (soap_out_PointerTo_icd1__OutDevice(soap, "icd1:OutDevice", -1, &a->icd1__OutDevice, ""))
-		return soap->error;
-	return SOAP_OK;
-}
-
-SOAP_FMAC3 struct __icd2__OutDevice * SOAP_FMAC4 soap_in___icd2__OutDevice(struct soap *soap, const char *tag, struct __icd2__OutDevice *a, const char *type)
-{
-	size_t soap_flag_icd1__OutDevice = 1;
-	short soap_flag;
-	a = (struct __icd2__OutDevice *)soap_id_enter(soap, "", a, SOAP_TYPE___icd2__OutDevice, sizeof(struct __icd2__OutDevice), 0, NULL, NULL, NULL);
-	if (!a)
-		return NULL;
-	soap_default___icd2__OutDevice(soap, a);
-		for (soap_flag = 0;; soap_flag = 1)
-		{	soap->error = SOAP_TAG_MISMATCH;
-			if (soap_flag_icd1__OutDevice && soap->error == SOAP_TAG_MISMATCH)
-				if (soap_in_PointerTo_icd1__OutDevice(soap, "icd1:OutDevice", &a->icd1__OutDevice, ""))
-				{	soap_flag_icd1__OutDevice--;
-					continue;
-				}
-			if (soap->error == SOAP_TAG_MISMATCH)
-				if (soap_flag)
-				{	soap->error = SOAP_OK;
-					break;
-				}
-			if (soap_flag && soap->error == SOAP_NO_TAG)
-				break;
-			if (soap->error)
-				return NULL;
-		}
-	return a;
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_put___icd2__OutDevice(struct soap *soap, const struct __icd2__OutDevice *a, const char *tag, const char *type)
-{
-	register int id = 0;
-	if (soap_out___icd2__OutDevice(soap, tag?tag:"-icd2:OutDevice", id, a, type))
-		return soap->error;
-	return SOAP_OK;
-}
-
-SOAP_FMAC3 struct __icd2__OutDevice * SOAP_FMAC4 soap_get___icd2__OutDevice(struct soap *soap, struct __icd2__OutDevice *p, const char *tag, const char *type)
-{
-	if ((p = soap_in___icd2__OutDevice(soap, tag, p, type)))
-		if (soap_getindependent(soap))
-			return NULL;
-	return p;
-}
-
-SOAP_FMAC1 struct __icd2__OutDevice * SOAP_FMAC2 soap_instantiate___icd2__OutDevice(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
-{
-	(void)type; (void)arrayType; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___icd2__OutDevice(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___icd2__OutDevice, n, _fdelete);
-	if (!cp)
-		return NULL;
-	if (n < 0)
-	{	cp->ptr = (void*)SOAP_NEW(struct __icd2__OutDevice);
-		if (size)
-			*size = sizeof(struct __icd2__OutDevice);
-	}
-	else
-	{	cp->ptr = (void*)SOAP_NEW(struct __icd2__OutDevice[n]);
-		if (!cp->ptr)
-		{	soap->error = SOAP_EOM;
-			return NULL;
-		}
-		if (size)
-			*size = n * sizeof(struct __icd2__OutDevice);
-	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (struct __icd2__OutDevice*)cp->ptr;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd2__OutDevice(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
-{
-	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __icd2__OutDevice %p -> %p\n", q, p));
-	*(struct __icd2__OutDevice*)p = *(struct __icd2__OutDevice*)q;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd2__TestSession(struct soap *soap, struct __icd2__TestSession *a)
-{
-	(void)soap; (void)a; /* appease -Wall -Werror */
-	a->icd1__TestSession = NULL;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___icd2__TestSession(struct soap *soap, const struct __icd2__TestSession *a)
-{
-	(void)soap; (void)a; /* appease -Wall -Werror */
-	soap_serialize_PointerTo_icd1__TestSession(soap, &a->icd1__TestSession);
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_out___icd2__TestSession(struct soap *soap, const char *tag, int id, const struct __icd2__TestSession *a, const char *type)
-{
-	(void)soap; (void)tag; (void)id; (void)type;
-	if (soap_out_PointerTo_icd1__TestSession(soap, "icd1:TestSession", -1, &a->icd1__TestSession, ""))
-		return soap->error;
-	return SOAP_OK;
-}
-
-SOAP_FMAC3 struct __icd2__TestSession * SOAP_FMAC4 soap_in___icd2__TestSession(struct soap *soap, const char *tag, struct __icd2__TestSession *a, const char *type)
-{
-	size_t soap_flag_icd1__TestSession = 1;
-	short soap_flag;
-	a = (struct __icd2__TestSession *)soap_id_enter(soap, "", a, SOAP_TYPE___icd2__TestSession, sizeof(struct __icd2__TestSession), 0, NULL, NULL, NULL);
-	if (!a)
-		return NULL;
-	soap_default___icd2__TestSession(soap, a);
-		for (soap_flag = 0;; soap_flag = 1)
-		{	soap->error = SOAP_TAG_MISMATCH;
-			if (soap_flag_icd1__TestSession && soap->error == SOAP_TAG_MISMATCH)
-				if (soap_in_PointerTo_icd1__TestSession(soap, "icd1:TestSession", &a->icd1__TestSession, ""))
-				{	soap_flag_icd1__TestSession--;
-					continue;
-				}
-			if (soap->error == SOAP_TAG_MISMATCH)
-				if (soap_flag)
-				{	soap->error = SOAP_OK;
-					break;
-				}
-			if (soap_flag && soap->error == SOAP_NO_TAG)
-				break;
-			if (soap->error)
-				return NULL;
-		}
-	return a;
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_put___icd2__TestSession(struct soap *soap, const struct __icd2__TestSession *a, const char *tag, const char *type)
-{
-	register int id = 0;
-	if (soap_out___icd2__TestSession(soap, tag?tag:"-icd2:TestSession", id, a, type))
-		return soap->error;
-	return SOAP_OK;
-}
-
-SOAP_FMAC3 struct __icd2__TestSession * SOAP_FMAC4 soap_get___icd2__TestSession(struct soap *soap, struct __icd2__TestSession *p, const char *tag, const char *type)
-{
-	if ((p = soap_in___icd2__TestSession(soap, tag, p, type)))
-		if (soap_getindependent(soap))
-			return NULL;
-	return p;
-}
-
-SOAP_FMAC1 struct __icd2__TestSession * SOAP_FMAC2 soap_instantiate___icd2__TestSession(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
-{
-	(void)type; (void)arrayType; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___icd2__TestSession(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___icd2__TestSession, n, _fdelete);
-	if (!cp)
-		return NULL;
-	if (n < 0)
-	{	cp->ptr = (void*)SOAP_NEW(struct __icd2__TestSession);
-		if (size)
-			*size = sizeof(struct __icd2__TestSession);
-	}
-	else
-	{	cp->ptr = (void*)SOAP_NEW(struct __icd2__TestSession[n]);
-		if (!cp->ptr)
-		{	soap->error = SOAP_EOM;
-			return NULL;
-		}
-		if (size)
-			*size = n * sizeof(struct __icd2__TestSession);
-	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (struct __icd2__TestSession*)cp->ptr;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd2__TestSession(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
-{
-	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __icd2__TestSession %p -> %p\n", q, p));
-	*(struct __icd2__TestSession*)p = *(struct __icd2__TestSession*)q;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd2__GetTime2(struct soap *soap, struct __icd2__GetTime2 *a)
-{
-	(void)soap; (void)a; /* appease -Wall -Werror */
-	a->icd1__GetTime2 = NULL;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___icd2__GetTime2(struct soap *soap, const struct __icd2__GetTime2 *a)
-{
-	(void)soap; (void)a; /* appease -Wall -Werror */
-	soap_serialize_PointerTo_icd1__GetTime2(soap, &a->icd1__GetTime2);
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_out___icd2__GetTime2(struct soap *soap, const char *tag, int id, const struct __icd2__GetTime2 *a, const char *type)
-{
-	(void)soap; (void)tag; (void)id; (void)type;
-	if (soap_out_PointerTo_icd1__GetTime2(soap, "icd1:GetTime2", -1, &a->icd1__GetTime2, ""))
-		return soap->error;
-	return SOAP_OK;
-}
-
-SOAP_FMAC3 struct __icd2__GetTime2 * SOAP_FMAC4 soap_in___icd2__GetTime2(struct soap *soap, const char *tag, struct __icd2__GetTime2 *a, const char *type)
-{
-	size_t soap_flag_icd1__GetTime2 = 1;
-	short soap_flag;
-	a = (struct __icd2__GetTime2 *)soap_id_enter(soap, "", a, SOAP_TYPE___icd2__GetTime2, sizeof(struct __icd2__GetTime2), 0, NULL, NULL, NULL);
-	if (!a)
-		return NULL;
-	soap_default___icd2__GetTime2(soap, a);
-		for (soap_flag = 0;; soap_flag = 1)
-		{	soap->error = SOAP_TAG_MISMATCH;
-			if (soap_flag_icd1__GetTime2 && soap->error == SOAP_TAG_MISMATCH)
-				if (soap_in_PointerTo_icd1__GetTime2(soap, "icd1:GetTime2", &a->icd1__GetTime2, ""))
-				{	soap_flag_icd1__GetTime2--;
-					continue;
-				}
-			if (soap->error == SOAP_TAG_MISMATCH)
-				if (soap_flag)
-				{	soap->error = SOAP_OK;
-					break;
-				}
-			if (soap_flag && soap->error == SOAP_NO_TAG)
-				break;
-			if (soap->error)
-				return NULL;
-		}
-	return a;
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_put___icd2__GetTime2(struct soap *soap, const struct __icd2__GetTime2 *a, const char *tag, const char *type)
-{
-	register int id = 0;
-	if (soap_out___icd2__GetTime2(soap, tag?tag:"-icd2:GetTime2", id, a, type))
-		return soap->error;
-	return SOAP_OK;
-}
-
-SOAP_FMAC3 struct __icd2__GetTime2 * SOAP_FMAC4 soap_get___icd2__GetTime2(struct soap *soap, struct __icd2__GetTime2 *p, const char *tag, const char *type)
-{
-	if ((p = soap_in___icd2__GetTime2(soap, tag, p, type)))
-		if (soap_getindependent(soap))
-			return NULL;
-	return p;
-}
-
-SOAP_FMAC1 struct __icd2__GetTime2 * SOAP_FMAC2 soap_instantiate___icd2__GetTime2(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
-{
-	(void)type; (void)arrayType; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___icd2__GetTime2(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___icd2__GetTime2, n, _fdelete);
-	if (!cp)
-		return NULL;
-	if (n < 0)
-	{	cp->ptr = (void*)SOAP_NEW(struct __icd2__GetTime2);
-		if (size)
-			*size = sizeof(struct __icd2__GetTime2);
-	}
-	else
-	{	cp->ptr = (void*)SOAP_NEW(struct __icd2__GetTime2[n]);
-		if (!cp->ptr)
-		{	soap->error = SOAP_EOM;
-			return NULL;
-		}
-		if (size)
-			*size = n * sizeof(struct __icd2__GetTime2);
-	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (struct __icd2__GetTime2*)cp->ptr;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd2__GetTime2(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
-{
-	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __icd2__GetTime2 %p -> %p\n", q, p));
-	*(struct __icd2__GetTime2*)p = *(struct __icd2__GetTime2*)q;
-}
-
 SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd2__GetTime(struct soap *soap, struct __icd2__GetTime *a)
 {
 	(void)soap; (void)a; /* appease -Wall -Werror */
@@ -5982,102 +3439,6 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd2__GetTime(struct soap *soap, int st, 
 	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __icd2__GetTime %p -> %p\n", q, p));
 	*(struct __icd2__GetTime*)p = *(struct __icd2__GetTime*)q;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd2__HelloWorld(struct soap *soap, struct __icd2__HelloWorld *a)
-{
-	(void)soap; (void)a; /* appease -Wall -Werror */
-	a->icd1__HelloWorld = NULL;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___icd2__HelloWorld(struct soap *soap, const struct __icd2__HelloWorld *a)
-{
-	(void)soap; (void)a; /* appease -Wall -Werror */
-	soap_serialize_PointerTo_icd1__HelloWorld(soap, &a->icd1__HelloWorld);
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_out___icd2__HelloWorld(struct soap *soap, const char *tag, int id, const struct __icd2__HelloWorld *a, const char *type)
-{
-	(void)soap; (void)tag; (void)id; (void)type;
-	if (soap_out_PointerTo_icd1__HelloWorld(soap, "icd1:HelloWorld", -1, &a->icd1__HelloWorld, ""))
-		return soap->error;
-	return SOAP_OK;
-}
-
-SOAP_FMAC3 struct __icd2__HelloWorld * SOAP_FMAC4 soap_in___icd2__HelloWorld(struct soap *soap, const char *tag, struct __icd2__HelloWorld *a, const char *type)
-{
-	size_t soap_flag_icd1__HelloWorld = 1;
-	short soap_flag;
-	a = (struct __icd2__HelloWorld *)soap_id_enter(soap, "", a, SOAP_TYPE___icd2__HelloWorld, sizeof(struct __icd2__HelloWorld), 0, NULL, NULL, NULL);
-	if (!a)
-		return NULL;
-	soap_default___icd2__HelloWorld(soap, a);
-		for (soap_flag = 0;; soap_flag = 1)
-		{	soap->error = SOAP_TAG_MISMATCH;
-			if (soap_flag_icd1__HelloWorld && soap->error == SOAP_TAG_MISMATCH)
-				if (soap_in_PointerTo_icd1__HelloWorld(soap, "icd1:HelloWorld", &a->icd1__HelloWorld, ""))
-				{	soap_flag_icd1__HelloWorld--;
-					continue;
-				}
-			if (soap->error == SOAP_TAG_MISMATCH)
-				if (soap_flag)
-				{	soap->error = SOAP_OK;
-					break;
-				}
-			if (soap_flag && soap->error == SOAP_NO_TAG)
-				break;
-			if (soap->error)
-				return NULL;
-		}
-	return a;
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_put___icd2__HelloWorld(struct soap *soap, const struct __icd2__HelloWorld *a, const char *tag, const char *type)
-{
-	register int id = 0;
-	if (soap_out___icd2__HelloWorld(soap, tag?tag:"-icd2:HelloWorld", id, a, type))
-		return soap->error;
-	return SOAP_OK;
-}
-
-SOAP_FMAC3 struct __icd2__HelloWorld * SOAP_FMAC4 soap_get___icd2__HelloWorld(struct soap *soap, struct __icd2__HelloWorld *p, const char *tag, const char *type)
-{
-	if ((p = soap_in___icd2__HelloWorld(soap, tag, p, type)))
-		if (soap_getindependent(soap))
-			return NULL;
-	return p;
-}
-
-SOAP_FMAC1 struct __icd2__HelloWorld * SOAP_FMAC2 soap_instantiate___icd2__HelloWorld(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
-{
-	(void)type; (void)arrayType; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___icd2__HelloWorld(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___icd2__HelloWorld, n, _fdelete);
-	if (!cp)
-		return NULL;
-	if (n < 0)
-	{	cp->ptr = (void*)SOAP_NEW(struct __icd2__HelloWorld);
-		if (size)
-			*size = sizeof(struct __icd2__HelloWorld);
-	}
-	else
-	{	cp->ptr = (void*)SOAP_NEW(struct __icd2__HelloWorld[n]);
-		if (!cp->ptr)
-		{	soap->error = SOAP_EOM;
-			return NULL;
-		}
-		if (size)
-			*size = n * sizeof(struct __icd2__HelloWorld);
-	}
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (struct __icd2__HelloWorld*)cp->ptr;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd2__HelloWorld(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
-{
-	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __icd2__HelloWorld %p -> %p\n", q, p));
-	*(struct __icd2__HelloWorld*)p = *(struct __icd2__HelloWorld*)q;
 }
 
 #ifndef WITH_NOGLOBAL
@@ -6245,6 +3606,116 @@ SOAP_FMAC3 struct SOAP_ENV__Code ** SOAP_FMAC4 soap_get_PointerToSOAP_ENV__Code(
 
 #endif
 
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__LogoutDeviceResponse(struct soap *soap, _icd1__LogoutDeviceResponse *const*a)
+{
+	if (!soap_reference(soap, *a, SOAP_TYPE__icd1__LogoutDeviceResponse))
+		(*a)->soap_serialize(soap);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_icd1__LogoutDeviceResponse(struct soap *soap, const char *tag, int id, _icd1__LogoutDeviceResponse *const*a, const char *type)
+{
+	id = soap_element_id(soap, tag, id, *a, NULL, 0, type, SOAP_TYPE__icd1__LogoutDeviceResponse);
+	if (id < 0)
+		return soap->error;
+	return (*a)->soap_out(soap, tag, id, type);
+}
+
+SOAP_FMAC3 _icd1__LogoutDeviceResponse ** SOAP_FMAC4 soap_in_PointerTo_icd1__LogoutDeviceResponse(struct soap *soap, const char *tag, _icd1__LogoutDeviceResponse **a, const char *type)
+{
+	if (soap_element_begin_in(soap, tag, 1, NULL))
+		return NULL;
+	if (!a)
+		if (!(a = (_icd1__LogoutDeviceResponse **)soap_malloc(soap, sizeof(_icd1__LogoutDeviceResponse *))))
+			return NULL;
+	*a = NULL;
+	if (!soap->null && *soap->href != '#')
+	{	soap_revert(soap);
+		if (!(*a = (_icd1__LogoutDeviceResponse *)soap_instantiate__icd1__LogoutDeviceResponse(soap, -1, soap->type, soap->arrayType, NULL)))
+			return NULL;
+		(*a)->soap_default(soap);
+		if (!(*a)->soap_in(soap, tag, NULL))
+			return NULL;
+	}
+	else
+	{	_icd1__LogoutDeviceResponse ** p = (_icd1__LogoutDeviceResponse **)soap_id_lookup(soap, soap->href, (void**)a, SOAP_TYPE__icd1__LogoutDeviceResponse, sizeof(_icd1__LogoutDeviceResponse), 0);
+		a = p;
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	return a;
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__LogoutDeviceResponse(struct soap *soap, _icd1__LogoutDeviceResponse *const*a, const char *tag, const char *type)
+{
+	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_PointerTo_icd1__LogoutDeviceResponse);
+	if (soap_out_PointerTo_icd1__LogoutDeviceResponse(soap, tag?tag:"icd1:LogoutDeviceResponse", id, a, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+SOAP_FMAC3 _icd1__LogoutDeviceResponse ** SOAP_FMAC4 soap_get_PointerTo_icd1__LogoutDeviceResponse(struct soap *soap, _icd1__LogoutDeviceResponse **p, const char *tag, const char *type)
+{
+	if ((p = soap_in_PointerTo_icd1__LogoutDeviceResponse(soap, tag, p, type)))
+		if (soap_getindependent(soap))
+			return NULL;
+	return p;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__LogoutDevice(struct soap *soap, _icd1__LogoutDevice *const*a)
+{
+	if (!soap_reference(soap, *a, SOAP_TYPE__icd1__LogoutDevice))
+		(*a)->soap_serialize(soap);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_icd1__LogoutDevice(struct soap *soap, const char *tag, int id, _icd1__LogoutDevice *const*a, const char *type)
+{
+	id = soap_element_id(soap, tag, id, *a, NULL, 0, type, SOAP_TYPE__icd1__LogoutDevice);
+	if (id < 0)
+		return soap->error;
+	return (*a)->soap_out(soap, tag, id, type);
+}
+
+SOAP_FMAC3 _icd1__LogoutDevice ** SOAP_FMAC4 soap_in_PointerTo_icd1__LogoutDevice(struct soap *soap, const char *tag, _icd1__LogoutDevice **a, const char *type)
+{
+	if (soap_element_begin_in(soap, tag, 1, NULL))
+		return NULL;
+	if (!a)
+		if (!(a = (_icd1__LogoutDevice **)soap_malloc(soap, sizeof(_icd1__LogoutDevice *))))
+			return NULL;
+	*a = NULL;
+	if (!soap->null && *soap->href != '#')
+	{	soap_revert(soap);
+		if (!(*a = (_icd1__LogoutDevice *)soap_instantiate__icd1__LogoutDevice(soap, -1, soap->type, soap->arrayType, NULL)))
+			return NULL;
+		(*a)->soap_default(soap);
+		if (!(*a)->soap_in(soap, tag, NULL))
+			return NULL;
+	}
+	else
+	{	_icd1__LogoutDevice ** p = (_icd1__LogoutDevice **)soap_id_lookup(soap, soap->href, (void**)a, SOAP_TYPE__icd1__LogoutDevice, sizeof(_icd1__LogoutDevice), 0);
+		a = p;
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	return a;
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__LogoutDevice(struct soap *soap, _icd1__LogoutDevice *const*a, const char *tag, const char *type)
+{
+	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_PointerTo_icd1__LogoutDevice);
+	if (soap_out_PointerTo_icd1__LogoutDevice(soap, tag?tag:"icd1:LogoutDevice", id, a, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+SOAP_FMAC3 _icd1__LogoutDevice ** SOAP_FMAC4 soap_get_PointerTo_icd1__LogoutDevice(struct soap *soap, _icd1__LogoutDevice **p, const char *tag, const char *type)
+{
+	if ((p = soap_in_PointerTo_icd1__LogoutDevice(soap, tag, p, type)))
+		if (soap_getindependent(soap))
+			return NULL;
+	return p;
+}
+
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__SendDataResponse(struct soap *soap, _icd1__SendDataResponse *const*a)
 {
 	if (!soap_reference(soap, *a, SOAP_TYPE__icd1__SendDataResponse))
@@ -6350,226 +3821,6 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__SendData(struct soap *soap, _
 SOAP_FMAC3 _icd1__SendData ** SOAP_FMAC4 soap_get_PointerTo_icd1__SendData(struct soap *soap, _icd1__SendData **p, const char *tag, const char *type)
 {
 	if ((p = soap_in_PointerTo_icd1__SendData(soap, tag, p, type)))
-		if (soap_getindependent(soap))
-			return NULL;
-	return p;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__HasUpdateBinResponse(struct soap *soap, _icd1__HasUpdateBinResponse *const*a)
-{
-	if (!soap_reference(soap, *a, SOAP_TYPE__icd1__HasUpdateBinResponse))
-		(*a)->soap_serialize(soap);
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_icd1__HasUpdateBinResponse(struct soap *soap, const char *tag, int id, _icd1__HasUpdateBinResponse *const*a, const char *type)
-{
-	id = soap_element_id(soap, tag, id, *a, NULL, 0, type, SOAP_TYPE__icd1__HasUpdateBinResponse);
-	if (id < 0)
-		return soap->error;
-	return (*a)->soap_out(soap, tag, id, type);
-}
-
-SOAP_FMAC3 _icd1__HasUpdateBinResponse ** SOAP_FMAC4 soap_in_PointerTo_icd1__HasUpdateBinResponse(struct soap *soap, const char *tag, _icd1__HasUpdateBinResponse **a, const char *type)
-{
-	if (soap_element_begin_in(soap, tag, 1, NULL))
-		return NULL;
-	if (!a)
-		if (!(a = (_icd1__HasUpdateBinResponse **)soap_malloc(soap, sizeof(_icd1__HasUpdateBinResponse *))))
-			return NULL;
-	*a = NULL;
-	if (!soap->null && *soap->href != '#')
-	{	soap_revert(soap);
-		if (!(*a = (_icd1__HasUpdateBinResponse *)soap_instantiate__icd1__HasUpdateBinResponse(soap, -1, soap->type, soap->arrayType, NULL)))
-			return NULL;
-		(*a)->soap_default(soap);
-		if (!(*a)->soap_in(soap, tag, NULL))
-			return NULL;
-	}
-	else
-	{	_icd1__HasUpdateBinResponse ** p = (_icd1__HasUpdateBinResponse **)soap_id_lookup(soap, soap->href, (void**)a, SOAP_TYPE__icd1__HasUpdateBinResponse, sizeof(_icd1__HasUpdateBinResponse), 0);
-		a = p;
-		if (soap->body && soap_element_end_in(soap, tag))
-			return NULL;
-	}
-	return a;
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__HasUpdateBinResponse(struct soap *soap, _icd1__HasUpdateBinResponse *const*a, const char *tag, const char *type)
-{
-	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_PointerTo_icd1__HasUpdateBinResponse);
-	if (soap_out_PointerTo_icd1__HasUpdateBinResponse(soap, tag?tag:"icd1:HasUpdateBinResponse", id, a, type))
-		return soap->error;
-	return soap_putindependent(soap);
-}
-
-SOAP_FMAC3 _icd1__HasUpdateBinResponse ** SOAP_FMAC4 soap_get_PointerTo_icd1__HasUpdateBinResponse(struct soap *soap, _icd1__HasUpdateBinResponse **p, const char *tag, const char *type)
-{
-	if ((p = soap_in_PointerTo_icd1__HasUpdateBinResponse(soap, tag, p, type)))
-		if (soap_getindependent(soap))
-			return NULL;
-	return p;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__HasUpdateBin(struct soap *soap, _icd1__HasUpdateBin *const*a)
-{
-	if (!soap_reference(soap, *a, SOAP_TYPE__icd1__HasUpdateBin))
-		(*a)->soap_serialize(soap);
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_icd1__HasUpdateBin(struct soap *soap, const char *tag, int id, _icd1__HasUpdateBin *const*a, const char *type)
-{
-	id = soap_element_id(soap, tag, id, *a, NULL, 0, type, SOAP_TYPE__icd1__HasUpdateBin);
-	if (id < 0)
-		return soap->error;
-	return (*a)->soap_out(soap, tag, id, type);
-}
-
-SOAP_FMAC3 _icd1__HasUpdateBin ** SOAP_FMAC4 soap_in_PointerTo_icd1__HasUpdateBin(struct soap *soap, const char *tag, _icd1__HasUpdateBin **a, const char *type)
-{
-	if (soap_element_begin_in(soap, tag, 1, NULL))
-		return NULL;
-	if (!a)
-		if (!(a = (_icd1__HasUpdateBin **)soap_malloc(soap, sizeof(_icd1__HasUpdateBin *))))
-			return NULL;
-	*a = NULL;
-	if (!soap->null && *soap->href != '#')
-	{	soap_revert(soap);
-		if (!(*a = (_icd1__HasUpdateBin *)soap_instantiate__icd1__HasUpdateBin(soap, -1, soap->type, soap->arrayType, NULL)))
-			return NULL;
-		(*a)->soap_default(soap);
-		if (!(*a)->soap_in(soap, tag, NULL))
-			return NULL;
-	}
-	else
-	{	_icd1__HasUpdateBin ** p = (_icd1__HasUpdateBin **)soap_id_lookup(soap, soap->href, (void**)a, SOAP_TYPE__icd1__HasUpdateBin, sizeof(_icd1__HasUpdateBin), 0);
-		a = p;
-		if (soap->body && soap_element_end_in(soap, tag))
-			return NULL;
-	}
-	return a;
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__HasUpdateBin(struct soap *soap, _icd1__HasUpdateBin *const*a, const char *tag, const char *type)
-{
-	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_PointerTo_icd1__HasUpdateBin);
-	if (soap_out_PointerTo_icd1__HasUpdateBin(soap, tag?tag:"icd1:HasUpdateBin", id, a, type))
-		return soap->error;
-	return soap_putindependent(soap);
-}
-
-SOAP_FMAC3 _icd1__HasUpdateBin ** SOAP_FMAC4 soap_get_PointerTo_icd1__HasUpdateBin(struct soap *soap, _icd1__HasUpdateBin **p, const char *tag, const char *type)
-{
-	if ((p = soap_in_PointerTo_icd1__HasUpdateBin(soap, tag, p, type)))
-		if (soap_getindependent(soap))
-			return NULL;
-	return p;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__GetUpdateDataBinResponse(struct soap *soap, _icd1__GetUpdateDataBinResponse *const*a)
-{
-	if (!soap_reference(soap, *a, SOAP_TYPE__icd1__GetUpdateDataBinResponse))
-		(*a)->soap_serialize(soap);
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_icd1__GetUpdateDataBinResponse(struct soap *soap, const char *tag, int id, _icd1__GetUpdateDataBinResponse *const*a, const char *type)
-{
-	id = soap_element_id(soap, tag, id, *a, NULL, 0, type, SOAP_TYPE__icd1__GetUpdateDataBinResponse);
-	if (id < 0)
-		return soap->error;
-	return (*a)->soap_out(soap, tag, id, type);
-}
-
-SOAP_FMAC3 _icd1__GetUpdateDataBinResponse ** SOAP_FMAC4 soap_in_PointerTo_icd1__GetUpdateDataBinResponse(struct soap *soap, const char *tag, _icd1__GetUpdateDataBinResponse **a, const char *type)
-{
-	if (soap_element_begin_in(soap, tag, 1, NULL))
-		return NULL;
-	if (!a)
-		if (!(a = (_icd1__GetUpdateDataBinResponse **)soap_malloc(soap, sizeof(_icd1__GetUpdateDataBinResponse *))))
-			return NULL;
-	*a = NULL;
-	if (!soap->null && *soap->href != '#')
-	{	soap_revert(soap);
-		if (!(*a = (_icd1__GetUpdateDataBinResponse *)soap_instantiate__icd1__GetUpdateDataBinResponse(soap, -1, soap->type, soap->arrayType, NULL)))
-			return NULL;
-		(*a)->soap_default(soap);
-		if (!(*a)->soap_in(soap, tag, NULL))
-			return NULL;
-	}
-	else
-	{	_icd1__GetUpdateDataBinResponse ** p = (_icd1__GetUpdateDataBinResponse **)soap_id_lookup(soap, soap->href, (void**)a, SOAP_TYPE__icd1__GetUpdateDataBinResponse, sizeof(_icd1__GetUpdateDataBinResponse), 0);
-		a = p;
-		if (soap->body && soap_element_end_in(soap, tag))
-			return NULL;
-	}
-	return a;
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__GetUpdateDataBinResponse(struct soap *soap, _icd1__GetUpdateDataBinResponse *const*a, const char *tag, const char *type)
-{
-	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_PointerTo_icd1__GetUpdateDataBinResponse);
-	if (soap_out_PointerTo_icd1__GetUpdateDataBinResponse(soap, tag?tag:"icd1:GetUpdateDataBinResponse", id, a, type))
-		return soap->error;
-	return soap_putindependent(soap);
-}
-
-SOAP_FMAC3 _icd1__GetUpdateDataBinResponse ** SOAP_FMAC4 soap_get_PointerTo_icd1__GetUpdateDataBinResponse(struct soap *soap, _icd1__GetUpdateDataBinResponse **p, const char *tag, const char *type)
-{
-	if ((p = soap_in_PointerTo_icd1__GetUpdateDataBinResponse(soap, tag, p, type)))
-		if (soap_getindependent(soap))
-			return NULL;
-	return p;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__GetUpdateDataBin(struct soap *soap, _icd1__GetUpdateDataBin *const*a)
-{
-	if (!soap_reference(soap, *a, SOAP_TYPE__icd1__GetUpdateDataBin))
-		(*a)->soap_serialize(soap);
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_icd1__GetUpdateDataBin(struct soap *soap, const char *tag, int id, _icd1__GetUpdateDataBin *const*a, const char *type)
-{
-	id = soap_element_id(soap, tag, id, *a, NULL, 0, type, SOAP_TYPE__icd1__GetUpdateDataBin);
-	if (id < 0)
-		return soap->error;
-	return (*a)->soap_out(soap, tag, id, type);
-}
-
-SOAP_FMAC3 _icd1__GetUpdateDataBin ** SOAP_FMAC4 soap_in_PointerTo_icd1__GetUpdateDataBin(struct soap *soap, const char *tag, _icd1__GetUpdateDataBin **a, const char *type)
-{
-	if (soap_element_begin_in(soap, tag, 1, NULL))
-		return NULL;
-	if (!a)
-		if (!(a = (_icd1__GetUpdateDataBin **)soap_malloc(soap, sizeof(_icd1__GetUpdateDataBin *))))
-			return NULL;
-	*a = NULL;
-	if (!soap->null && *soap->href != '#')
-	{	soap_revert(soap);
-		if (!(*a = (_icd1__GetUpdateDataBin *)soap_instantiate__icd1__GetUpdateDataBin(soap, -1, soap->type, soap->arrayType, NULL)))
-			return NULL;
-		(*a)->soap_default(soap);
-		if (!(*a)->soap_in(soap, tag, NULL))
-			return NULL;
-	}
-	else
-	{	_icd1__GetUpdateDataBin ** p = (_icd1__GetUpdateDataBin **)soap_id_lookup(soap, soap->href, (void**)a, SOAP_TYPE__icd1__GetUpdateDataBin, sizeof(_icd1__GetUpdateDataBin), 0);
-		a = p;
-		if (soap->body && soap_element_end_in(soap, tag))
-			return NULL;
-	}
-	return a;
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__GetUpdateDataBin(struct soap *soap, _icd1__GetUpdateDataBin *const*a, const char *tag, const char *type)
-{
-	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_PointerTo_icd1__GetUpdateDataBin);
-	if (soap_out_PointerTo_icd1__GetUpdateDataBin(soap, tag?tag:"icd1:GetUpdateDataBin", id, a, type))
-		return soap->error;
-	return soap_putindependent(soap);
-}
-
-SOAP_FMAC3 _icd1__GetUpdateDataBin ** SOAP_FMAC4 soap_get_PointerTo_icd1__GetUpdateDataBin(struct soap *soap, _icd1__GetUpdateDataBin **p, const char *tag, const char *type)
-{
-	if ((p = soap_in_PointerTo_icd1__GetUpdateDataBin(soap, tag, p, type)))
 		if (soap_getindependent(soap))
 			return NULL;
 	return p;
@@ -6685,336 +3936,6 @@ SOAP_FMAC3 _icd1__LoginDevice ** SOAP_FMAC4 soap_get_PointerTo_icd1__LoginDevice
 	return p;
 }
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__OutDeviceResponse(struct soap *soap, _icd1__OutDeviceResponse *const*a)
-{
-	if (!soap_reference(soap, *a, SOAP_TYPE__icd1__OutDeviceResponse))
-		(*a)->soap_serialize(soap);
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_icd1__OutDeviceResponse(struct soap *soap, const char *tag, int id, _icd1__OutDeviceResponse *const*a, const char *type)
-{
-	id = soap_element_id(soap, tag, id, *a, NULL, 0, type, SOAP_TYPE__icd1__OutDeviceResponse);
-	if (id < 0)
-		return soap->error;
-	return (*a)->soap_out(soap, tag, id, type);
-}
-
-SOAP_FMAC3 _icd1__OutDeviceResponse ** SOAP_FMAC4 soap_in_PointerTo_icd1__OutDeviceResponse(struct soap *soap, const char *tag, _icd1__OutDeviceResponse **a, const char *type)
-{
-	if (soap_element_begin_in(soap, tag, 1, NULL))
-		return NULL;
-	if (!a)
-		if (!(a = (_icd1__OutDeviceResponse **)soap_malloc(soap, sizeof(_icd1__OutDeviceResponse *))))
-			return NULL;
-	*a = NULL;
-	if (!soap->null && *soap->href != '#')
-	{	soap_revert(soap);
-		if (!(*a = (_icd1__OutDeviceResponse *)soap_instantiate__icd1__OutDeviceResponse(soap, -1, soap->type, soap->arrayType, NULL)))
-			return NULL;
-		(*a)->soap_default(soap);
-		if (!(*a)->soap_in(soap, tag, NULL))
-			return NULL;
-	}
-	else
-	{	_icd1__OutDeviceResponse ** p = (_icd1__OutDeviceResponse **)soap_id_lookup(soap, soap->href, (void**)a, SOAP_TYPE__icd1__OutDeviceResponse, sizeof(_icd1__OutDeviceResponse), 0);
-		a = p;
-		if (soap->body && soap_element_end_in(soap, tag))
-			return NULL;
-	}
-	return a;
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__OutDeviceResponse(struct soap *soap, _icd1__OutDeviceResponse *const*a, const char *tag, const char *type)
-{
-	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_PointerTo_icd1__OutDeviceResponse);
-	if (soap_out_PointerTo_icd1__OutDeviceResponse(soap, tag?tag:"icd1:OutDeviceResponse", id, a, type))
-		return soap->error;
-	return soap_putindependent(soap);
-}
-
-SOAP_FMAC3 _icd1__OutDeviceResponse ** SOAP_FMAC4 soap_get_PointerTo_icd1__OutDeviceResponse(struct soap *soap, _icd1__OutDeviceResponse **p, const char *tag, const char *type)
-{
-	if ((p = soap_in_PointerTo_icd1__OutDeviceResponse(soap, tag, p, type)))
-		if (soap_getindependent(soap))
-			return NULL;
-	return p;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__OutDevice(struct soap *soap, _icd1__OutDevice *const*a)
-{
-	if (!soap_reference(soap, *a, SOAP_TYPE__icd1__OutDevice))
-		(*a)->soap_serialize(soap);
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_icd1__OutDevice(struct soap *soap, const char *tag, int id, _icd1__OutDevice *const*a, const char *type)
-{
-	id = soap_element_id(soap, tag, id, *a, NULL, 0, type, SOAP_TYPE__icd1__OutDevice);
-	if (id < 0)
-		return soap->error;
-	return (*a)->soap_out(soap, tag, id, type);
-}
-
-SOAP_FMAC3 _icd1__OutDevice ** SOAP_FMAC4 soap_in_PointerTo_icd1__OutDevice(struct soap *soap, const char *tag, _icd1__OutDevice **a, const char *type)
-{
-	if (soap_element_begin_in(soap, tag, 1, NULL))
-		return NULL;
-	if (!a)
-		if (!(a = (_icd1__OutDevice **)soap_malloc(soap, sizeof(_icd1__OutDevice *))))
-			return NULL;
-	*a = NULL;
-	if (!soap->null && *soap->href != '#')
-	{	soap_revert(soap);
-		if (!(*a = (_icd1__OutDevice *)soap_instantiate__icd1__OutDevice(soap, -1, soap->type, soap->arrayType, NULL)))
-			return NULL;
-		(*a)->soap_default(soap);
-		if (!(*a)->soap_in(soap, tag, NULL))
-			return NULL;
-	}
-	else
-	{	_icd1__OutDevice ** p = (_icd1__OutDevice **)soap_id_lookup(soap, soap->href, (void**)a, SOAP_TYPE__icd1__OutDevice, sizeof(_icd1__OutDevice), 0);
-		a = p;
-		if (soap->body && soap_element_end_in(soap, tag))
-			return NULL;
-	}
-	return a;
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__OutDevice(struct soap *soap, _icd1__OutDevice *const*a, const char *tag, const char *type)
-{
-	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_PointerTo_icd1__OutDevice);
-	if (soap_out_PointerTo_icd1__OutDevice(soap, tag?tag:"icd1:OutDevice", id, a, type))
-		return soap->error;
-	return soap_putindependent(soap);
-}
-
-SOAP_FMAC3 _icd1__OutDevice ** SOAP_FMAC4 soap_get_PointerTo_icd1__OutDevice(struct soap *soap, _icd1__OutDevice **p, const char *tag, const char *type)
-{
-	if ((p = soap_in_PointerTo_icd1__OutDevice(soap, tag, p, type)))
-		if (soap_getindependent(soap))
-			return NULL;
-	return p;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__TestSessionResponse(struct soap *soap, _icd1__TestSessionResponse *const*a)
-{
-	if (!soap_reference(soap, *a, SOAP_TYPE__icd1__TestSessionResponse))
-		(*a)->soap_serialize(soap);
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_icd1__TestSessionResponse(struct soap *soap, const char *tag, int id, _icd1__TestSessionResponse *const*a, const char *type)
-{
-	id = soap_element_id(soap, tag, id, *a, NULL, 0, type, SOAP_TYPE__icd1__TestSessionResponse);
-	if (id < 0)
-		return soap->error;
-	return (*a)->soap_out(soap, tag, id, type);
-}
-
-SOAP_FMAC3 _icd1__TestSessionResponse ** SOAP_FMAC4 soap_in_PointerTo_icd1__TestSessionResponse(struct soap *soap, const char *tag, _icd1__TestSessionResponse **a, const char *type)
-{
-	if (soap_element_begin_in(soap, tag, 1, NULL))
-		return NULL;
-	if (!a)
-		if (!(a = (_icd1__TestSessionResponse **)soap_malloc(soap, sizeof(_icd1__TestSessionResponse *))))
-			return NULL;
-	*a = NULL;
-	if (!soap->null && *soap->href != '#')
-	{	soap_revert(soap);
-		if (!(*a = (_icd1__TestSessionResponse *)soap_instantiate__icd1__TestSessionResponse(soap, -1, soap->type, soap->arrayType, NULL)))
-			return NULL;
-		(*a)->soap_default(soap);
-		if (!(*a)->soap_in(soap, tag, NULL))
-			return NULL;
-	}
-	else
-	{	_icd1__TestSessionResponse ** p = (_icd1__TestSessionResponse **)soap_id_lookup(soap, soap->href, (void**)a, SOAP_TYPE__icd1__TestSessionResponse, sizeof(_icd1__TestSessionResponse), 0);
-		a = p;
-		if (soap->body && soap_element_end_in(soap, tag))
-			return NULL;
-	}
-	return a;
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__TestSessionResponse(struct soap *soap, _icd1__TestSessionResponse *const*a, const char *tag, const char *type)
-{
-	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_PointerTo_icd1__TestSessionResponse);
-	if (soap_out_PointerTo_icd1__TestSessionResponse(soap, tag?tag:"icd1:TestSessionResponse", id, a, type))
-		return soap->error;
-	return soap_putindependent(soap);
-}
-
-SOAP_FMAC3 _icd1__TestSessionResponse ** SOAP_FMAC4 soap_get_PointerTo_icd1__TestSessionResponse(struct soap *soap, _icd1__TestSessionResponse **p, const char *tag, const char *type)
-{
-	if ((p = soap_in_PointerTo_icd1__TestSessionResponse(soap, tag, p, type)))
-		if (soap_getindependent(soap))
-			return NULL;
-	return p;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__TestSession(struct soap *soap, _icd1__TestSession *const*a)
-{
-	if (!soap_reference(soap, *a, SOAP_TYPE__icd1__TestSession))
-		(*a)->soap_serialize(soap);
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_icd1__TestSession(struct soap *soap, const char *tag, int id, _icd1__TestSession *const*a, const char *type)
-{
-	id = soap_element_id(soap, tag, id, *a, NULL, 0, type, SOAP_TYPE__icd1__TestSession);
-	if (id < 0)
-		return soap->error;
-	return (*a)->soap_out(soap, tag, id, type);
-}
-
-SOAP_FMAC3 _icd1__TestSession ** SOAP_FMAC4 soap_in_PointerTo_icd1__TestSession(struct soap *soap, const char *tag, _icd1__TestSession **a, const char *type)
-{
-	if (soap_element_begin_in(soap, tag, 1, NULL))
-		return NULL;
-	if (!a)
-		if (!(a = (_icd1__TestSession **)soap_malloc(soap, sizeof(_icd1__TestSession *))))
-			return NULL;
-	*a = NULL;
-	if (!soap->null && *soap->href != '#')
-	{	soap_revert(soap);
-		if (!(*a = (_icd1__TestSession *)soap_instantiate__icd1__TestSession(soap, -1, soap->type, soap->arrayType, NULL)))
-			return NULL;
-		(*a)->soap_default(soap);
-		if (!(*a)->soap_in(soap, tag, NULL))
-			return NULL;
-	}
-	else
-	{	_icd1__TestSession ** p = (_icd1__TestSession **)soap_id_lookup(soap, soap->href, (void**)a, SOAP_TYPE__icd1__TestSession, sizeof(_icd1__TestSession), 0);
-		a = p;
-		if (soap->body && soap_element_end_in(soap, tag))
-			return NULL;
-	}
-	return a;
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__TestSession(struct soap *soap, _icd1__TestSession *const*a, const char *tag, const char *type)
-{
-	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_PointerTo_icd1__TestSession);
-	if (soap_out_PointerTo_icd1__TestSession(soap, tag?tag:"icd1:TestSession", id, a, type))
-		return soap->error;
-	return soap_putindependent(soap);
-}
-
-SOAP_FMAC3 _icd1__TestSession ** SOAP_FMAC4 soap_get_PointerTo_icd1__TestSession(struct soap *soap, _icd1__TestSession **p, const char *tag, const char *type)
-{
-	if ((p = soap_in_PointerTo_icd1__TestSession(soap, tag, p, type)))
-		if (soap_getindependent(soap))
-			return NULL;
-	return p;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__GetTime2Response(struct soap *soap, _icd1__GetTime2Response *const*a)
-{
-	if (!soap_reference(soap, *a, SOAP_TYPE__icd1__GetTime2Response))
-		(*a)->soap_serialize(soap);
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_icd1__GetTime2Response(struct soap *soap, const char *tag, int id, _icd1__GetTime2Response *const*a, const char *type)
-{
-	id = soap_element_id(soap, tag, id, *a, NULL, 0, type, SOAP_TYPE__icd1__GetTime2Response);
-	if (id < 0)
-		return soap->error;
-	return (*a)->soap_out(soap, tag, id, type);
-}
-
-SOAP_FMAC3 _icd1__GetTime2Response ** SOAP_FMAC4 soap_in_PointerTo_icd1__GetTime2Response(struct soap *soap, const char *tag, _icd1__GetTime2Response **a, const char *type)
-{
-	if (soap_element_begin_in(soap, tag, 1, NULL))
-		return NULL;
-	if (!a)
-		if (!(a = (_icd1__GetTime2Response **)soap_malloc(soap, sizeof(_icd1__GetTime2Response *))))
-			return NULL;
-	*a = NULL;
-	if (!soap->null && *soap->href != '#')
-	{	soap_revert(soap);
-		if (!(*a = (_icd1__GetTime2Response *)soap_instantiate__icd1__GetTime2Response(soap, -1, soap->type, soap->arrayType, NULL)))
-			return NULL;
-		(*a)->soap_default(soap);
-		if (!(*a)->soap_in(soap, tag, NULL))
-			return NULL;
-	}
-	else
-	{	_icd1__GetTime2Response ** p = (_icd1__GetTime2Response **)soap_id_lookup(soap, soap->href, (void**)a, SOAP_TYPE__icd1__GetTime2Response, sizeof(_icd1__GetTime2Response), 0);
-		a = p;
-		if (soap->body && soap_element_end_in(soap, tag))
-			return NULL;
-	}
-	return a;
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__GetTime2Response(struct soap *soap, _icd1__GetTime2Response *const*a, const char *tag, const char *type)
-{
-	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_PointerTo_icd1__GetTime2Response);
-	if (soap_out_PointerTo_icd1__GetTime2Response(soap, tag?tag:"icd1:GetTime2Response", id, a, type))
-		return soap->error;
-	return soap_putindependent(soap);
-}
-
-SOAP_FMAC3 _icd1__GetTime2Response ** SOAP_FMAC4 soap_get_PointerTo_icd1__GetTime2Response(struct soap *soap, _icd1__GetTime2Response **p, const char *tag, const char *type)
-{
-	if ((p = soap_in_PointerTo_icd1__GetTime2Response(soap, tag, p, type)))
-		if (soap_getindependent(soap))
-			return NULL;
-	return p;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__GetTime2(struct soap *soap, _icd1__GetTime2 *const*a)
-{
-	if (!soap_reference(soap, *a, SOAP_TYPE__icd1__GetTime2))
-		(*a)->soap_serialize(soap);
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_icd1__GetTime2(struct soap *soap, const char *tag, int id, _icd1__GetTime2 *const*a, const char *type)
-{
-	id = soap_element_id(soap, tag, id, *a, NULL, 0, type, SOAP_TYPE__icd1__GetTime2);
-	if (id < 0)
-		return soap->error;
-	return (*a)->soap_out(soap, tag, id, type);
-}
-
-SOAP_FMAC3 _icd1__GetTime2 ** SOAP_FMAC4 soap_in_PointerTo_icd1__GetTime2(struct soap *soap, const char *tag, _icd1__GetTime2 **a, const char *type)
-{
-	if (soap_element_begin_in(soap, tag, 1, NULL))
-		return NULL;
-	if (!a)
-		if (!(a = (_icd1__GetTime2 **)soap_malloc(soap, sizeof(_icd1__GetTime2 *))))
-			return NULL;
-	*a = NULL;
-	if (!soap->null && *soap->href != '#')
-	{	soap_revert(soap);
-		if (!(*a = (_icd1__GetTime2 *)soap_instantiate__icd1__GetTime2(soap, -1, soap->type, soap->arrayType, NULL)))
-			return NULL;
-		(*a)->soap_default(soap);
-		if (!(*a)->soap_in(soap, tag, NULL))
-			return NULL;
-	}
-	else
-	{	_icd1__GetTime2 ** p = (_icd1__GetTime2 **)soap_id_lookup(soap, soap->href, (void**)a, SOAP_TYPE__icd1__GetTime2, sizeof(_icd1__GetTime2), 0);
-		a = p;
-		if (soap->body && soap_element_end_in(soap, tag))
-			return NULL;
-	}
-	return a;
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__GetTime2(struct soap *soap, _icd1__GetTime2 *const*a, const char *tag, const char *type)
-{
-	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_PointerTo_icd1__GetTime2);
-	if (soap_out_PointerTo_icd1__GetTime2(soap, tag?tag:"icd1:GetTime2", id, a, type))
-		return soap->error;
-	return soap_putindependent(soap);
-}
-
-SOAP_FMAC3 _icd1__GetTime2 ** SOAP_FMAC4 soap_get_PointerTo_icd1__GetTime2(struct soap *soap, _icd1__GetTime2 **p, const char *tag, const char *type)
-{
-	if ((p = soap_in_PointerTo_icd1__GetTime2(soap, tag, p, type)))
-		if (soap_getindependent(soap))
-			return NULL;
-	return p;
-}
-
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__GetTimeResponse(struct soap *soap, _icd1__GetTimeResponse *const*a)
 {
 	if (!soap_reference(soap, *a, SOAP_TYPE__icd1__GetTimeResponse))
@@ -7120,116 +4041,6 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__GetTime(struct soap *soap, _i
 SOAP_FMAC3 _icd1__GetTime ** SOAP_FMAC4 soap_get_PointerTo_icd1__GetTime(struct soap *soap, _icd1__GetTime **p, const char *tag, const char *type)
 {
 	if ((p = soap_in_PointerTo_icd1__GetTime(soap, tag, p, type)))
-		if (soap_getindependent(soap))
-			return NULL;
-	return p;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__HelloWorldResponse(struct soap *soap, _icd1__HelloWorldResponse *const*a)
-{
-	if (!soap_reference(soap, *a, SOAP_TYPE__icd1__HelloWorldResponse))
-		(*a)->soap_serialize(soap);
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_icd1__HelloWorldResponse(struct soap *soap, const char *tag, int id, _icd1__HelloWorldResponse *const*a, const char *type)
-{
-	id = soap_element_id(soap, tag, id, *a, NULL, 0, type, SOAP_TYPE__icd1__HelloWorldResponse);
-	if (id < 0)
-		return soap->error;
-	return (*a)->soap_out(soap, tag, id, type);
-}
-
-SOAP_FMAC3 _icd1__HelloWorldResponse ** SOAP_FMAC4 soap_in_PointerTo_icd1__HelloWorldResponse(struct soap *soap, const char *tag, _icd1__HelloWorldResponse **a, const char *type)
-{
-	if (soap_element_begin_in(soap, tag, 1, NULL))
-		return NULL;
-	if (!a)
-		if (!(a = (_icd1__HelloWorldResponse **)soap_malloc(soap, sizeof(_icd1__HelloWorldResponse *))))
-			return NULL;
-	*a = NULL;
-	if (!soap->null && *soap->href != '#')
-	{	soap_revert(soap);
-		if (!(*a = (_icd1__HelloWorldResponse *)soap_instantiate__icd1__HelloWorldResponse(soap, -1, soap->type, soap->arrayType, NULL)))
-			return NULL;
-		(*a)->soap_default(soap);
-		if (!(*a)->soap_in(soap, tag, NULL))
-			return NULL;
-	}
-	else
-	{	_icd1__HelloWorldResponse ** p = (_icd1__HelloWorldResponse **)soap_id_lookup(soap, soap->href, (void**)a, SOAP_TYPE__icd1__HelloWorldResponse, sizeof(_icd1__HelloWorldResponse), 0);
-		a = p;
-		if (soap->body && soap_element_end_in(soap, tag))
-			return NULL;
-	}
-	return a;
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__HelloWorldResponse(struct soap *soap, _icd1__HelloWorldResponse *const*a, const char *tag, const char *type)
-{
-	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_PointerTo_icd1__HelloWorldResponse);
-	if (soap_out_PointerTo_icd1__HelloWorldResponse(soap, tag?tag:"icd1:HelloWorldResponse", id, a, type))
-		return soap->error;
-	return soap_putindependent(soap);
-}
-
-SOAP_FMAC3 _icd1__HelloWorldResponse ** SOAP_FMAC4 soap_get_PointerTo_icd1__HelloWorldResponse(struct soap *soap, _icd1__HelloWorldResponse **p, const char *tag, const char *type)
-{
-	if ((p = soap_in_PointerTo_icd1__HelloWorldResponse(soap, tag, p, type)))
-		if (soap_getindependent(soap))
-			return NULL;
-	return p;
-}
-
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__HelloWorld(struct soap *soap, _icd1__HelloWorld *const*a)
-{
-	if (!soap_reference(soap, *a, SOAP_TYPE__icd1__HelloWorld))
-		(*a)->soap_serialize(soap);
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_icd1__HelloWorld(struct soap *soap, const char *tag, int id, _icd1__HelloWorld *const*a, const char *type)
-{
-	id = soap_element_id(soap, tag, id, *a, NULL, 0, type, SOAP_TYPE__icd1__HelloWorld);
-	if (id < 0)
-		return soap->error;
-	return (*a)->soap_out(soap, tag, id, type);
-}
-
-SOAP_FMAC3 _icd1__HelloWorld ** SOAP_FMAC4 soap_in_PointerTo_icd1__HelloWorld(struct soap *soap, const char *tag, _icd1__HelloWorld **a, const char *type)
-{
-	if (soap_element_begin_in(soap, tag, 1, NULL))
-		return NULL;
-	if (!a)
-		if (!(a = (_icd1__HelloWorld **)soap_malloc(soap, sizeof(_icd1__HelloWorld *))))
-			return NULL;
-	*a = NULL;
-	if (!soap->null && *soap->href != '#')
-	{	soap_revert(soap);
-		if (!(*a = (_icd1__HelloWorld *)soap_instantiate__icd1__HelloWorld(soap, -1, soap->type, soap->arrayType, NULL)))
-			return NULL;
-		(*a)->soap_default(soap);
-		if (!(*a)->soap_in(soap, tag, NULL))
-			return NULL;
-	}
-	else
-	{	_icd1__HelloWorld ** p = (_icd1__HelloWorld **)soap_id_lookup(soap, soap->href, (void**)a, SOAP_TYPE__icd1__HelloWorld, sizeof(_icd1__HelloWorld), 0);
-		a = p;
-		if (soap->body && soap_element_end_in(soap, tag))
-			return NULL;
-	}
-	return a;
-}
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__HelloWorld(struct soap *soap, _icd1__HelloWorld *const*a, const char *tag, const char *type)
-{
-	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_PointerTo_icd1__HelloWorld);
-	if (soap_out_PointerTo_icd1__HelloWorld(soap, tag?tag:"icd1:HelloWorld", id, a, type))
-		return soap->error;
-	return soap_putindependent(soap);
-}
-
-SOAP_FMAC3 _icd1__HelloWorld ** SOAP_FMAC4 soap_get_PointerTo_icd1__HelloWorld(struct soap *soap, _icd1__HelloWorld **p, const char *tag, const char *type)
-{
-	if ((p = soap_in_PointerTo_icd1__HelloWorld(soap, tag, p, type)))
 		if (soap_getindependent(soap))
 			return NULL;
 	return p;

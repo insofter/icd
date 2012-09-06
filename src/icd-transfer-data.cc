@@ -5,8 +5,8 @@
 #include "logger.hpp"
 #include <getopt.h>
 
-#include "gsoap/Service1SoapProxy.h"
-#include "gsoap/Service1Soap.nsmap"
+#include "gsoap/icdtcp3SoapProxy.h"
+#include "gsoap/icdtcp3Soap.nsmap"
 
 //gsoap/_Stub.h -- klasy parametrów
 //gsoap/_Service1SoapProxy.h -- funkcje serwera
@@ -119,16 +119,16 @@ int main( int argc, char *argv[] ) {
 
 
 
-  Service1SoapProxy service;//("http://www.insofter.pl/pawo/icdtcp3webservice/Service1.asmx");
+  icdtcp3SoapProxy service;//("http://www.insofter.pl/pawo/icdtcp3webservice/Service1.asmx");
   int ans;
 
 
   _icd1__LoginDevice login;
   _icd1__LoginDeviceResponse rlogin;
 
-  login.idd=3;
+  login.idd=0;
   login.name=new std::string("Piotr");
-  login.DevInfo=new std::string("icdtcp3");
+  login.devInfo=new std::string("icdtcp3");
 
   log.okParams( 3, "LoginDevice" );
 
@@ -142,10 +142,14 @@ int main( int argc, char *argv[] ) {
   log.okSoap( 7, *(login.name) );
 
   delete login.name;
-  delete login.DevInfo;
+  delete login.devInfo;
 
-//  if( rlogin.exitCode ) {
-  log.okServerAns( 10, *(rlogin.LoginDeviceResult) );
+  if( rlogin.LoginDeviceResult==0 ) {
+    log.okServerAns( 10, *(rlogin.message) );
+  } else {
+    log.errServerAns( 10, *(rlogin.message), "błąd", "LD", "błąd logowania" );
+    exit(1);
+  }
 
 
 
@@ -162,15 +166,20 @@ int main( int argc, char *argv[] ) {
   }
   log.okSoap( 17, "GetTime" );
 
-//  if( rlogin.exitCode ) {
   log.okServerAns( 10, *(rtime.GetTimeResult) );
+//set time
+//date -s 2012.09.06-15:15:00
+//Thu Sep  6 15:15:00 UTC 2012
+///etc # hwclock -w
+//
+//system
 
 
-
+//////////////////////////////////////////////////////
   _icd1__SendData data;
   _icd1__SendDataResponse rdata;
 
-  std::string pack("2012-08-03 11:28:28 5;0;0;0;0;399600;0;0;0;0;2;2;2;2;Com2");
+  std::string pack("02012-08-03 11:28:28 5;0;0;0;0;399600;0;0;0;0;2;2;2;2;Com2");
 
   data.data = &pack;
 
@@ -185,20 +194,22 @@ int main( int argc, char *argv[] ) {
   }
   log.okSoap( 27, pack );
 
-//  if( rlogin.exitCode ) {
-  log.okServerAns( 30, *(rdata.SendDataResult) );
+  if( rdata.SendDataResult==0 ) {
+    log.okServerAns( 30, *(rdata.message) );
+  } else {
+    log.errServerAns( 30, *(rdata.message), "too old", "SD", "błąd wysyłania" );
+    exit(1);
+  }
+////////////////////////////////////////////////////
 
 
 
-
-  _icd1__OutDevice out;
-  _icd1__OutDeviceResponse rout;
-  out.ErrorNo=0;
+  _icd1__LogoutDevice out;
+  _icd1__LogoutDeviceResponse rout;
 
   log.okParams( 93, "OutDevice" );
 
-
-  ans=service.OutDevice(&out, &rout);
+  ans=service.LogoutDevice(&out, &rout);
 
   if( ans!=SOAP_OK ) {
     log.errSoap( 97, service.soap_fault_detail(), ans, "Błąd transmisji" );
@@ -207,12 +218,15 @@ int main( int argc, char *argv[] ) {
   log.okSoap( 97, "OutDevice" );
 
 
-//  if( rlogin.exitCode ) {
-  log.okServerAns( 99, *(rout.OutDeviceResult) );
+  if( rout.LogoutDeviceResult==0 ) {
+    log.okServerAns( 99, *(rout.message) );
+  } else {
+    log.errServerAns( 99, *(rout.message), "sesserr", "LO", 
+        "błąd zamykania sesji" );
+    exit(1);
+  }
 
   log.done();
-
-
 }
 
 
