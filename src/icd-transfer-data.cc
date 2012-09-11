@@ -21,7 +21,6 @@ int createData( std::string & data ) {
 
   std::ostringstream ss;
 
-
   stmt.prepare( "SELECT id, itd, "
       "datetime(dtm, 'unixepoch', 'localtime'), cnt, dark_time, "
       "work_time FROM flow WHERE flags > 0 ORDER BY dtm ASC LIMIT 16" );
@@ -44,6 +43,11 @@ int createData( std::string & data ) {
   } else {
     return 1;
   }
+}
+
+void commitData( const std::string & data ) {
+
+
 }
 
 
@@ -231,31 +235,29 @@ int main( int argc, char *argv[] ) {
 //////////////////////////////////////////////////////
   _icd1__SendData data;
   _icd1__SendDataResponse rdata;
+  data.data = &s;
 
+  while( createData( s ) ) {
+    log.okParams( 23, "SendData" );
 
-  std::string pack;//("02012-08-03 11:28:28 5;0;0;0;0;399600;0;0;0;0;2;2;2;2;Com2");
+    ans=service.SendData(&data, &rdata);
 
-  std::cout << "xxxx " << createData( pack ) << " xxxx" << std::endl;
-  data.data = &pack;
+    if( ans!=SOAP_OK ) {
+      log.errSoap( 27, service.soap_fault_detail(), ans, "Błąd transmisji" );
+      exit(1);
+    }
+    log.okSoap( 27, s );
 
-  log.okParams( 23, "SendData" );
+    commitData( *rdata.message );
 
-
-  ans=service.SendData(&data, &rdata);
-
-
-  if( ans!=SOAP_OK ) {
-    log.errSoap( 27, service.soap_fault_detail(), ans, "Błąd transmisji" );
-    exit(1);
+    if( rdata.SendDataResult==0 ) {
+      log.okServerAns( 30, *(rdata.message) );
+    } else {
+      log.errServerAns( 30, *(rdata.message), "too old", "SD", "błąd wysyłania" );
+      exit(1);
+    }
   }
-  log.okSoap( 27, pack );
 
-  if( rdata.SendDataResult==0 ) {
-    log.okServerAns( 30, *(rdata.message) );
-  } else {
-    log.errServerAns( 30, *(rdata.message), "too old", "SD", "błąd wysyłania" );
-    exit(1);
-  }
 ////////////////////////////////////////////////////
 
 
