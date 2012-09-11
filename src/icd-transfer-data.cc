@@ -4,6 +4,7 @@
 #include "daemonizer.h"
 #include "logger.hpp"
 #include <getopt.h>
+#include <sstream>
 
 #include "gsoap/icdtcp3SoapProxy.h"
 #include "gsoap/icdtcp3Soap.nsmap"
@@ -11,7 +12,39 @@
 //gsoap/_Stub.h -- klasy parametrów
 //gsoap/_Service1SoapProxy.h -- funkcje serwera
 
+icd::config *globalConfig;
+sqlite3cc::conn *globalDb;
 
+
+int createData( std::string & data ) {
+  sqlite3cc::stmt stmt( *globalDb );
+
+  std::ostringstream ss;
+
+
+  stmt.prepare( "SELECT id, itd, "
+      "datetime(dtm, 'unixepoch', 'localtime'), cnt, dark_time, "
+      "work_time FROM flow WHERE flags > 0 ORDER BY dtm ASC LIMIT 16" );
+
+  while( stmt.step() == SQLITE_ROW ) {
+    ss << stmt.column_int(0) << ';' //id
+      << stmt.column_text(1) << ';' //itd
+      << stmt.column_text(2) << ';' //dtm
+      << stmt.column_int(3) << ';' //cnt
+      << stmt.column_int(4) << ';' //drk
+      << stmt.column_int(5) << ';' //wrk
+      << std::endl;
+  }
+  stmt.finalize();
+
+  data = ss.str();
+
+  if( data.empty() ) {
+    return 0;
+  } else {
+    return 1;
+  }
+}
 
 
 void print_version(char *argv0) {
@@ -20,7 +53,6 @@ void print_version(char *argv0) {
 }
 
 
-icd::config *globalConfig;
 
 void print_usage(char *argv0) {
   std::cerr 
@@ -114,6 +146,12 @@ int main( int argc, char *argv[] ) {
     }
 //parametry uruchomienia -- koniec
 
+  globalDb=new sqlite3cc::conn();
+
+  globalDb->open(db_name.c_str());
+  globalDb->busy_timeout(db_timeout);
+
+ // globalConfig=new icd::config( *globalDb );
 
 
 
@@ -121,6 +159,7 @@ int main( int argc, char *argv[] ) {
 
   icdtcp3SoapProxy service;//("http://www.insofter.pl/pawo/icdtcp3webservice/Service1.asmx");
   int ans;
+  std::string s;
 
 
   _icd1__LoginDevice login;
@@ -166,8 +205,22 @@ int main( int argc, char *argv[] ) {
   }
   log.okSoap( 17, "GetTime" );
 
-  log.okServerAns( 10, *(rtime.GetTimeResult) );
-//set time
+  log.okServerAns( 20, *(rtime.GetTimeResult) );
+  if( rtime.GetTimeResult->size() >= 19 ) {
+    rtime.GetTimeResult->at(4)='.';
+    rtime.GetTimeResult->at(7)='.';
+    rtime.GetTimeResult->at(10)='-';
+    rtime.GetTimeResult->at(13)=':';
+    rtime.GetTimeResult->at(16)=':';
+    s="date -s ";
+    s+=*(rtime.GetTimeResult);
+    s+=" &>/dev/null";
+    if( system( s.c_str() ) == 0 ) {
+      system( "hwclock -w" );
+    }
+  }
+
+//set time01234567890123456789
 //date -s 2012.09.06-15:15:00
 //Thu Sep  6 15:15:00 UTC 2012
 ///etc # hwclock -w
@@ -179,14 +232,17 @@ int main( int argc, char *argv[] ) {
   _icd1__SendData data;
   _icd1__SendDataResponse rdata;
 
-  std::string pack("02012-08-03 11:28:28 5;0;0;0;0;399600;0;0;0;0;2;2;2;2;Com2");
 
+  std::string pack;//("02012-08-03 11:28:28 5;0;0;0;0;399600;0;0;0;0;2;2;2;2;Com2");
+
+  std::cout << "xxxx " << createData( pack ) << " xxxx" << std::endl;
   data.data = &pack;
 
   log.okParams( 23, "SendData" );
 
 
   ans=service.SendData(&data, &rdata);
+
 
   if( ans!=SOAP_OK ) {
     log.errSoap( 27, service.soap_fault_detail(), ans, "Błąd transmisji" );
