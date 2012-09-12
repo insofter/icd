@@ -74,8 +74,16 @@ class SOAP_CMAC icdtcp3Soap12Proxy : public soap
 	virtual	int SendData(_icd1__SendData *icd1__SendData, _icd1__SendDataResponse *icd1__SendDataResponse) { return SendData(NULL, NULL, icd1__SendData, icd1__SendDataResponse); }
 	virtual	int SendData(const char *endpoint, const char *soap_action, _icd1__SendData *icd1__SendData, _icd1__SendDataResponse *icd1__SendDataResponse);
 
+	/// Web service operation 'SendData3' (returns error code or SOAP_OK)
+	virtual	int SendData3(_icd1__SendData3 *icd1__SendData3, _icd1__SendData3Response *icd1__SendData3Response) { return SendData3(NULL, NULL, icd1__SendData3, icd1__SendData3Response); }
+	virtual	int SendData3(const char *endpoint, const char *soap_action, _icd1__SendData3 *icd1__SendData3, _icd1__SendData3Response *icd1__SendData3Response);
+
 	/// Web service operation 'LogoutDevice' (returns error code or SOAP_OK)
 	virtual	int LogoutDevice(_icd1__LogoutDevice *icd1__LogoutDevice, _icd1__LogoutDeviceResponse *icd1__LogoutDeviceResponse) { return LogoutDevice(NULL, NULL, icd1__LogoutDevice, icd1__LogoutDeviceResponse); }
 	virtual	int LogoutDevice(const char *endpoint, const char *soap_action, _icd1__LogoutDevice *icd1__LogoutDevice, _icd1__LogoutDeviceResponse *icd1__LogoutDeviceResponse);
+
+	/// Web service operation 'TestSession' (returns error code or SOAP_OK)
+	virtual	int TestSession(_icd1__TestSession *icd1__TestSession, _icd1__TestSessionResponse *icd1__TestSessionResponse) { return TestSession(NULL, NULL, icd1__TestSession, icd1__TestSessionResponse); }
+	virtual	int TestSession(const char *endpoint, const char *soap_action, _icd1__TestSession *icd1__TestSession, _icd1__TestSessionResponse *icd1__TestSessionResponse);
 };
 #endif

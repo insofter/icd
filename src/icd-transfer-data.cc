@@ -16,27 +16,24 @@
 icd::config *globalConfig;
 sqlite3cc::conn *globalDb;
 
-int iloscPaczek() {
+
+int iloscDanych() {
   sqlite3cc::stmt stmt( *globalDb );
   stmt.prepare( "SELECT COUNT(*) FROM flow WHERE flags > 0 "
-      "ORDER BY dtm ASC LIMIT 16" );
+      "ORDER BY dtm ASC LIMIT 4" );
   stmt.step();
   int x=stmt.column_int(0);
   stmt.finalize();
-
-  return std::ceil( ((float)x)/16 );
+  return x;
 }
 
 
 int createData( std::string & data ) {
   sqlite3cc::stmt stmt( *globalDb );
-
   std::ostringstream ss;
-
   stmt.prepare( "SELECT id, itd, "
       "datetime(dtm, 'unixepoch', 'localtime'), cnt, dark_time, "
-      "work_time FROM flow WHERE flags > 0 ORDER BY dtm ASC LIMIT 16" );
-
+      "work_time FROM flow WHERE flags > 0 ORDER BY dtm ASC LIMIT 4" );
   while( stmt.step() == SQLITE_ROW ) {
     ss << stmt.column_int(0) << ';' //id
       << stmt.column_text(1) << ';' //itd
@@ -44,12 +41,10 @@ int createData( std::string & data ) {
       << stmt.column_int(3) << ';' //cnt
       << stmt.column_int(4) << ';' //drk
       << stmt.column_int(5) << ';' //wrk
-      << std::endl;
+      << "0" << std::endl;
   }
   stmt.finalize();
-
   data = ss.str();
-
   if( data.empty() ) {
     return 0;
   } else {
@@ -57,23 +52,25 @@ int createData( std::string & data ) {
   }
 }
 
-void commitData( const std::string & data ) {
+
+void commitData( const std::string & data, int ilDanych ) {
   sqlite3cc::stmt stmt( *globalDb );
   stmt.prepare( "UPDATE flow SET flags = ?1 WHERE id == ?2" );
   std::istringstream ss( data );
   int i, f;
   char x;
-
-  while( ! ss.eof() ) {
-    ss >> i >> x >> f >> x;
-    std::cerr << "........ i=" << i << " f=" << f << std::endl;
-    stmt.bind_int( 1, i );
-    stmt.bind_int( 2, f );
+  while( ( ! ss.eof() ) && ilDanych ) {
+    ss >> i >> x >> f ; 
+//    std::cerr << "........ i=" << i << " f=" << f << std::endl;
+    stmt.bind_int( 1, f );
+    stmt.bind_int( 2, i );
     stmt.step();
     stmt.reset();
+    --ilDanych;
   }
   stmt.finalize();
 }
+
 
 void setTime( std::string & data ) {
   std::string s;
@@ -90,17 +87,13 @@ void setTime( std::string & data ) {
       system( "hwclock -w" );
     }
   }
-//set time01234567890123456789
-//date -s 2012.09.06-15:15:00
-//Thu Sep  6 15:15:00 UTC 2012
-//hwclock -w
-
 }
+
+
 void print_version(char *argv0) {
-    std::cerr << basename(argv0) << " " << version << "\n"
-      << copyright << std::endl;
+  std::cerr << basename(argv0) << " " << version << "\n"
+    << copyright << std::endl;
 }
-
 
 
 void print_usage(char *argv0) {
@@ -132,15 +125,21 @@ void print_usage(char *argv0) {
 }
 
 
+char * new_c_str( const std::string & s ) {
+  char * mem = new char[ s.size()+1 ];
+  strcpy( mem, s.c_str() );
+  return mem;
+}
 
-
-
+ 
 int main( int argc, char *argv[] ) {
 
   Clog log;
   std::string s;
   int db_timeout = 60000; 
   bool end = false;
+  char * mem;
+  int ans;
 
 //parametry uruchomienia
     struct option long_options[] = {
@@ -152,9 +151,9 @@ int main( int argc, char *argv[] ) {
       { 0, 0, 0, 0 }
     };
 
-    while( 1==1 ) {
+    while( end==false ) {
       int option_index = 0;
-      int ch = getopt_long(argc, argv, "d:t:l::hv", long_options, &option_index);
+      int ch=getopt_long(argc, argv, "d:t:l::hv", long_options, &option_index);
       if (ch == -1)
         break;
       switch(ch) {
@@ -185,9 +184,6 @@ int main( int argc, char *argv[] ) {
         exit(1);
         break;
       }
-      if(end) {
-        break;
-      }
     }
     if( !end && s.empty() ) {
       std::cerr << "Missing '--db' parameter" << std::endl;
@@ -196,137 +192,137 @@ int main( int argc, char *argv[] ) {
 //parametry uruchomienia -- koniec
 
   globalDb=new sqlite3cc::conn();
-
   globalDb->open( s.c_str());
   globalDb->busy_timeout(db_timeout);
-
   globalConfig=new icd::config( *globalDb );
-  std::string q("2;356;\n253;3425\n45;213\n");
-  commitData( q );
-  exit(0);
 
 
-  int ans;
+  //przygotowanie połaczenia -------------------------------------------------//
+  s="http://";                                                                //
+  s+=globalConfig->entry( "device", "address" );                              //
+  s+="/icdtcp3/icdtcp3.asmx";                                                 //
+  icdtcp3SoapProxy service( new_c_str( s ) );                                 //
+                                                                              //
+  service.userid = new_c_str( globalConfig->entry( "device", "user" ) );      //
+                                                                              //
+  service.passwd = new_c_str( globalConfig->entry( "device", "pass" ) );      //
+  //przygotowanie połaczenia -- koniec ---------------------------------------//
 
-  s=globalConfig->entry( "device", "address" );
-  s+="/icdtcp3/icdtcp3.asmx";
-  icdtcp3SoapProxy service;
-//  icdtcp3SoapProxy service( s.c_str() );
-
-
-
-  //logowanie
-  _icd1__LoginDevice login;
-  _icd1__LoginDeviceResponse rlogin;
-
-  login.idd=atoi( (globalConfig->entry( "device", "idd")).c_str() );
-  login.name=new std::string( globalConfig->entry( "device", "ids" ) );
-  login.devInfo=new std::string("icdtcp3");
-
-
-  log.okParams( 3, "LoginDevice" );
-
-  ans=service.LoginDevice( &login, &rlogin );
-
-  if( ans!=SOAP_OK ) {
-    log.errSoap( 7, service.soap_fault_detail(), ans, "Błąd transmisji" );
-    exit(1);
-  }
-  log.okSoap( 7, *(login.name) );
-
-  delete login.name;
-  delete login.devInfo;
-
-  if( rlogin.LoginDeviceResult==0 ) {
-    log.okServerAns( 10, *(rlogin.message) );
-  } else {
-    log.errServerAns( 10, *(rlogin.message), "błąd", "LD", "błąd logowania" );
-    exit(1);
-  }
-  delete rlogin.message;
-  //logownaie -- koniec
-
-
-  //pobranie czasu
-  _icd1__GetTime time;
-  _icd1__GetTimeResponse rtime;
-
-  log.okParams( 13, "GetTime" );
-
-  ans=service.GetTime(&time, &rtime);
-
-  if( ans!=SOAP_OK ) {
-    log.errSoap( 17, service.soap_fault_detail(), ans, "Błąd transmisji" );
-    exit(1);
-  }
-  log.okSoap( 17, "GetTime" );
-
-  log.okServerAns( 20, *(rtime.GetTimeResult) );
-  setTime( *(rtime.GetTimeResult) );
-  delete rtime.GetTimeResult;
-  //pobranie czasu -- koniec
+  //logowanie ----------------------------------------------------------------//
+  _icd1__LoginDevice login;                                                   //
+  _icd1__LoginDeviceResponse rlogin;                                          //
+                                                                              //
+  login.idd=atoi( (globalConfig->entry( "device", "idd")).c_str() );          //
+  login.deviceIds=new std::string( globalConfig->entry( "device", "ids" ) );  //
+  login.devInfo=new std::string("icdtcp3");                                   //
+  s="idd='";                                                                  //
+  s+=globalConfig->entry( "device", "idd");                                   //
+  s+="', deviceIds='";                                                        //
+  s+=*(login.deviceIds);                                                      //
+  s+="', devInfo='";                                                          //
+  s+=*(login.devInfo);                                                        //
+  s+="'";                                                                     //
+                                                                              //
+  log.okParams( 3, "LoginDevice" );                                           //
+                                                                              //
+  ans=service.LoginDevice( &login, &rlogin );                                 //
+  delete login.deviceIds;                                                     //
+  delete login.devInfo;                                                       //
+                                                                              //
+  if( ans!=SOAP_OK ) {                                                        //
+    log.errSoap( 7, service.soap_fault_detail(), ans, "Błąd transmisji" );    //
+    exit(1);                                                                  //
+  }                                                                           //
+  log.okSoap( 7, s );                                                         //
+                                                                              //
+                                                                              //
+  if( rlogin.LoginDeviceResult==0 ) {                                         //
+    log.okServerAns( 10, *(rlogin.message) );                                 //
+  } else {                                                                    //
+    log.errServerAns( 10, *(rlogin.message), "błąd", "LD", "błąd logowania" );//
+    exit(1);                                                                  //
+  }                                                                           //
+  //logownaie -- koniec ------------------------------------------------------//
 
 
-  //wysyłanie danych
-  _icd1__SendData data;
-  _icd1__SendDataResponse rdata;
-  data.data = &s;
-  int ilPaczek=iloscPaczek();
-  int aktPaczka=0;
+  //pobranie czasu -----------------------------------------------------------//
+  _icd1__GetTime time;                                                        //
+  _icd1__GetTimeResponse rtime;                                               //
+                                                                              //
+  log.okParams( 13, "GetTime" );                                              //
+                                                                              //
+  ans=service.GetTime(&time, &rtime);                                         //
+                                                                              //
+  if( ans!=SOAP_OK ) {                                                        //
+    log.errSoap( 17, service.soap_fault_detail(), ans, "Błąd transmisji" );   //
+    exit(1);                                                                  //
+  }                                                                           //
+  log.okSoap( 17, "GetTime" );                                                //
+                                                                              //
+  log.okServerAns( 20, *(rtime.GetTimeResult) );                              //
+  setTime( *(rtime.GetTimeResult) );                                          //
+  //pobranie czasu -- koniec -------------------------------------------------//
 
 
-  while( createData( s ) ) {
-    std::cerr << "sdagas" << ilPaczek << "sadgsg";
-    log.okParams( 20+60*(aktPaczka*3+1)/(ilPaczek*3), "SendData" );
-
-    ans=service.SendData(&data, &rdata);
-
-    if( ans!=SOAP_OK ) {
-      log.errSoap( 20+60*(aktPaczka*3+2)/(ilPaczek*3), 
-          service.soap_fault_detail(), ans, "Błąd transmisji" );
-      exit(1);
-    }
-    log.okSoap( 20+60*(aktPaczka*3+2)/(ilPaczek*3), s );
-
-    commitData( *rdata.message );
-
-    if( rdata.SendDataResult==0 ) {
-      log.okServerAns( 20+60*(aktPaczka*3+3)/(ilPaczek*3), *(rdata.message) );
-    } else {
-      log.errServerAns( 20+60*(aktPaczka*3+3)/(ilPaczek*3), *(rdata.message), 
-          "too old", "SD", "błąd wysyłania" );
-      exit(1);
-    }
-    ++aktPaczka;
-  }
-  //wysyłanie danych -- koniec
-
-
-
-
-  //wylogowanie
-  _icd1__LogoutDevice out;
-  _icd1__LogoutDeviceResponse rout;
-
-  log.okParams( 93, "OutDevice" );
-
-  ans=service.LogoutDevice(&out, &rout);
-
-  if( ans!=SOAP_OK ) {
-    log.errSoap( 97, service.soap_fault_detail(), ans, "Błąd transmisji" );
-    exit(1);
-  }
-  log.okSoap( 97, "OutDevice" );
+  //wysyłanie danych ---------------------------------------------------------//
+  _icd1__SendData3 data;                                                      //
+  _icd1__SendData3Response rdata;                                             //
+  data.data = &s;                                                             //
+  int ilDanych=iloscDanych();                                                 //  
+  int ilPaczek=std::ceil( ((float)ilDanych)/4 );                              //
+  int aktPaczka=0;                                                            //
+                                                                              //
+  while( createData( s ) && aktPaczka<ilPaczek ) {                            //
+    log.okParams( 20+60*(aktPaczka*3+1)/(ilPaczek*3), "SendData3" );          //
+                                                                              //
+    ans=service.SendData3(&data, &rdata);                                     //
+                                                                              //
+    if( ans!=SOAP_OK ) {                                                      //
+      log.errSoap( 20+60*(aktPaczka*3+2)/(ilPaczek*3),                        //
+          service.soap_fault_detail(), ans, "Błąd transmisji" );              //
+      exit(1);                                                                //
+    }                                                                         //
+    log.okSoap( 20+60*(aktPaczka*3+2)/(ilPaczek*3), s );                      //
+                                                                              //
+    commitData( *rdata.message, ilDanych );                                   //
+                                                                              //
+    if( rdata.SendData3Result>0 ) {                                           //
+      log.errServerAns( 20+60*(aktPaczka*3+3)/(ilPaczek*3), *(rdata.message), //
+          "too old", "SD", "błąd wysyłania" );                                //
+      break;                                                                  //
+    } else {                                                                  //
+      log.okServerAns( 20+60*(aktPaczka*3+3)/(ilPaczek*3), *(rdata.message) );//
+    }                                                                         //
+    ++aktPaczka;                                                              //
+  }                                                                           //
+  //wysyłanie danych -- koniec -----------------------------------------------//
 
 
-  if( rout.LogoutDeviceResult==0 ) {
-    log.okServerAns( 99, *(rout.message) );
-  } else {
-    log.errServerAns( 99, *(rout.message), "sesserr", "LO", 
-        "błąd zamykania sesji" );
-    exit(1);
-  }
-  //wylogowanie -- koniec
+
+
+  //wylogowanie --------------------------------------------------------------//
+  _icd1__LogoutDevice out;                                                    //
+  _icd1__LogoutDeviceResponse rout;                                           //
+                                                                              //
+  log.okParams( 93, "LogoutDevice" );                                         //
+                                                                              //
+  ans=service.LogoutDevice(&out, &rout);                                      //
+                                                                              //
+  if( ans!=SOAP_OK ) {                                                        //
+    log.errSoap( 97, service.soap_fault_detail(), ans, "Błąd transmisji" );   //
+    exit(1);                                                                  //
+  }                                                                           //
+  log.okSoap( 97, "LogoutDevice" );                                           //
+                                                                              //
+                                                                              //
+  if( rout.LogoutDeviceResult==0 ) {                                          //
+    log.okServerAns( 99, *(rout.message) );                                   //
+  } else {                                                                    //
+    log.errServerAns( 99, *(rout.message), "sesserr", "LO",                   //
+        "błąd zamykania sesji" );                                             //
+    exit(1);                                                                  //
+  }                                                                           //
+  //wylogowanie -- koniec-----------------------------------------------------//
 
   log.done();
 

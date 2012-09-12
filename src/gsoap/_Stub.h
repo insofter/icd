@@ -16,7 +16,7 @@ class SOAP_CMAC _icd1__GetTimeResponse
 class SOAP_CMAC _icd1__LoginDevice
 {
 	int idd;	/* required element of type xsd:int */
-	std::string *name;	/* optional element of type xsd:string */
+	std::string *deviceIds;	/* optional element of type xsd:string */
 	std::string *devInfo;	/* optional element of type xsd:string */
 };
 
@@ -37,6 +37,17 @@ class SOAP_CMAC _icd1__SendDataResponse
 	std::string *message;	/* optional element of type xsd:string */
 };
 
+class SOAP_CMAC _icd1__SendData3
+{
+	std::string *data;	/* optional element of type xsd:string */
+};
+
+class SOAP_CMAC _icd1__SendData3Response
+{
+	int SendData3Result;	/* SOAP 1.2 RPC return element (when namespace qualified) */	/* required element of type xsd:int */
+	std::string *message;	/* optional element of type xsd:string */
+};
+
 class SOAP_CMAC _icd1__LogoutDevice
 {
 };
@@ -45,6 +56,15 @@ class SOAP_CMAC _icd1__LogoutDeviceResponse
 {
 	int LogoutDeviceResult;	/* SOAP 1.2 RPC return element (when namespace qualified) */	/* required element of type xsd:int */
 	std::string *message;	/* optional element of type xsd:string */
+};
+
+class SOAP_CMAC _icd1__TestSession
+{
+};
+
+class SOAP_CMAC _icd1__TestSessionResponse
+{
+	int TestSessionResult;	/* SOAP 1.2 RPC return element (when namespace qualified) */	/* required element of type xsd:int */
 };
 
 /* Operation wrapper: */
@@ -66,9 +86,21 @@ struct __icd2__SendData
 };
 
 /* Operation wrapper: */
+struct __icd2__SendData3
+{
+	_icd1__SendData3 *icd1__SendData3;	/* optional element of type icd1:SendData3 */
+};
+
+/* Operation wrapper: */
 struct __icd2__LogoutDevice
 {
 	_icd1__LogoutDevice *icd1__LogoutDevice;	/* optional element of type icd1:LogoutDevice */
+};
+
+/* Operation wrapper: */
+struct __icd2__TestSession
+{
+	_icd1__TestSession *icd1__TestSession;	/* optional element of type icd1:TestSession */
 };
 
 /* Operation wrapper: */
@@ -90,9 +122,21 @@ struct __icd3__SendData
 };
 
 /* Operation wrapper: */
+struct __icd3__SendData3
+{
+	_icd1__SendData3 *icd1__SendData3;	/* optional element of type icd1:SendData3 */
+};
+
+/* Operation wrapper: */
 struct __icd3__LogoutDevice
 {
 	_icd1__LogoutDevice *icd1__LogoutDevice;	/* optional element of type icd1:LogoutDevice */
+};
+
+/* Operation wrapper: */
+struct __icd3__TestSession
+{
+	_icd1__TestSession *icd1__TestSession;	/* optional element of type icd1:TestSession */
 };
 
 /* SOAP Header: */

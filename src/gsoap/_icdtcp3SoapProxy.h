@@ -16,8 +16,18 @@
     _icd1__SendDataResponse *icd1__SendDataResponse
 ) 
 
+	virtual	int SendData3(
+    _icd1__SendData3 *icd1__SendData3,
+    _icd1__SendData3Response *icd1__SendData3Response
+) 
+
 	virtual	int LogoutDevice(
     _icd1__LogoutDevice *icd1__LogoutDevice,
     _icd1__LogoutDeviceResponse *icd1__LogoutDeviceResponse
+) 
+
+	virtual	int TestSession(
+    _icd1__TestSession *icd1__TestSession,
+    _icd1__TestSessionResponse *icd1__TestSessionResponse
 ) 
 

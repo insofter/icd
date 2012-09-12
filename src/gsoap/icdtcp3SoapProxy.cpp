@@ -274,6 +274,60 @@ int icdtcp3SoapProxy::SendData(const char *endpoint, const char *soap_action, _i
 	return soap_closesock(soap);
 }
 
+int icdtcp3SoapProxy::SendData3(const char *endpoint, const char *soap_action, _icd1__SendData3 *icd1__SendData3, _icd1__SendData3Response *icd1__SendData3Response)
+{	struct soap *soap = this;
+	struct __icd2__SendData3 soap_tmp___icd2__SendData3;
+	if (endpoint)
+		soap_endpoint = endpoint;
+	if (!soap_endpoint)
+		soap_endpoint = "http://192.168.123.194/icdtcp3/icdtcp3.asmx";
+	if (!soap_action)
+		soap_action = "http://insofter.pl/webservices/SendData3";
+	soap->encodingStyle = NULL;
+	soap_tmp___icd2__SendData3.icd1__SendData3 = icd1__SendData3;
+	soap_begin(soap);
+	soap_serializeheader(soap);
+	soap_serialize___icd2__SendData3(soap, &soap_tmp___icd2__SendData3);
+	if (soap_begin_count(soap))
+		return soap->error;
+	if (soap->mode & SOAP_IO_LENGTH)
+	{	if (soap_envelope_begin_out(soap)
+		 || soap_putheader(soap)
+		 || soap_body_begin_out(soap)
+		 || soap_put___icd2__SendData3(soap, &soap_tmp___icd2__SendData3, "-icd2:SendData3", NULL)
+		 || soap_body_end_out(soap)
+		 || soap_envelope_end_out(soap))
+			 return soap->error;
+	}
+	if (soap_end_count(soap))
+		return soap->error;
+	if (soap_connect(soap, soap_endpoint, soap_action)
+	 || soap_envelope_begin_out(soap)
+	 || soap_putheader(soap)
+	 || soap_body_begin_out(soap)
+	 || soap_put___icd2__SendData3(soap, &soap_tmp___icd2__SendData3, "-icd2:SendData3", NULL)
+	 || soap_body_end_out(soap)
+	 || soap_envelope_end_out(soap)
+	 || soap_end_send(soap))
+		return soap_closesock(soap);
+	if (!icd1__SendData3Response)
+		return soap_closesock(soap);
+	icd1__SendData3Response->soap_default(soap);
+	if (soap_begin_recv(soap)
+	 || soap_envelope_begin_in(soap)
+	 || soap_recv_header(soap)
+	 || soap_body_begin_in(soap))
+		return soap_closesock(soap);
+	icd1__SendData3Response->soap_get(soap, "icd1:SendData3Response", "");
+	if (soap->error)
+		return soap_recv_fault(soap, 0);
+	if (soap_body_end_in(soap)
+	 || soap_envelope_end_in(soap)
+	 || soap_end_recv(soap))
+		return soap_closesock(soap);
+	return soap_closesock(soap);
+}
+
 int icdtcp3SoapProxy::LogoutDevice(const char *endpoint, const char *soap_action, _icd1__LogoutDevice *icd1__LogoutDevice, _icd1__LogoutDeviceResponse *icd1__LogoutDeviceResponse)
 {	struct soap *soap = this;
 	struct __icd2__LogoutDevice soap_tmp___icd2__LogoutDevice;
@@ -319,6 +373,60 @@ int icdtcp3SoapProxy::LogoutDevice(const char *endpoint, const char *soap_action
 	 || soap_body_begin_in(soap))
 		return soap_closesock(soap);
 	icd1__LogoutDeviceResponse->soap_get(soap, "icd1:LogoutDeviceResponse", "");
+	if (soap->error)
+		return soap_recv_fault(soap, 0);
+	if (soap_body_end_in(soap)
+	 || soap_envelope_end_in(soap)
+	 || soap_end_recv(soap))
+		return soap_closesock(soap);
+	return soap_closesock(soap);
+}
+
+int icdtcp3SoapProxy::TestSession(const char *endpoint, const char *soap_action, _icd1__TestSession *icd1__TestSession, _icd1__TestSessionResponse *icd1__TestSessionResponse)
+{	struct soap *soap = this;
+	struct __icd2__TestSession soap_tmp___icd2__TestSession;
+	if (endpoint)
+		soap_endpoint = endpoint;
+	if (!soap_endpoint)
+		soap_endpoint = "http://192.168.123.194/icdtcp3/icdtcp3.asmx";
+	if (!soap_action)
+		soap_action = "http://insofter.pl/webservices/TestSession";
+	soap->encodingStyle = NULL;
+	soap_tmp___icd2__TestSession.icd1__TestSession = icd1__TestSession;
+	soap_begin(soap);
+	soap_serializeheader(soap);
+	soap_serialize___icd2__TestSession(soap, &soap_tmp___icd2__TestSession);
+	if (soap_begin_count(soap))
+		return soap->error;
+	if (soap->mode & SOAP_IO_LENGTH)
+	{	if (soap_envelope_begin_out(soap)
+		 || soap_putheader(soap)
+		 || soap_body_begin_out(soap)
+		 || soap_put___icd2__TestSession(soap, &soap_tmp___icd2__TestSession, "-icd2:TestSession", NULL)
+		 || soap_body_end_out(soap)
+		 || soap_envelope_end_out(soap))
+			 return soap->error;
+	}
+	if (soap_end_count(soap))
+		return soap->error;
+	if (soap_connect(soap, soap_endpoint, soap_action)
+	 || soap_envelope_begin_out(soap)
+	 || soap_putheader(soap)
+	 || soap_body_begin_out(soap)
+	 || soap_put___icd2__TestSession(soap, &soap_tmp___icd2__TestSession, "-icd2:TestSession", NULL)
+	 || soap_body_end_out(soap)
+	 || soap_envelope_end_out(soap)
+	 || soap_end_send(soap))
+		return soap_closesock(soap);
+	if (!icd1__TestSessionResponse)
+		return soap_closesock(soap);
+	icd1__TestSessionResponse->soap_default(soap);
+	if (soap_begin_recv(soap)
+	 || soap_envelope_begin_in(soap)
+	 || soap_recv_header(soap)
+	 || soap_body_begin_in(soap))
+		return soap_closesock(soap);
+	icd1__TestSessionResponse->soap_get(soap, "icd1:TestSessionResponse", "");
 	if (soap->error)
 		return soap_recv_fault(soap, 0);
 	if (soap_body_end_in(soap)
