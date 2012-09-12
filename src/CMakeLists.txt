@@ -60,7 +60,7 @@ add_library(logger logger.cpp)
 add_executable(icd-transfer-data icd-transfer-data.cc)
 target_link_libraries(icd-transfer-data 
   sqlite3 curl version gsoap_C gsoap_icdtcp3SoapProxy
-  gsoap_stdsoap2 logger)
+  gsoap_stdsoap2 logger db-config)
 #roxml
 
 

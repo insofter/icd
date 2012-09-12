@@ -5,6 +5,7 @@
 #include "logger.hpp"
 #include <getopt.h>
 #include <sstream>
+#include <cmath>
 
 #include "gsoap/icdtcp3SoapProxy.h"
 #include "gsoap/icdtcp3Soap.nsmap"
@@ -14,6 +15,17 @@
 
 icd::config *globalConfig;
 sqlite3cc::conn *globalDb;
+
+int iloscPaczek() {
+  sqlite3cc::stmt stmt( *globalDb );
+  stmt.prepare( "SELECT COUNT(*) FROM flow WHERE flags > 0 "
+      "ORDER BY dtm ASC LIMIT 16" );
+  stmt.step();
+  int x=stmt.column_int(0);
+  stmt.finalize();
+
+  return std::ceil( ((float)x)/16 );
+}
 
 
 int createData( std::string & data ) {
@@ -46,11 +58,44 @@ int createData( std::string & data ) {
 }
 
 void commitData( const std::string & data ) {
+  sqlite3cc::stmt stmt( *globalDb );
+  stmt.prepare( "UPDATE flow SET flags = ?1 WHERE id == ?2" );
+  std::istringstream ss( data );
+  int i, f;
+  char x;
 
-
+  while( ! ss.eof() ) {
+    ss >> i >> x >> f >> x;
+    std::cerr << "........ i=" << i << " f=" << f << std::endl;
+    stmt.bind_int( 1, i );
+    stmt.bind_int( 2, f );
+    stmt.step();
+    stmt.reset();
+  }
+  stmt.finalize();
 }
 
+void setTime( std::string & data ) {
+  std::string s;
+  if( data.size() >= 19 ) {
+    data[4]='.';
+    data[7]='.';
+    data[10]='-';
+    data[13]=':';
+    data[16]=':';
+    s="date -s ";
+    s+=data;
+    s+=" &>/dev/null";
+    if( system( s.c_str() ) == 0 ) {
+      system( "hwclock -w" );
+    }
+  }
+//set time01234567890123456789
+//date -s 2012.09.06-15:15:00
+//Thu Sep  6 15:15:00 UTC 2012
+//hwclock -w
 
+}
 void print_version(char *argv0) {
     std::cerr << basename(argv0) << " " << version << "\n"
       << copyright << std::endl;
@@ -93,7 +138,7 @@ void print_usage(char *argv0) {
 int main( int argc, char *argv[] ) {
 
   Clog log;
-  std::string db_name;
+  std::string s;
   int db_timeout = 60000; 
   bool end = false;
 
@@ -114,7 +159,7 @@ int main( int argc, char *argv[] ) {
         break;
       switch(ch) {
       case 'd':
-        db_name = optarg;
+        s = optarg;
         break;
       case 't':
         db_timeout = strtol(optarg, NULL, 0);
@@ -144,7 +189,7 @@ int main( int argc, char *argv[] ) {
         break;
       }
     }
-    if( !end && db_name.empty() ) {
+    if( !end && s.empty() ) {
       std::cerr << "Missing '--db' parameter" << std::endl;
       exit(1);
     }
@@ -152,31 +197,36 @@ int main( int argc, char *argv[] ) {
 
   globalDb=new sqlite3cc::conn();
 
-  globalDb->open(db_name.c_str());
+  globalDb->open( s.c_str());
   globalDb->busy_timeout(db_timeout);
 
- // globalConfig=new icd::config( *globalDb );
+  globalConfig=new icd::config( *globalDb );
+  std::string q("2;356;\n253;3425\n45;213\n");
+  commitData( q );
+  exit(0);
 
 
-
-
-
-  icdtcp3SoapProxy service;//("http://www.insofter.pl/pawo/icdtcp3webservice/Service1.asmx");
   int ans;
-  std::string s;
+
+  s=globalConfig->entry( "device", "address" );
+  s+="/icdtcp3/icdtcp3.asmx";
+  icdtcp3SoapProxy service;
+//  icdtcp3SoapProxy service( s.c_str() );
 
 
+
+  //logowanie
   _icd1__LoginDevice login;
   _icd1__LoginDeviceResponse rlogin;
 
-  login.idd=0;
-  login.name=new std::string("Piotr");
+  login.idd=atoi( (globalConfig->entry( "device", "idd")).c_str() );
+  login.name=new std::string( globalConfig->entry( "device", "ids" ) );
   login.devInfo=new std::string("icdtcp3");
+
 
   log.okParams( 3, "LoginDevice" );
 
   ans=service.LoginDevice( &login, &rlogin );
-
 
   if( ans!=SOAP_OK ) {
     log.errSoap( 7, service.soap_fault_detail(), ans, "Błąd transmisji" );
@@ -193,9 +243,11 @@ int main( int argc, char *argv[] ) {
     log.errServerAns( 10, *(rlogin.message), "błąd", "LD", "błąd logowania" );
     exit(1);
   }
+  delete rlogin.message;
+  //logownaie -- koniec
 
 
-
+  //pobranie czasu
   _icd1__GetTime time;
   _icd1__GetTimeResponse rtime;
 
@@ -210,58 +262,49 @@ int main( int argc, char *argv[] ) {
   log.okSoap( 17, "GetTime" );
 
   log.okServerAns( 20, *(rtime.GetTimeResult) );
-  if( rtime.GetTimeResult->size() >= 19 ) {
-    rtime.GetTimeResult->at(4)='.';
-    rtime.GetTimeResult->at(7)='.';
-    rtime.GetTimeResult->at(10)='-';
-    rtime.GetTimeResult->at(13)=':';
-    rtime.GetTimeResult->at(16)=':';
-    s="date -s ";
-    s+=*(rtime.GetTimeResult);
-    s+=" &>/dev/null";
-    if( system( s.c_str() ) == 0 ) {
-      system( "hwclock -w" );
-    }
-  }
-
-//set time01234567890123456789
-//date -s 2012.09.06-15:15:00
-//Thu Sep  6 15:15:00 UTC 2012
-///etc # hwclock -w
-//
-//system
+  setTime( *(rtime.GetTimeResult) );
+  delete rtime.GetTimeResult;
+  //pobranie czasu -- koniec
 
 
-//////////////////////////////////////////////////////
+  //wysyłanie danych
   _icd1__SendData data;
   _icd1__SendDataResponse rdata;
   data.data = &s;
+  int ilPaczek=iloscPaczek();
+  int aktPaczka=0;
+
 
   while( createData( s ) ) {
-    log.okParams( 23, "SendData" );
+    std::cerr << "sdagas" << ilPaczek << "sadgsg";
+    log.okParams( 20+60*(aktPaczka*3+1)/(ilPaczek*3), "SendData" );
 
     ans=service.SendData(&data, &rdata);
 
     if( ans!=SOAP_OK ) {
-      log.errSoap( 27, service.soap_fault_detail(), ans, "Błąd transmisji" );
+      log.errSoap( 20+60*(aktPaczka*3+2)/(ilPaczek*3), 
+          service.soap_fault_detail(), ans, "Błąd transmisji" );
       exit(1);
     }
-    log.okSoap( 27, s );
+    log.okSoap( 20+60*(aktPaczka*3+2)/(ilPaczek*3), s );
 
     commitData( *rdata.message );
 
     if( rdata.SendDataResult==0 ) {
-      log.okServerAns( 30, *(rdata.message) );
+      log.okServerAns( 20+60*(aktPaczka*3+3)/(ilPaczek*3), *(rdata.message) );
     } else {
-      log.errServerAns( 30, *(rdata.message), "too old", "SD", "błąd wysyłania" );
+      log.errServerAns( 20+60*(aktPaczka*3+3)/(ilPaczek*3), *(rdata.message), 
+          "too old", "SD", "błąd wysyłania" );
       exit(1);
     }
+    ++aktPaczka;
   }
-
-////////////////////////////////////////////////////
-
+  //wysyłanie danych -- koniec
 
 
+
+
+  //wylogowanie
   _icd1__LogoutDevice out;
   _icd1__LogoutDeviceResponse rout;
 
@@ -283,8 +326,11 @@ int main( int argc, char *argv[] ) {
         "błąd zamykania sesji" );
     exit(1);
   }
+  //wylogowanie -- koniec
 
   log.done();
+
+  return 0;
 }
 
 
