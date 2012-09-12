@@ -11,7 +11,7 @@ fi
 
 echo 0
 
-#icd-sync-db
+icd-sync-db 
 echo 50
 
 
