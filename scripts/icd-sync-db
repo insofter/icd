@@ -1,0 +1,18 @@
+#!/bin/sh
+
+PROGRAM_NAME=`basename "$0"`
+
+check_error()
+{
+  if [ $? != 0 ] ; then
+    echo "Error! ${PROGRAM_NAME} halted."
+    exit 1
+  fi
+}
+
+icd-sync-config
+check_error
+
+icd-sync-flow
+check_error
+
