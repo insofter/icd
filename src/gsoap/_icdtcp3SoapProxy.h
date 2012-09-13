@@ -31,3 +31,8 @@
     _icd1__TestSessionResponse *icd1__TestSessionResponse
 ) 
 
+	virtual	int GetDeviceUpdateInfo(
+    _icd1__GetDeviceUpdateInfo *icd1__GetDeviceUpdateInfo,
+    _icd1__GetDeviceUpdateInfoResponse *icd1__GetDeviceUpdateInfoResponse
+) 
+

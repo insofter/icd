@@ -15,7 +15,7 @@ compiling, linking, and/or using OpenSSL is allowed.
 
 #include "H.h"
 
-SOAP_SOURCE_STAMP("@(#) C.cpp ver 2.8.8 2012-09-12 11:16:30 GMT")
+SOAP_SOURCE_STAMP("@(#) C.cpp ver 2.8.8 2012-09-13 13:45:01 GMT")
 
 
 #ifndef WITH_NOGLOBAL
@@ -195,6 +195,12 @@ SOAP_FMAC3 void * SOAP_FMAC4 soap_getelement(struct soap *soap, int *type)
 		return soap_in_int(soap, NULL, NULL, "xsd:int");
 	case SOAP_TYPE_std__string:
 		return soap_in_std__string(soap, NULL, NULL, "xsd:string");
+	case SOAP_TYPE_icd1__UpdatePack:
+		return soap_in_icd1__UpdatePack(soap, NULL, NULL, "icd1:UpdatePack");
+	case SOAP_TYPE_PointerTo_icd1__GetDeviceUpdateInfoResponse:
+		return soap_in_PointerTo_icd1__GetDeviceUpdateInfoResponse(soap, NULL, NULL, "icd1:GetDeviceUpdateInfoResponse");
+	case SOAP_TYPE_PointerTo_icd1__GetDeviceUpdateInfo:
+		return soap_in_PointerTo_icd1__GetDeviceUpdateInfo(soap, NULL, NULL, "icd1:GetDeviceUpdateInfo");
 	case SOAP_TYPE_PointerTo_icd1__TestSessionResponse:
 		return soap_in_PointerTo_icd1__TestSessionResponse(soap, NULL, NULL, "icd1:TestSessionResponse");
 	case SOAP_TYPE_PointerTo_icd1__TestSession:
@@ -219,6 +225,8 @@ SOAP_FMAC3 void * SOAP_FMAC4 soap_getelement(struct soap *soap, int *type)
 		return soap_in_PointerTo_icd1__GetTimeResponse(soap, NULL, NULL, "icd1:GetTimeResponse");
 	case SOAP_TYPE_PointerTo_icd1__GetTime:
 		return soap_in_PointerTo_icd1__GetTime(soap, NULL, NULL, "icd1:GetTime");
+	case SOAP_TYPE_PointerToicd1__UpdatePack:
+		return soap_in_PointerToicd1__UpdatePack(soap, NULL, NULL, "icd1:UpdatePack");
 	case SOAP_TYPE_PointerTostd__string:
 		return soap_in_PointerTostd__string(soap, NULL, NULL, "xsd:string");
 	case SOAP_TYPE__QName:
@@ -238,6 +246,10 @@ SOAP_FMAC3 void * SOAP_FMAC4 soap_getelement(struct soap *soap, int *type)
 		if (!soap_match_tag(soap, t, "xsd:string"))
 		{	*type = SOAP_TYPE_std__string;
 			return soap_in_std__string(soap, NULL, NULL, NULL);
+		}
+		if (!soap_match_tag(soap, t, "icd1:UpdatePack"))
+		{	*type = SOAP_TYPE_icd1__UpdatePack;
+			return soap_in_icd1__UpdatePack(soap, NULL, NULL, NULL);
 		}
 		if (!soap_match_tag(soap, t, "xsd:byte"))
 		{	*type = SOAP_TYPE_byte;
@@ -260,6 +272,14 @@ SOAP_FMAC3 void * SOAP_FMAC4 soap_getelement(struct soap *soap, int *type)
 			return s ? *s : NULL;
 		}
 		t = soap->tag;
+		if (!soap_match_tag(soap, t, "icd1:GetDeviceUpdateInfoResponse"))
+		{	*type = SOAP_TYPE__icd1__GetDeviceUpdateInfoResponse;
+			return soap_in__icd1__GetDeviceUpdateInfoResponse(soap, NULL, NULL, NULL);
+		}
+		if (!soap_match_tag(soap, t, "icd1:GetDeviceUpdateInfo"))
+		{	*type = SOAP_TYPE__icd1__GetDeviceUpdateInfo;
+			return soap_in__icd1__GetDeviceUpdateInfo(soap, NULL, NULL, NULL);
+		}
 		if (!soap_match_tag(soap, t, "icd1:TestSessionResponse"))
 		{	*type = SOAP_TYPE__icd1__TestSessionResponse;
 			return soap_in__icd1__TestSessionResponse(soap, NULL, NULL, NULL);
@@ -379,6 +399,10 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_putelement(struct soap *soap, const void *ptr, co
 		return soap_out_int(soap, tag, id, (const int *)ptr, "xsd:int");
 	case SOAP_TYPE_std__string:
 		return soap_out_std__string(soap, tag, id, (const std::string *)ptr, "xsd:string");
+	case SOAP_TYPE__icd1__GetDeviceUpdateInfoResponse:
+		return ((_icd1__GetDeviceUpdateInfoResponse *)ptr)->soap_out(soap, "icd1:GetDeviceUpdateInfoResponse", id, NULL);
+	case SOAP_TYPE__icd1__GetDeviceUpdateInfo:
+		return ((_icd1__GetDeviceUpdateInfo *)ptr)->soap_out(soap, "icd1:GetDeviceUpdateInfo", id, NULL);
 	case SOAP_TYPE__icd1__TestSessionResponse:
 		return ((_icd1__TestSessionResponse *)ptr)->soap_out(soap, "icd1:TestSessionResponse", id, NULL);
 	case SOAP_TYPE__icd1__TestSession:
@@ -403,6 +427,12 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_putelement(struct soap *soap, const void *ptr, co
 		return ((_icd1__GetTimeResponse *)ptr)->soap_out(soap, "icd1:GetTimeResponse", id, NULL);
 	case SOAP_TYPE__icd1__GetTime:
 		return ((_icd1__GetTime *)ptr)->soap_out(soap, "icd1:GetTime", id, NULL);
+	case SOAP_TYPE_icd1__UpdatePack:
+		return ((icd1__UpdatePack *)ptr)->soap_out(soap, tag, id, "icd1:UpdatePack");
+	case SOAP_TYPE_PointerTo_icd1__GetDeviceUpdateInfoResponse:
+		return soap_out_PointerTo_icd1__GetDeviceUpdateInfoResponse(soap, tag, id, (_icd1__GetDeviceUpdateInfoResponse *const*)ptr, "icd1:GetDeviceUpdateInfoResponse");
+	case SOAP_TYPE_PointerTo_icd1__GetDeviceUpdateInfo:
+		return soap_out_PointerTo_icd1__GetDeviceUpdateInfo(soap, tag, id, (_icd1__GetDeviceUpdateInfo *const*)ptr, "icd1:GetDeviceUpdateInfo");
 	case SOAP_TYPE_PointerTo_icd1__TestSessionResponse:
 		return soap_out_PointerTo_icd1__TestSessionResponse(soap, tag, id, (_icd1__TestSessionResponse *const*)ptr, "icd1:TestSessionResponse");
 	case SOAP_TYPE_PointerTo_icd1__TestSession:
@@ -427,6 +457,8 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_putelement(struct soap *soap, const void *ptr, co
 		return soap_out_PointerTo_icd1__GetTimeResponse(soap, tag, id, (_icd1__GetTimeResponse *const*)ptr, "icd1:GetTimeResponse");
 	case SOAP_TYPE_PointerTo_icd1__GetTime:
 		return soap_out_PointerTo_icd1__GetTime(soap, tag, id, (_icd1__GetTime *const*)ptr, "icd1:GetTime");
+	case SOAP_TYPE_PointerToicd1__UpdatePack:
+		return soap_out_PointerToicd1__UpdatePack(soap, tag, id, (icd1__UpdatePack *const*)ptr, "icd1:UpdatePack");
 	case SOAP_TYPE_PointerTostd__string:
 		return soap_out_PointerTostd__string(soap, tag, id, (std::string *const*)ptr, "xsd:string");
 	case SOAP_TYPE__QName:
@@ -454,6 +486,12 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_markelement(struct soap *soap, const void *ptr, 
 	{
 	case SOAP_TYPE_std__string:
 		soap_serialize_std__string(soap, (const std::string *)ptr);
+		break;
+	case SOAP_TYPE__icd1__GetDeviceUpdateInfoResponse:
+		((_icd1__GetDeviceUpdateInfoResponse *)ptr)->soap_serialize(soap);
+		break;
+	case SOAP_TYPE__icd1__GetDeviceUpdateInfo:
+		((_icd1__GetDeviceUpdateInfo *)ptr)->soap_serialize(soap);
 		break;
 	case SOAP_TYPE__icd1__TestSessionResponse:
 		((_icd1__TestSessionResponse *)ptr)->soap_serialize(soap);
@@ -491,6 +529,12 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_markelement(struct soap *soap, const void *ptr, 
 	case SOAP_TYPE__icd1__GetTime:
 		((_icd1__GetTime *)ptr)->soap_serialize(soap);
 		break;
+	case SOAP_TYPE_icd1__UpdatePack:
+		((icd1__UpdatePack *)ptr)->soap_serialize(soap);
+		break;
+	case SOAP_TYPE___icd3__GetDeviceUpdateInfo:
+		soap_serialize___icd3__GetDeviceUpdateInfo(soap, (const struct __icd3__GetDeviceUpdateInfo *)ptr);
+		break;
 	case SOAP_TYPE___icd3__TestSession:
 		soap_serialize___icd3__TestSession(soap, (const struct __icd3__TestSession *)ptr);
 		break;
@@ -509,6 +553,9 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_markelement(struct soap *soap, const void *ptr, 
 	case SOAP_TYPE___icd3__GetTime:
 		soap_serialize___icd3__GetTime(soap, (const struct __icd3__GetTime *)ptr);
 		break;
+	case SOAP_TYPE___icd2__GetDeviceUpdateInfo:
+		soap_serialize___icd2__GetDeviceUpdateInfo(soap, (const struct __icd2__GetDeviceUpdateInfo *)ptr);
+		break;
 	case SOAP_TYPE___icd2__TestSession:
 		soap_serialize___icd2__TestSession(soap, (const struct __icd2__TestSession *)ptr);
 		break;
@@ -526,6 +573,12 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_markelement(struct soap *soap, const void *ptr, 
 		break;
 	case SOAP_TYPE___icd2__GetTime:
 		soap_serialize___icd2__GetTime(soap, (const struct __icd2__GetTime *)ptr);
+		break;
+	case SOAP_TYPE_PointerTo_icd1__GetDeviceUpdateInfoResponse:
+		soap_serialize_PointerTo_icd1__GetDeviceUpdateInfoResponse(soap, (_icd1__GetDeviceUpdateInfoResponse *const*)ptr);
+		break;
+	case SOAP_TYPE_PointerTo_icd1__GetDeviceUpdateInfo:
+		soap_serialize_PointerTo_icd1__GetDeviceUpdateInfo(soap, (_icd1__GetDeviceUpdateInfo *const*)ptr);
 		break;
 	case SOAP_TYPE_PointerTo_icd1__TestSessionResponse:
 		soap_serialize_PointerTo_icd1__TestSessionResponse(soap, (_icd1__TestSessionResponse *const*)ptr);
@@ -563,6 +616,9 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_markelement(struct soap *soap, const void *ptr, 
 	case SOAP_TYPE_PointerTo_icd1__GetTime:
 		soap_serialize_PointerTo_icd1__GetTime(soap, (_icd1__GetTime *const*)ptr);
 		break;
+	case SOAP_TYPE_PointerToicd1__UpdatePack:
+		soap_serialize_PointerToicd1__UpdatePack(soap, (icd1__UpdatePack *const*)ptr);
+		break;
 	case SOAP_TYPE_PointerTostd__string:
 		soap_serialize_PointerTostd__string(soap, (std::string *const*)ptr);
 		break;
@@ -584,10 +640,12 @@ SOAP_FMAC3 void * SOAP_FMAC4 _instantiate(struct soap *soap, int t, const char *
 {	(void)type;
 	switch (t)
 	{
-	case SOAP_TYPE__icd1__GetTime:
-		return (void*)soap_instantiate__icd1__GetTime(soap, -1, type, arrayType, n);
 	case SOAP_TYPE_std__string:
 		return (void*)soap_instantiate_std__string(soap, -1, type, arrayType, n);
+	case SOAP_TYPE_icd1__UpdatePack:
+		return (void*)soap_instantiate_icd1__UpdatePack(soap, -1, type, arrayType, n);
+	case SOAP_TYPE__icd1__GetTime:
+		return (void*)soap_instantiate__icd1__GetTime(soap, -1, type, arrayType, n);
 	case SOAP_TYPE__icd1__GetTimeResponse:
 		return (void*)soap_instantiate__icd1__GetTimeResponse(soap, -1, type, arrayType, n);
 	case SOAP_TYPE__icd1__LoginDevice:
@@ -610,6 +668,10 @@ SOAP_FMAC3 void * SOAP_FMAC4 _instantiate(struct soap *soap, int t, const char *
 		return (void*)soap_instantiate__icd1__TestSession(soap, -1, type, arrayType, n);
 	case SOAP_TYPE__icd1__TestSessionResponse:
 		return (void*)soap_instantiate__icd1__TestSessionResponse(soap, -1, type, arrayType, n);
+	case SOAP_TYPE__icd1__GetDeviceUpdateInfo:
+		return (void*)soap_instantiate__icd1__GetDeviceUpdateInfo(soap, -1, type, arrayType, n);
+	case SOAP_TYPE__icd1__GetDeviceUpdateInfoResponse:
+		return (void*)soap_instantiate__icd1__GetDeviceUpdateInfoResponse(soap, -1, type, arrayType, n);
 	case SOAP_TYPE___icd2__GetTime:
 		return (void*)soap_instantiate___icd2__GetTime(soap, -1, type, arrayType, n);
 	case SOAP_TYPE___icd2__LoginDevice:
@@ -622,6 +684,8 @@ SOAP_FMAC3 void * SOAP_FMAC4 _instantiate(struct soap *soap, int t, const char *
 		return (void*)soap_instantiate___icd2__LogoutDevice(soap, -1, type, arrayType, n);
 	case SOAP_TYPE___icd2__TestSession:
 		return (void*)soap_instantiate___icd2__TestSession(soap, -1, type, arrayType, n);
+	case SOAP_TYPE___icd2__GetDeviceUpdateInfo:
+		return (void*)soap_instantiate___icd2__GetDeviceUpdateInfo(soap, -1, type, arrayType, n);
 	case SOAP_TYPE___icd3__GetTime:
 		return (void*)soap_instantiate___icd3__GetTime(soap, -1, type, arrayType, n);
 	case SOAP_TYPE___icd3__LoginDevice:
@@ -634,6 +698,8 @@ SOAP_FMAC3 void * SOAP_FMAC4 _instantiate(struct soap *soap, int t, const char *
 		return (void*)soap_instantiate___icd3__LogoutDevice(soap, -1, type, arrayType, n);
 	case SOAP_TYPE___icd3__TestSession:
 		return (void*)soap_instantiate___icd3__TestSession(soap, -1, type, arrayType, n);
+	case SOAP_TYPE___icd3__GetDeviceUpdateInfo:
+		return (void*)soap_instantiate___icd3__GetDeviceUpdateInfo(soap, -1, type, arrayType, n);
 #ifndef WITH_NOGLOBAL
 	case SOAP_TYPE_SOAP_ENV__Header:
 		return (void*)soap_instantiate_SOAP_ENV__Header(soap, -1, type, arrayType, n);
@@ -661,17 +727,23 @@ SOAP_FMAC3 void * SOAP_FMAC4 _instantiate(struct soap *soap, int t, const char *
 SOAP_FMAC3 int SOAP_FMAC4 _fdelete(struct soap_clist *p)
 {	switch (p->type)
 	{
-	case SOAP_TYPE__icd1__GetTime:
-		if (p->size < 0)
-			SOAP_DELETE((_icd1__GetTime*)p->ptr);
-		else
-			SOAP_DELETE_ARRAY((_icd1__GetTime*)p->ptr);
-		break;
 	case SOAP_TYPE_std__string:
 		if (p->size < 0)
 			SOAP_DELETE((std::string*)p->ptr);
 		else
 			SOAP_DELETE_ARRAY((std::string*)p->ptr);
+		break;
+	case SOAP_TYPE_icd1__UpdatePack:
+		if (p->size < 0)
+			SOAP_DELETE((icd1__UpdatePack*)p->ptr);
+		else
+			SOAP_DELETE_ARRAY((icd1__UpdatePack*)p->ptr);
+		break;
+	case SOAP_TYPE__icd1__GetTime:
+		if (p->size < 0)
+			SOAP_DELETE((_icd1__GetTime*)p->ptr);
+		else
+			SOAP_DELETE_ARRAY((_icd1__GetTime*)p->ptr);
 		break;
 	case SOAP_TYPE__icd1__GetTimeResponse:
 		if (p->size < 0)
@@ -739,6 +811,18 @@ SOAP_FMAC3 int SOAP_FMAC4 _fdelete(struct soap_clist *p)
 		else
 			SOAP_DELETE_ARRAY((_icd1__TestSessionResponse*)p->ptr);
 		break;
+	case SOAP_TYPE__icd1__GetDeviceUpdateInfo:
+		if (p->size < 0)
+			SOAP_DELETE((_icd1__GetDeviceUpdateInfo*)p->ptr);
+		else
+			SOAP_DELETE_ARRAY((_icd1__GetDeviceUpdateInfo*)p->ptr);
+		break;
+	case SOAP_TYPE__icd1__GetDeviceUpdateInfoResponse:
+		if (p->size < 0)
+			SOAP_DELETE((_icd1__GetDeviceUpdateInfoResponse*)p->ptr);
+		else
+			SOAP_DELETE_ARRAY((_icd1__GetDeviceUpdateInfoResponse*)p->ptr);
+		break;
 	case SOAP_TYPE___icd2__GetTime:
 		if (p->size < 0)
 			SOAP_DELETE((struct __icd2__GetTime*)p->ptr);
@@ -775,6 +859,12 @@ SOAP_FMAC3 int SOAP_FMAC4 _fdelete(struct soap_clist *p)
 		else
 			SOAP_DELETE_ARRAY((struct __icd2__TestSession*)p->ptr);
 		break;
+	case SOAP_TYPE___icd2__GetDeviceUpdateInfo:
+		if (p->size < 0)
+			SOAP_DELETE((struct __icd2__GetDeviceUpdateInfo*)p->ptr);
+		else
+			SOAP_DELETE_ARRAY((struct __icd2__GetDeviceUpdateInfo*)p->ptr);
+		break;
 	case SOAP_TYPE___icd3__GetTime:
 		if (p->size < 0)
 			SOAP_DELETE((struct __icd3__GetTime*)p->ptr);
@@ -810,6 +900,12 @@ SOAP_FMAC3 int SOAP_FMAC4 _fdelete(struct soap_clist *p)
 			SOAP_DELETE((struct __icd3__TestSession*)p->ptr);
 		else
 			SOAP_DELETE_ARRAY((struct __icd3__TestSession*)p->ptr);
+		break;
+	case SOAP_TYPE___icd3__GetDeviceUpdateInfo:
+		if (p->size < 0)
+			SOAP_DELETE((struct __icd3__GetDeviceUpdateInfo*)p->ptr);
+		else
+			SOAP_DELETE_ARRAY((struct __icd3__GetDeviceUpdateInfo*)p->ptr);
 		break;
 #ifndef WITH_NOGLOBAL
 	case SOAP_TYPE_SOAP_ENV__Header:
@@ -1045,6 +1141,289 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy_std__string(struct soap *soap, int st, int 
 	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying std::string %p -> %p\n", q, p));
 	*(std::string*)p = *(std::string*)q;
+}
+
+void _icd1__GetDeviceUpdateInfoResponse::soap_default(struct soap *soap)
+{
+	this->soap = soap;
+	soap_default_int(soap, &this->_icd1__GetDeviceUpdateInfoResponse::GetDeviceUpdateInfoResult);
+	this->_icd1__GetDeviceUpdateInfoResponse::message = NULL;
+	/* transient soap skipped */
+}
+
+void _icd1__GetDeviceUpdateInfoResponse::soap_serialize(struct soap *soap) const
+{
+	(void)soap; /* appease -Wall -Werror */
+	soap_serialize_PointerToicd1__UpdatePack(soap, &this->_icd1__GetDeviceUpdateInfoResponse::message);
+	/* transient soap skipped */
+}
+
+int _icd1__GetDeviceUpdateInfoResponse::soap_out(struct soap *soap, const char *tag, int id, const char *type) const
+{
+	return soap_out__icd1__GetDeviceUpdateInfoResponse(soap, tag, id, this, type);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out__icd1__GetDeviceUpdateInfoResponse(struct soap *soap, const char *tag, int id, const _icd1__GetDeviceUpdateInfoResponse *a, const char *type)
+{
+	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE__icd1__GetDeviceUpdateInfoResponse), type))
+		return soap->error;
+	soap_element_result(soap, "icd1:GetDeviceUpdateInfoResult");
+	if (soap_out_int(soap, "icd1:GetDeviceUpdateInfoResult", -1, &(a->_icd1__GetDeviceUpdateInfoResponse::GetDeviceUpdateInfoResult), ""))
+		return soap->error;
+	if (soap_out_PointerToicd1__UpdatePack(soap, "icd1:message", -1, &(a->_icd1__GetDeviceUpdateInfoResponse::message), ""))
+		return soap->error;
+	/* transient soap skipped */
+	return soap_element_end_out(soap, tag);
+}
+
+void *_icd1__GetDeviceUpdateInfoResponse::soap_in(struct soap *soap, const char *tag, const char *type)
+{	return soap_in__icd1__GetDeviceUpdateInfoResponse(soap, tag, this, type);
+}
+
+SOAP_FMAC3 _icd1__GetDeviceUpdateInfoResponse * SOAP_FMAC4 soap_in__icd1__GetDeviceUpdateInfoResponse(struct soap *soap, const char *tag, _icd1__GetDeviceUpdateInfoResponse *a, const char *type)
+{
+	(void)type; /* appease -Wall -Werror */
+	if (soap_element_begin_in(soap, tag, 0, NULL))
+		return NULL;
+	a = (_icd1__GetDeviceUpdateInfoResponse *)soap_class_id_enter(soap, soap->id, a, SOAP_TYPE__icd1__GetDeviceUpdateInfoResponse, sizeof(_icd1__GetDeviceUpdateInfoResponse), soap->type, soap->arrayType);
+	if (!a)
+		return NULL;
+	if (soap->alloced)
+	{	a->soap_default(soap);
+		if (soap->clist->type != SOAP_TYPE__icd1__GetDeviceUpdateInfoResponse)
+		{	soap_revert(soap);
+			*soap->id = '\0';
+			return (_icd1__GetDeviceUpdateInfoResponse *)a->soap_in(soap, tag, type);
+		}
+	}
+	size_t soap_flag_GetDeviceUpdateInfoResult1 = 1;
+	size_t soap_flag_message1 = 1;
+	if (soap->body && !*soap->href)
+	{
+		for (;;)
+		{	soap->error = SOAP_TAG_MISMATCH;
+			if (soap_flag_GetDeviceUpdateInfoResult1 && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_int(soap, "icd1:GetDeviceUpdateInfoResult", &(a->_icd1__GetDeviceUpdateInfoResponse::GetDeviceUpdateInfoResult), "xsd:int"))
+				{	soap_flag_GetDeviceUpdateInfoResult1--;
+					continue;
+				}
+			if (soap_flag_message1 && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_PointerToicd1__UpdatePack(soap, "icd1:message", &(a->_icd1__GetDeviceUpdateInfoResponse::message), "icd1:UpdatePack"))
+				{	soap_flag_message1--;
+					continue;
+				}
+			/* transient soap skipped */
+			soap_check_result(soap, "icd1:GetDeviceUpdateInfoResult");
+			if (soap->error == SOAP_TAG_MISMATCH)
+				soap->error = soap_ignore_element(soap);
+			if (soap->error == SOAP_NO_TAG)
+				break;
+			if (soap->error)
+				return NULL;
+		}
+		if (soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	else
+	{	a = (_icd1__GetDeviceUpdateInfoResponse *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE__icd1__GetDeviceUpdateInfoResponse, 0, sizeof(_icd1__GetDeviceUpdateInfoResponse), 0, soap_copy__icd1__GetDeviceUpdateInfoResponse);
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	if ((soap->mode & SOAP_XML_STRICT) && (soap_flag_GetDeviceUpdateInfoResult1 > 0))
+	{	soap->error = SOAP_OCCURS;
+		return NULL;
+	}
+	return a;
+}
+
+int _icd1__GetDeviceUpdateInfoResponse::soap_put(struct soap *soap, const char *tag, const  char *type) const
+{
+	register int id = soap_embed(soap, (void*)this, NULL, 0, tag, SOAP_TYPE__icd1__GetDeviceUpdateInfoResponse);
+	if (this->soap_out(soap, tag?tag:"icd1:GetDeviceUpdateInfoResponse", id, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+void *_icd1__GetDeviceUpdateInfoResponse::soap_get(struct soap *soap, const char *tag, const char *type)
+{
+	return soap_get__icd1__GetDeviceUpdateInfoResponse(soap, this, tag, type);
+}
+
+SOAP_FMAC3 _icd1__GetDeviceUpdateInfoResponse * SOAP_FMAC4 soap_get__icd1__GetDeviceUpdateInfoResponse(struct soap *soap, _icd1__GetDeviceUpdateInfoResponse *p, const char *tag, const char *type)
+{
+	if ((p = soap_in__icd1__GetDeviceUpdateInfoResponse(soap, tag, p, type)))
+		if (soap_getindependent(soap))
+			return NULL;
+	return p;
+}
+
+SOAP_FMAC1 _icd1__GetDeviceUpdateInfoResponse * SOAP_FMAC2 soap_instantiate__icd1__GetDeviceUpdateInfoResponse(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+{
+	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate__icd1__GetDeviceUpdateInfoResponse(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE__icd1__GetDeviceUpdateInfoResponse, n, _fdelete);
+	if (!cp)
+		return NULL;
+	if (n < 0)
+	{	cp->ptr = (void*)SOAP_NEW(_icd1__GetDeviceUpdateInfoResponse);
+		if (size)
+			*size = sizeof(_icd1__GetDeviceUpdateInfoResponse);
+		((_icd1__GetDeviceUpdateInfoResponse*)cp->ptr)->soap = soap;
+	}
+	else
+	{	cp->ptr = (void*)SOAP_NEW(_icd1__GetDeviceUpdateInfoResponse[n]);
+		if (!cp->ptr)
+		{	soap->error = SOAP_EOM;
+			return NULL;
+		}
+		if (size)
+			*size = n * sizeof(_icd1__GetDeviceUpdateInfoResponse);
+		for (int i = 0; i < n; i++)
+			((_icd1__GetDeviceUpdateInfoResponse*)cp->ptr)[i].soap = soap;
+	}
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
+	return (_icd1__GetDeviceUpdateInfoResponse*)cp->ptr;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy__icd1__GetDeviceUpdateInfoResponse(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+{
+	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying _icd1__GetDeviceUpdateInfoResponse %p -> %p\n", q, p));
+	*(_icd1__GetDeviceUpdateInfoResponse*)p = *(_icd1__GetDeviceUpdateInfoResponse*)q;
+}
+
+void _icd1__GetDeviceUpdateInfo::soap_default(struct soap *soap)
+{
+	this->soap = soap;
+	this->_icd1__GetDeviceUpdateInfo::SoftVersion = NULL;
+	/* transient soap skipped */
+}
+
+void _icd1__GetDeviceUpdateInfo::soap_serialize(struct soap *soap) const
+{
+	(void)soap; /* appease -Wall -Werror */
+	soap_serialize_PointerTostd__string(soap, &this->_icd1__GetDeviceUpdateInfo::SoftVersion);
+	/* transient soap skipped */
+}
+
+int _icd1__GetDeviceUpdateInfo::soap_out(struct soap *soap, const char *tag, int id, const char *type) const
+{
+	return soap_out__icd1__GetDeviceUpdateInfo(soap, tag, id, this, type);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out__icd1__GetDeviceUpdateInfo(struct soap *soap, const char *tag, int id, const _icd1__GetDeviceUpdateInfo *a, const char *type)
+{
+	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE__icd1__GetDeviceUpdateInfo), type))
+		return soap->error;
+	if (soap_out_PointerTostd__string(soap, "icd1:SoftVersion", -1, &(a->_icd1__GetDeviceUpdateInfo::SoftVersion), ""))
+		return soap->error;
+	/* transient soap skipped */
+	return soap_element_end_out(soap, tag);
+}
+
+void *_icd1__GetDeviceUpdateInfo::soap_in(struct soap *soap, const char *tag, const char *type)
+{	return soap_in__icd1__GetDeviceUpdateInfo(soap, tag, this, type);
+}
+
+SOAP_FMAC3 _icd1__GetDeviceUpdateInfo * SOAP_FMAC4 soap_in__icd1__GetDeviceUpdateInfo(struct soap *soap, const char *tag, _icd1__GetDeviceUpdateInfo *a, const char *type)
+{
+	(void)type; /* appease -Wall -Werror */
+	if (soap_element_begin_in(soap, tag, 0, NULL))
+		return NULL;
+	a = (_icd1__GetDeviceUpdateInfo *)soap_class_id_enter(soap, soap->id, a, SOAP_TYPE__icd1__GetDeviceUpdateInfo, sizeof(_icd1__GetDeviceUpdateInfo), soap->type, soap->arrayType);
+	if (!a)
+		return NULL;
+	if (soap->alloced)
+	{	a->soap_default(soap);
+		if (soap->clist->type != SOAP_TYPE__icd1__GetDeviceUpdateInfo)
+		{	soap_revert(soap);
+			*soap->id = '\0';
+			return (_icd1__GetDeviceUpdateInfo *)a->soap_in(soap, tag, type);
+		}
+	}
+	size_t soap_flag_SoftVersion1 = 1;
+	if (soap->body && !*soap->href)
+	{
+		for (;;)
+		{	soap->error = SOAP_TAG_MISMATCH;
+			if (soap_flag_SoftVersion1 && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
+				if (soap_in_PointerTostd__string(soap, "icd1:SoftVersion", &(a->_icd1__GetDeviceUpdateInfo::SoftVersion), "xsd:string"))
+				{	soap_flag_SoftVersion1--;
+					continue;
+				}
+			/* transient soap skipped */
+			if (soap->error == SOAP_TAG_MISMATCH)
+				soap->error = soap_ignore_element(soap);
+			if (soap->error == SOAP_NO_TAG)
+				break;
+			if (soap->error)
+				return NULL;
+		}
+		if (soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	else
+	{	a = (_icd1__GetDeviceUpdateInfo *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE__icd1__GetDeviceUpdateInfo, 0, sizeof(_icd1__GetDeviceUpdateInfo), 0, soap_copy__icd1__GetDeviceUpdateInfo);
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	return a;
+}
+
+int _icd1__GetDeviceUpdateInfo::soap_put(struct soap *soap, const char *tag, const  char *type) const
+{
+	register int id = soap_embed(soap, (void*)this, NULL, 0, tag, SOAP_TYPE__icd1__GetDeviceUpdateInfo);
+	if (this->soap_out(soap, tag?tag:"icd1:GetDeviceUpdateInfo", id, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+void *_icd1__GetDeviceUpdateInfo::soap_get(struct soap *soap, const char *tag, const char *type)
+{
+	return soap_get__icd1__GetDeviceUpdateInfo(soap, this, tag, type);
+}
+
+SOAP_FMAC3 _icd1__GetDeviceUpdateInfo * SOAP_FMAC4 soap_get__icd1__GetDeviceUpdateInfo(struct soap *soap, _icd1__GetDeviceUpdateInfo *p, const char *tag, const char *type)
+{
+	if ((p = soap_in__icd1__GetDeviceUpdateInfo(soap, tag, p, type)))
+		if (soap_getindependent(soap))
+			return NULL;
+	return p;
+}
+
+SOAP_FMAC1 _icd1__GetDeviceUpdateInfo * SOAP_FMAC2 soap_instantiate__icd1__GetDeviceUpdateInfo(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+{
+	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate__icd1__GetDeviceUpdateInfo(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE__icd1__GetDeviceUpdateInfo, n, _fdelete);
+	if (!cp)
+		return NULL;
+	if (n < 0)
+	{	cp->ptr = (void*)SOAP_NEW(_icd1__GetDeviceUpdateInfo);
+		if (size)
+			*size = sizeof(_icd1__GetDeviceUpdateInfo);
+		((_icd1__GetDeviceUpdateInfo*)cp->ptr)->soap = soap;
+	}
+	else
+	{	cp->ptr = (void*)SOAP_NEW(_icd1__GetDeviceUpdateInfo[n]);
+		if (!cp->ptr)
+		{	soap->error = SOAP_EOM;
+			return NULL;
+		}
+		if (size)
+			*size = n * sizeof(_icd1__GetDeviceUpdateInfo);
+		for (int i = 0; i < n; i++)
+			((_icd1__GetDeviceUpdateInfo*)cp->ptr)[i].soap = soap;
+	}
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
+	return (_icd1__GetDeviceUpdateInfo*)cp->ptr;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy__icd1__GetDeviceUpdateInfo(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+{
+	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying _icd1__GetDeviceUpdateInfo %p -> %p\n", q, p));
+	*(_icd1__GetDeviceUpdateInfo*)p = *(_icd1__GetDeviceUpdateInfo*)q;
 }
 
 void _icd1__TestSessionResponse::soap_default(struct soap *soap)
@@ -2716,6 +3095,183 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy__icd1__GetTime(struct soap *soap, int st, i
 	*(_icd1__GetTime*)p = *(_icd1__GetTime*)q;
 }
 
+void icd1__UpdatePack::soap_default(struct soap *soap)
+{
+	this->soap = soap;
+	this->icd1__UpdatePack::Link = NULL;
+	this->icd1__UpdatePack::md5 = NULL;
+	soap_default_int(soap, &this->icd1__UpdatePack::FileSize);
+	this->icd1__UpdatePack::UpdateForce = NULL;
+	this->icd1__UpdatePack::NewVersion = NULL;
+	/* transient soap skipped */
+}
+
+void icd1__UpdatePack::soap_serialize(struct soap *soap) const
+{
+	(void)soap; /* appease -Wall -Werror */
+	soap_serialize_PointerTostd__string(soap, &this->icd1__UpdatePack::Link);
+	soap_serialize_PointerTostd__string(soap, &this->icd1__UpdatePack::md5);
+	soap_serialize_PointerTostd__string(soap, &this->icd1__UpdatePack::UpdateForce);
+	soap_serialize_PointerTostd__string(soap, &this->icd1__UpdatePack::NewVersion);
+	/* transient soap skipped */
+}
+
+int icd1__UpdatePack::soap_out(struct soap *soap, const char *tag, int id, const char *type) const
+{
+	return soap_out_icd1__UpdatePack(soap, tag, id, this, type);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_icd1__UpdatePack(struct soap *soap, const char *tag, int id, const icd1__UpdatePack *a, const char *type)
+{
+	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE_icd1__UpdatePack), type))
+		return soap->error;
+	if (soap_out_PointerTostd__string(soap, "icd1:Link", -1, &(a->icd1__UpdatePack::Link), ""))
+		return soap->error;
+	if (soap_out_PointerTostd__string(soap, "icd1:md5", -1, &(a->icd1__UpdatePack::md5), ""))
+		return soap->error;
+	if (soap_out_int(soap, "icd1:FileSize", -1, &(a->icd1__UpdatePack::FileSize), ""))
+		return soap->error;
+	if (soap_out_PointerTostd__string(soap, "icd1:UpdateForce", -1, &(a->icd1__UpdatePack::UpdateForce), ""))
+		return soap->error;
+	if (soap_out_PointerTostd__string(soap, "icd1:NewVersion", -1, &(a->icd1__UpdatePack::NewVersion), ""))
+		return soap->error;
+	/* transient soap skipped */
+	return soap_element_end_out(soap, tag);
+}
+
+void *icd1__UpdatePack::soap_in(struct soap *soap, const char *tag, const char *type)
+{	return soap_in_icd1__UpdatePack(soap, tag, this, type);
+}
+
+SOAP_FMAC3 icd1__UpdatePack * SOAP_FMAC4 soap_in_icd1__UpdatePack(struct soap *soap, const char *tag, icd1__UpdatePack *a, const char *type)
+{
+	(void)type; /* appease -Wall -Werror */
+	if (soap_element_begin_in(soap, tag, 0, NULL))
+		return NULL;
+	a = (icd1__UpdatePack *)soap_class_id_enter(soap, soap->id, a, SOAP_TYPE_icd1__UpdatePack, sizeof(icd1__UpdatePack), soap->type, soap->arrayType);
+	if (!a)
+		return NULL;
+	if (soap->alloced)
+	{	a->soap_default(soap);
+		if (soap->clist->type != SOAP_TYPE_icd1__UpdatePack)
+		{	soap_revert(soap);
+			*soap->id = '\0';
+			return (icd1__UpdatePack *)a->soap_in(soap, tag, type);
+		}
+	}
+	size_t soap_flag_Link1 = 1;
+	size_t soap_flag_md51 = 1;
+	size_t soap_flag_FileSize1 = 1;
+	size_t soap_flag_UpdateForce1 = 1;
+	size_t soap_flag_NewVersion1 = 1;
+	if (soap->body && !*soap->href)
+	{
+		for (;;)
+		{	soap->error = SOAP_TAG_MISMATCH;
+			if (soap_flag_Link1 && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
+				if (soap_in_PointerTostd__string(soap, "icd1:Link", &(a->icd1__UpdatePack::Link), "xsd:string"))
+				{	soap_flag_Link1--;
+					continue;
+				}
+			if (soap_flag_md51 && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
+				if (soap_in_PointerTostd__string(soap, "icd1:md5", &(a->icd1__UpdatePack::md5), "xsd:string"))
+				{	soap_flag_md51--;
+					continue;
+				}
+			if (soap_flag_FileSize1 && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_int(soap, "icd1:FileSize", &(a->icd1__UpdatePack::FileSize), "xsd:int"))
+				{	soap_flag_FileSize1--;
+					continue;
+				}
+			if (soap_flag_UpdateForce1 && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
+				if (soap_in_PointerTostd__string(soap, "icd1:UpdateForce", &(a->icd1__UpdatePack::UpdateForce), "xsd:string"))
+				{	soap_flag_UpdateForce1--;
+					continue;
+				}
+			if (soap_flag_NewVersion1 && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
+				if (soap_in_PointerTostd__string(soap, "icd1:NewVersion", &(a->icd1__UpdatePack::NewVersion), "xsd:string"))
+				{	soap_flag_NewVersion1--;
+					continue;
+				}
+			/* transient soap skipped */
+			if (soap->error == SOAP_TAG_MISMATCH)
+				soap->error = soap_ignore_element(soap);
+			if (soap->error == SOAP_NO_TAG)
+				break;
+			if (soap->error)
+				return NULL;
+		}
+		if (soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	else
+	{	a = (icd1__UpdatePack *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE_icd1__UpdatePack, 0, sizeof(icd1__UpdatePack), 0, soap_copy_icd1__UpdatePack);
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	if ((soap->mode & SOAP_XML_STRICT) && (soap_flag_FileSize1 > 0))
+	{	soap->error = SOAP_OCCURS;
+		return NULL;
+	}
+	return a;
+}
+
+int icd1__UpdatePack::soap_put(struct soap *soap, const char *tag, const  char *type) const
+{
+	register int id = soap_embed(soap, (void*)this, NULL, 0, tag, SOAP_TYPE_icd1__UpdatePack);
+	if (this->soap_out(soap, tag?tag:"icd1:UpdatePack", id, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+void *icd1__UpdatePack::soap_get(struct soap *soap, const char *tag, const char *type)
+{
+	return soap_get_icd1__UpdatePack(soap, this, tag, type);
+}
+
+SOAP_FMAC3 icd1__UpdatePack * SOAP_FMAC4 soap_get_icd1__UpdatePack(struct soap *soap, icd1__UpdatePack *p, const char *tag, const char *type)
+{
+	if ((p = soap_in_icd1__UpdatePack(soap, tag, p, type)))
+		if (soap_getindependent(soap))
+			return NULL;
+	return p;
+}
+
+SOAP_FMAC1 icd1__UpdatePack * SOAP_FMAC2 soap_instantiate_icd1__UpdatePack(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+{
+	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_icd1__UpdatePack(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE_icd1__UpdatePack, n, _fdelete);
+	if (!cp)
+		return NULL;
+	if (n < 0)
+	{	cp->ptr = (void*)SOAP_NEW(icd1__UpdatePack);
+		if (size)
+			*size = sizeof(icd1__UpdatePack);
+		((icd1__UpdatePack*)cp->ptr)->soap = soap;
+	}
+	else
+	{	cp->ptr = (void*)SOAP_NEW(icd1__UpdatePack[n]);
+		if (!cp->ptr)
+		{	soap->error = SOAP_EOM;
+			return NULL;
+		}
+		if (size)
+			*size = n * sizeof(icd1__UpdatePack);
+		for (int i = 0; i < n; i++)
+			((icd1__UpdatePack*)cp->ptr)[i].soap = soap;
+	}
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
+	return (icd1__UpdatePack*)cp->ptr;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy_icd1__UpdatePack(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+{
+	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying icd1__UpdatePack %p -> %p\n", q, p));
+	*(icd1__UpdatePack*)p = *(icd1__UpdatePack*)q;
+}
+
 #ifndef WITH_NOGLOBAL
 
 SOAP_FMAC3 void SOAP_FMAC4 soap_default_SOAP_ENV__Fault(struct soap *soap, struct SOAP_ENV__Fault *a)
@@ -3359,6 +3915,102 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy_SOAP_ENV__Header(struct soap *soap, int st,
 
 #endif
 
+SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd3__GetDeviceUpdateInfo(struct soap *soap, struct __icd3__GetDeviceUpdateInfo *a)
+{
+	(void)soap; (void)a; /* appease -Wall -Werror */
+	a->icd1__GetDeviceUpdateInfo = NULL;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___icd3__GetDeviceUpdateInfo(struct soap *soap, const struct __icd3__GetDeviceUpdateInfo *a)
+{
+	(void)soap; (void)a; /* appease -Wall -Werror */
+	soap_serialize_PointerTo_icd1__GetDeviceUpdateInfo(soap, &a->icd1__GetDeviceUpdateInfo);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out___icd3__GetDeviceUpdateInfo(struct soap *soap, const char *tag, int id, const struct __icd3__GetDeviceUpdateInfo *a, const char *type)
+{
+	(void)soap; (void)tag; (void)id; (void)type;
+	if (soap_out_PointerTo_icd1__GetDeviceUpdateInfo(soap, "icd1:GetDeviceUpdateInfo", -1, &a->icd1__GetDeviceUpdateInfo, ""))
+		return soap->error;
+	return SOAP_OK;
+}
+
+SOAP_FMAC3 struct __icd3__GetDeviceUpdateInfo * SOAP_FMAC4 soap_in___icd3__GetDeviceUpdateInfo(struct soap *soap, const char *tag, struct __icd3__GetDeviceUpdateInfo *a, const char *type)
+{
+	size_t soap_flag_icd1__GetDeviceUpdateInfo = 1;
+	short soap_flag;
+	a = (struct __icd3__GetDeviceUpdateInfo *)soap_id_enter(soap, "", a, SOAP_TYPE___icd3__GetDeviceUpdateInfo, sizeof(struct __icd3__GetDeviceUpdateInfo), 0, NULL, NULL, NULL);
+	if (!a)
+		return NULL;
+	soap_default___icd3__GetDeviceUpdateInfo(soap, a);
+		for (soap_flag = 0;; soap_flag = 1)
+		{	soap->error = SOAP_TAG_MISMATCH;
+			if (soap_flag_icd1__GetDeviceUpdateInfo && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_PointerTo_icd1__GetDeviceUpdateInfo(soap, "icd1:GetDeviceUpdateInfo", &a->icd1__GetDeviceUpdateInfo, ""))
+				{	soap_flag_icd1__GetDeviceUpdateInfo--;
+					continue;
+				}
+			if (soap->error == SOAP_TAG_MISMATCH)
+				if (soap_flag)
+				{	soap->error = SOAP_OK;
+					break;
+				}
+			if (soap_flag && soap->error == SOAP_NO_TAG)
+				break;
+			if (soap->error)
+				return NULL;
+		}
+	return a;
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_put___icd3__GetDeviceUpdateInfo(struct soap *soap, const struct __icd3__GetDeviceUpdateInfo *a, const char *tag, const char *type)
+{
+	register int id = 0;
+	if (soap_out___icd3__GetDeviceUpdateInfo(soap, tag?tag:"-icd3:GetDeviceUpdateInfo", id, a, type))
+		return soap->error;
+	return SOAP_OK;
+}
+
+SOAP_FMAC3 struct __icd3__GetDeviceUpdateInfo * SOAP_FMAC4 soap_get___icd3__GetDeviceUpdateInfo(struct soap *soap, struct __icd3__GetDeviceUpdateInfo *p, const char *tag, const char *type)
+{
+	if ((p = soap_in___icd3__GetDeviceUpdateInfo(soap, tag, p, type)))
+		if (soap_getindependent(soap))
+			return NULL;
+	return p;
+}
+
+SOAP_FMAC1 struct __icd3__GetDeviceUpdateInfo * SOAP_FMAC2 soap_instantiate___icd3__GetDeviceUpdateInfo(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+{
+	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___icd3__GetDeviceUpdateInfo(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___icd3__GetDeviceUpdateInfo, n, _fdelete);
+	if (!cp)
+		return NULL;
+	if (n < 0)
+	{	cp->ptr = (void*)SOAP_NEW(struct __icd3__GetDeviceUpdateInfo);
+		if (size)
+			*size = sizeof(struct __icd3__GetDeviceUpdateInfo);
+	}
+	else
+	{	cp->ptr = (void*)SOAP_NEW(struct __icd3__GetDeviceUpdateInfo[n]);
+		if (!cp->ptr)
+		{	soap->error = SOAP_EOM;
+			return NULL;
+		}
+		if (size)
+			*size = n * sizeof(struct __icd3__GetDeviceUpdateInfo);
+	}
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
+	return (struct __icd3__GetDeviceUpdateInfo*)cp->ptr;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd3__GetDeviceUpdateInfo(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+{
+	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __icd3__GetDeviceUpdateInfo %p -> %p\n", q, p));
+	*(struct __icd3__GetDeviceUpdateInfo*)p = *(struct __icd3__GetDeviceUpdateInfo*)q;
+}
+
 SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd3__TestSession(struct soap *soap, struct __icd3__TestSession *a)
 {
 	(void)soap; (void)a; /* appease -Wall -Werror */
@@ -3933,6 +4585,102 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd3__GetTime(struct soap *soap, int st, 
 	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __icd3__GetTime %p -> %p\n", q, p));
 	*(struct __icd3__GetTime*)p = *(struct __icd3__GetTime*)q;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd2__GetDeviceUpdateInfo(struct soap *soap, struct __icd2__GetDeviceUpdateInfo *a)
+{
+	(void)soap; (void)a; /* appease -Wall -Werror */
+	a->icd1__GetDeviceUpdateInfo = NULL;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___icd2__GetDeviceUpdateInfo(struct soap *soap, const struct __icd2__GetDeviceUpdateInfo *a)
+{
+	(void)soap; (void)a; /* appease -Wall -Werror */
+	soap_serialize_PointerTo_icd1__GetDeviceUpdateInfo(soap, &a->icd1__GetDeviceUpdateInfo);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out___icd2__GetDeviceUpdateInfo(struct soap *soap, const char *tag, int id, const struct __icd2__GetDeviceUpdateInfo *a, const char *type)
+{
+	(void)soap; (void)tag; (void)id; (void)type;
+	if (soap_out_PointerTo_icd1__GetDeviceUpdateInfo(soap, "icd1:GetDeviceUpdateInfo", -1, &a->icd1__GetDeviceUpdateInfo, ""))
+		return soap->error;
+	return SOAP_OK;
+}
+
+SOAP_FMAC3 struct __icd2__GetDeviceUpdateInfo * SOAP_FMAC4 soap_in___icd2__GetDeviceUpdateInfo(struct soap *soap, const char *tag, struct __icd2__GetDeviceUpdateInfo *a, const char *type)
+{
+	size_t soap_flag_icd1__GetDeviceUpdateInfo = 1;
+	short soap_flag;
+	a = (struct __icd2__GetDeviceUpdateInfo *)soap_id_enter(soap, "", a, SOAP_TYPE___icd2__GetDeviceUpdateInfo, sizeof(struct __icd2__GetDeviceUpdateInfo), 0, NULL, NULL, NULL);
+	if (!a)
+		return NULL;
+	soap_default___icd2__GetDeviceUpdateInfo(soap, a);
+		for (soap_flag = 0;; soap_flag = 1)
+		{	soap->error = SOAP_TAG_MISMATCH;
+			if (soap_flag_icd1__GetDeviceUpdateInfo && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_PointerTo_icd1__GetDeviceUpdateInfo(soap, "icd1:GetDeviceUpdateInfo", &a->icd1__GetDeviceUpdateInfo, ""))
+				{	soap_flag_icd1__GetDeviceUpdateInfo--;
+					continue;
+				}
+			if (soap->error == SOAP_TAG_MISMATCH)
+				if (soap_flag)
+				{	soap->error = SOAP_OK;
+					break;
+				}
+			if (soap_flag && soap->error == SOAP_NO_TAG)
+				break;
+			if (soap->error)
+				return NULL;
+		}
+	return a;
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_put___icd2__GetDeviceUpdateInfo(struct soap *soap, const struct __icd2__GetDeviceUpdateInfo *a, const char *tag, const char *type)
+{
+	register int id = 0;
+	if (soap_out___icd2__GetDeviceUpdateInfo(soap, tag?tag:"-icd2:GetDeviceUpdateInfo", id, a, type))
+		return soap->error;
+	return SOAP_OK;
+}
+
+SOAP_FMAC3 struct __icd2__GetDeviceUpdateInfo * SOAP_FMAC4 soap_get___icd2__GetDeviceUpdateInfo(struct soap *soap, struct __icd2__GetDeviceUpdateInfo *p, const char *tag, const char *type)
+{
+	if ((p = soap_in___icd2__GetDeviceUpdateInfo(soap, tag, p, type)))
+		if (soap_getindependent(soap))
+			return NULL;
+	return p;
+}
+
+SOAP_FMAC1 struct __icd2__GetDeviceUpdateInfo * SOAP_FMAC2 soap_instantiate___icd2__GetDeviceUpdateInfo(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+{
+	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___icd2__GetDeviceUpdateInfo(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___icd2__GetDeviceUpdateInfo, n, _fdelete);
+	if (!cp)
+		return NULL;
+	if (n < 0)
+	{	cp->ptr = (void*)SOAP_NEW(struct __icd2__GetDeviceUpdateInfo);
+		if (size)
+			*size = sizeof(struct __icd2__GetDeviceUpdateInfo);
+	}
+	else
+	{	cp->ptr = (void*)SOAP_NEW(struct __icd2__GetDeviceUpdateInfo[n]);
+		if (!cp->ptr)
+		{	soap->error = SOAP_EOM;
+			return NULL;
+		}
+		if (size)
+			*size = n * sizeof(struct __icd2__GetDeviceUpdateInfo);
+	}
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
+	return (struct __icd2__GetDeviceUpdateInfo*)cp->ptr;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd2__GetDeviceUpdateInfo(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+{
+	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __icd2__GetDeviceUpdateInfo %p -> %p\n", q, p));
+	*(struct __icd2__GetDeviceUpdateInfo*)p = *(struct __icd2__GetDeviceUpdateInfo*)q;
 }
 
 SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd2__TestSession(struct soap *soap, struct __icd2__TestSession *a)
@@ -4676,6 +5424,116 @@ SOAP_FMAC3 struct SOAP_ENV__Code ** SOAP_FMAC4 soap_get_PointerToSOAP_ENV__Code(
 
 #endif
 
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__GetDeviceUpdateInfoResponse(struct soap *soap, _icd1__GetDeviceUpdateInfoResponse *const*a)
+{
+	if (!soap_reference(soap, *a, SOAP_TYPE__icd1__GetDeviceUpdateInfoResponse))
+		(*a)->soap_serialize(soap);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_icd1__GetDeviceUpdateInfoResponse(struct soap *soap, const char *tag, int id, _icd1__GetDeviceUpdateInfoResponse *const*a, const char *type)
+{
+	id = soap_element_id(soap, tag, id, *a, NULL, 0, type, SOAP_TYPE__icd1__GetDeviceUpdateInfoResponse);
+	if (id < 0)
+		return soap->error;
+	return (*a)->soap_out(soap, tag, id, type);
+}
+
+SOAP_FMAC3 _icd1__GetDeviceUpdateInfoResponse ** SOAP_FMAC4 soap_in_PointerTo_icd1__GetDeviceUpdateInfoResponse(struct soap *soap, const char *tag, _icd1__GetDeviceUpdateInfoResponse **a, const char *type)
+{
+	if (soap_element_begin_in(soap, tag, 1, NULL))
+		return NULL;
+	if (!a)
+		if (!(a = (_icd1__GetDeviceUpdateInfoResponse **)soap_malloc(soap, sizeof(_icd1__GetDeviceUpdateInfoResponse *))))
+			return NULL;
+	*a = NULL;
+	if (!soap->null && *soap->href != '#')
+	{	soap_revert(soap);
+		if (!(*a = (_icd1__GetDeviceUpdateInfoResponse *)soap_instantiate__icd1__GetDeviceUpdateInfoResponse(soap, -1, soap->type, soap->arrayType, NULL)))
+			return NULL;
+		(*a)->soap_default(soap);
+		if (!(*a)->soap_in(soap, tag, NULL))
+			return NULL;
+	}
+	else
+	{	_icd1__GetDeviceUpdateInfoResponse ** p = (_icd1__GetDeviceUpdateInfoResponse **)soap_id_lookup(soap, soap->href, (void**)a, SOAP_TYPE__icd1__GetDeviceUpdateInfoResponse, sizeof(_icd1__GetDeviceUpdateInfoResponse), 0);
+		a = p;
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	return a;
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__GetDeviceUpdateInfoResponse(struct soap *soap, _icd1__GetDeviceUpdateInfoResponse *const*a, const char *tag, const char *type)
+{
+	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_PointerTo_icd1__GetDeviceUpdateInfoResponse);
+	if (soap_out_PointerTo_icd1__GetDeviceUpdateInfoResponse(soap, tag?tag:"icd1:GetDeviceUpdateInfoResponse", id, a, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+SOAP_FMAC3 _icd1__GetDeviceUpdateInfoResponse ** SOAP_FMAC4 soap_get_PointerTo_icd1__GetDeviceUpdateInfoResponse(struct soap *soap, _icd1__GetDeviceUpdateInfoResponse **p, const char *tag, const char *type)
+{
+	if ((p = soap_in_PointerTo_icd1__GetDeviceUpdateInfoResponse(soap, tag, p, type)))
+		if (soap_getindependent(soap))
+			return NULL;
+	return p;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__GetDeviceUpdateInfo(struct soap *soap, _icd1__GetDeviceUpdateInfo *const*a)
+{
+	if (!soap_reference(soap, *a, SOAP_TYPE__icd1__GetDeviceUpdateInfo))
+		(*a)->soap_serialize(soap);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_icd1__GetDeviceUpdateInfo(struct soap *soap, const char *tag, int id, _icd1__GetDeviceUpdateInfo *const*a, const char *type)
+{
+	id = soap_element_id(soap, tag, id, *a, NULL, 0, type, SOAP_TYPE__icd1__GetDeviceUpdateInfo);
+	if (id < 0)
+		return soap->error;
+	return (*a)->soap_out(soap, tag, id, type);
+}
+
+SOAP_FMAC3 _icd1__GetDeviceUpdateInfo ** SOAP_FMAC4 soap_in_PointerTo_icd1__GetDeviceUpdateInfo(struct soap *soap, const char *tag, _icd1__GetDeviceUpdateInfo **a, const char *type)
+{
+	if (soap_element_begin_in(soap, tag, 1, NULL))
+		return NULL;
+	if (!a)
+		if (!(a = (_icd1__GetDeviceUpdateInfo **)soap_malloc(soap, sizeof(_icd1__GetDeviceUpdateInfo *))))
+			return NULL;
+	*a = NULL;
+	if (!soap->null && *soap->href != '#')
+	{	soap_revert(soap);
+		if (!(*a = (_icd1__GetDeviceUpdateInfo *)soap_instantiate__icd1__GetDeviceUpdateInfo(soap, -1, soap->type, soap->arrayType, NULL)))
+			return NULL;
+		(*a)->soap_default(soap);
+		if (!(*a)->soap_in(soap, tag, NULL))
+			return NULL;
+	}
+	else
+	{	_icd1__GetDeviceUpdateInfo ** p = (_icd1__GetDeviceUpdateInfo **)soap_id_lookup(soap, soap->href, (void**)a, SOAP_TYPE__icd1__GetDeviceUpdateInfo, sizeof(_icd1__GetDeviceUpdateInfo), 0);
+		a = p;
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	return a;
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__GetDeviceUpdateInfo(struct soap *soap, _icd1__GetDeviceUpdateInfo *const*a, const char *tag, const char *type)
+{
+	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_PointerTo_icd1__GetDeviceUpdateInfo);
+	if (soap_out_PointerTo_icd1__GetDeviceUpdateInfo(soap, tag?tag:"icd1:GetDeviceUpdateInfo", id, a, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+SOAP_FMAC3 _icd1__GetDeviceUpdateInfo ** SOAP_FMAC4 soap_get_PointerTo_icd1__GetDeviceUpdateInfo(struct soap *soap, _icd1__GetDeviceUpdateInfo **p, const char *tag, const char *type)
+{
+	if ((p = soap_in_PointerTo_icd1__GetDeviceUpdateInfo(soap, tag, p, type)))
+		if (soap_getindependent(soap))
+			return NULL;
+	return p;
+}
+
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__TestSessionResponse(struct soap *soap, _icd1__TestSessionResponse *const*a)
 {
 	if (!soap_reference(soap, *a, SOAP_TYPE__icd1__TestSessionResponse))
@@ -5331,6 +6189,61 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__GetTime(struct soap *soap, _i
 SOAP_FMAC3 _icd1__GetTime ** SOAP_FMAC4 soap_get_PointerTo_icd1__GetTime(struct soap *soap, _icd1__GetTime **p, const char *tag, const char *type)
 {
 	if ((p = soap_in_PointerTo_icd1__GetTime(soap, tag, p, type)))
+		if (soap_getindependent(soap))
+			return NULL;
+	return p;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerToicd1__UpdatePack(struct soap *soap, icd1__UpdatePack *const*a)
+{
+	if (!soap_reference(soap, *a, SOAP_TYPE_icd1__UpdatePack))
+		(*a)->soap_serialize(soap);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerToicd1__UpdatePack(struct soap *soap, const char *tag, int id, icd1__UpdatePack *const*a, const char *type)
+{
+	id = soap_element_id(soap, tag, id, *a, NULL, 0, type, SOAP_TYPE_icd1__UpdatePack);
+	if (id < 0)
+		return soap->error;
+	return (*a)->soap_out(soap, tag, id, type);
+}
+
+SOAP_FMAC3 icd1__UpdatePack ** SOAP_FMAC4 soap_in_PointerToicd1__UpdatePack(struct soap *soap, const char *tag, icd1__UpdatePack **a, const char *type)
+{
+	if (soap_element_begin_in(soap, tag, 1, NULL))
+		return NULL;
+	if (!a)
+		if (!(a = (icd1__UpdatePack **)soap_malloc(soap, sizeof(icd1__UpdatePack *))))
+			return NULL;
+	*a = NULL;
+	if (!soap->null && *soap->href != '#')
+	{	soap_revert(soap);
+		if (!(*a = (icd1__UpdatePack *)soap_instantiate_icd1__UpdatePack(soap, -1, soap->type, soap->arrayType, NULL)))
+			return NULL;
+		(*a)->soap_default(soap);
+		if (!(*a)->soap_in(soap, tag, NULL))
+			return NULL;
+	}
+	else
+	{	icd1__UpdatePack ** p = (icd1__UpdatePack **)soap_id_lookup(soap, soap->href, (void**)a, SOAP_TYPE_icd1__UpdatePack, sizeof(icd1__UpdatePack), 0);
+		a = p;
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	return a;
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerToicd1__UpdatePack(struct soap *soap, icd1__UpdatePack *const*a, const char *tag, const char *type)
+{
+	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_PointerToicd1__UpdatePack);
+	if (soap_out_PointerToicd1__UpdatePack(soap, tag?tag:"icd1:UpdatePack", id, a, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+SOAP_FMAC3 icd1__UpdatePack ** SOAP_FMAC4 soap_get_PointerToicd1__UpdatePack(struct soap *soap, icd1__UpdatePack **p, const char *tag, const char *type)
+{
+	if ((p = soap_in_PointerToicd1__UpdatePack(soap, tag, p, type)))
 		if (soap_getindependent(soap))
 			return NULL;
 	return p;

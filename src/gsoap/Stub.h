@@ -43,15 +43,44 @@ compiling, linking, and/or using OpenSSL is allowed.
 
 #endif
 
+#if 0 /* volatile type: do not declare here, declared elsewhere */
+
+#endif
+
+#ifndef SOAP_TYPE_icd1__UpdatePack
+#define SOAP_TYPE_icd1__UpdatePack (8)
+/* icd1:UpdatePack */
+class SOAP_CMAC icd1__UpdatePack
+{
+public:
+	std::string *Link;	/* optional element of type xsd:string */
+	std::string *md5;	/* optional element of type xsd:string */
+	int FileSize;	/* required element of type xsd:int */
+	std::string *UpdateForce;	/* optional element of type xsd:string */
+	std::string *NewVersion;	/* optional element of type xsd:string */
+	struct soap *soap;	/* transient */
+public:
+	virtual int soap_type() const { return 8; } /* = unique id SOAP_TYPE_icd1__UpdatePack */
+	virtual void soap_default(struct soap*);
+	virtual void soap_serialize(struct soap*) const;
+	virtual int soap_put(struct soap*, const char*, const char*) const;
+	virtual int soap_out(struct soap*, const char*, int, const char*) const;
+	virtual void *soap_get(struct soap*, const char*, const char*);
+	virtual void *soap_in(struct soap*, const char*, const char*);
+	         icd1__UpdatePack() { icd1__UpdatePack::soap_default(NULL); }
+	virtual ~icd1__UpdatePack() { }
+};
+#endif
+
 #ifndef SOAP_TYPE__icd1__GetTime
-#define SOAP_TYPE__icd1__GetTime (8)
+#define SOAP_TYPE__icd1__GetTime (9)
 /* icd1:GetTime */
 class SOAP_CMAC _icd1__GetTime
 {
 public:
 	struct soap *soap;	/* transient */
 public:
-	virtual int soap_type() const { return 8; } /* = unique id SOAP_TYPE__icd1__GetTime */
+	virtual int soap_type() const { return 9; } /* = unique id SOAP_TYPE__icd1__GetTime */
 	virtual void soap_default(struct soap*);
 	virtual void soap_serialize(struct soap*) const;
 	virtual int soap_put(struct soap*, const char*, const char*) const;
@@ -63,12 +92,8 @@ public:
 };
 #endif
 
-#if 0 /* volatile type: do not declare here, declared elsewhere */
-
-#endif
-
 #ifndef SOAP_TYPE__icd1__GetTimeResponse
-#define SOAP_TYPE__icd1__GetTimeResponse (9)
+#define SOAP_TYPE__icd1__GetTimeResponse (10)
 /* icd1:GetTimeResponse */
 class SOAP_CMAC _icd1__GetTimeResponse
 {
@@ -76,7 +101,7 @@ public:
 	std::string *GetTimeResult;	/* SOAP 1.2 RPC return element (when namespace qualified) */	/* optional element of type xsd:string */
 	struct soap *soap;	/* transient */
 public:
-	virtual int soap_type() const { return 9; } /* = unique id SOAP_TYPE__icd1__GetTimeResponse */
+	virtual int soap_type() const { return 10; } /* = unique id SOAP_TYPE__icd1__GetTimeResponse */
 	virtual void soap_default(struct soap*);
 	virtual void soap_serialize(struct soap*) const;
 	virtual int soap_put(struct soap*, const char*, const char*) const;
@@ -89,7 +114,7 @@ public:
 #endif
 
 #ifndef SOAP_TYPE__icd1__LoginDevice
-#define SOAP_TYPE__icd1__LoginDevice (10)
+#define SOAP_TYPE__icd1__LoginDevice (11)
 /* icd1:LoginDevice */
 class SOAP_CMAC _icd1__LoginDevice
 {
@@ -99,7 +124,7 @@ public:
 	std::string *devInfo;	/* optional element of type xsd:string */
 	struct soap *soap;	/* transient */
 public:
-	virtual int soap_type() const { return 10; } /* = unique id SOAP_TYPE__icd1__LoginDevice */
+	virtual int soap_type() const { return 11; } /* = unique id SOAP_TYPE__icd1__LoginDevice */
 	virtual void soap_default(struct soap*);
 	virtual void soap_serialize(struct soap*) const;
 	virtual int soap_put(struct soap*, const char*, const char*) const;
@@ -112,7 +137,7 @@ public:
 #endif
 
 #ifndef SOAP_TYPE__icd1__LoginDeviceResponse
-#define SOAP_TYPE__icd1__LoginDeviceResponse (11)
+#define SOAP_TYPE__icd1__LoginDeviceResponse (12)
 /* icd1:LoginDeviceResponse */
 class SOAP_CMAC _icd1__LoginDeviceResponse
 {
@@ -121,7 +146,7 @@ public:
 	std::string *message;	/* optional element of type xsd:string */
 	struct soap *soap;	/* transient */
 public:
-	virtual int soap_type() const { return 11; } /* = unique id SOAP_TYPE__icd1__LoginDeviceResponse */
+	virtual int soap_type() const { return 12; } /* = unique id SOAP_TYPE__icd1__LoginDeviceResponse */
 	virtual void soap_default(struct soap*);
 	virtual void soap_serialize(struct soap*) const;
 	virtual int soap_put(struct soap*, const char*, const char*) const;
@@ -134,7 +159,7 @@ public:
 #endif
 
 #ifndef SOAP_TYPE__icd1__SendData
-#define SOAP_TYPE__icd1__SendData (12)
+#define SOAP_TYPE__icd1__SendData (13)
 /* icd1:SendData */
 class SOAP_CMAC _icd1__SendData
 {
@@ -142,7 +167,7 @@ public:
 	std::string *data;	/* optional element of type xsd:string */
 	struct soap *soap;	/* transient */
 public:
-	virtual int soap_type() const { return 12; } /* = unique id SOAP_TYPE__icd1__SendData */
+	virtual int soap_type() const { return 13; } /* = unique id SOAP_TYPE__icd1__SendData */
 	virtual void soap_default(struct soap*);
 	virtual void soap_serialize(struct soap*) const;
 	virtual int soap_put(struct soap*, const char*, const char*) const;
@@ -155,7 +180,7 @@ public:
 #endif
 
 #ifndef SOAP_TYPE__icd1__SendDataResponse
-#define SOAP_TYPE__icd1__SendDataResponse (13)
+#define SOAP_TYPE__icd1__SendDataResponse (14)
 /* icd1:SendDataResponse */
 class SOAP_CMAC _icd1__SendDataResponse
 {
@@ -164,7 +189,7 @@ public:
 	std::string *message;	/* optional element of type xsd:string */
 	struct soap *soap;	/* transient */
 public:
-	virtual int soap_type() const { return 13; } /* = unique id SOAP_TYPE__icd1__SendDataResponse */
+	virtual int soap_type() const { return 14; } /* = unique id SOAP_TYPE__icd1__SendDataResponse */
 	virtual void soap_default(struct soap*);
 	virtual void soap_serialize(struct soap*) const;
 	virtual int soap_put(struct soap*, const char*, const char*) const;
@@ -177,7 +202,7 @@ public:
 #endif
 
 #ifndef SOAP_TYPE__icd1__SendData3
-#define SOAP_TYPE__icd1__SendData3 (14)
+#define SOAP_TYPE__icd1__SendData3 (15)
 /* icd1:SendData3 */
 class SOAP_CMAC _icd1__SendData3
 {
@@ -185,7 +210,7 @@ public:
 	std::string *data;	/* optional element of type xsd:string */
 	struct soap *soap;	/* transient */
 public:
-	virtual int soap_type() const { return 14; } /* = unique id SOAP_TYPE__icd1__SendData3 */
+	virtual int soap_type() const { return 15; } /* = unique id SOAP_TYPE__icd1__SendData3 */
 	virtual void soap_default(struct soap*);
 	virtual void soap_serialize(struct soap*) const;
 	virtual int soap_put(struct soap*, const char*, const char*) const;
@@ -198,7 +223,7 @@ public:
 #endif
 
 #ifndef SOAP_TYPE__icd1__SendData3Response
-#define SOAP_TYPE__icd1__SendData3Response (15)
+#define SOAP_TYPE__icd1__SendData3Response (16)
 /* icd1:SendData3Response */
 class SOAP_CMAC _icd1__SendData3Response
 {
@@ -207,7 +232,7 @@ public:
 	std::string *message;	/* optional element of type xsd:string */
 	struct soap *soap;	/* transient */
 public:
-	virtual int soap_type() const { return 15; } /* = unique id SOAP_TYPE__icd1__SendData3Response */
+	virtual int soap_type() const { return 16; } /* = unique id SOAP_TYPE__icd1__SendData3Response */
 	virtual void soap_default(struct soap*);
 	virtual void soap_serialize(struct soap*) const;
 	virtual int soap_put(struct soap*, const char*, const char*) const;
@@ -220,14 +245,14 @@ public:
 #endif
 
 #ifndef SOAP_TYPE__icd1__LogoutDevice
-#define SOAP_TYPE__icd1__LogoutDevice (16)
+#define SOAP_TYPE__icd1__LogoutDevice (17)
 /* icd1:LogoutDevice */
 class SOAP_CMAC _icd1__LogoutDevice
 {
 public:
 	struct soap *soap;	/* transient */
 public:
-	virtual int soap_type() const { return 16; } /* = unique id SOAP_TYPE__icd1__LogoutDevice */
+	virtual int soap_type() const { return 17; } /* = unique id SOAP_TYPE__icd1__LogoutDevice */
 	virtual void soap_default(struct soap*);
 	virtual void soap_serialize(struct soap*) const;
 	virtual int soap_put(struct soap*, const char*, const char*) const;
@@ -240,7 +265,7 @@ public:
 #endif
 
 #ifndef SOAP_TYPE__icd1__LogoutDeviceResponse
-#define SOAP_TYPE__icd1__LogoutDeviceResponse (17)
+#define SOAP_TYPE__icd1__LogoutDeviceResponse (18)
 /* icd1:LogoutDeviceResponse */
 class SOAP_CMAC _icd1__LogoutDeviceResponse
 {
@@ -249,7 +274,7 @@ public:
 	std::string *message;	/* optional element of type xsd:string */
 	struct soap *soap;	/* transient */
 public:
-	virtual int soap_type() const { return 17; } /* = unique id SOAP_TYPE__icd1__LogoutDeviceResponse */
+	virtual int soap_type() const { return 18; } /* = unique id SOAP_TYPE__icd1__LogoutDeviceResponse */
 	virtual void soap_default(struct soap*);
 	virtual void soap_serialize(struct soap*) const;
 	virtual int soap_put(struct soap*, const char*, const char*) const;
@@ -262,14 +287,14 @@ public:
 #endif
 
 #ifndef SOAP_TYPE__icd1__TestSession
-#define SOAP_TYPE__icd1__TestSession (18)
+#define SOAP_TYPE__icd1__TestSession (19)
 /* icd1:TestSession */
 class SOAP_CMAC _icd1__TestSession
 {
 public:
 	struct soap *soap;	/* transient */
 public:
-	virtual int soap_type() const { return 18; } /* = unique id SOAP_TYPE__icd1__TestSession */
+	virtual int soap_type() const { return 19; } /* = unique id SOAP_TYPE__icd1__TestSession */
 	virtual void soap_default(struct soap*);
 	virtual void soap_serialize(struct soap*) const;
 	virtual int soap_put(struct soap*, const char*, const char*) const;
@@ -282,7 +307,7 @@ public:
 #endif
 
 #ifndef SOAP_TYPE__icd1__TestSessionResponse
-#define SOAP_TYPE__icd1__TestSessionResponse (19)
+#define SOAP_TYPE__icd1__TestSessionResponse (20)
 /* icd1:TestSessionResponse */
 class SOAP_CMAC _icd1__TestSessionResponse
 {
@@ -290,7 +315,7 @@ public:
 	int TestSessionResult;	/* SOAP 1.2 RPC return element (when namespace qualified) */	/* required element of type xsd:int */
 	struct soap *soap;	/* transient */
 public:
-	virtual int soap_type() const { return 19; } /* = unique id SOAP_TYPE__icd1__TestSessionResponse */
+	virtual int soap_type() const { return 20; } /* = unique id SOAP_TYPE__icd1__TestSessionResponse */
 	virtual void soap_default(struct soap*);
 	virtual void soap_serialize(struct soap*) const;
 	virtual int soap_put(struct soap*, const char*, const char*) const;
@@ -302,8 +327,51 @@ public:
 };
 #endif
 
+#ifndef SOAP_TYPE__icd1__GetDeviceUpdateInfo
+#define SOAP_TYPE__icd1__GetDeviceUpdateInfo (21)
+/* icd1:GetDeviceUpdateInfo */
+class SOAP_CMAC _icd1__GetDeviceUpdateInfo
+{
+public:
+	std::string *SoftVersion;	/* optional element of type xsd:string */
+	struct soap *soap;	/* transient */
+public:
+	virtual int soap_type() const { return 21; } /* = unique id SOAP_TYPE__icd1__GetDeviceUpdateInfo */
+	virtual void soap_default(struct soap*);
+	virtual void soap_serialize(struct soap*) const;
+	virtual int soap_put(struct soap*, const char*, const char*) const;
+	virtual int soap_out(struct soap*, const char*, int, const char*) const;
+	virtual void *soap_get(struct soap*, const char*, const char*);
+	virtual void *soap_in(struct soap*, const char*, const char*);
+	         _icd1__GetDeviceUpdateInfo() { _icd1__GetDeviceUpdateInfo::soap_default(NULL); }
+	virtual ~_icd1__GetDeviceUpdateInfo() { }
+};
+#endif
+
+#ifndef SOAP_TYPE__icd1__GetDeviceUpdateInfoResponse
+#define SOAP_TYPE__icd1__GetDeviceUpdateInfoResponse (22)
+/* icd1:GetDeviceUpdateInfoResponse */
+class SOAP_CMAC _icd1__GetDeviceUpdateInfoResponse
+{
+public:
+	int GetDeviceUpdateInfoResult;	/* SOAP 1.2 RPC return element (when namespace qualified) */	/* required element of type xsd:int */
+	icd1__UpdatePack *message;	/* optional element of type icd1:UpdatePack */
+	struct soap *soap;	/* transient */
+public:
+	virtual int soap_type() const { return 22; } /* = unique id SOAP_TYPE__icd1__GetDeviceUpdateInfoResponse */
+	virtual void soap_default(struct soap*);
+	virtual void soap_serialize(struct soap*) const;
+	virtual int soap_put(struct soap*, const char*, const char*) const;
+	virtual int soap_out(struct soap*, const char*, int, const char*) const;
+	virtual void *soap_get(struct soap*, const char*, const char*);
+	virtual void *soap_in(struct soap*, const char*, const char*);
+	         _icd1__GetDeviceUpdateInfoResponse() { _icd1__GetDeviceUpdateInfoResponse::soap_default(NULL); }
+	virtual ~_icd1__GetDeviceUpdateInfoResponse() { }
+};
+#endif
+
 #ifndef SOAP_TYPE___icd2__GetTime
-#define SOAP_TYPE___icd2__GetTime (26)
+#define SOAP_TYPE___icd2__GetTime (30)
 /* Operation wrapper: */
 struct __icd2__GetTime
 {
@@ -313,7 +381,7 @@ public:
 #endif
 
 #ifndef SOAP_TYPE___icd2__LoginDevice
-#define SOAP_TYPE___icd2__LoginDevice (30)
+#define SOAP_TYPE___icd2__LoginDevice (34)
 /* Operation wrapper: */
 struct __icd2__LoginDevice
 {
@@ -323,7 +391,7 @@ public:
 #endif
 
 #ifndef SOAP_TYPE___icd2__SendData
-#define SOAP_TYPE___icd2__SendData (34)
+#define SOAP_TYPE___icd2__SendData (38)
 /* Operation wrapper: */
 struct __icd2__SendData
 {
@@ -333,7 +401,7 @@ public:
 #endif
 
 #ifndef SOAP_TYPE___icd2__SendData3
-#define SOAP_TYPE___icd2__SendData3 (38)
+#define SOAP_TYPE___icd2__SendData3 (42)
 /* Operation wrapper: */
 struct __icd2__SendData3
 {
@@ -343,7 +411,7 @@ public:
 #endif
 
 #ifndef SOAP_TYPE___icd2__LogoutDevice
-#define SOAP_TYPE___icd2__LogoutDevice (42)
+#define SOAP_TYPE___icd2__LogoutDevice (46)
 /* Operation wrapper: */
 struct __icd2__LogoutDevice
 {
@@ -353,7 +421,7 @@ public:
 #endif
 
 #ifndef SOAP_TYPE___icd2__TestSession
-#define SOAP_TYPE___icd2__TestSession (46)
+#define SOAP_TYPE___icd2__TestSession (50)
 /* Operation wrapper: */
 struct __icd2__TestSession
 {
@@ -362,8 +430,18 @@ public:
 };
 #endif
 
+#ifndef SOAP_TYPE___icd2__GetDeviceUpdateInfo
+#define SOAP_TYPE___icd2__GetDeviceUpdateInfo (54)
+/* Operation wrapper: */
+struct __icd2__GetDeviceUpdateInfo
+{
+public:
+	_icd1__GetDeviceUpdateInfo *icd1__GetDeviceUpdateInfo;	/* optional element of type icd1:GetDeviceUpdateInfo */
+};
+#endif
+
 #ifndef SOAP_TYPE___icd3__GetTime
-#define SOAP_TYPE___icd3__GetTime (48)
+#define SOAP_TYPE___icd3__GetTime (56)
 /* Operation wrapper: */
 struct __icd3__GetTime
 {
@@ -373,7 +451,7 @@ public:
 #endif
 
 #ifndef SOAP_TYPE___icd3__LoginDevice
-#define SOAP_TYPE___icd3__LoginDevice (50)
+#define SOAP_TYPE___icd3__LoginDevice (58)
 /* Operation wrapper: */
 struct __icd3__LoginDevice
 {
@@ -383,7 +461,7 @@ public:
 #endif
 
 #ifndef SOAP_TYPE___icd3__SendData
-#define SOAP_TYPE___icd3__SendData (52)
+#define SOAP_TYPE___icd3__SendData (60)
 /* Operation wrapper: */
 struct __icd3__SendData
 {
@@ -393,7 +471,7 @@ public:
 #endif
 
 #ifndef SOAP_TYPE___icd3__SendData3
-#define SOAP_TYPE___icd3__SendData3 (54)
+#define SOAP_TYPE___icd3__SendData3 (62)
 /* Operation wrapper: */
 struct __icd3__SendData3
 {
@@ -403,7 +481,7 @@ public:
 #endif
 
 #ifndef SOAP_TYPE___icd3__LogoutDevice
-#define SOAP_TYPE___icd3__LogoutDevice (56)
+#define SOAP_TYPE___icd3__LogoutDevice (64)
 /* Operation wrapper: */
 struct __icd3__LogoutDevice
 {
@@ -413,7 +491,7 @@ public:
 #endif
 
 #ifndef SOAP_TYPE___icd3__TestSession
-#define SOAP_TYPE___icd3__TestSession (58)
+#define SOAP_TYPE___icd3__TestSession (66)
 /* Operation wrapper: */
 struct __icd3__TestSession
 {
@@ -422,10 +500,20 @@ public:
 };
 #endif
 
+#ifndef SOAP_TYPE___icd3__GetDeviceUpdateInfo
+#define SOAP_TYPE___icd3__GetDeviceUpdateInfo (68)
+/* Operation wrapper: */
+struct __icd3__GetDeviceUpdateInfo
+{
+public:
+	_icd1__GetDeviceUpdateInfo *icd1__GetDeviceUpdateInfo;	/* optional element of type icd1:GetDeviceUpdateInfo */
+};
+#endif
+
 #ifndef WITH_NOGLOBAL
 
 #ifndef SOAP_TYPE_SOAP_ENV__Header
-#define SOAP_TYPE_SOAP_ENV__Header (59)
+#define SOAP_TYPE_SOAP_ENV__Header (69)
 /* SOAP Header: */
 struct SOAP_ENV__Header
 {
@@ -441,7 +529,7 @@ private:
 #ifndef WITH_NOGLOBAL
 
 #ifndef SOAP_TYPE_SOAP_ENV__Code
-#define SOAP_TYPE_SOAP_ENV__Code (60)
+#define SOAP_TYPE_SOAP_ENV__Code (70)
 /* SOAP Fault Code: */
 struct SOAP_ENV__Code
 {
@@ -456,7 +544,7 @@ public:
 #ifndef WITH_NOGLOBAL
 
 #ifndef SOAP_TYPE_SOAP_ENV__Detail
-#define SOAP_TYPE_SOAP_ENV__Detail (62)
+#define SOAP_TYPE_SOAP_ENV__Detail (72)
 /* SOAP-ENV:Detail */
 struct SOAP_ENV__Detail
 {
@@ -472,7 +560,7 @@ public:
 #ifndef WITH_NOGLOBAL
 
 #ifndef SOAP_TYPE_SOAP_ENV__Reason
-#define SOAP_TYPE_SOAP_ENV__Reason (65)
+#define SOAP_TYPE_SOAP_ENV__Reason (75)
 /* SOAP-ENV:Reason */
 struct SOAP_ENV__Reason
 {
@@ -486,7 +574,7 @@ public:
 #ifndef WITH_NOGLOBAL
 
 #ifndef SOAP_TYPE_SOAP_ENV__Fault
-#define SOAP_TYPE_SOAP_ENV__Fault (66)
+#define SOAP_TYPE_SOAP_ENV__Fault (76)
 /* SOAP Fault: */
 struct SOAP_ENV__Fault
 {

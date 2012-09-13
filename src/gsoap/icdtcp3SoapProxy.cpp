@@ -435,4 +435,58 @@ int icdtcp3SoapProxy::TestSession(const char *endpoint, const char *soap_action,
 		return soap_closesock(soap);
 	return soap_closesock(soap);
 }
+
+int icdtcp3SoapProxy::GetDeviceUpdateInfo(const char *endpoint, const char *soap_action, _icd1__GetDeviceUpdateInfo *icd1__GetDeviceUpdateInfo, _icd1__GetDeviceUpdateInfoResponse *icd1__GetDeviceUpdateInfoResponse)
+{	struct soap *soap = this;
+	struct __icd2__GetDeviceUpdateInfo soap_tmp___icd2__GetDeviceUpdateInfo;
+	if (endpoint)
+		soap_endpoint = endpoint;
+	if (!soap_endpoint)
+		soap_endpoint = "http://192.168.123.194/icdtcp3/icdtcp3.asmx";
+	if (!soap_action)
+		soap_action = "http://insofter.pl/webservices/GetDeviceUpdateInfo";
+	soap->encodingStyle = NULL;
+	soap_tmp___icd2__GetDeviceUpdateInfo.icd1__GetDeviceUpdateInfo = icd1__GetDeviceUpdateInfo;
+	soap_begin(soap);
+	soap_serializeheader(soap);
+	soap_serialize___icd2__GetDeviceUpdateInfo(soap, &soap_tmp___icd2__GetDeviceUpdateInfo);
+	if (soap_begin_count(soap))
+		return soap->error;
+	if (soap->mode & SOAP_IO_LENGTH)
+	{	if (soap_envelope_begin_out(soap)
+		 || soap_putheader(soap)
+		 || soap_body_begin_out(soap)
+		 || soap_put___icd2__GetDeviceUpdateInfo(soap, &soap_tmp___icd2__GetDeviceUpdateInfo, "-icd2:GetDeviceUpdateInfo", NULL)
+		 || soap_body_end_out(soap)
+		 || soap_envelope_end_out(soap))
+			 return soap->error;
+	}
+	if (soap_end_count(soap))
+		return soap->error;
+	if (soap_connect(soap, soap_endpoint, soap_action)
+	 || soap_envelope_begin_out(soap)
+	 || soap_putheader(soap)
+	 || soap_body_begin_out(soap)
+	 || soap_put___icd2__GetDeviceUpdateInfo(soap, &soap_tmp___icd2__GetDeviceUpdateInfo, "-icd2:GetDeviceUpdateInfo", NULL)
+	 || soap_body_end_out(soap)
+	 || soap_envelope_end_out(soap)
+	 || soap_end_send(soap))
+		return soap_closesock(soap);
+	if (!icd1__GetDeviceUpdateInfoResponse)
+		return soap_closesock(soap);
+	icd1__GetDeviceUpdateInfoResponse->soap_default(soap);
+	if (soap_begin_recv(soap)
+	 || soap_envelope_begin_in(soap)
+	 || soap_recv_header(soap)
+	 || soap_body_begin_in(soap))
+		return soap_closesock(soap);
+	icd1__GetDeviceUpdateInfoResponse->soap_get(soap, "icd1:GetDeviceUpdateInfoResponse", "");
+	if (soap->error)
+		return soap_recv_fault(soap, 0);
+	if (soap_body_end_in(soap)
+	 || soap_envelope_end_in(soap)
+	 || soap_end_recv(soap))
+		return soap_closesock(soap);
+	return soap_closesock(soap);
+}
 /* End of client proxy code */

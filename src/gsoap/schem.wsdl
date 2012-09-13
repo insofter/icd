@@ -80,6 +80,30 @@
           </s:sequence>
         </s:complexType>
       </s:element>
+      <s:element name="GetDeviceUpdateInfo">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SoftVersion" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDeviceUpdateInfoResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="GetDeviceUpdateInfoResult" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="message" type="tns:UpdatePack" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="UpdatePack">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Link" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="md5" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="FileSize" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="UpdateForce" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="NewVersion" type="s:string" />
+        </s:sequence>
+      </s:complexType>
     </s:schema>
   </wsdl:types>
   <wsdl:message name="GetTimeSoapIn">
@@ -118,6 +142,12 @@
   <wsdl:message name="TestSessionSoapOut">
     <wsdl:part name="parameters" element="tns:TestSessionResponse" />
   </wsdl:message>
+  <wsdl:message name="GetDeviceUpdateInfoSoapIn">
+    <wsdl:part name="parameters" element="tns:GetDeviceUpdateInfo" />
+  </wsdl:message>
+  <wsdl:message name="GetDeviceUpdateInfoSoapOut">
+    <wsdl:part name="parameters" element="tns:GetDeviceUpdateInfoResponse" />
+  </wsdl:message>
   <wsdl:portType name="icdtcp3Soap">
     <wsdl:operation name="GetTime">
       <wsdl:input message="tns:GetTimeSoapIn" />
@@ -142,6 +172,10 @@
     <wsdl:operation name="TestSession">
       <wsdl:input message="tns:TestSessionSoapIn" />
       <wsdl:output message="tns:TestSessionSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDeviceUpdateInfo">
+      <wsdl:input message="tns:GetDeviceUpdateInfoSoapIn" />
+      <wsdl:output message="tns:GetDeviceUpdateInfoSoapOut" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="icdtcp3Soap" type="tns:icdtcp3Soap">
@@ -200,6 +234,15 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="GetDeviceUpdateInfo">
+      <soap:operation soapAction="http://insofter.pl/webservices/GetDeviceUpdateInfo" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
   </wsdl:binding>
   <wsdl:binding name="icdtcp3Soap12" type="tns:icdtcp3Soap">
     <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
@@ -250,6 +293,15 @@
     </wsdl:operation>
     <wsdl:operation name="TestSession">
       <soap12:operation soapAction="http://insofter.pl/webservices/TestSession" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDeviceUpdateInfo">
+      <soap12:operation soapAction="http://insofter.pl/webservices/GetDeviceUpdateInfo" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
