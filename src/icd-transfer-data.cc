@@ -166,9 +166,9 @@ int main( int argc, char *argv[] ) {
       case 'l':
         //printf("%s", optarg);
         if( strcmp(optarg, "short")==0 ) {
-          log=Clog(Clog::SHORT);
+          log._log=Clog::SHORT;
         } else if( strcmp(optarg, "long")==0 ) {
-          log=Clog(Clog::LONG);
+          log._log=Clog::LONG;
         } 
         break;
       case 'h':
@@ -196,6 +196,14 @@ int main( int argc, char *argv[] ) {
   globalDb->busy_timeout(db_timeout);
   globalConfig=new icd::config( *globalDb );
 
+  //sprawdzenie czy nie ma komunikacji w tle----------------------------------//
+  std::string x=globalConfig->entry("current", "last-send-status");           //
+  if( x.size()>=1 && x[0]=='?' ) {                                            //
+    log.errTrInProgress();                                                    //
+    exit(1);                                                                  //
+  }                                                                           //
+  //sprawdzenie czy nie ma komunikacji w tle -- koniec -----------------------//
+
 
   //przygotowanie połaczenia -------------------------------------------------//
   s="http://";                                                                //
@@ -207,6 +215,8 @@ int main( int argc, char *argv[] ) {
                                                                               //
   service.passwd = new_c_str( globalConfig->entry( "device", "pass" ) );      //
   //przygotowanie połaczenia -- koniec ---------------------------------------//
+
+  sleep(3);
 
   //logowanie ----------------------------------------------------------------//
   _icd1__LoginDevice login;                                                   //
@@ -244,6 +254,7 @@ int main( int argc, char *argv[] ) {
   }                                                                           //
   //logownaie -- koniec ------------------------------------------------------//
 
+  sleep(3);
 
   //pobranie czasu -----------------------------------------------------------//
   _icd1__GetTime time;                                                        //
@@ -263,6 +274,7 @@ int main( int argc, char *argv[] ) {
   setTime( *(rtime.GetTimeResult) );                                          //
   //pobranie czasu -- koniec -------------------------------------------------//
 
+  sleep(3);
 
   //wysyłanie danych ---------------------------------------------------------//
   _icd1__SendData3 data;                                                      //
@@ -297,8 +309,7 @@ int main( int argc, char *argv[] ) {
   }                                                                           //
   //wysyłanie danych -- koniec -----------------------------------------------//
 
-
-
+  sleep(3);
 
   //wylogowanie --------------------------------------------------------------//
   _icd1__LogoutDevice out;                                                    //
@@ -323,6 +334,8 @@ int main( int argc, char *argv[] ) {
     exit(1);                                                                  //
   }                                                                           //
   //wylogowanie -- koniec-----------------------------------------------------//
+
+  sleep(3);
 
   log.done();
 

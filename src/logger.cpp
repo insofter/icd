@@ -25,10 +25,24 @@ int print_percent(int perc) {
 
 
 Clog::Clog( log_type log ): _log(log) {
+                  //0123456789012345
+  sprintf(progress,"??Progress: xxx%");
+  destrLock=false;
 }
 
+
+Clog::~Clog() {
+  if( ! destrLock ) {
+    std::string x=globalConfig->entry("current", "last-send-status"); 
+    if( x.size()>=1 && x[0]=='?' ) {
+      globalConfig->set_entry("current", 
+          "last-send-status", "--ERR TR. BROKEN");
+    }
+  }
+}
 void Clog::okParams( int percent, const std::string & cmd ) {
-  //todb
+  sprintf(progress+12,"%3i%%", percent);
+  globalConfig->set_entry("current","last-send-status", progress);
 
   switch( _log ) {
     case SHORT:
@@ -44,7 +58,8 @@ void Clog::okParams( int percent, const std::string & cmd ) {
 }
  
 void Clog::okSoap( int percent, const std::string & servQuery ) {
-//todb
+  sprintf(progress+12,"%3i%%", percent);
+  globalConfig->set_entry("current","last-send-status", progress);
 
   switch( _log ) {
     case SHORT:
@@ -62,7 +77,8 @@ void Clog::okSoap( int percent, const std::string & servQuery ) {
 
  
 void Clog::okServerAns( int percent, const std::string & servAns ) {
-  //todb
+  sprintf(progress+12,"%3i%%", percent);
+  globalConfig->set_entry("current","last-send-status", progress);
 
   switch( _log ) {
     case SHORT:
@@ -81,11 +97,14 @@ void Clog::okServerAns( int percent, const std::string & servAns ) {
  
 void Clog::errParams( int percent, const std::string & cmd, 
     const std::string & err, const std::string & short_err ) {
-  //todb
+  std::ostringstream ss;
+
+  ss << "--ERR CR:" << short_err;
+  globalConfig->set_entry( "current","last-send-status", ss.str() );
 
   switch( _log ) {
     case SHORT:
-      std::cout << "--ERR CR:" << short_err << std::endl;
+      std::cout << ss.str() << std::endl;
       break;
 
     case LONG:
@@ -101,11 +120,14 @@ void Clog::errParams( int percent, const std::string & cmd,
  
 void Clog::errSoap( int percent, const std::string & soapTxt,
     int soapCode, const std::string & err ) {
-  //todb
+
+  char ss[17];
+  sprintf(ss,"--ERR SOAP:%4i", soapCode );
+  globalConfig->set_entry("current","last-send-status", ss);
 
   switch( _log ) {
     case SHORT:
-      printf("--ERR SOAP:%4i\n", soapCode );
+      printf("%s\n", ss );
       break;
 
     case LONG:
@@ -120,12 +142,15 @@ void Clog::errSoap( int percent, const std::string & soapTxt,
 void Clog::errServerAns( int percent, const std::string & servAns,
   const std::string & shortAns, const std::string & shortCmd,
   const std::string & errName ) {
-  //todb
+
+  std::ostringstream ss;
+
+  ss << "--ERR " << shortCmd << ":" << shortAns;
+  globalConfig->set_entry( "current","last-send-status", ss.str() );
 
   switch( _log ) {
     case SHORT:
-      std::cout << "--ERR " << shortCmd << ":" << shortAns 
-        << std::endl;
+      std::cout << ss.str() << std::endl;
       break;
 
     case LONG:
@@ -138,15 +163,19 @@ void Clog::errServerAns( int percent, const std::string & servAns,
 }
 
 void Clog::done( int warn ) {
-  //todb
+  
+  std::ostringstream ss;
+
+  if( warn == 0 ) {
+    ss << "++OK Transfer OK";
+  } else {
+    ss << "++WARNINGS: " << warn;
+  }
+  globalConfig->set_entry( "current","last-send-status", ss.str() );
   
   switch( _log ) {
     case SHORT:
-      if( warn == 0 ) {
-        std::cout << "++OK Transfer OK" << std::endl;
-      } else {
-        std::cout << "++WARNINGS: " << warn << std::endl;
-      }
+      std::cout << ss.str() << std::endl;
       break;
     case LONG:
       std::cout << std::endl << "[100%] " << std::endl;
@@ -155,6 +184,35 @@ void Clog::done( int warn ) {
       } else {
         std::cout << "++WARN: Ilość ostrzeżeń: " << warn << std::endl;
       }
+      break;
+  }
+}
+
+void Clog::error( int err ) {
+  std::ostringstream ss;
+  ss << "--ERRORS: " << err;
+  globalConfig->set_entry( "current","last-send-status", ss.str() );
+
+  
+  switch( _log ) {
+    case SHORT:
+      std::cout << ss.str() << std::endl;
+      break;
+    case LONG:
+      std::cout << std::endl << "[100%] " << std::endl;
+      std::cout << "--ERRORS: Ilość błedów: " << err << std::endl;
+      break;
+  }
+}
+
+void Clog::errTrInProgress() {
+  destrLock=true;
+  switch( _log ) {
+    case SHORT:   //0123456789012345
+      std::cout << "--TR IN PROGRESS" << std::endl;
+      break;
+    case LONG:
+      std::cout << "--ERR Komunikacja w tle." << std::endl;
       break;
   }
 }

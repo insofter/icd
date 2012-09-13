@@ -8,6 +8,7 @@
 #ifndef LOGGER_HPP
 #define LOGGER_HPP
 
+#include "db-config.h"
 #include <poll.h>
 #include <fcntl.h>
 #include <string>
@@ -18,11 +19,16 @@
 #include <unistd.h>
 #endif
 
+extern icd::config *globalConfig;
 
 /**
  * Interface for printing logs on standard output.
  */
 class Clog {
+protected:
+  char progress[17];
+  bool destrLock;
+
 public:
   enum log_type { SILENT, SHORT, LONG };
 
@@ -35,6 +41,11 @@ public:
    * @param log_type Type of logs.
    */
   Clog( log_type log=SILENT );
+
+  /**
+   * Destructor, sets end status in db if there is progress status.
+   */
+  ~Clog();
   
   /**
    * Succesfull creating of parameters.
@@ -104,6 +115,19 @@ public:
   //--ERR           //
   //--ERR           //
   //++OK Transfer OK//
+  
+  /**
+   * Transfer without success
+   * @param err Number of errors
+   */
+  void error( int err );
+
+  /**
+   * Transfer in progress
+   */
+  void errTrInProgress();
+
+
 };
 
 
