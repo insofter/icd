@@ -8,12 +8,15 @@
 #include <sys/time.h>
 #include <getopt.h>
 #include <libgen.h>
+#include <queue>
+#include <signal.h>
 
 #include "version.h"
 #include "sqlite3cc.h"
 #include "db-config.h"
 #include "daemonizer.h"
 #include "syslogstream.h"
+#include "threads.h"
 
 void print_usage(char *argv0)
 {
@@ -43,7 +46,7 @@ void print_version(char *argv0)
   std::cerr << basename(argv0) << " " << version << "\n"
     << copyright << std::endl;
 }
-
+/*
 namespace icd
 {
 
@@ -500,3 +503,593 @@ int main(int argc, char *argv[])
 
   return 0;
 }
+*/
+
+//------------
+#include <map>
+#include <pthread.h>
+
+namespace icd
+{
+
+#define EVENT_TYPE_TIMER (1)
+#define EVENT_TYPE_ITD (2)
+
+class event
+{
+public:
+  event(const std::string& publisher, const time& timestamp)
+    : publisher_(publisher), timestamp_(timestamp) {}
+  ~event() {}
+
+  virtual int type() const = 0;
+  virtual event *clone() const = 0;
+
+  std::string publisher() const { return publisher_; }
+  time timestamp() const { return timestamp_; }
+
+  friend std::ostream& operator <<(std::ostream &os, const event &ref);
+
+private:
+  std::string publisher_;
+  time timestamp_;
+
+  virtual void dbg_print(std::ostream& os) const = 0;
+};
+
+std::ostream& operator <<(std::ostream &os, const event &ref)
+{
+  ref.dbg_print(os);
+  return os;
+}
+
+class timer_event : public event
+{
+public:
+  timer_event(const std::string& publisher, const time& timestamp)
+    : event(publisher, timestamp) {}
+  ~timer_event() {}
+
+  virtual int type() const { return EVENT_TYPE_TIMER; } 
+  virtual event *clone() const { return new timer_event(*this); }
+
+private:
+  virtual void dbg_print(std::ostream& os) const
+  {
+    os << "timer_event(" << publisher() << "," << timestamp() << ")";
+  }
+};
+
+enum itd_state 
+{
+  CLEAR = 0,
+  BLOCKED = 1,
+};
+
+class itd_event : public event
+{
+public:
+  itd_event(const std::string& publisher, const time& timestamp)
+    : event(publisher, timestamp), state_(CLEAR) {}
+  ~itd_event() {}
+
+  virtual int type() const { return EVENT_TYPE_ITD; }
+  virtual event *clone() const { return new itd_event(*this); }
+
+  void set_device(const std::string& device) { device_ = device; }
+  void set_dtm(const time& dtm) { dtm_ = dtm; }
+  void set_state(const itd_state& state) { state_ = state; }
+
+  std::string device() const { return device_; }
+  time dtm() const { return dtm_; }
+  itd_state state() const { return state_; }
+
+private:
+  std::string device_;
+  time dtm_;
+  itd_state state_;
+
+  virtual void dbg_print(std::ostream& os) const
+  {
+    os << "itd_event(" << publisher() << "," << timestamp() << ","
+      << ((state_ == CLEAR) ? "CLEAR" : "BLOCKED") << ")";
+  }
+};
+
+
+
+class virtual_device : public thread
+{
+public:
+  virtual_device(const std::string& name) : syslog_(name), name_(name) {}
+  ~virtual_device() {}
+
+  std::string name() const { return name_; }
+  std::ostream &syslog() { return syslog_; }
+
+private:
+  icd::syslogstream syslog_;
+  std::string name_;
+};
+
+
+
+
+class event_subscriber : public virtual_device
+{
+public:
+  event_subscriber(const std::string& name) : virtual_device(name) {}
+  ~event_subscriber() {}
+
+  time delay() { mutex_locker ml(lock_); return delay_; }
+  void set_delay(const time& delay) { mutex_locker ml(lock_); delay_ = delay; }
+
+  void process_notification(const event& e);
+
+protected:
+  virtual void handle_event(const event& e) = 0;
+
+private:
+  struct prioritize_events
+  {
+    // return true if e2 is older (=higher priority) that e1
+    bool operator()(const event* &e1, const event* &e2) const
+    {
+      return e1->timestamp() > e2->timestamp();
+    }
+  };
+
+  std::priority_queue<const event *, std::vector<const event *>, prioritize_events> queue_;
+  time delay_;
+  mutex lock_;
+  condition queue_cond_;
+  condition delay_cond_;
+
+  virtual void run();
+};
+
+class event_publisher : public virtual_device
+{
+public:
+  event_publisher(const std::string& name) : virtual_device(name) {}
+  ~event_publisher() {}
+
+  void subscribe(event_subscriber& subscriber);
+  void unsubscribe(event_subscriber& subscriber);
+
+protected:
+  void notify_subscribers(const event& e);
+
+private:
+  std::map<std::string, event_subscriber&> subscribers_;
+  mutex lock_;
+};
+
+void event_subscriber::process_notification(const event& e)
+{
+  mutex_locker ml(lock_);
+  syslog() << "event queued, " << e << std::endl;
+  queue_.push(e.clone());
+  queue_cond_.signal();
+}
+
+void event_subscriber::run()
+{
+  mutex_locker ml(lock_);
+
+  while(1)
+  {
+    queue_cond_.wait(lock_);
+
+    while (!queue_.empty())
+    {
+      // apply delay
+      time timestamp = queue_.top()->timestamp() + delay_;
+      while (time::now() < timestamp)
+        delay_cond_.timedwait(lock_, timestamp);
+
+      // process event
+      // note that the queue top element here may be defferent to the one
+      // that was taken to calculate delay (a late event may have arrived
+      // to the queue)
+      const event *e = queue_.top();
+      queue_.pop();
+      lock_.unlock();
+      syslog() << "event handled, " << *e << std::endl;
+      handle_event(*e);
+      lock_.lock();
+      delete e;
+    }
+  }
+}
+
+
+
+void event_publisher::subscribe(event_subscriber& subscriber)
+{
+  mutex_locker ml(lock_);
+  subscribers_.insert(std::pair<std::string, event_subscriber&>(
+    subscriber.name(), subscriber));
+}
+
+void event_publisher::unsubscribe(event_subscriber& subscriber)
+{
+  mutex_locker ml(lock_);
+  subscribers_.erase(subscriber.name());
+}
+
+void event_publisher::notify_subscribers(const event& e)
+{
+  mutex_locker ml(lock_);
+  syslog() << "event sent, " << e << std::endl;
+  std::map<std::string, event_subscriber&>::iterator i;
+  for (i = subscribers_.begin(); i != subscribers_.end(); i++)
+    (*i).second.process_notification(e);
+}
+
+// timer; sends a message to its subscribers on time elapse
+class timer_vd : public event_publisher
+{
+public:
+  timer_vd(const std::string& name) : event_publisher(name),
+    periodic_(true), aligned_(false)  {}
+  ~timer_vd() {}
+
+  bool periodic() { mutex_locker ml(lock_); return periodic_; }
+  bool aligned() { mutex_locker ml(lock_); return aligned_; } 
+  time interval() { mutex_locker ml(lock_); return interval_; } 
+
+  void set_periodic(bool periodic) { mutex_locker ml(lock_); periodic_ = periodic; }
+  void set_aligned(bool aligned) { mutex_locker ml(lock_); aligned_ = aligned; }
+  void set_interval(const time& interval) { mutex_locker ml(lock_); interval_ = interval; }
+
+private:
+  bool periodic_;
+  bool aligned_;
+  time interval_;
+  mutex lock_;
+  condition cond_;
+
+  virtual void run();
+};
+
+
+void timer_vd::run()
+{
+  mutex_locker ml(lock_);
+
+  while(periodic_)
+  {
+    time dtm = time::now();
+    if (aligned_)
+      dtm = time::align(dtm, interval_);
+    dtm = dtm + interval_;
+
+    cond_.timedwait(lock_, dtm);
+
+    if (time::now() >= dtm)
+    {
+      notify_subscribers(timer_event(name(), dtm));
+    }
+  }
+}
+
+//-----------
+class itd_vd : public event_publisher
+{
+public:
+  itd_vd(const std::string& name);
+  ~itd_vd() {}
+
+private:
+  std::string dev_path_;
+  std::string line_;
+  std::ifstream is_;
+
+  virtual void run();
+
+  void throw_ios_reading_failure(const std::string& file);
+};
+
+itd_vd::itd_vd(const std::string& name)
+: event_publisher(name), dev_path_("/dev/" + name)
+{
+  is_.open(dev_path_.c_str());
+  if (!is_)
+    throw_ios_reading_failure(dev_path_);
+}
+
+void itd_vd::run()
+{
+  while(1)
+  {
+    if (!getline(is_, line_))
+      throw_ios_reading_failure(dev_path_);
+
+    long long sec = 0, usec = 0;
+    int state = 0;
+    std::istringstream iss(line_);
+    iss >> sec >> usec >> state >> std::ws;
+    if (!iss.eof())
+      throw_ios_reading_failure(dev_path_);
+
+    time dtm(sec, usec);
+
+    itd_event e(name(), dtm);
+    e.set_device(name());
+    e.set_dtm(dtm);
+    e.set_state(static_cast<itd_state>(state));
+
+    notify_subscribers(e);
+  }
+}
+
+void itd_vd::throw_ios_reading_failure(const std::string& file)
+{
+  std::ostringstream oss;
+  oss << "Reading file '" << file << "' failed";
+  throw std::ios_base::failure(oss.str());
+}
+
+class rand_itd_vd: public event_publisher
+{
+public:
+  rand_itd_vd(const std::string& name);
+  ~rand_itd_vd() {}
+
+private:
+  itd_state state_;
+  mutex lock_;
+  condition cond_;
+
+  virtual void run();
+};
+
+rand_itd_vd::rand_itd_vd(const std::string& name)
+: event_publisher(name), state_(CLEAR)
+{
+  srand(::time(NULL));
+}
+
+void rand_itd_vd::run()
+{
+  while(1)
+  {
+    // Wait between 0-30sec when in clear state
+    // and 0-3sec when in blocked state
+    // r is expressed in miliseconds
+    long r = rand() % ((state_ == CLEAR) ? 30000 : 3000);
+    time interval(r / 1000, (r % 1000) * 1000);
+
+    time dtm = time::now() + interval;
+    while (time::now() < dtm)
+      cond_.timedwait(lock_, dtm);
+
+    state_ = (state_ == CLEAR) ? BLOCKED : CLEAR;
+
+    itd_event e(name(), dtm);
+    e.set_device(name());
+    e.set_dtm(dtm);
+    e.set_state(static_cast<itd_state>(state_));
+
+    notify_subscribers(e);
+  }
+}
+
+/*
+file_itd_vd
+
+filter_vd
+
+simple_aggr_vd
+
+flow_writer_vd*/
+
+class event_writer_vd : public event_subscriber
+{
+public:
+  event_writer_vd(const std::string& name, const std::string& db_name, int db_timeout);
+  ~event_writer_vd();
+
+private:
+  sqlite3cc::conn db_;
+  sqlite3cc::stmt stmt_;
+
+  virtual void handle_event(const event& e);
+};
+
+event_writer_vd::event_writer_vd(const std::string& name, const std::string& db_name, int db_timeout)
+: event_subscriber(name), stmt_(db_) 
+{
+  db_.open(db_name.c_str());
+  db_.busy_timeout(db_timeout);
+  const char *sql = "INSERT INTO events (itd, dtmms, state) VALUES (?1, ?2, ?3)";
+  stmt_.prepare(sql);
+}
+
+event_writer_vd::~event_writer_vd()
+{
+  stmt_.finalize();
+  db_.close();
+}
+
+void event_writer_vd::handle_event(const event& e)
+{
+  switch(e.type())
+  {
+    case EVENT_TYPE_ITD:
+    {
+      syslog() << "event_writer_vd: processing event, " << e << std::endl;
+      const itd_event& ie = dynamic_cast<const itd_event&>(e);
+      stmt_.reset();
+      stmt_.clear_bindings();
+      stmt_.bind_text(1, ie.device());
+      stmt_.bind_int64(2, (long long)ie.dtm().sec() * 1000 + (long long)ie.dtm().usec() / 1000);
+      stmt_.bind_int(3, ie.state());
+      stmt_.step();
+      break;
+    }
+  default:
+    syslog() << "event_writer_vd: unhandled event, " << e << std::endl;
+  }
+}
+
+class dbglog_vd : public event_subscriber
+{
+public:
+  dbglog_vd(const std::string& name) : event_subscriber(name) {}
+  ~dbglog_vd() {}
+
+private:
+  sqlite3cc::conn db_;
+
+  virtual void handle_event(const event& e);
+  
+};
+
+void dbglog_vd::handle_event(const event& e)
+{
+  syslog() << "dbglog_vd::handle_event, " << e << std::endl;
+}
+
+}
+
+
+int main(int argc, char *argv[])
+{
+  icd::syslogstream::initialize(basename(argv[0]), LOG_PERROR);
+  icd::syslogstream syslog;
+
+  try
+  {
+    daemonizer daemon;
+    std::string db_name;
+    int db_timeout = 60000; // default timeout is 60 seconds
+    std::string dev_name;
+    std::string emulator;
+    bool run_as_daemon = false;
+    bool exit = false;
+
+    struct option long_options[] = {
+      { "db", required_argument, 0, 'd' },
+      { "timeout", required_argument, 0, 't' },
+      { "device", required_argument, 0, 'i' },
+      { "rand", no_argument, 0, 'r' },
+      { "kbd", no_argument, 0, 'k' },
+      { "daemon", no_argument, 0, 'b' },
+      { "pidfile", required_argument, 0, 'p' },
+      { "help", no_argument, 0, 'h' },
+      { "version", no_argument, 0, 'v' },
+      { 0, 0, 0, 0 }
+    };
+
+    while(1)
+    {
+      int option_index = 0;
+      int ch = getopt_long(argc, argv, "d:t:i:rkbphv", long_options, &option_index);
+      if (ch == -1)
+        break;
+
+      switch(ch)
+      {
+        case 'd':
+          db_name = optarg;
+          break;
+        case 't':
+          db_timeout = strtol(optarg, NULL, 0);
+          break;
+        case 'i':
+          dev_name = optarg;
+          break;
+        case 'k':
+          emulator = "kbd";
+          break;
+        case 'r':
+          emulator = "rand";
+          break;
+        case 'b':
+          run_as_daemon = true;
+          break;
+        case 'p':
+          daemon.pid_file(optarg);
+          break;
+        case 'h':
+          print_usage(argv[0]);
+          exit = true;
+          break;
+        case 'v':
+          print_version(argv[0]);
+          exit = true;
+          break;
+        default:
+        {
+          std::ostringstream oss;
+          oss << "Unknown option '" << char(ch) << "'";
+          throw std::runtime_error(oss.str());
+        }
+      }
+
+      if (exit)
+        break;
+    }
+
+    if (!exit && db_name.empty())
+      throw std::runtime_error("Missing '--db' parameter");
+
+    if (!exit && dev_name.empty())
+      throw std::runtime_error("Missing '--device' parameter");
+
+    if (!exit && run_as_daemon)
+      exit = daemon.fork();
+
+    if (!exit)
+    {
+      sigset_t signal_mask;
+      sigemptyset (&signal_mask);
+      sigaddset (&signal_mask, SIGINT);
+      sigaddset (&signal_mask, SIGTERM);
+      int res = pthread_sigmask (SIG_BLOCK, &signal_mask, NULL);
+      if (res != 0)
+        throw std::runtime_error("sigmask failed"); 
+
+      icd::timer_vd tm("timer0");
+      tm.set_periodic(true);
+      tm.set_aligned(true);
+      tm.set_interval(icd::time(10,0));
+
+      icd::rand_itd_vd itd0("itd0");
+
+      icd::dbglog_vd log("log0");
+      log.set_delay(icd::time(1,0));
+      itd0.subscribe(log);
+      tm.subscribe(log);
+
+      icd::event_writer_vd evwr("evwr0", db_name, db_timeout);
+      itd0.subscribe(evwr);
+  
+      tm.start();
+      itd0.start();
+      log.start();
+      evwr.start();
+
+      syslog << icd::info << "Waiting for termination signal" << std::endl;
+      int sig_caught;
+      res = sigwait (&signal_mask, &sig_caught);
+      if (res != 0)
+        throw std::runtime_error("sigwait failed");
+      syslog << icd::info << "Signal received, terminating" << std::endl;
+
+      tm.stop();
+      log.stop();
+      evwr.stop();
+    }
+  }
+  catch(std::exception& e)
+  {
+    syslog << basename(argv[0]) << " error: " << e.what()  << std::endl;
+    return 1;
+  }
+
+  return 0;
+}
+

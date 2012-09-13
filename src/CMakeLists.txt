@@ -28,6 +28,7 @@ add_dependencies(version update-version)
 add_library(db-config db-config.cc)
 add_library(daemonizer daemonizer.cc)
 add_library(syslogstream syslogstream.cc)
+add_library(threads threads.cc)
 #add_library(transfer-agent transfer-agent.cc)
 #nowe lcd
 add_library(lcd-driver lcd-driver.cpp)
@@ -43,7 +44,7 @@ target_link_libraries(icd-sql sqlite3 version)
 
 add_executable(icd-itd-daemon icd-itd-daemon.cc)
 target_link_libraries(icd-itd-daemon db-config daemonizer
-  syslogstream sqlite3 version)
+  syslogstream sqlite3 version pthread threads)
 
 add_executable(icd-test icd-test.cc)
 target_link_libraries(icd-test db-config sqlite3 version)
