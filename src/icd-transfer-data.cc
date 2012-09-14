@@ -216,7 +216,7 @@ int main( int argc, char *argv[] ) {
   service.passwd = new_c_str( globalConfig->entry( "device", "pass" ) );      //
   //przygotowanie połaczenia -- koniec ---------------------------------------//
 
-  sleep(3);
+//  sleep(3);
 
   //logowanie ----------------------------------------------------------------//
   _icd1__LoginDevice login;                                                   //
@@ -254,7 +254,7 @@ int main( int argc, char *argv[] ) {
   }                                                                           //
   //logownaie -- koniec ------------------------------------------------------//
 
-  sleep(3);
+//  sleep(3);
 
   //pobranie czasu -----------------------------------------------------------//
   _icd1__GetTime time;                                                        //
@@ -274,42 +274,71 @@ int main( int argc, char *argv[] ) {
   setTime( *(rtime.GetTimeResult) );                                          //
   //pobranie czasu -- koniec -------------------------------------------------//
 
-  sleep(3);
+//  sleep(3);
 
   //wysyłanie danych ---------------------------------------------------------//
+  #define PROCENT_NA_TRANSFER 50                                              //
   _icd1__SendData3 data;                                                      //
   _icd1__SendData3Response rdata;                                             //
   data.data = &s;                                                             //
-  int ilDanych=iloscDanych();                                                 //  
+  int ilDanych=iloscDanych();                                                 //
   int ilPaczek=std::ceil( ((float)ilDanych)/4 );                              //
   int aktPaczka=0;                                                            //
                                                                               //
   while( createData( s ) && aktPaczka<ilPaczek ) {                            //
-    log.okParams( 20+60*(aktPaczka*3+1)/(ilPaczek*3), "SendData3" );          //
+    log.okParams( 20+PROCENT_NA_TRANSFER*(aktPaczka*3+1)/(ilPaczek*3),        //
+        "SendData3" );                                                        //
                                                                               //
     ans=service.SendData3(&data, &rdata);                                     //
                                                                               //
     if( ans!=SOAP_OK ) {                                                      //
-      log.errSoap( 20+60*(aktPaczka*3+2)/(ilPaczek*3),                        //
+      log.errSoap( 20+PROCENT_NA_TRANSFER*(aktPaczka*3+2)/(ilPaczek*3),       //
           service.soap_fault_detail(), ans, "Błąd transmisji" );              //
       exit(1);                                                                //
     }                                                                         //
-    log.okSoap( 20+60*(aktPaczka*3+2)/(ilPaczek*3), s );                      //
+    log.okSoap( 20+PROCENT_NA_TRANSFER*(aktPaczka*3+2)/(ilPaczek*3), s );     //
                                                                               //
     commitData( *rdata.message, ilDanych );                                   //
                                                                               //
     if( rdata.SendData3Result>0 ) {                                           //
-      log.errServerAns( 20+60*(aktPaczka*3+3)/(ilPaczek*3), *(rdata.message), //
+      log.errServerAns( 20+PROCENT_NA_TRANSFER*(aktPaczka*3+3)/(ilPaczek*3),  //
+          *(rdata.message),                                                   //
           "too old", "SD", "błąd wysyłania" );                                //
       break;                                                                  //
     } else {                                                                  //
-      log.okServerAns( 20+60*(aktPaczka*3+3)/(ilPaczek*3), *(rdata.message) );//
+      log.okServerAns( 20+PROCENT_NA_TRANSFER*(aktPaczka*3+3)/(ilPaczek*3),   // 
+          *(rdata.message) );                                                 //
     }                                                                         //
     ++aktPaczka;                                                              //
   }                                                                           //
   //wysyłanie danych -- koniec -----------------------------------------------//
 
-  sleep(3);
+//  sleep(3);
+
+  //sprawdzenie aktualizacji -------------------------------------------------//
+  _icd1__GetDeviceUpdateInfo update;
+  _icd1__GetDeviceUpdateInfoResponse rupdate;
+
+  update.SoftVersion=&s;
+  //cat etc/br-version
+
+  log.okParams( 83, "Update" );
+
+  ans=service.GetDeviceUpdateInfo( &update, &rupdate );
+
+  if( ans!=SOAP_OK ) {
+    log.errSoap( 87, service.soap_fault_detail(), ans, "Błąd transmisji" );
+    exit(1);
+  }
+  log.okSoap( 87, "Update" );//parametry SoftVersion=xxxx
+
+  if( rupdate.GetDeviceUpdateInfoResult==0 ) {
+    log.okServerAns( 89, "Dostępne nowe oprogramowanie" );
+  } else {
+    log.okServerAns( 89, "System aktualny" );
+  }
+  //sprawdzenie aktualizacji -- koniec ---------------------------------------//
+
 
   //wylogowanie --------------------------------------------------------------//
   _icd1__LogoutDevice out;                                                    //
@@ -333,9 +362,38 @@ int main( int argc, char *argv[] ) {
         "błąd zamykania sesji" );                                             //
     exit(1);                                                                  //
   }                                                                           //
-  //wylogowanie -- koniec-----------------------------------------------------//
+  //wylogowanie -- koniec ----------------------------------------------------//
 
-  sleep(3);
+//  sleep(3);
+
+  //wykonianie aktualizacji --------------------------------------------------//
+  if( rupdate.GetDeviceUpdateInfoResult==0 ) {                                //
+    std::cerr << ":: update start" << std::endl;                              //
+    s="wget -q -O /tmp/update.img http://";                                   //
+    s+=globalConfig->entry( "device", "address" );                            //
+    s+="/icdtcp3";                                                            //
+    s+=*rupdate.message->Link;                                                //
+    if( system( s.c_str() ) == 0 ) {                                          //
+      char md5sum[33];                                                        //
+      FILE *md5Chk = popen("md5sum /tmp/update.img", "r");                    //
+      fscanf( md5Chk, "%32s", md5sum );                                       //
+      pclose( md5Chk );                                                       //
+      if( (*(rupdate.message->md5)).compare( md5sum ) == 0 ) {                //
+        if( (*(rupdate.message->UpdateForce)).compare( "FORCE" ) == 0 ) {     //
+//          system(  "icdtcp3-update-sw --force /tmp/update.img "               //
+//              "&& sleep 3 && reboot &" );                                     //
+          std::cerr << ":: FORCE update with file: "
+            << "/tmp/update.img" << std::endl;
+        } else {                                                              //
+//          system(  "icdtcp3-update-sw --type=icdtcp3 /tmp/update.img "        //
+//              "&& sleep 3 && reboot &" );                                     //
+          std::cerr << ":: update with file: "
+            << "/tmp/update.img" << std::endl;
+        }                                                                     //
+      }                                                                       //
+    }                                                                         //
+  }                                                                           //
+  //wykonianie aktualizacji -- koniec ----------------------------------------//
 
   log.done();
 
