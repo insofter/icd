@@ -16,6 +16,7 @@
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="1" maxOccurs="1" name="idd" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="mac" type="s:string" />
             <s:element minOccurs="0" maxOccurs="1" name="deviceIds" type="s:string" />
             <s:element minOccurs="0" maxOccurs="1" name="devInfo" type="s:string" />
           </s:sequence>
@@ -83,7 +84,7 @@
       <s:element name="GetDeviceUpdateInfo">
         <s:complexType>
           <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="SoftVersion" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="softVersion" type="s:string" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -91,7 +92,7 @@
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="1" maxOccurs="1" name="GetDeviceUpdateInfoResult" type="s:int" />
-            <s:element minOccurs="0" maxOccurs="1" name="message" type="tns:UpdatePack" />
+            <s:element minOccurs="0" maxOccurs="1" name="response" type="tns:UpdatePack" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -102,6 +103,24 @@
           <s:element minOccurs="1" maxOccurs="1" name="FileSize" type="s:int" />
           <s:element minOccurs="0" maxOccurs="1" name="UpdateForce" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="NewVersion" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetMacIdd">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetMacIddResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="GetMacIddResult" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="response" type="tns:GetMacIddPack" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="GetMacIddPack">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Idd" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="mac" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="message" type="s:string" />
         </s:sequence>
       </s:complexType>
     </s:schema>
@@ -148,6 +167,12 @@
   <wsdl:message name="GetDeviceUpdateInfoSoapOut">
     <wsdl:part name="parameters" element="tns:GetDeviceUpdateInfoResponse" />
   </wsdl:message>
+  <wsdl:message name="GetMacIddSoapIn">
+    <wsdl:part name="parameters" element="tns:GetMacIdd" />
+  </wsdl:message>
+  <wsdl:message name="GetMacIddSoapOut">
+    <wsdl:part name="parameters" element="tns:GetMacIddResponse" />
+  </wsdl:message>
   <wsdl:portType name="icdtcp3Soap">
     <wsdl:operation name="GetTime">
       <wsdl:input message="tns:GetTimeSoapIn" />
@@ -176,6 +201,10 @@
     <wsdl:operation name="GetDeviceUpdateInfo">
       <wsdl:input message="tns:GetDeviceUpdateInfoSoapIn" />
       <wsdl:output message="tns:GetDeviceUpdateInfoSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetMacIdd">
+      <wsdl:input message="tns:GetMacIddSoapIn" />
+      <wsdl:output message="tns:GetMacIddSoapOut" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="icdtcp3Soap" type="tns:icdtcp3Soap">
@@ -243,6 +272,15 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="GetMacIdd">
+      <soap:operation soapAction="http://insofter.pl/webservices/GetMacIdd" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
   </wsdl:binding>
   <wsdl:binding name="icdtcp3Soap12" type="tns:icdtcp3Soap">
     <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
@@ -302,6 +340,15 @@
     </wsdl:operation>
     <wsdl:operation name="GetDeviceUpdateInfo">
       <soap12:operation soapAction="http://insofter.pl/webservices/GetDeviceUpdateInfo" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMacIdd">
+      <soap12:operation soapAction="http://insofter.pl/webservices/GetMacIdd" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>

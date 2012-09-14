@@ -13,6 +13,13 @@ class SOAP_CMAC icd1__UpdatePack
 	std::string *NewVersion;	/* optional element of type xsd:string */
 };
 
+class SOAP_CMAC icd1__GetMacIddPack
+{
+	int Idd;	/* required element of type xsd:int */
+	std::string *mac;	/* optional element of type xsd:string */
+	std::string *message;	/* optional element of type xsd:string */
+};
+
 class SOAP_CMAC _icd1__GetTime
 {
 };
@@ -25,6 +32,7 @@ class SOAP_CMAC _icd1__GetTimeResponse
 class SOAP_CMAC _icd1__LoginDevice
 {
 	int idd;	/* required element of type xsd:int */
+	std::string *mac;	/* optional element of type xsd:string */
 	std::string *deviceIds;	/* optional element of type xsd:string */
 	std::string *devInfo;	/* optional element of type xsd:string */
 };
@@ -78,13 +86,23 @@ class SOAP_CMAC _icd1__TestSessionResponse
 
 class SOAP_CMAC _icd1__GetDeviceUpdateInfo
 {
-	std::string *SoftVersion;	/* optional element of type xsd:string */
+	std::string *softVersion;	/* optional element of type xsd:string */
 };
 
 class SOAP_CMAC _icd1__GetDeviceUpdateInfoResponse
 {
 	int GetDeviceUpdateInfoResult;	/* SOAP 1.2 RPC return element (when namespace qualified) */	/* required element of type xsd:int */
-	icd1__UpdatePack *message;	/* optional element of type icd1:UpdatePack */
+	icd1__UpdatePack *response;	/* optional element of type icd1:UpdatePack */
+};
+
+class SOAP_CMAC _icd1__GetMacIdd
+{
+};
+
+class SOAP_CMAC _icd1__GetMacIddResponse
+{
+	int GetMacIddResult;	/* SOAP 1.2 RPC return element (when namespace qualified) */	/* required element of type xsd:int */
+	icd1__GetMacIddPack *response;	/* optional element of type icd1:GetMacIddPack */
 };
 
 /* Operation wrapper: */
@@ -130,6 +148,12 @@ struct __icd2__GetDeviceUpdateInfo
 };
 
 /* Operation wrapper: */
+struct __icd2__GetMacIdd
+{
+	_icd1__GetMacIdd *icd1__GetMacIdd;	/* optional element of type icd1:GetMacIdd */
+};
+
+/* Operation wrapper: */
 struct __icd3__GetTime
 {
 	_icd1__GetTime *icd1__GetTime;	/* optional element of type icd1:GetTime */
@@ -169,6 +193,12 @@ struct __icd3__TestSession
 struct __icd3__GetDeviceUpdateInfo
 {
 	_icd1__GetDeviceUpdateInfo *icd1__GetDeviceUpdateInfo;	/* optional element of type icd1:GetDeviceUpdateInfo */
+};
+
+/* Operation wrapper: */
+struct __icd3__GetMacIdd
+{
+	_icd1__GetMacIdd *icd1__GetMacIdd;	/* optional element of type icd1:GetMacIdd */
 };
 
 /* SOAP Header: */

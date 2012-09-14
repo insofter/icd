@@ -36,3 +36,8 @@
     _icd1__GetDeviceUpdateInfoResponse *icd1__GetDeviceUpdateInfoResponse
 ) 
 
+	virtual	int GetMacIdd(
+    _icd1__GetMacIdd *icd1__GetMacIdd,
+    _icd1__GetMacIddResponse *icd1__GetMacIddResponse
+) 
+

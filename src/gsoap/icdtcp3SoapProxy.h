@@ -89,5 +89,9 @@ class SOAP_CMAC icdtcp3SoapProxy : public soap
 	/// Web service operation 'GetDeviceUpdateInfo' (returns error code or SOAP_OK)
 	virtual	int GetDeviceUpdateInfo(_icd1__GetDeviceUpdateInfo *icd1__GetDeviceUpdateInfo, _icd1__GetDeviceUpdateInfoResponse *icd1__GetDeviceUpdateInfoResponse) { return GetDeviceUpdateInfo(NULL, NULL, icd1__GetDeviceUpdateInfo, icd1__GetDeviceUpdateInfoResponse); }
 	virtual	int GetDeviceUpdateInfo(const char *endpoint, const char *soap_action, _icd1__GetDeviceUpdateInfo *icd1__GetDeviceUpdateInfo, _icd1__GetDeviceUpdateInfoResponse *icd1__GetDeviceUpdateInfoResponse);
+
+	/// Web service operation 'GetMacIdd' (returns error code or SOAP_OK)
+	virtual	int GetMacIdd(_icd1__GetMacIdd *icd1__GetMacIdd, _icd1__GetMacIddResponse *icd1__GetMacIddResponse) { return GetMacIdd(NULL, NULL, icd1__GetMacIdd, icd1__GetMacIddResponse); }
+	virtual	int GetMacIdd(const char *endpoint, const char *soap_action, _icd1__GetMacIdd *icd1__GetMacIdd, _icd1__GetMacIddResponse *icd1__GetMacIddResponse);
 };
 #endif

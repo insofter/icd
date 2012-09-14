@@ -124,12 +124,117 @@ void print_usage(char *argv0) {
     ;
 }
 
-
 char * new_c_str( const std::string & s ) {
   char * mem = new char[ s.size()+1 ];
   strcpy( mem, s.c_str() );
   return mem;
 }
+
+void getInitWIthFullSession( Clog & log ) {
+  std::string s;
+  int ans;
+  char * servAddr;
+
+  //przygotowanie połaczenia -------------------------------------------------//
+  s="http://";                                                                //
+  s+=globalConfig->entry( "device", "address" );                              //
+  s+="/icdtcp3/icdtcp3.asmx";                                                 //
+  servAddr=new_c_str( s );                                                    //
+  icdtcp3SoapProxy service( servAddr );                                       //
+                                                                              //
+  service.userid = new_c_str( globalConfig->entry( "device", "user" ) );      //
+                                                                              //
+  service.passwd = new_c_str( globalConfig->entry( "device", "pass" ) );      //
+  //przygotowanie połaczenia -- koniec ---------------------------------------//
+
+
+  //logowanie ----------------------------------------------------------------//
+  _icd1__LoginDevice login;                                                   //
+  _icd1__LoginDeviceResponse rlogin;                                          //
+                                                                              //
+  login.idd=atoi( (globalConfig->entry( "device", "idd")).c_str() );          //
+  login.mac=new std::string( globalConfig->entry( "device", "mac" ) );        //
+  login.deviceIds=new std::string( globalConfig->entry( "device", "ids" ) );  //
+  login.devInfo=new std::string("icdtcp3");                                   //
+  s="idd='";                                                                  //
+  s+=globalConfig->entry( "device", "idd");                                   //
+  s+="', deviceIds='";                                                        //
+  s+=*(login.deviceIds);                                                      //
+  s+="', devInfo='";                                                          //
+  s+=*(login.devInfo);                                                        //
+  s+="'";                                                                     //
+                                                                              //
+  log.okParams( 3, "LoginDevice" );                                           //
+                                                                              //
+  ans=service.LoginDevice( &login, &rlogin );                                 //
+  delete login.deviceIds;                                                     //
+  delete login.devInfo;                                                       //
+  delete login.mac;                                                           //
+                                                                              //
+  if( ans!=SOAP_OK ) {                                                        //
+    log.errSoap( 7, service.soap_fault_detail(), ans, "Błąd transmisji" );    //
+    exit(1);                                                                  //
+  }                                                                           //
+  log.okSoap( 7, s );                                                         //
+                                                                              //
+                                                                              //
+  if( rlogin.LoginDeviceResult==0 ) {                                         //
+    log.okServerAns( 10, *(rlogin.message) );                                 //
+  } else {                                                                    //
+    log.errServerAns( 10, *(rlogin.message), "błąd", "LD", "błąd logowania" );//
+    exit(1);                                                                  //
+  }                                                                           //
+  //logownaie -- koniec ------------------------------------------------------//
+
+
+  //pobranie czasu -----------------------------------------------------------//
+  _icd1__GetTime time;                                                        //
+  _icd1__GetTimeResponse rtime;                                               //
+                                                                              //
+  log.okParams( 13, "GetTime" );                                              //
+                                                                              //
+  ans=service.GetTime(&time, &rtime);                                         //
+                                                                              //
+  if( ans!=SOAP_OK ) {                                                        //
+    log.errSoap( 17, service.soap_fault_detail(), ans, "Błąd transmisji" );   //
+    exit(1);                                                                  //
+  }                                                                           //
+  log.okSoap( 17, "GetTime" );                                                //
+                                                                              //
+  log.okServerAns( 20, *(rtime.GetTimeResult) );                              //
+  setTime( *(rtime.GetTimeResult) );                                          //
+  //pobranie czasu -- koniec -------------------------------------------------//
+
+
+  //wylogowanie --------------------------------------------------------------//
+  _icd1__LogoutDevice out;                                                    //
+  _icd1__LogoutDeviceResponse rout;                                           //
+                                                                              //
+  log.okParams( 93, "LogoutDevice" );                                         //
+                                                                              //
+  ans=service.LogoutDevice(&out, &rout);                                      //
+                                                                              //
+  if( ans!=SOAP_OK ) {                                                        //
+    log.errSoap( 97, service.soap_fault_detail(), ans, "Błąd transmisji" );   //
+    exit(1);                                                                  //
+  }                                                                           //
+  log.okSoap( 97, "LogoutDevice" );                                           //
+                                                                              //
+                                                                              //
+  if( rout.LogoutDeviceResult==0 ) {                                          //
+    log.okServerAns( 99, *(rout.message) );                                   //
+  } else {                                                                    //
+    log.errServerAns( 99, *(rout.message), "sesserr", "LO",                   //
+        "błąd zamykania sesji" );                                             //
+    exit(1);                                                                  //
+  }                                                                           //
+  //wylogowanie -- koniec ----------------------------------------------------//
+  
+  delete service.userid;
+  delete service.passwd;
+  delete servAddr;
+}
+
 
  
 int main( int argc, char *argv[] ) {
@@ -196,13 +301,20 @@ int main( int argc, char *argv[] ) {
   globalDb->busy_timeout(db_timeout);
   globalConfig=new icd::config( *globalDb );
 
-  //sprawdzenie czy nie ma komunikacji w tle----------------------------------//
+  //sprawdzenie czy nie ma komunikacji w tle ---------------------------------//
   std::string x=globalConfig->entry("current", "last-send-status");           //
   if( x.size()>=1 && x[0]=='?' ) {                                            //
     log.errTrInProgress();                                                    //
     exit(1);                                                                  //
   }                                                                           //
   //sprawdzenie czy nie ma komunikacji w tle -- koniec -----------------------//
+
+
+  //dla idd == 0 pobieramy dane ----------------------------------------------//
+  if( atoi( (globalConfig->entry( "device", "idd")).c_str() ) == 0 ) {        //
+    getInitWIthFullSession( log );                                            //
+  }                                                                           //
+  //dla idd == 0 pobieramy dane -- koniec ------------------------------------//
 
 
   //przygotowanie połaczenia -------------------------------------------------//
@@ -216,13 +328,13 @@ int main( int argc, char *argv[] ) {
   service.passwd = new_c_str( globalConfig->entry( "device", "pass" ) );      //
   //przygotowanie połaczenia -- koniec ---------------------------------------//
 
-//  sleep(3);
 
   //logowanie ----------------------------------------------------------------//
   _icd1__LoginDevice login;                                                   //
   _icd1__LoginDeviceResponse rlogin;                                          //
                                                                               //
   login.idd=atoi( (globalConfig->entry( "device", "idd")).c_str() );          //
+  login.mac=new std::string( globalConfig->entry( "device", "mac" ) );
   login.deviceIds=new std::string( globalConfig->entry( "device", "ids" ) );  //
   login.devInfo=new std::string("icdtcp3");                                   //
   s="idd='";                                                                  //
@@ -238,6 +350,7 @@ int main( int argc, char *argv[] ) {
   ans=service.LoginDevice( &login, &rlogin );                                 //
   delete login.deviceIds;                                                     //
   delete login.devInfo;                                                       //
+  delete login.mac;                                                           //
                                                                               //
   if( ans!=SOAP_OK ) {                                                        //
     log.errSoap( 7, service.soap_fault_detail(), ans, "Błąd transmisji" );    //
@@ -254,7 +367,6 @@ int main( int argc, char *argv[] ) {
   }                                                                           //
   //logownaie -- koniec ------------------------------------------------------//
 
-//  sleep(3);
 
   //pobranie czasu -----------------------------------------------------------//
   _icd1__GetTime time;                                                        //
@@ -274,7 +386,6 @@ int main( int argc, char *argv[] ) {
   setTime( *(rtime.GetTimeResult) );                                          //
   //pobranie czasu -- koniec -------------------------------------------------//
 
-//  sleep(3);
 
   //wysyłanie danych ---------------------------------------------------------//
   #define PROCENT_NA_TRANSFER 50                                              //
@@ -313,14 +424,13 @@ int main( int argc, char *argv[] ) {
   }                                                                           //
   //wysyłanie danych -- koniec -----------------------------------------------//
 
-//  sleep(3);
 
   //sprawdzenie aktualizacji -------------------------------------------------//
   _icd1__GetDeviceUpdateInfo update;
   _icd1__GetDeviceUpdateInfoResponse rupdate;
 
-  update.SoftVersion=&s;
-  //cat etc/br-version
+  update.softVersion=&s;
+  //TODO: cat etc/br-version
 
   log.okParams( 83, "Update" );
 
@@ -364,7 +474,6 @@ int main( int argc, char *argv[] ) {
   }                                                                           //
   //wylogowanie -- koniec ----------------------------------------------------//
 
-//  sleep(3);
 
   //wykonianie aktualizacji --------------------------------------------------//
   if( rupdate.GetDeviceUpdateInfoResult==0 ) {                                //
@@ -372,14 +481,14 @@ int main( int argc, char *argv[] ) {
     s="wget -q -O /tmp/update.img http://";                                   //
     s+=globalConfig->entry( "device", "address" );                            //
     s+="/icdtcp3";                                                            //
-    s+=*rupdate.message->Link;                                                //
+    s+=*rupdate.response->Link;                                                //
     if( system( s.c_str() ) == 0 ) {                                          //
       char md5sum[33];                                                        //
       FILE *md5Chk = popen("md5sum /tmp/update.img", "r");                    //
       fscanf( md5Chk, "%32s", md5sum );                                       //
       pclose( md5Chk );                                                       //
-      if( (*(rupdate.message->md5)).compare( md5sum ) == 0 ) {                //
-        if( (*(rupdate.message->UpdateForce)).compare( "FORCE" ) == 0 ) {     //
+      if( (*(rupdate.response->md5)).compare( md5sum ) == 0 ) {                //
+        if( (*(rupdate.response->UpdateForce)).compare( "FORCE" ) == 0 ) {     //
 //          system(  "icdtcp3-update-sw --force /tmp/update.img "               //
 //              "&& sleep 3 && reboot &" );                                     //
           std::cerr << ":: FORCE update with file: "
@@ -399,74 +508,3 @@ int main( int argc, char *argv[] ) {
 
   return 0;
 }
-
-
-
-/*
-//#include <iostream>
-//#include <vector>
-//#include <list>
-
-#include "transfer-agent.h"
-#include "curlcc.h"
-#include "sqlite3cc.h"
-
-class flow_entry_db : public idctcp3::flow_entry
-{
-  public:
-    flow_entry_db(sqlite3cc::stmt& st)
-    {
-      id = st.column_int(0);
-      itd = st.column_text(1);
-      dtm = st.column_text(2);
-      cnt = st.column_int(3);
-      dark_time = st.column_int(4);
-      work_time = st.column_int(5);
-      test = st.column_text(6);
-      flags = st.column_int(7);
-    }
-};
-
-int main(int argc, char* argv[])
-{
-  std::cout << "Hello world!!!\n";
-
-  sqlite3cc::conn db;
-  const char* db_name = "/home/icdtcp3/projects/icd/live.db";
-  db.open(db_name);
-
-  std::string base_url("http://www.insofter.pl/");
-  idctcp3::transfer_agent ta(base_url);
-
-  ta.login();
-  ta.get_time();
-
-//  ta.test_session();
-//  ta.test_session();
-//  ta.test_session();
-
-  ta.send_data();
-
-  sqlite3cc::rowset<flow_entry_db> entries(db);
-  entries.db_select("SELECT id, itd, dtm, cnt, dark_time, work_time, test, flags FROM flow");
-
-  std::vector<flow_entry_db *>::iterator i;
-  for (i = entries.get_rows().begin(); i < entries.get_rows().end(); i++)
-  {
-    flow_entry_db *r = *i;
-    std::cerr << "id=" << r->id << "|"
-     << "itd=" << r->itd << "|"
-     << "dtm=" << r->dtm << "|"
-     << "cnt=" << r->cnt << "|"
-     << "dark_time=" << r->dark_time << "|"
-     << "work_time=" << r->work_time << "|"
-     << "test=" << r->test << "|"
-     << "flags=" << r->flags << std::endl;
-  }
-
-  ta.logout();
-  db.close();
-
-  return 0;
-}
-*/

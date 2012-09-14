@@ -489,4 +489,58 @@ int icdtcp3Soap12Proxy::GetDeviceUpdateInfo(const char *endpoint, const char *so
 		return soap_closesock(soap);
 	return soap_closesock(soap);
 }
+
+int icdtcp3Soap12Proxy::GetMacIdd(const char *endpoint, const char *soap_action, _icd1__GetMacIdd *icd1__GetMacIdd, _icd1__GetMacIddResponse *icd1__GetMacIddResponse)
+{	struct soap *soap = this;
+	struct __icd3__GetMacIdd soap_tmp___icd3__GetMacIdd;
+	if (endpoint)
+		soap_endpoint = endpoint;
+	if (!soap_endpoint)
+		soap_endpoint = "http://192.168.123.194/icdtcp3/icdtcp3.asmx";
+	if (!soap_action)
+		soap_action = "http://insofter.pl/webservices/GetMacIdd";
+	soap->encodingStyle = NULL;
+	soap_tmp___icd3__GetMacIdd.icd1__GetMacIdd = icd1__GetMacIdd;
+	soap_begin(soap);
+	soap_serializeheader(soap);
+	soap_serialize___icd3__GetMacIdd(soap, &soap_tmp___icd3__GetMacIdd);
+	if (soap_begin_count(soap))
+		return soap->error;
+	if (soap->mode & SOAP_IO_LENGTH)
+	{	if (soap_envelope_begin_out(soap)
+		 || soap_putheader(soap)
+		 || soap_body_begin_out(soap)
+		 || soap_put___icd3__GetMacIdd(soap, &soap_tmp___icd3__GetMacIdd, "-icd3:GetMacIdd", NULL)
+		 || soap_body_end_out(soap)
+		 || soap_envelope_end_out(soap))
+			 return soap->error;
+	}
+	if (soap_end_count(soap))
+		return soap->error;
+	if (soap_connect(soap, soap_endpoint, soap_action)
+	 || soap_envelope_begin_out(soap)
+	 || soap_putheader(soap)
+	 || soap_body_begin_out(soap)
+	 || soap_put___icd3__GetMacIdd(soap, &soap_tmp___icd3__GetMacIdd, "-icd3:GetMacIdd", NULL)
+	 || soap_body_end_out(soap)
+	 || soap_envelope_end_out(soap)
+	 || soap_end_send(soap))
+		return soap_closesock(soap);
+	if (!icd1__GetMacIddResponse)
+		return soap_closesock(soap);
+	icd1__GetMacIddResponse->soap_default(soap);
+	if (soap_begin_recv(soap)
+	 || soap_envelope_begin_in(soap)
+	 || soap_recv_header(soap)
+	 || soap_body_begin_in(soap))
+		return soap_closesock(soap);
+	icd1__GetMacIddResponse->soap_get(soap, "icd1:GetMacIddResponse", "");
+	if (soap->error)
+		return soap_recv_fault(soap, 0);
+	if (soap_body_end_in(soap)
+	 || soap_envelope_end_in(soap)
+	 || soap_end_recv(soap))
+		return soap_closesock(soap);
+	return soap_closesock(soap);
+}
 /* End of client proxy code */

@@ -15,7 +15,7 @@ compiling, linking, and/or using OpenSSL is allowed.
 
 #include "H.h"
 
-SOAP_SOURCE_STAMP("@(#) C.cpp ver 2.8.8 2012-09-13 13:45:01 GMT")
+SOAP_SOURCE_STAMP("@(#) C.cpp ver 2.8.8 2012-09-14 12:40:31 GMT")
 
 
 #ifndef WITH_NOGLOBAL
@@ -195,8 +195,14 @@ SOAP_FMAC3 void * SOAP_FMAC4 soap_getelement(struct soap *soap, int *type)
 		return soap_in_int(soap, NULL, NULL, "xsd:int");
 	case SOAP_TYPE_std__string:
 		return soap_in_std__string(soap, NULL, NULL, "xsd:string");
+	case SOAP_TYPE_icd1__GetMacIddPack:
+		return soap_in_icd1__GetMacIddPack(soap, NULL, NULL, "icd1:GetMacIddPack");
 	case SOAP_TYPE_icd1__UpdatePack:
 		return soap_in_icd1__UpdatePack(soap, NULL, NULL, "icd1:UpdatePack");
+	case SOAP_TYPE_PointerTo_icd1__GetMacIddResponse:
+		return soap_in_PointerTo_icd1__GetMacIddResponse(soap, NULL, NULL, "icd1:GetMacIddResponse");
+	case SOAP_TYPE_PointerTo_icd1__GetMacIdd:
+		return soap_in_PointerTo_icd1__GetMacIdd(soap, NULL, NULL, "icd1:GetMacIdd");
 	case SOAP_TYPE_PointerTo_icd1__GetDeviceUpdateInfoResponse:
 		return soap_in_PointerTo_icd1__GetDeviceUpdateInfoResponse(soap, NULL, NULL, "icd1:GetDeviceUpdateInfoResponse");
 	case SOAP_TYPE_PointerTo_icd1__GetDeviceUpdateInfo:
@@ -225,6 +231,8 @@ SOAP_FMAC3 void * SOAP_FMAC4 soap_getelement(struct soap *soap, int *type)
 		return soap_in_PointerTo_icd1__GetTimeResponse(soap, NULL, NULL, "icd1:GetTimeResponse");
 	case SOAP_TYPE_PointerTo_icd1__GetTime:
 		return soap_in_PointerTo_icd1__GetTime(soap, NULL, NULL, "icd1:GetTime");
+	case SOAP_TYPE_PointerToicd1__GetMacIddPack:
+		return soap_in_PointerToicd1__GetMacIddPack(soap, NULL, NULL, "icd1:GetMacIddPack");
 	case SOAP_TYPE_PointerToicd1__UpdatePack:
 		return soap_in_PointerToicd1__UpdatePack(soap, NULL, NULL, "icd1:UpdatePack");
 	case SOAP_TYPE_PointerTostd__string:
@@ -246,6 +254,10 @@ SOAP_FMAC3 void * SOAP_FMAC4 soap_getelement(struct soap *soap, int *type)
 		if (!soap_match_tag(soap, t, "xsd:string"))
 		{	*type = SOAP_TYPE_std__string;
 			return soap_in_std__string(soap, NULL, NULL, NULL);
+		}
+		if (!soap_match_tag(soap, t, "icd1:GetMacIddPack"))
+		{	*type = SOAP_TYPE_icd1__GetMacIddPack;
+			return soap_in_icd1__GetMacIddPack(soap, NULL, NULL, NULL);
 		}
 		if (!soap_match_tag(soap, t, "icd1:UpdatePack"))
 		{	*type = SOAP_TYPE_icd1__UpdatePack;
@@ -272,6 +284,14 @@ SOAP_FMAC3 void * SOAP_FMAC4 soap_getelement(struct soap *soap, int *type)
 			return s ? *s : NULL;
 		}
 		t = soap->tag;
+		if (!soap_match_tag(soap, t, "icd1:GetMacIddResponse"))
+		{	*type = SOAP_TYPE__icd1__GetMacIddResponse;
+			return soap_in__icd1__GetMacIddResponse(soap, NULL, NULL, NULL);
+		}
+		if (!soap_match_tag(soap, t, "icd1:GetMacIdd"))
+		{	*type = SOAP_TYPE__icd1__GetMacIdd;
+			return soap_in__icd1__GetMacIdd(soap, NULL, NULL, NULL);
+		}
 		if (!soap_match_tag(soap, t, "icd1:GetDeviceUpdateInfoResponse"))
 		{	*type = SOAP_TYPE__icd1__GetDeviceUpdateInfoResponse;
 			return soap_in__icd1__GetDeviceUpdateInfoResponse(soap, NULL, NULL, NULL);
@@ -399,6 +419,10 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_putelement(struct soap *soap, const void *ptr, co
 		return soap_out_int(soap, tag, id, (const int *)ptr, "xsd:int");
 	case SOAP_TYPE_std__string:
 		return soap_out_std__string(soap, tag, id, (const std::string *)ptr, "xsd:string");
+	case SOAP_TYPE__icd1__GetMacIddResponse:
+		return ((_icd1__GetMacIddResponse *)ptr)->soap_out(soap, "icd1:GetMacIddResponse", id, NULL);
+	case SOAP_TYPE__icd1__GetMacIdd:
+		return ((_icd1__GetMacIdd *)ptr)->soap_out(soap, "icd1:GetMacIdd", id, NULL);
 	case SOAP_TYPE__icd1__GetDeviceUpdateInfoResponse:
 		return ((_icd1__GetDeviceUpdateInfoResponse *)ptr)->soap_out(soap, "icd1:GetDeviceUpdateInfoResponse", id, NULL);
 	case SOAP_TYPE__icd1__GetDeviceUpdateInfo:
@@ -427,8 +451,14 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_putelement(struct soap *soap, const void *ptr, co
 		return ((_icd1__GetTimeResponse *)ptr)->soap_out(soap, "icd1:GetTimeResponse", id, NULL);
 	case SOAP_TYPE__icd1__GetTime:
 		return ((_icd1__GetTime *)ptr)->soap_out(soap, "icd1:GetTime", id, NULL);
+	case SOAP_TYPE_icd1__GetMacIddPack:
+		return ((icd1__GetMacIddPack *)ptr)->soap_out(soap, tag, id, "icd1:GetMacIddPack");
 	case SOAP_TYPE_icd1__UpdatePack:
 		return ((icd1__UpdatePack *)ptr)->soap_out(soap, tag, id, "icd1:UpdatePack");
+	case SOAP_TYPE_PointerTo_icd1__GetMacIddResponse:
+		return soap_out_PointerTo_icd1__GetMacIddResponse(soap, tag, id, (_icd1__GetMacIddResponse *const*)ptr, "icd1:GetMacIddResponse");
+	case SOAP_TYPE_PointerTo_icd1__GetMacIdd:
+		return soap_out_PointerTo_icd1__GetMacIdd(soap, tag, id, (_icd1__GetMacIdd *const*)ptr, "icd1:GetMacIdd");
 	case SOAP_TYPE_PointerTo_icd1__GetDeviceUpdateInfoResponse:
 		return soap_out_PointerTo_icd1__GetDeviceUpdateInfoResponse(soap, tag, id, (_icd1__GetDeviceUpdateInfoResponse *const*)ptr, "icd1:GetDeviceUpdateInfoResponse");
 	case SOAP_TYPE_PointerTo_icd1__GetDeviceUpdateInfo:
@@ -457,6 +487,8 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_putelement(struct soap *soap, const void *ptr, co
 		return soap_out_PointerTo_icd1__GetTimeResponse(soap, tag, id, (_icd1__GetTimeResponse *const*)ptr, "icd1:GetTimeResponse");
 	case SOAP_TYPE_PointerTo_icd1__GetTime:
 		return soap_out_PointerTo_icd1__GetTime(soap, tag, id, (_icd1__GetTime *const*)ptr, "icd1:GetTime");
+	case SOAP_TYPE_PointerToicd1__GetMacIddPack:
+		return soap_out_PointerToicd1__GetMacIddPack(soap, tag, id, (icd1__GetMacIddPack *const*)ptr, "icd1:GetMacIddPack");
 	case SOAP_TYPE_PointerToicd1__UpdatePack:
 		return soap_out_PointerToicd1__UpdatePack(soap, tag, id, (icd1__UpdatePack *const*)ptr, "icd1:UpdatePack");
 	case SOAP_TYPE_PointerTostd__string:
@@ -486,6 +518,12 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_markelement(struct soap *soap, const void *ptr, 
 	{
 	case SOAP_TYPE_std__string:
 		soap_serialize_std__string(soap, (const std::string *)ptr);
+		break;
+	case SOAP_TYPE__icd1__GetMacIddResponse:
+		((_icd1__GetMacIddResponse *)ptr)->soap_serialize(soap);
+		break;
+	case SOAP_TYPE__icd1__GetMacIdd:
+		((_icd1__GetMacIdd *)ptr)->soap_serialize(soap);
 		break;
 	case SOAP_TYPE__icd1__GetDeviceUpdateInfoResponse:
 		((_icd1__GetDeviceUpdateInfoResponse *)ptr)->soap_serialize(soap);
@@ -529,8 +567,14 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_markelement(struct soap *soap, const void *ptr, 
 	case SOAP_TYPE__icd1__GetTime:
 		((_icd1__GetTime *)ptr)->soap_serialize(soap);
 		break;
+	case SOAP_TYPE_icd1__GetMacIddPack:
+		((icd1__GetMacIddPack *)ptr)->soap_serialize(soap);
+		break;
 	case SOAP_TYPE_icd1__UpdatePack:
 		((icd1__UpdatePack *)ptr)->soap_serialize(soap);
+		break;
+	case SOAP_TYPE___icd3__GetMacIdd:
+		soap_serialize___icd3__GetMacIdd(soap, (const struct __icd3__GetMacIdd *)ptr);
 		break;
 	case SOAP_TYPE___icd3__GetDeviceUpdateInfo:
 		soap_serialize___icd3__GetDeviceUpdateInfo(soap, (const struct __icd3__GetDeviceUpdateInfo *)ptr);
@@ -553,6 +597,9 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_markelement(struct soap *soap, const void *ptr, 
 	case SOAP_TYPE___icd3__GetTime:
 		soap_serialize___icd3__GetTime(soap, (const struct __icd3__GetTime *)ptr);
 		break;
+	case SOAP_TYPE___icd2__GetMacIdd:
+		soap_serialize___icd2__GetMacIdd(soap, (const struct __icd2__GetMacIdd *)ptr);
+		break;
 	case SOAP_TYPE___icd2__GetDeviceUpdateInfo:
 		soap_serialize___icd2__GetDeviceUpdateInfo(soap, (const struct __icd2__GetDeviceUpdateInfo *)ptr);
 		break;
@@ -573,6 +620,12 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_markelement(struct soap *soap, const void *ptr, 
 		break;
 	case SOAP_TYPE___icd2__GetTime:
 		soap_serialize___icd2__GetTime(soap, (const struct __icd2__GetTime *)ptr);
+		break;
+	case SOAP_TYPE_PointerTo_icd1__GetMacIddResponse:
+		soap_serialize_PointerTo_icd1__GetMacIddResponse(soap, (_icd1__GetMacIddResponse *const*)ptr);
+		break;
+	case SOAP_TYPE_PointerTo_icd1__GetMacIdd:
+		soap_serialize_PointerTo_icd1__GetMacIdd(soap, (_icd1__GetMacIdd *const*)ptr);
 		break;
 	case SOAP_TYPE_PointerTo_icd1__GetDeviceUpdateInfoResponse:
 		soap_serialize_PointerTo_icd1__GetDeviceUpdateInfoResponse(soap, (_icd1__GetDeviceUpdateInfoResponse *const*)ptr);
@@ -616,6 +669,9 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_markelement(struct soap *soap, const void *ptr, 
 	case SOAP_TYPE_PointerTo_icd1__GetTime:
 		soap_serialize_PointerTo_icd1__GetTime(soap, (_icd1__GetTime *const*)ptr);
 		break;
+	case SOAP_TYPE_PointerToicd1__GetMacIddPack:
+		soap_serialize_PointerToicd1__GetMacIddPack(soap, (icd1__GetMacIddPack *const*)ptr);
+		break;
 	case SOAP_TYPE_PointerToicd1__UpdatePack:
 		soap_serialize_PointerToicd1__UpdatePack(soap, (icd1__UpdatePack *const*)ptr);
 		break;
@@ -644,6 +700,8 @@ SOAP_FMAC3 void * SOAP_FMAC4 _instantiate(struct soap *soap, int t, const char *
 		return (void*)soap_instantiate_std__string(soap, -1, type, arrayType, n);
 	case SOAP_TYPE_icd1__UpdatePack:
 		return (void*)soap_instantiate_icd1__UpdatePack(soap, -1, type, arrayType, n);
+	case SOAP_TYPE_icd1__GetMacIddPack:
+		return (void*)soap_instantiate_icd1__GetMacIddPack(soap, -1, type, arrayType, n);
 	case SOAP_TYPE__icd1__GetTime:
 		return (void*)soap_instantiate__icd1__GetTime(soap, -1, type, arrayType, n);
 	case SOAP_TYPE__icd1__GetTimeResponse:
@@ -672,6 +730,10 @@ SOAP_FMAC3 void * SOAP_FMAC4 _instantiate(struct soap *soap, int t, const char *
 		return (void*)soap_instantiate__icd1__GetDeviceUpdateInfo(soap, -1, type, arrayType, n);
 	case SOAP_TYPE__icd1__GetDeviceUpdateInfoResponse:
 		return (void*)soap_instantiate__icd1__GetDeviceUpdateInfoResponse(soap, -1, type, arrayType, n);
+	case SOAP_TYPE__icd1__GetMacIdd:
+		return (void*)soap_instantiate__icd1__GetMacIdd(soap, -1, type, arrayType, n);
+	case SOAP_TYPE__icd1__GetMacIddResponse:
+		return (void*)soap_instantiate__icd1__GetMacIddResponse(soap, -1, type, arrayType, n);
 	case SOAP_TYPE___icd2__GetTime:
 		return (void*)soap_instantiate___icd2__GetTime(soap, -1, type, arrayType, n);
 	case SOAP_TYPE___icd2__LoginDevice:
@@ -686,6 +748,8 @@ SOAP_FMAC3 void * SOAP_FMAC4 _instantiate(struct soap *soap, int t, const char *
 		return (void*)soap_instantiate___icd2__TestSession(soap, -1, type, arrayType, n);
 	case SOAP_TYPE___icd2__GetDeviceUpdateInfo:
 		return (void*)soap_instantiate___icd2__GetDeviceUpdateInfo(soap, -1, type, arrayType, n);
+	case SOAP_TYPE___icd2__GetMacIdd:
+		return (void*)soap_instantiate___icd2__GetMacIdd(soap, -1, type, arrayType, n);
 	case SOAP_TYPE___icd3__GetTime:
 		return (void*)soap_instantiate___icd3__GetTime(soap, -1, type, arrayType, n);
 	case SOAP_TYPE___icd3__LoginDevice:
@@ -700,6 +764,8 @@ SOAP_FMAC3 void * SOAP_FMAC4 _instantiate(struct soap *soap, int t, const char *
 		return (void*)soap_instantiate___icd3__TestSession(soap, -1, type, arrayType, n);
 	case SOAP_TYPE___icd3__GetDeviceUpdateInfo:
 		return (void*)soap_instantiate___icd3__GetDeviceUpdateInfo(soap, -1, type, arrayType, n);
+	case SOAP_TYPE___icd3__GetMacIdd:
+		return (void*)soap_instantiate___icd3__GetMacIdd(soap, -1, type, arrayType, n);
 #ifndef WITH_NOGLOBAL
 	case SOAP_TYPE_SOAP_ENV__Header:
 		return (void*)soap_instantiate_SOAP_ENV__Header(soap, -1, type, arrayType, n);
@@ -738,6 +804,12 @@ SOAP_FMAC3 int SOAP_FMAC4 _fdelete(struct soap_clist *p)
 			SOAP_DELETE((icd1__UpdatePack*)p->ptr);
 		else
 			SOAP_DELETE_ARRAY((icd1__UpdatePack*)p->ptr);
+		break;
+	case SOAP_TYPE_icd1__GetMacIddPack:
+		if (p->size < 0)
+			SOAP_DELETE((icd1__GetMacIddPack*)p->ptr);
+		else
+			SOAP_DELETE_ARRAY((icd1__GetMacIddPack*)p->ptr);
 		break;
 	case SOAP_TYPE__icd1__GetTime:
 		if (p->size < 0)
@@ -823,6 +895,18 @@ SOAP_FMAC3 int SOAP_FMAC4 _fdelete(struct soap_clist *p)
 		else
 			SOAP_DELETE_ARRAY((_icd1__GetDeviceUpdateInfoResponse*)p->ptr);
 		break;
+	case SOAP_TYPE__icd1__GetMacIdd:
+		if (p->size < 0)
+			SOAP_DELETE((_icd1__GetMacIdd*)p->ptr);
+		else
+			SOAP_DELETE_ARRAY((_icd1__GetMacIdd*)p->ptr);
+		break;
+	case SOAP_TYPE__icd1__GetMacIddResponse:
+		if (p->size < 0)
+			SOAP_DELETE((_icd1__GetMacIddResponse*)p->ptr);
+		else
+			SOAP_DELETE_ARRAY((_icd1__GetMacIddResponse*)p->ptr);
+		break;
 	case SOAP_TYPE___icd2__GetTime:
 		if (p->size < 0)
 			SOAP_DELETE((struct __icd2__GetTime*)p->ptr);
@@ -865,6 +949,12 @@ SOAP_FMAC3 int SOAP_FMAC4 _fdelete(struct soap_clist *p)
 		else
 			SOAP_DELETE_ARRAY((struct __icd2__GetDeviceUpdateInfo*)p->ptr);
 		break;
+	case SOAP_TYPE___icd2__GetMacIdd:
+		if (p->size < 0)
+			SOAP_DELETE((struct __icd2__GetMacIdd*)p->ptr);
+		else
+			SOAP_DELETE_ARRAY((struct __icd2__GetMacIdd*)p->ptr);
+		break;
 	case SOAP_TYPE___icd3__GetTime:
 		if (p->size < 0)
 			SOAP_DELETE((struct __icd3__GetTime*)p->ptr);
@@ -906,6 +996,12 @@ SOAP_FMAC3 int SOAP_FMAC4 _fdelete(struct soap_clist *p)
 			SOAP_DELETE((struct __icd3__GetDeviceUpdateInfo*)p->ptr);
 		else
 			SOAP_DELETE_ARRAY((struct __icd3__GetDeviceUpdateInfo*)p->ptr);
+		break;
+	case SOAP_TYPE___icd3__GetMacIdd:
+		if (p->size < 0)
+			SOAP_DELETE((struct __icd3__GetMacIdd*)p->ptr);
+		else
+			SOAP_DELETE_ARRAY((struct __icd3__GetMacIdd*)p->ptr);
 		break;
 #ifndef WITH_NOGLOBAL
 	case SOAP_TYPE_SOAP_ENV__Header:
@@ -1143,18 +1239,291 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy_std__string(struct soap *soap, int st, int 
 	*(std::string*)p = *(std::string*)q;
 }
 
+void _icd1__GetMacIddResponse::soap_default(struct soap *soap)
+{
+	this->soap = soap;
+	soap_default_int(soap, &this->_icd1__GetMacIddResponse::GetMacIddResult);
+	this->_icd1__GetMacIddResponse::response = NULL;
+	/* transient soap skipped */
+}
+
+void _icd1__GetMacIddResponse::soap_serialize(struct soap *soap) const
+{
+	(void)soap; /* appease -Wall -Werror */
+	soap_serialize_PointerToicd1__GetMacIddPack(soap, &this->_icd1__GetMacIddResponse::response);
+	/* transient soap skipped */
+}
+
+int _icd1__GetMacIddResponse::soap_out(struct soap *soap, const char *tag, int id, const char *type) const
+{
+	return soap_out__icd1__GetMacIddResponse(soap, tag, id, this, type);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out__icd1__GetMacIddResponse(struct soap *soap, const char *tag, int id, const _icd1__GetMacIddResponse *a, const char *type)
+{
+	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE__icd1__GetMacIddResponse), type))
+		return soap->error;
+	soap_element_result(soap, "icd1:GetMacIddResult");
+	if (soap_out_int(soap, "icd1:GetMacIddResult", -1, &(a->_icd1__GetMacIddResponse::GetMacIddResult), ""))
+		return soap->error;
+	if (soap_out_PointerToicd1__GetMacIddPack(soap, "icd1:response", -1, &(a->_icd1__GetMacIddResponse::response), ""))
+		return soap->error;
+	/* transient soap skipped */
+	return soap_element_end_out(soap, tag);
+}
+
+void *_icd1__GetMacIddResponse::soap_in(struct soap *soap, const char *tag, const char *type)
+{	return soap_in__icd1__GetMacIddResponse(soap, tag, this, type);
+}
+
+SOAP_FMAC3 _icd1__GetMacIddResponse * SOAP_FMAC4 soap_in__icd1__GetMacIddResponse(struct soap *soap, const char *tag, _icd1__GetMacIddResponse *a, const char *type)
+{
+	(void)type; /* appease -Wall -Werror */
+	if (soap_element_begin_in(soap, tag, 0, NULL))
+		return NULL;
+	a = (_icd1__GetMacIddResponse *)soap_class_id_enter(soap, soap->id, a, SOAP_TYPE__icd1__GetMacIddResponse, sizeof(_icd1__GetMacIddResponse), soap->type, soap->arrayType);
+	if (!a)
+		return NULL;
+	if (soap->alloced)
+	{	a->soap_default(soap);
+		if (soap->clist->type != SOAP_TYPE__icd1__GetMacIddResponse)
+		{	soap_revert(soap);
+			*soap->id = '\0';
+			return (_icd1__GetMacIddResponse *)a->soap_in(soap, tag, type);
+		}
+	}
+	size_t soap_flag_GetMacIddResult1 = 1;
+	size_t soap_flag_response1 = 1;
+	if (soap->body && !*soap->href)
+	{
+		for (;;)
+		{	soap->error = SOAP_TAG_MISMATCH;
+			if (soap_flag_GetMacIddResult1 && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_int(soap, "icd1:GetMacIddResult", &(a->_icd1__GetMacIddResponse::GetMacIddResult), "xsd:int"))
+				{	soap_flag_GetMacIddResult1--;
+					continue;
+				}
+			if (soap_flag_response1 && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_PointerToicd1__GetMacIddPack(soap, "icd1:response", &(a->_icd1__GetMacIddResponse::response), "icd1:GetMacIddPack"))
+				{	soap_flag_response1--;
+					continue;
+				}
+			/* transient soap skipped */
+			soap_check_result(soap, "icd1:GetMacIddResult");
+			if (soap->error == SOAP_TAG_MISMATCH)
+				soap->error = soap_ignore_element(soap);
+			if (soap->error == SOAP_NO_TAG)
+				break;
+			if (soap->error)
+				return NULL;
+		}
+		if (soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	else
+	{	a = (_icd1__GetMacIddResponse *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE__icd1__GetMacIddResponse, 0, sizeof(_icd1__GetMacIddResponse), 0, soap_copy__icd1__GetMacIddResponse);
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	if ((soap->mode & SOAP_XML_STRICT) && (soap_flag_GetMacIddResult1 > 0))
+	{	soap->error = SOAP_OCCURS;
+		return NULL;
+	}
+	return a;
+}
+
+int _icd1__GetMacIddResponse::soap_put(struct soap *soap, const char *tag, const  char *type) const
+{
+	register int id = soap_embed(soap, (void*)this, NULL, 0, tag, SOAP_TYPE__icd1__GetMacIddResponse);
+	if (this->soap_out(soap, tag?tag:"icd1:GetMacIddResponse", id, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+void *_icd1__GetMacIddResponse::soap_get(struct soap *soap, const char *tag, const char *type)
+{
+	return soap_get__icd1__GetMacIddResponse(soap, this, tag, type);
+}
+
+SOAP_FMAC3 _icd1__GetMacIddResponse * SOAP_FMAC4 soap_get__icd1__GetMacIddResponse(struct soap *soap, _icd1__GetMacIddResponse *p, const char *tag, const char *type)
+{
+	if ((p = soap_in__icd1__GetMacIddResponse(soap, tag, p, type)))
+		if (soap_getindependent(soap))
+			return NULL;
+	return p;
+}
+
+SOAP_FMAC1 _icd1__GetMacIddResponse * SOAP_FMAC2 soap_instantiate__icd1__GetMacIddResponse(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+{
+	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate__icd1__GetMacIddResponse(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE__icd1__GetMacIddResponse, n, _fdelete);
+	if (!cp)
+		return NULL;
+	if (n < 0)
+	{	cp->ptr = (void*)SOAP_NEW(_icd1__GetMacIddResponse);
+		if (size)
+			*size = sizeof(_icd1__GetMacIddResponse);
+		((_icd1__GetMacIddResponse*)cp->ptr)->soap = soap;
+	}
+	else
+	{	cp->ptr = (void*)SOAP_NEW(_icd1__GetMacIddResponse[n]);
+		if (!cp->ptr)
+		{	soap->error = SOAP_EOM;
+			return NULL;
+		}
+		if (size)
+			*size = n * sizeof(_icd1__GetMacIddResponse);
+		for (int i = 0; i < n; i++)
+			((_icd1__GetMacIddResponse*)cp->ptr)[i].soap = soap;
+	}
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
+	return (_icd1__GetMacIddResponse*)cp->ptr;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy__icd1__GetMacIddResponse(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+{
+	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying _icd1__GetMacIddResponse %p -> %p\n", q, p));
+	*(_icd1__GetMacIddResponse*)p = *(_icd1__GetMacIddResponse*)q;
+}
+
+void _icd1__GetMacIdd::soap_default(struct soap *soap)
+{
+	this->soap = soap;
+	/* transient soap skipped */
+}
+
+void _icd1__GetMacIdd::soap_serialize(struct soap *soap) const
+{
+	(void)soap; /* appease -Wall -Werror */
+	/* transient soap skipped */
+}
+
+int _icd1__GetMacIdd::soap_out(struct soap *soap, const char *tag, int id, const char *type) const
+{
+	return soap_out__icd1__GetMacIdd(soap, tag, id, this, type);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out__icd1__GetMacIdd(struct soap *soap, const char *tag, int id, const _icd1__GetMacIdd *a, const char *type)
+{
+	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE__icd1__GetMacIdd), type))
+		return soap->error;
+	/* transient soap skipped */
+	return soap_element_end_out(soap, tag);
+}
+
+void *_icd1__GetMacIdd::soap_in(struct soap *soap, const char *tag, const char *type)
+{	return soap_in__icd1__GetMacIdd(soap, tag, this, type);
+}
+
+SOAP_FMAC3 _icd1__GetMacIdd * SOAP_FMAC4 soap_in__icd1__GetMacIdd(struct soap *soap, const char *tag, _icd1__GetMacIdd *a, const char *type)
+{
+	(void)type; /* appease -Wall -Werror */
+	if (soap_element_begin_in(soap, tag, 0, NULL))
+		return NULL;
+	a = (_icd1__GetMacIdd *)soap_class_id_enter(soap, soap->id, a, SOAP_TYPE__icd1__GetMacIdd, sizeof(_icd1__GetMacIdd), soap->type, soap->arrayType);
+	if (!a)
+		return NULL;
+	if (soap->alloced)
+	{	a->soap_default(soap);
+		if (soap->clist->type != SOAP_TYPE__icd1__GetMacIdd)
+		{	soap_revert(soap);
+			*soap->id = '\0';
+			return (_icd1__GetMacIdd *)a->soap_in(soap, tag, type);
+		}
+	}
+	if (soap->body && !*soap->href)
+	{
+		for (;;)
+		{	soap->error = SOAP_TAG_MISMATCH;
+			/* transient soap skipped */
+			if (soap->error == SOAP_TAG_MISMATCH)
+				soap->error = soap_ignore_element(soap);
+			if (soap->error == SOAP_NO_TAG)
+				break;
+			if (soap->error)
+				return NULL;
+		}
+		if (soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	else
+	{	a = (_icd1__GetMacIdd *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE__icd1__GetMacIdd, 0, sizeof(_icd1__GetMacIdd), 0, soap_copy__icd1__GetMacIdd);
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	return a;
+}
+
+int _icd1__GetMacIdd::soap_put(struct soap *soap, const char *tag, const  char *type) const
+{
+	register int id = soap_embed(soap, (void*)this, NULL, 0, tag, SOAP_TYPE__icd1__GetMacIdd);
+	if (this->soap_out(soap, tag?tag:"icd1:GetMacIdd", id, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+void *_icd1__GetMacIdd::soap_get(struct soap *soap, const char *tag, const char *type)
+{
+	return soap_get__icd1__GetMacIdd(soap, this, tag, type);
+}
+
+SOAP_FMAC3 _icd1__GetMacIdd * SOAP_FMAC4 soap_get__icd1__GetMacIdd(struct soap *soap, _icd1__GetMacIdd *p, const char *tag, const char *type)
+{
+	if ((p = soap_in__icd1__GetMacIdd(soap, tag, p, type)))
+		if (soap_getindependent(soap))
+			return NULL;
+	return p;
+}
+
+SOAP_FMAC1 _icd1__GetMacIdd * SOAP_FMAC2 soap_instantiate__icd1__GetMacIdd(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+{
+	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate__icd1__GetMacIdd(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE__icd1__GetMacIdd, n, _fdelete);
+	if (!cp)
+		return NULL;
+	if (n < 0)
+	{	cp->ptr = (void*)SOAP_NEW(_icd1__GetMacIdd);
+		if (size)
+			*size = sizeof(_icd1__GetMacIdd);
+		((_icd1__GetMacIdd*)cp->ptr)->soap = soap;
+	}
+	else
+	{	cp->ptr = (void*)SOAP_NEW(_icd1__GetMacIdd[n]);
+		if (!cp->ptr)
+		{	soap->error = SOAP_EOM;
+			return NULL;
+		}
+		if (size)
+			*size = n * sizeof(_icd1__GetMacIdd);
+		for (int i = 0; i < n; i++)
+			((_icd1__GetMacIdd*)cp->ptr)[i].soap = soap;
+	}
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
+	return (_icd1__GetMacIdd*)cp->ptr;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy__icd1__GetMacIdd(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+{
+	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying _icd1__GetMacIdd %p -> %p\n", q, p));
+	*(_icd1__GetMacIdd*)p = *(_icd1__GetMacIdd*)q;
+}
+
 void _icd1__GetDeviceUpdateInfoResponse::soap_default(struct soap *soap)
 {
 	this->soap = soap;
 	soap_default_int(soap, &this->_icd1__GetDeviceUpdateInfoResponse::GetDeviceUpdateInfoResult);
-	this->_icd1__GetDeviceUpdateInfoResponse::message = NULL;
+	this->_icd1__GetDeviceUpdateInfoResponse::response = NULL;
 	/* transient soap skipped */
 }
 
 void _icd1__GetDeviceUpdateInfoResponse::soap_serialize(struct soap *soap) const
 {
 	(void)soap; /* appease -Wall -Werror */
-	soap_serialize_PointerToicd1__UpdatePack(soap, &this->_icd1__GetDeviceUpdateInfoResponse::message);
+	soap_serialize_PointerToicd1__UpdatePack(soap, &this->_icd1__GetDeviceUpdateInfoResponse::response);
 	/* transient soap skipped */
 }
 
@@ -1170,7 +1539,7 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_out__icd1__GetDeviceUpdateInfoResponse(struct soa
 	soap_element_result(soap, "icd1:GetDeviceUpdateInfoResult");
 	if (soap_out_int(soap, "icd1:GetDeviceUpdateInfoResult", -1, &(a->_icd1__GetDeviceUpdateInfoResponse::GetDeviceUpdateInfoResult), ""))
 		return soap->error;
-	if (soap_out_PointerToicd1__UpdatePack(soap, "icd1:message", -1, &(a->_icd1__GetDeviceUpdateInfoResponse::message), ""))
+	if (soap_out_PointerToicd1__UpdatePack(soap, "icd1:response", -1, &(a->_icd1__GetDeviceUpdateInfoResponse::response), ""))
 		return soap->error;
 	/* transient soap skipped */
 	return soap_element_end_out(soap, tag);
@@ -1197,7 +1566,7 @@ SOAP_FMAC3 _icd1__GetDeviceUpdateInfoResponse * SOAP_FMAC4 soap_in__icd1__GetDev
 		}
 	}
 	size_t soap_flag_GetDeviceUpdateInfoResult1 = 1;
-	size_t soap_flag_message1 = 1;
+	size_t soap_flag_response1 = 1;
 	if (soap->body && !*soap->href)
 	{
 		for (;;)
@@ -1207,9 +1576,9 @@ SOAP_FMAC3 _icd1__GetDeviceUpdateInfoResponse * SOAP_FMAC4 soap_in__icd1__GetDev
 				{	soap_flag_GetDeviceUpdateInfoResult1--;
 					continue;
 				}
-			if (soap_flag_message1 && soap->error == SOAP_TAG_MISMATCH)
-				if (soap_in_PointerToicd1__UpdatePack(soap, "icd1:message", &(a->_icd1__GetDeviceUpdateInfoResponse::message), "icd1:UpdatePack"))
-				{	soap_flag_message1--;
+			if (soap_flag_response1 && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_PointerToicd1__UpdatePack(soap, "icd1:response", &(a->_icd1__GetDeviceUpdateInfoResponse::response), "icd1:UpdatePack"))
+				{	soap_flag_response1--;
 					continue;
 				}
 			/* transient soap skipped */
@@ -1295,14 +1664,14 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy__icd1__GetDeviceUpdateInfoResponse(struct s
 void _icd1__GetDeviceUpdateInfo::soap_default(struct soap *soap)
 {
 	this->soap = soap;
-	this->_icd1__GetDeviceUpdateInfo::SoftVersion = NULL;
+	this->_icd1__GetDeviceUpdateInfo::softVersion = NULL;
 	/* transient soap skipped */
 }
 
 void _icd1__GetDeviceUpdateInfo::soap_serialize(struct soap *soap) const
 {
 	(void)soap; /* appease -Wall -Werror */
-	soap_serialize_PointerTostd__string(soap, &this->_icd1__GetDeviceUpdateInfo::SoftVersion);
+	soap_serialize_PointerTostd__string(soap, &this->_icd1__GetDeviceUpdateInfo::softVersion);
 	/* transient soap skipped */
 }
 
@@ -1315,7 +1684,7 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_out__icd1__GetDeviceUpdateInfo(struct soap *soap,
 {
 	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE__icd1__GetDeviceUpdateInfo), type))
 		return soap->error;
-	if (soap_out_PointerTostd__string(soap, "icd1:SoftVersion", -1, &(a->_icd1__GetDeviceUpdateInfo::SoftVersion), ""))
+	if (soap_out_PointerTostd__string(soap, "icd1:softVersion", -1, &(a->_icd1__GetDeviceUpdateInfo::softVersion), ""))
 		return soap->error;
 	/* transient soap skipped */
 	return soap_element_end_out(soap, tag);
@@ -1341,14 +1710,14 @@ SOAP_FMAC3 _icd1__GetDeviceUpdateInfo * SOAP_FMAC4 soap_in__icd1__GetDeviceUpdat
 			return (_icd1__GetDeviceUpdateInfo *)a->soap_in(soap, tag, type);
 		}
 	}
-	size_t soap_flag_SoftVersion1 = 1;
+	size_t soap_flag_softVersion1 = 1;
 	if (soap->body && !*soap->href)
 	{
 		for (;;)
 		{	soap->error = SOAP_TAG_MISMATCH;
-			if (soap_flag_SoftVersion1 && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
-				if (soap_in_PointerTostd__string(soap, "icd1:SoftVersion", &(a->_icd1__GetDeviceUpdateInfo::SoftVersion), "xsd:string"))
-				{	soap_flag_SoftVersion1--;
+			if (soap_flag_softVersion1 && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
+				if (soap_in_PointerTostd__string(soap, "icd1:softVersion", &(a->_icd1__GetDeviceUpdateInfo::softVersion), "xsd:string"))
+				{	soap_flag_softVersion1--;
 					continue;
 				}
 			/* transient soap skipped */
@@ -2681,6 +3050,7 @@ void _icd1__LoginDevice::soap_default(struct soap *soap)
 {
 	this->soap = soap;
 	soap_default_int(soap, &this->_icd1__LoginDevice::idd);
+	this->_icd1__LoginDevice::mac = NULL;
 	this->_icd1__LoginDevice::deviceIds = NULL;
 	this->_icd1__LoginDevice::devInfo = NULL;
 	/* transient soap skipped */
@@ -2689,6 +3059,7 @@ void _icd1__LoginDevice::soap_default(struct soap *soap)
 void _icd1__LoginDevice::soap_serialize(struct soap *soap) const
 {
 	(void)soap; /* appease -Wall -Werror */
+	soap_serialize_PointerTostd__string(soap, &this->_icd1__LoginDevice::mac);
 	soap_serialize_PointerTostd__string(soap, &this->_icd1__LoginDevice::deviceIds);
 	soap_serialize_PointerTostd__string(soap, &this->_icd1__LoginDevice::devInfo);
 	/* transient soap skipped */
@@ -2704,6 +3075,8 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_out__icd1__LoginDevice(struct soap *soap, const c
 	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE__icd1__LoginDevice), type))
 		return soap->error;
 	if (soap_out_int(soap, "icd1:idd", -1, &(a->_icd1__LoginDevice::idd), ""))
+		return soap->error;
+	if (soap_out_PointerTostd__string(soap, "icd1:mac", -1, &(a->_icd1__LoginDevice::mac), ""))
 		return soap->error;
 	if (soap_out_PointerTostd__string(soap, "icd1:deviceIds", -1, &(a->_icd1__LoginDevice::deviceIds), ""))
 		return soap->error;
@@ -2734,6 +3107,7 @@ SOAP_FMAC3 _icd1__LoginDevice * SOAP_FMAC4 soap_in__icd1__LoginDevice(struct soa
 		}
 	}
 	size_t soap_flag_idd1 = 1;
+	size_t soap_flag_mac1 = 1;
 	size_t soap_flag_deviceIds1 = 1;
 	size_t soap_flag_devInfo1 = 1;
 	if (soap->body && !*soap->href)
@@ -2743,6 +3117,11 @@ SOAP_FMAC3 _icd1__LoginDevice * SOAP_FMAC4 soap_in__icd1__LoginDevice(struct soa
 			if (soap_flag_idd1 && soap->error == SOAP_TAG_MISMATCH)
 				if (soap_in_int(soap, "icd1:idd", &(a->_icd1__LoginDevice::idd), "xsd:int"))
 				{	soap_flag_idd1--;
+					continue;
+				}
+			if (soap_flag_mac1 && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
+				if (soap_in_PointerTostd__string(soap, "icd1:mac", &(a->_icd1__LoginDevice::mac), "xsd:string"))
+				{	soap_flag_mac1--;
 					continue;
 				}
 			if (soap_flag_deviceIds1 && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
@@ -3093,6 +3472,163 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy__icd1__GetTime(struct soap *soap, int st, i
 	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying _icd1__GetTime %p -> %p\n", q, p));
 	*(_icd1__GetTime*)p = *(_icd1__GetTime*)q;
+}
+
+void icd1__GetMacIddPack::soap_default(struct soap *soap)
+{
+	this->soap = soap;
+	soap_default_int(soap, &this->icd1__GetMacIddPack::Idd);
+	this->icd1__GetMacIddPack::mac = NULL;
+	this->icd1__GetMacIddPack::message = NULL;
+	/* transient soap skipped */
+}
+
+void icd1__GetMacIddPack::soap_serialize(struct soap *soap) const
+{
+	(void)soap; /* appease -Wall -Werror */
+	soap_serialize_PointerTostd__string(soap, &this->icd1__GetMacIddPack::mac);
+	soap_serialize_PointerTostd__string(soap, &this->icd1__GetMacIddPack::message);
+	/* transient soap skipped */
+}
+
+int icd1__GetMacIddPack::soap_out(struct soap *soap, const char *tag, int id, const char *type) const
+{
+	return soap_out_icd1__GetMacIddPack(soap, tag, id, this, type);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_icd1__GetMacIddPack(struct soap *soap, const char *tag, int id, const icd1__GetMacIddPack *a, const char *type)
+{
+	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE_icd1__GetMacIddPack), type))
+		return soap->error;
+	if (soap_out_int(soap, "icd1:Idd", -1, &(a->icd1__GetMacIddPack::Idd), ""))
+		return soap->error;
+	if (soap_out_PointerTostd__string(soap, "icd1:mac", -1, &(a->icd1__GetMacIddPack::mac), ""))
+		return soap->error;
+	if (soap_out_PointerTostd__string(soap, "icd1:message", -1, &(a->icd1__GetMacIddPack::message), ""))
+		return soap->error;
+	/* transient soap skipped */
+	return soap_element_end_out(soap, tag);
+}
+
+void *icd1__GetMacIddPack::soap_in(struct soap *soap, const char *tag, const char *type)
+{	return soap_in_icd1__GetMacIddPack(soap, tag, this, type);
+}
+
+SOAP_FMAC3 icd1__GetMacIddPack * SOAP_FMAC4 soap_in_icd1__GetMacIddPack(struct soap *soap, const char *tag, icd1__GetMacIddPack *a, const char *type)
+{
+	(void)type; /* appease -Wall -Werror */
+	if (soap_element_begin_in(soap, tag, 0, NULL))
+		return NULL;
+	a = (icd1__GetMacIddPack *)soap_class_id_enter(soap, soap->id, a, SOAP_TYPE_icd1__GetMacIddPack, sizeof(icd1__GetMacIddPack), soap->type, soap->arrayType);
+	if (!a)
+		return NULL;
+	if (soap->alloced)
+	{	a->soap_default(soap);
+		if (soap->clist->type != SOAP_TYPE_icd1__GetMacIddPack)
+		{	soap_revert(soap);
+			*soap->id = '\0';
+			return (icd1__GetMacIddPack *)a->soap_in(soap, tag, type);
+		}
+	}
+	size_t soap_flag_Idd1 = 1;
+	size_t soap_flag_mac1 = 1;
+	size_t soap_flag_message1 = 1;
+	if (soap->body && !*soap->href)
+	{
+		for (;;)
+		{	soap->error = SOAP_TAG_MISMATCH;
+			if (soap_flag_Idd1 && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_int(soap, "icd1:Idd", &(a->icd1__GetMacIddPack::Idd), "xsd:int"))
+				{	soap_flag_Idd1--;
+					continue;
+				}
+			if (soap_flag_mac1 && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
+				if (soap_in_PointerTostd__string(soap, "icd1:mac", &(a->icd1__GetMacIddPack::mac), "xsd:string"))
+				{	soap_flag_mac1--;
+					continue;
+				}
+			if (soap_flag_message1 && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
+				if (soap_in_PointerTostd__string(soap, "icd1:message", &(a->icd1__GetMacIddPack::message), "xsd:string"))
+				{	soap_flag_message1--;
+					continue;
+				}
+			/* transient soap skipped */
+			if (soap->error == SOAP_TAG_MISMATCH)
+				soap->error = soap_ignore_element(soap);
+			if (soap->error == SOAP_NO_TAG)
+				break;
+			if (soap->error)
+				return NULL;
+		}
+		if (soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	else
+	{	a = (icd1__GetMacIddPack *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE_icd1__GetMacIddPack, 0, sizeof(icd1__GetMacIddPack), 0, soap_copy_icd1__GetMacIddPack);
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	if ((soap->mode & SOAP_XML_STRICT) && (soap_flag_Idd1 > 0))
+	{	soap->error = SOAP_OCCURS;
+		return NULL;
+	}
+	return a;
+}
+
+int icd1__GetMacIddPack::soap_put(struct soap *soap, const char *tag, const  char *type) const
+{
+	register int id = soap_embed(soap, (void*)this, NULL, 0, tag, SOAP_TYPE_icd1__GetMacIddPack);
+	if (this->soap_out(soap, tag?tag:"icd1:GetMacIddPack", id, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+void *icd1__GetMacIddPack::soap_get(struct soap *soap, const char *tag, const char *type)
+{
+	return soap_get_icd1__GetMacIddPack(soap, this, tag, type);
+}
+
+SOAP_FMAC3 icd1__GetMacIddPack * SOAP_FMAC4 soap_get_icd1__GetMacIddPack(struct soap *soap, icd1__GetMacIddPack *p, const char *tag, const char *type)
+{
+	if ((p = soap_in_icd1__GetMacIddPack(soap, tag, p, type)))
+		if (soap_getindependent(soap))
+			return NULL;
+	return p;
+}
+
+SOAP_FMAC1 icd1__GetMacIddPack * SOAP_FMAC2 soap_instantiate_icd1__GetMacIddPack(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+{
+	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_icd1__GetMacIddPack(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE_icd1__GetMacIddPack, n, _fdelete);
+	if (!cp)
+		return NULL;
+	if (n < 0)
+	{	cp->ptr = (void*)SOAP_NEW(icd1__GetMacIddPack);
+		if (size)
+			*size = sizeof(icd1__GetMacIddPack);
+		((icd1__GetMacIddPack*)cp->ptr)->soap = soap;
+	}
+	else
+	{	cp->ptr = (void*)SOAP_NEW(icd1__GetMacIddPack[n]);
+		if (!cp->ptr)
+		{	soap->error = SOAP_EOM;
+			return NULL;
+		}
+		if (size)
+			*size = n * sizeof(icd1__GetMacIddPack);
+		for (int i = 0; i < n; i++)
+			((icd1__GetMacIddPack*)cp->ptr)[i].soap = soap;
+	}
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
+	return (icd1__GetMacIddPack*)cp->ptr;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy_icd1__GetMacIddPack(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+{
+	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying icd1__GetMacIddPack %p -> %p\n", q, p));
+	*(icd1__GetMacIddPack*)p = *(icd1__GetMacIddPack*)q;
 }
 
 void icd1__UpdatePack::soap_default(struct soap *soap)
@@ -3915,6 +4451,102 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy_SOAP_ENV__Header(struct soap *soap, int st,
 
 #endif
 
+SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd3__GetMacIdd(struct soap *soap, struct __icd3__GetMacIdd *a)
+{
+	(void)soap; (void)a; /* appease -Wall -Werror */
+	a->icd1__GetMacIdd = NULL;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___icd3__GetMacIdd(struct soap *soap, const struct __icd3__GetMacIdd *a)
+{
+	(void)soap; (void)a; /* appease -Wall -Werror */
+	soap_serialize_PointerTo_icd1__GetMacIdd(soap, &a->icd1__GetMacIdd);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out___icd3__GetMacIdd(struct soap *soap, const char *tag, int id, const struct __icd3__GetMacIdd *a, const char *type)
+{
+	(void)soap; (void)tag; (void)id; (void)type;
+	if (soap_out_PointerTo_icd1__GetMacIdd(soap, "icd1:GetMacIdd", -1, &a->icd1__GetMacIdd, ""))
+		return soap->error;
+	return SOAP_OK;
+}
+
+SOAP_FMAC3 struct __icd3__GetMacIdd * SOAP_FMAC4 soap_in___icd3__GetMacIdd(struct soap *soap, const char *tag, struct __icd3__GetMacIdd *a, const char *type)
+{
+	size_t soap_flag_icd1__GetMacIdd = 1;
+	short soap_flag;
+	a = (struct __icd3__GetMacIdd *)soap_id_enter(soap, "", a, SOAP_TYPE___icd3__GetMacIdd, sizeof(struct __icd3__GetMacIdd), 0, NULL, NULL, NULL);
+	if (!a)
+		return NULL;
+	soap_default___icd3__GetMacIdd(soap, a);
+		for (soap_flag = 0;; soap_flag = 1)
+		{	soap->error = SOAP_TAG_MISMATCH;
+			if (soap_flag_icd1__GetMacIdd && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_PointerTo_icd1__GetMacIdd(soap, "icd1:GetMacIdd", &a->icd1__GetMacIdd, ""))
+				{	soap_flag_icd1__GetMacIdd--;
+					continue;
+				}
+			if (soap->error == SOAP_TAG_MISMATCH)
+				if (soap_flag)
+				{	soap->error = SOAP_OK;
+					break;
+				}
+			if (soap_flag && soap->error == SOAP_NO_TAG)
+				break;
+			if (soap->error)
+				return NULL;
+		}
+	return a;
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_put___icd3__GetMacIdd(struct soap *soap, const struct __icd3__GetMacIdd *a, const char *tag, const char *type)
+{
+	register int id = 0;
+	if (soap_out___icd3__GetMacIdd(soap, tag?tag:"-icd3:GetMacIdd", id, a, type))
+		return soap->error;
+	return SOAP_OK;
+}
+
+SOAP_FMAC3 struct __icd3__GetMacIdd * SOAP_FMAC4 soap_get___icd3__GetMacIdd(struct soap *soap, struct __icd3__GetMacIdd *p, const char *tag, const char *type)
+{
+	if ((p = soap_in___icd3__GetMacIdd(soap, tag, p, type)))
+		if (soap_getindependent(soap))
+			return NULL;
+	return p;
+}
+
+SOAP_FMAC1 struct __icd3__GetMacIdd * SOAP_FMAC2 soap_instantiate___icd3__GetMacIdd(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+{
+	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___icd3__GetMacIdd(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___icd3__GetMacIdd, n, _fdelete);
+	if (!cp)
+		return NULL;
+	if (n < 0)
+	{	cp->ptr = (void*)SOAP_NEW(struct __icd3__GetMacIdd);
+		if (size)
+			*size = sizeof(struct __icd3__GetMacIdd);
+	}
+	else
+	{	cp->ptr = (void*)SOAP_NEW(struct __icd3__GetMacIdd[n]);
+		if (!cp->ptr)
+		{	soap->error = SOAP_EOM;
+			return NULL;
+		}
+		if (size)
+			*size = n * sizeof(struct __icd3__GetMacIdd);
+	}
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
+	return (struct __icd3__GetMacIdd*)cp->ptr;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd3__GetMacIdd(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+{
+	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __icd3__GetMacIdd %p -> %p\n", q, p));
+	*(struct __icd3__GetMacIdd*)p = *(struct __icd3__GetMacIdd*)q;
+}
+
 SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd3__GetDeviceUpdateInfo(struct soap *soap, struct __icd3__GetDeviceUpdateInfo *a)
 {
 	(void)soap; (void)a; /* appease -Wall -Werror */
@@ -4585,6 +5217,102 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd3__GetTime(struct soap *soap, int st, 
 	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
 	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __icd3__GetTime %p -> %p\n", q, p));
 	*(struct __icd3__GetTime*)p = *(struct __icd3__GetTime*)q;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd2__GetMacIdd(struct soap *soap, struct __icd2__GetMacIdd *a)
+{
+	(void)soap; (void)a; /* appease -Wall -Werror */
+	a->icd1__GetMacIdd = NULL;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___icd2__GetMacIdd(struct soap *soap, const struct __icd2__GetMacIdd *a)
+{
+	(void)soap; (void)a; /* appease -Wall -Werror */
+	soap_serialize_PointerTo_icd1__GetMacIdd(soap, &a->icd1__GetMacIdd);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out___icd2__GetMacIdd(struct soap *soap, const char *tag, int id, const struct __icd2__GetMacIdd *a, const char *type)
+{
+	(void)soap; (void)tag; (void)id; (void)type;
+	if (soap_out_PointerTo_icd1__GetMacIdd(soap, "icd1:GetMacIdd", -1, &a->icd1__GetMacIdd, ""))
+		return soap->error;
+	return SOAP_OK;
+}
+
+SOAP_FMAC3 struct __icd2__GetMacIdd * SOAP_FMAC4 soap_in___icd2__GetMacIdd(struct soap *soap, const char *tag, struct __icd2__GetMacIdd *a, const char *type)
+{
+	size_t soap_flag_icd1__GetMacIdd = 1;
+	short soap_flag;
+	a = (struct __icd2__GetMacIdd *)soap_id_enter(soap, "", a, SOAP_TYPE___icd2__GetMacIdd, sizeof(struct __icd2__GetMacIdd), 0, NULL, NULL, NULL);
+	if (!a)
+		return NULL;
+	soap_default___icd2__GetMacIdd(soap, a);
+		for (soap_flag = 0;; soap_flag = 1)
+		{	soap->error = SOAP_TAG_MISMATCH;
+			if (soap_flag_icd1__GetMacIdd && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_PointerTo_icd1__GetMacIdd(soap, "icd1:GetMacIdd", &a->icd1__GetMacIdd, ""))
+				{	soap_flag_icd1__GetMacIdd--;
+					continue;
+				}
+			if (soap->error == SOAP_TAG_MISMATCH)
+				if (soap_flag)
+				{	soap->error = SOAP_OK;
+					break;
+				}
+			if (soap_flag && soap->error == SOAP_NO_TAG)
+				break;
+			if (soap->error)
+				return NULL;
+		}
+	return a;
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_put___icd2__GetMacIdd(struct soap *soap, const struct __icd2__GetMacIdd *a, const char *tag, const char *type)
+{
+	register int id = 0;
+	if (soap_out___icd2__GetMacIdd(soap, tag?tag:"-icd2:GetMacIdd", id, a, type))
+		return soap->error;
+	return SOAP_OK;
+}
+
+SOAP_FMAC3 struct __icd2__GetMacIdd * SOAP_FMAC4 soap_get___icd2__GetMacIdd(struct soap *soap, struct __icd2__GetMacIdd *p, const char *tag, const char *type)
+{
+	if ((p = soap_in___icd2__GetMacIdd(soap, tag, p, type)))
+		if (soap_getindependent(soap))
+			return NULL;
+	return p;
+}
+
+SOAP_FMAC1 struct __icd2__GetMacIdd * SOAP_FMAC2 soap_instantiate___icd2__GetMacIdd(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+{
+	(void)type; (void)arrayType; /* appease -Wall -Werror */
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate___icd2__GetMacIdd(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE___icd2__GetMacIdd, n, _fdelete);
+	if (!cp)
+		return NULL;
+	if (n < 0)
+	{	cp->ptr = (void*)SOAP_NEW(struct __icd2__GetMacIdd);
+		if (size)
+			*size = sizeof(struct __icd2__GetMacIdd);
+	}
+	else
+	{	cp->ptr = (void*)SOAP_NEW(struct __icd2__GetMacIdd[n]);
+		if (!cp->ptr)
+		{	soap->error = SOAP_EOM;
+			return NULL;
+		}
+		if (size)
+			*size = n * sizeof(struct __icd2__GetMacIdd);
+	}
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
+	return (struct __icd2__GetMacIdd*)cp->ptr;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd2__GetMacIdd(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+{
+	(void)soap; (void)tt; (void)st; (void)len; (void)n; /* appease -Wall -Werror */
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct __icd2__GetMacIdd %p -> %p\n", q, p));
+	*(struct __icd2__GetMacIdd*)p = *(struct __icd2__GetMacIdd*)q;
 }
 
 SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd2__GetDeviceUpdateInfo(struct soap *soap, struct __icd2__GetDeviceUpdateInfo *a)
@@ -5424,6 +6152,116 @@ SOAP_FMAC3 struct SOAP_ENV__Code ** SOAP_FMAC4 soap_get_PointerToSOAP_ENV__Code(
 
 #endif
 
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__GetMacIddResponse(struct soap *soap, _icd1__GetMacIddResponse *const*a)
+{
+	if (!soap_reference(soap, *a, SOAP_TYPE__icd1__GetMacIddResponse))
+		(*a)->soap_serialize(soap);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_icd1__GetMacIddResponse(struct soap *soap, const char *tag, int id, _icd1__GetMacIddResponse *const*a, const char *type)
+{
+	id = soap_element_id(soap, tag, id, *a, NULL, 0, type, SOAP_TYPE__icd1__GetMacIddResponse);
+	if (id < 0)
+		return soap->error;
+	return (*a)->soap_out(soap, tag, id, type);
+}
+
+SOAP_FMAC3 _icd1__GetMacIddResponse ** SOAP_FMAC4 soap_in_PointerTo_icd1__GetMacIddResponse(struct soap *soap, const char *tag, _icd1__GetMacIddResponse **a, const char *type)
+{
+	if (soap_element_begin_in(soap, tag, 1, NULL))
+		return NULL;
+	if (!a)
+		if (!(a = (_icd1__GetMacIddResponse **)soap_malloc(soap, sizeof(_icd1__GetMacIddResponse *))))
+			return NULL;
+	*a = NULL;
+	if (!soap->null && *soap->href != '#')
+	{	soap_revert(soap);
+		if (!(*a = (_icd1__GetMacIddResponse *)soap_instantiate__icd1__GetMacIddResponse(soap, -1, soap->type, soap->arrayType, NULL)))
+			return NULL;
+		(*a)->soap_default(soap);
+		if (!(*a)->soap_in(soap, tag, NULL))
+			return NULL;
+	}
+	else
+	{	_icd1__GetMacIddResponse ** p = (_icd1__GetMacIddResponse **)soap_id_lookup(soap, soap->href, (void**)a, SOAP_TYPE__icd1__GetMacIddResponse, sizeof(_icd1__GetMacIddResponse), 0);
+		a = p;
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	return a;
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__GetMacIddResponse(struct soap *soap, _icd1__GetMacIddResponse *const*a, const char *tag, const char *type)
+{
+	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_PointerTo_icd1__GetMacIddResponse);
+	if (soap_out_PointerTo_icd1__GetMacIddResponse(soap, tag?tag:"icd1:GetMacIddResponse", id, a, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+SOAP_FMAC3 _icd1__GetMacIddResponse ** SOAP_FMAC4 soap_get_PointerTo_icd1__GetMacIddResponse(struct soap *soap, _icd1__GetMacIddResponse **p, const char *tag, const char *type)
+{
+	if ((p = soap_in_PointerTo_icd1__GetMacIddResponse(soap, tag, p, type)))
+		if (soap_getindependent(soap))
+			return NULL;
+	return p;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__GetMacIdd(struct soap *soap, _icd1__GetMacIdd *const*a)
+{
+	if (!soap_reference(soap, *a, SOAP_TYPE__icd1__GetMacIdd))
+		(*a)->soap_serialize(soap);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_icd1__GetMacIdd(struct soap *soap, const char *tag, int id, _icd1__GetMacIdd *const*a, const char *type)
+{
+	id = soap_element_id(soap, tag, id, *a, NULL, 0, type, SOAP_TYPE__icd1__GetMacIdd);
+	if (id < 0)
+		return soap->error;
+	return (*a)->soap_out(soap, tag, id, type);
+}
+
+SOAP_FMAC3 _icd1__GetMacIdd ** SOAP_FMAC4 soap_in_PointerTo_icd1__GetMacIdd(struct soap *soap, const char *tag, _icd1__GetMacIdd **a, const char *type)
+{
+	if (soap_element_begin_in(soap, tag, 1, NULL))
+		return NULL;
+	if (!a)
+		if (!(a = (_icd1__GetMacIdd **)soap_malloc(soap, sizeof(_icd1__GetMacIdd *))))
+			return NULL;
+	*a = NULL;
+	if (!soap->null && *soap->href != '#')
+	{	soap_revert(soap);
+		if (!(*a = (_icd1__GetMacIdd *)soap_instantiate__icd1__GetMacIdd(soap, -1, soap->type, soap->arrayType, NULL)))
+			return NULL;
+		(*a)->soap_default(soap);
+		if (!(*a)->soap_in(soap, tag, NULL))
+			return NULL;
+	}
+	else
+	{	_icd1__GetMacIdd ** p = (_icd1__GetMacIdd **)soap_id_lookup(soap, soap->href, (void**)a, SOAP_TYPE__icd1__GetMacIdd, sizeof(_icd1__GetMacIdd), 0);
+		a = p;
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	return a;
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__GetMacIdd(struct soap *soap, _icd1__GetMacIdd *const*a, const char *tag, const char *type)
+{
+	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_PointerTo_icd1__GetMacIdd);
+	if (soap_out_PointerTo_icd1__GetMacIdd(soap, tag?tag:"icd1:GetMacIdd", id, a, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+SOAP_FMAC3 _icd1__GetMacIdd ** SOAP_FMAC4 soap_get_PointerTo_icd1__GetMacIdd(struct soap *soap, _icd1__GetMacIdd **p, const char *tag, const char *type)
+{
+	if ((p = soap_in_PointerTo_icd1__GetMacIdd(soap, tag, p, type)))
+		if (soap_getindependent(soap))
+			return NULL;
+	return p;
+}
+
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__GetDeviceUpdateInfoResponse(struct soap *soap, _icd1__GetDeviceUpdateInfoResponse *const*a)
 {
 	if (!soap_reference(soap, *a, SOAP_TYPE__icd1__GetDeviceUpdateInfoResponse))
@@ -6189,6 +7027,61 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__GetTime(struct soap *soap, _i
 SOAP_FMAC3 _icd1__GetTime ** SOAP_FMAC4 soap_get_PointerTo_icd1__GetTime(struct soap *soap, _icd1__GetTime **p, const char *tag, const char *type)
 {
 	if ((p = soap_in_PointerTo_icd1__GetTime(soap, tag, p, type)))
+		if (soap_getindependent(soap))
+			return NULL;
+	return p;
+}
+
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerToicd1__GetMacIddPack(struct soap *soap, icd1__GetMacIddPack *const*a)
+{
+	if (!soap_reference(soap, *a, SOAP_TYPE_icd1__GetMacIddPack))
+		(*a)->soap_serialize(soap);
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerToicd1__GetMacIddPack(struct soap *soap, const char *tag, int id, icd1__GetMacIddPack *const*a, const char *type)
+{
+	id = soap_element_id(soap, tag, id, *a, NULL, 0, type, SOAP_TYPE_icd1__GetMacIddPack);
+	if (id < 0)
+		return soap->error;
+	return (*a)->soap_out(soap, tag, id, type);
+}
+
+SOAP_FMAC3 icd1__GetMacIddPack ** SOAP_FMAC4 soap_in_PointerToicd1__GetMacIddPack(struct soap *soap, const char *tag, icd1__GetMacIddPack **a, const char *type)
+{
+	if (soap_element_begin_in(soap, tag, 1, NULL))
+		return NULL;
+	if (!a)
+		if (!(a = (icd1__GetMacIddPack **)soap_malloc(soap, sizeof(icd1__GetMacIddPack *))))
+			return NULL;
+	*a = NULL;
+	if (!soap->null && *soap->href != '#')
+	{	soap_revert(soap);
+		if (!(*a = (icd1__GetMacIddPack *)soap_instantiate_icd1__GetMacIddPack(soap, -1, soap->type, soap->arrayType, NULL)))
+			return NULL;
+		(*a)->soap_default(soap);
+		if (!(*a)->soap_in(soap, tag, NULL))
+			return NULL;
+	}
+	else
+	{	icd1__GetMacIddPack ** p = (icd1__GetMacIddPack **)soap_id_lookup(soap, soap->href, (void**)a, SOAP_TYPE_icd1__GetMacIddPack, sizeof(icd1__GetMacIddPack), 0);
+		a = p;
+		if (soap->body && soap_element_end_in(soap, tag))
+			return NULL;
+	}
+	return a;
+}
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerToicd1__GetMacIddPack(struct soap *soap, icd1__GetMacIddPack *const*a, const char *tag, const char *type)
+{
+	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_PointerToicd1__GetMacIddPack);
+	if (soap_out_PointerToicd1__GetMacIddPack(soap, tag?tag:"icd1:GetMacIddPack", id, a, type))
+		return soap->error;
+	return soap_putindependent(soap);
+}
+
+SOAP_FMAC3 icd1__GetMacIddPack ** SOAP_FMAC4 soap_get_PointerToicd1__GetMacIddPack(struct soap *soap, icd1__GetMacIddPack **p, const char *tag, const char *type)
+{
+	if ((p = soap_in_PointerToicd1__GetMacIddPack(soap, tag, p, type)))
 		if (soap_getindependent(soap))
 			return NULL;
 	return p;
