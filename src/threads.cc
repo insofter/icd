@@ -24,6 +24,11 @@ namespace icd
     return time(c / 1000000, c % 1000000);
   }
 
+  time::operator float() const
+  {
+    return float(sec_) + float(usec_) / 1000000.0;
+  }
+
   std::ostream& operator <<(std::ostream &os,const time &ref)
   {
     char s[32];
@@ -39,6 +44,19 @@ namespace icd
     long usec = ref1.usec_ + ref2.usec_;
     long sec = ref1.sec_ + ref2.sec_ + usec / 1000000;
     usec = usec % 1000000;
+    return time(sec, usec);
+  }
+
+  time operator-(const time &ref1, const time &ref2)
+  {
+    long usec = ref1.usec_ - ref2.usec_;
+    long sec = ref1.sec_ - ref2.sec_;
+    if (usec < 0)
+    {
+      usec += 1000000;
+      sec -= 1;
+    }
+
     return time(sec, usec);
   }
 

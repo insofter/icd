@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include <pthread.h>
 
 #ifndef __THREADS_H__
@@ -27,9 +29,12 @@ namespace icd
       long sec() const { return sec_; }
       long usec() const { return usec_; }
 
+      operator float() const;
+
       friend std::ostream& operator <<(std::ostream &os, const time &ref);
 
       friend time operator+(const time &ref1, const time &ref2);
+      friend time operator-(const time &ref1, const time &ref2);
 
       friend bool operator== (const time &ref1, const time &ref2);
       friend bool operator!= (const time &ref1, const time &ref2);
