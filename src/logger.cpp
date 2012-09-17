@@ -164,10 +164,18 @@ void Clog::errServerAns( int percent, const std::string & servAns,
 
 void Clog::done( int warn ) {
   
+
   std::ostringstream ss;
 
   if( warn == 0 ) {
-    ss << "++OK Transfer OK";
+    char buf[21];
+    time_t rawtime;
+    struct tm * timeinfo;
+    time( &rawtime );
+    timeinfo = localtime ( &rawtime );
+    strftime(buf,20,"++OK %m.%d-%H:%M",timeinfo);
+    buf[16]=0;       
+    ss << buf; 
   } else {
     ss << "++WARNINGS: " << warn;
   }
