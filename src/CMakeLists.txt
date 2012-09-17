@@ -63,6 +63,9 @@ target_link_libraries(icd-transfer-data
   gsoap_stdsoap2 logger db-config)
 #roxml
 
+add_executable(icd-cron icd-cron.cpp)
+target_link_libraries(icd-cron
+  sqlite3 version db-config daemonizer)
 
 
 
