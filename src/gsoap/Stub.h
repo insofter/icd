@@ -55,9 +55,10 @@ class SOAP_CMAC icd1__UpdatePack
 public:
 	std::string *Link;	/* optional element of type xsd:string */
 	std::string *md5;	/* optional element of type xsd:string */
-	int FileSize;	/* required element of type xsd:int */
+	LONG64 FileSize;	/* required element of type xsd:long */
 	std::string *UpdateForce;	/* optional element of type xsd:string */
 	std::string *NewVersion;	/* optional element of type xsd:string */
+	std::string *Message;	/* optional element of type xsd:string */
 	struct soap *soap;	/* transient */
 public:
 	virtual int soap_type() const { return 8; } /* = unique id SOAP_TYPE_icd1__UpdatePack */
@@ -310,44 +311,44 @@ public:
 };
 #endif
 
-#ifndef SOAP_TYPE__icd1__TestSession
-#define SOAP_TYPE__icd1__TestSession (20)
-/* icd1:TestSession */
-class SOAP_CMAC _icd1__TestSession
+#ifndef SOAP_TYPE__icd1__GetServiceInfo
+#define SOAP_TYPE__icd1__GetServiceInfo (20)
+/* icd1:GetServiceInfo */
+class SOAP_CMAC _icd1__GetServiceInfo
 {
 public:
 	struct soap *soap;	/* transient */
 public:
-	virtual int soap_type() const { return 20; } /* = unique id SOAP_TYPE__icd1__TestSession */
+	virtual int soap_type() const { return 20; } /* = unique id SOAP_TYPE__icd1__GetServiceInfo */
 	virtual void soap_default(struct soap*);
 	virtual void soap_serialize(struct soap*) const;
 	virtual int soap_put(struct soap*, const char*, const char*) const;
 	virtual int soap_out(struct soap*, const char*, int, const char*) const;
 	virtual void *soap_get(struct soap*, const char*, const char*);
 	virtual void *soap_in(struct soap*, const char*, const char*);
-	         _icd1__TestSession() { _icd1__TestSession::soap_default(NULL); }
-	virtual ~_icd1__TestSession() { }
+	         _icd1__GetServiceInfo() { _icd1__GetServiceInfo::soap_default(NULL); }
+	virtual ~_icd1__GetServiceInfo() { }
 };
 #endif
 
-#ifndef SOAP_TYPE__icd1__TestSessionResponse
-#define SOAP_TYPE__icd1__TestSessionResponse (21)
-/* icd1:TestSessionResponse */
-class SOAP_CMAC _icd1__TestSessionResponse
+#ifndef SOAP_TYPE__icd1__GetServiceInfoResponse
+#define SOAP_TYPE__icd1__GetServiceInfoResponse (21)
+/* icd1:GetServiceInfoResponse */
+class SOAP_CMAC _icd1__GetServiceInfoResponse
 {
 public:
-	int TestSessionResult;	/* SOAP 1.2 RPC return element (when namespace qualified) */	/* required element of type xsd:int */
+	std::string *GetServiceInfoResult;	/* SOAP 1.2 RPC return element (when namespace qualified) */	/* optional element of type xsd:string */
 	struct soap *soap;	/* transient */
 public:
-	virtual int soap_type() const { return 21; } /* = unique id SOAP_TYPE__icd1__TestSessionResponse */
+	virtual int soap_type() const { return 21; } /* = unique id SOAP_TYPE__icd1__GetServiceInfoResponse */
 	virtual void soap_default(struct soap*);
 	virtual void soap_serialize(struct soap*) const;
 	virtual int soap_put(struct soap*, const char*, const char*) const;
 	virtual int soap_out(struct soap*, const char*, int, const char*) const;
 	virtual void *soap_get(struct soap*, const char*, const char*);
 	virtual void *soap_in(struct soap*, const char*, const char*);
-	         _icd1__TestSessionResponse() { _icd1__TestSessionResponse::soap_default(NULL); }
-	virtual ~_icd1__TestSessionResponse() { }
+	         _icd1__GetServiceInfoResponse() { _icd1__GetServiceInfoResponse::soap_default(NULL); }
+	virtual ~_icd1__GetServiceInfoResponse() { }
 };
 #endif
 
@@ -437,7 +438,7 @@ public:
 #endif
 
 #ifndef SOAP_TYPE___icd2__GetTime
-#define SOAP_TYPE___icd2__GetTime (34)
+#define SOAP_TYPE___icd2__GetTime (35)
 /* Operation wrapper: */
 struct __icd2__GetTime
 {
@@ -447,7 +448,7 @@ public:
 #endif
 
 #ifndef SOAP_TYPE___icd2__LoginDevice
-#define SOAP_TYPE___icd2__LoginDevice (38)
+#define SOAP_TYPE___icd2__LoginDevice (39)
 /* Operation wrapper: */
 struct __icd2__LoginDevice
 {
@@ -457,7 +458,7 @@ public:
 #endif
 
 #ifndef SOAP_TYPE___icd2__SendData
-#define SOAP_TYPE___icd2__SendData (42)
+#define SOAP_TYPE___icd2__SendData (43)
 /* Operation wrapper: */
 struct __icd2__SendData
 {
@@ -467,7 +468,7 @@ public:
 #endif
 
 #ifndef SOAP_TYPE___icd2__SendData3
-#define SOAP_TYPE___icd2__SendData3 (46)
+#define SOAP_TYPE___icd2__SendData3 (47)
 /* Operation wrapper: */
 struct __icd2__SendData3
 {
@@ -477,7 +478,7 @@ public:
 #endif
 
 #ifndef SOAP_TYPE___icd2__LogoutDevice
-#define SOAP_TYPE___icd2__LogoutDevice (50)
+#define SOAP_TYPE___icd2__LogoutDevice (51)
 /* Operation wrapper: */
 struct __icd2__LogoutDevice
 {
@@ -486,18 +487,18 @@ public:
 };
 #endif
 
-#ifndef SOAP_TYPE___icd2__TestSession
-#define SOAP_TYPE___icd2__TestSession (54)
+#ifndef SOAP_TYPE___icd2__GetServiceInfo
+#define SOAP_TYPE___icd2__GetServiceInfo (55)
 /* Operation wrapper: */
-struct __icd2__TestSession
+struct __icd2__GetServiceInfo
 {
 public:
-	_icd1__TestSession *icd1__TestSession;	/* optional element of type icd1:TestSession */
+	_icd1__GetServiceInfo *icd1__GetServiceInfo;	/* optional element of type icd1:GetServiceInfo */
 };
 #endif
 
 #ifndef SOAP_TYPE___icd2__GetDeviceUpdateInfo
-#define SOAP_TYPE___icd2__GetDeviceUpdateInfo (58)
+#define SOAP_TYPE___icd2__GetDeviceUpdateInfo (59)
 /* Operation wrapper: */
 struct __icd2__GetDeviceUpdateInfo
 {
@@ -507,7 +508,7 @@ public:
 #endif
 
 #ifndef SOAP_TYPE___icd2__GetMacIdd
-#define SOAP_TYPE___icd2__GetMacIdd (62)
+#define SOAP_TYPE___icd2__GetMacIdd (63)
 /* Operation wrapper: */
 struct __icd2__GetMacIdd
 {
@@ -517,7 +518,7 @@ public:
 #endif
 
 #ifndef SOAP_TYPE___icd3__GetTime
-#define SOAP_TYPE___icd3__GetTime (64)
+#define SOAP_TYPE___icd3__GetTime (65)
 /* Operation wrapper: */
 struct __icd3__GetTime
 {
@@ -527,7 +528,7 @@ public:
 #endif
 
 #ifndef SOAP_TYPE___icd3__LoginDevice
-#define SOAP_TYPE___icd3__LoginDevice (66)
+#define SOAP_TYPE___icd3__LoginDevice (67)
 /* Operation wrapper: */
 struct __icd3__LoginDevice
 {
@@ -537,7 +538,7 @@ public:
 #endif
 
 #ifndef SOAP_TYPE___icd3__SendData
-#define SOAP_TYPE___icd3__SendData (68)
+#define SOAP_TYPE___icd3__SendData (69)
 /* Operation wrapper: */
 struct __icd3__SendData
 {
@@ -547,7 +548,7 @@ public:
 #endif
 
 #ifndef SOAP_TYPE___icd3__SendData3
-#define SOAP_TYPE___icd3__SendData3 (70)
+#define SOAP_TYPE___icd3__SendData3 (71)
 /* Operation wrapper: */
 struct __icd3__SendData3
 {
@@ -557,7 +558,7 @@ public:
 #endif
 
 #ifndef SOAP_TYPE___icd3__LogoutDevice
-#define SOAP_TYPE___icd3__LogoutDevice (72)
+#define SOAP_TYPE___icd3__LogoutDevice (73)
 /* Operation wrapper: */
 struct __icd3__LogoutDevice
 {
@@ -566,18 +567,18 @@ public:
 };
 #endif
 
-#ifndef SOAP_TYPE___icd3__TestSession
-#define SOAP_TYPE___icd3__TestSession (74)
+#ifndef SOAP_TYPE___icd3__GetServiceInfo
+#define SOAP_TYPE___icd3__GetServiceInfo (75)
 /* Operation wrapper: */
-struct __icd3__TestSession
+struct __icd3__GetServiceInfo
 {
 public:
-	_icd1__TestSession *icd1__TestSession;	/* optional element of type icd1:TestSession */
+	_icd1__GetServiceInfo *icd1__GetServiceInfo;	/* optional element of type icd1:GetServiceInfo */
 };
 #endif
 
 #ifndef SOAP_TYPE___icd3__GetDeviceUpdateInfo
-#define SOAP_TYPE___icd3__GetDeviceUpdateInfo (76)
+#define SOAP_TYPE___icd3__GetDeviceUpdateInfo (77)
 /* Operation wrapper: */
 struct __icd3__GetDeviceUpdateInfo
 {
@@ -587,7 +588,7 @@ public:
 #endif
 
 #ifndef SOAP_TYPE___icd3__GetMacIdd
-#define SOAP_TYPE___icd3__GetMacIdd (78)
+#define SOAP_TYPE___icd3__GetMacIdd (79)
 /* Operation wrapper: */
 struct __icd3__GetMacIdd
 {
@@ -599,7 +600,7 @@ public:
 #ifndef WITH_NOGLOBAL
 
 #ifndef SOAP_TYPE_SOAP_ENV__Header
-#define SOAP_TYPE_SOAP_ENV__Header (79)
+#define SOAP_TYPE_SOAP_ENV__Header (80)
 /* SOAP Header: */
 struct SOAP_ENV__Header
 {
@@ -615,7 +616,7 @@ private:
 #ifndef WITH_NOGLOBAL
 
 #ifndef SOAP_TYPE_SOAP_ENV__Code
-#define SOAP_TYPE_SOAP_ENV__Code (80)
+#define SOAP_TYPE_SOAP_ENV__Code (81)
 /* SOAP Fault Code: */
 struct SOAP_ENV__Code
 {
@@ -630,7 +631,7 @@ public:
 #ifndef WITH_NOGLOBAL
 
 #ifndef SOAP_TYPE_SOAP_ENV__Detail
-#define SOAP_TYPE_SOAP_ENV__Detail (82)
+#define SOAP_TYPE_SOAP_ENV__Detail (83)
 /* SOAP-ENV:Detail */
 struct SOAP_ENV__Detail
 {
@@ -646,7 +647,7 @@ public:
 #ifndef WITH_NOGLOBAL
 
 #ifndef SOAP_TYPE_SOAP_ENV__Reason
-#define SOAP_TYPE_SOAP_ENV__Reason (85)
+#define SOAP_TYPE_SOAP_ENV__Reason (86)
 /* SOAP-ENV:Reason */
 struct SOAP_ENV__Reason
 {
@@ -660,7 +661,7 @@ public:
 #ifndef WITH_NOGLOBAL
 
 #ifndef SOAP_TYPE_SOAP_ENV__Fault
-#define SOAP_TYPE_SOAP_ENV__Fault (86)
+#define SOAP_TYPE_SOAP_ENV__Fault (87)
 /* SOAP Fault: */
 struct SOAP_ENV__Fault
 {

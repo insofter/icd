@@ -71,13 +71,13 @@
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:element name="TestSession">
+      <s:element name="GetServiceInfo">
         <s:complexType />
       </s:element>
-      <s:element name="TestSessionResponse">
+      <s:element name="GetServiceInfoResponse">
         <s:complexType>
           <s:sequence>
-            <s:element minOccurs="1" maxOccurs="1" name="TestSessionResult" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="GetServiceInfoResult" type="s:string" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -100,9 +100,10 @@
         <s:sequence>
           <s:element minOccurs="0" maxOccurs="1" name="Link" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="md5" type="s:string" />
-          <s:element minOccurs="1" maxOccurs="1" name="FileSize" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="FileSize" type="s:long" />
           <s:element minOccurs="0" maxOccurs="1" name="UpdateForce" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="NewVersion" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
         </s:sequence>
       </s:complexType>
       <s:element name="GetMacIdd">
@@ -155,11 +156,11 @@
   <wsdl:message name="LogoutDeviceSoapOut">
     <wsdl:part name="parameters" element="tns:LogoutDeviceResponse" />
   </wsdl:message>
-  <wsdl:message name="TestSessionSoapIn">
-    <wsdl:part name="parameters" element="tns:TestSession" />
+  <wsdl:message name="GetServiceInfoSoapIn">
+    <wsdl:part name="parameters" element="tns:GetServiceInfo" />
   </wsdl:message>
-  <wsdl:message name="TestSessionSoapOut">
-    <wsdl:part name="parameters" element="tns:TestSessionResponse" />
+  <wsdl:message name="GetServiceInfoSoapOut">
+    <wsdl:part name="parameters" element="tns:GetServiceInfoResponse" />
   </wsdl:message>
   <wsdl:message name="GetDeviceUpdateInfoSoapIn">
     <wsdl:part name="parameters" element="tns:GetDeviceUpdateInfo" />
@@ -194,9 +195,9 @@
       <wsdl:input message="tns:LogoutDeviceSoapIn" />
       <wsdl:output message="tns:LogoutDeviceSoapOut" />
     </wsdl:operation>
-    <wsdl:operation name="TestSession">
-      <wsdl:input message="tns:TestSessionSoapIn" />
-      <wsdl:output message="tns:TestSessionSoapOut" />
+    <wsdl:operation name="GetServiceInfo">
+      <wsdl:input message="tns:GetServiceInfoSoapIn" />
+      <wsdl:output message="tns:GetServiceInfoSoapOut" />
     </wsdl:operation>
     <wsdl:operation name="GetDeviceUpdateInfo">
       <wsdl:input message="tns:GetDeviceUpdateInfoSoapIn" />
@@ -254,8 +255,8 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="TestSession">
-      <soap:operation soapAction="http://insofter.pl/webservices/TestSession" style="document" />
+    <wsdl:operation name="GetServiceInfo">
+      <soap:operation soapAction="http://insofter.pl/webservices/GetServiceInfo" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -329,8 +330,8 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="TestSession">
-      <soap12:operation soapAction="http://insofter.pl/webservices/TestSession" style="document" />
+    <wsdl:operation name="GetServiceInfo">
+      <soap12:operation soapAction="http://insofter.pl/webservices/GetServiceInfo" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>

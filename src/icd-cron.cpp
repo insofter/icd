@@ -104,7 +104,8 @@ int main( int argc, char *argv[] ) {
       exit(1);
     }
     if (run_as_daemon && daemon.fork() ) {
-      exit(1);
+      std::cerr << "Forking to background..." << std::endl;
+      exit(0);
     }
 //parametry uruchomienia -- koniec
 
@@ -120,6 +121,7 @@ int main( int argc, char *argv[] ) {
 
     system( cmd.c_str() );
     system( "date" );
+    system( "date >> /tmp/last" );
 
     db.open( s.c_str() );
     db.busy_timeout(db_timeout);

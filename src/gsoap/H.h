@@ -76,6 +76,26 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_put_int(struct soap*, const int *, const char*, c
 
 SOAP_FMAC3 int * SOAP_FMAC4 soap_get_int(struct soap*, int *, const char*, const char*);
 
+#ifndef SOAP_TYPE_LONG64
+#define SOAP_TYPE_LONG64 (28)
+#endif
+SOAP_FMAC3 void SOAP_FMAC4 soap_default_LONG64(struct soap*, LONG64 *);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_LONG64(struct soap*, const char*, int, const LONG64 *, const char*);
+SOAP_FMAC3 LONG64 * SOAP_FMAC4 soap_in_LONG64(struct soap*, const char*, LONG64 *, const char*);
+
+#ifndef soap_write_LONG64
+#define soap_write_LONG64(soap, data) ( soap_begin_send(soap) || soap_put_LONG64(soap, data, "long", NULL) || soap_end_send(soap) )
+#endif
+
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_LONG64(struct soap*, const LONG64 *, const char*, const char*);
+
+#ifndef soap_read_LONG64
+#define soap_read_LONG64(soap, data) ( soap_begin_recv(soap) || !soap_get_LONG64(soap, data, NULL, NULL) || soap_end_recv(soap) )
+#endif
+
+SOAP_FMAC3 LONG64 * SOAP_FMAC4 soap_get_LONG64(struct soap*, LONG64 *, const char*, const char*);
+
 #ifndef SOAP_TYPE_std__string
 #define SOAP_TYPE_std__string (26)
 #endif
@@ -209,57 +229,57 @@ SOAP_FMAC3 _icd1__GetDeviceUpdateInfo * SOAP_FMAC4 soap_get__icd1__GetDeviceUpda
 SOAP_FMAC1 _icd1__GetDeviceUpdateInfo * SOAP_FMAC2 soap_instantiate__icd1__GetDeviceUpdateInfo(struct soap*, int, const char*, const char*, size_t*);
 SOAP_FMAC3 void SOAP_FMAC4 soap_copy__icd1__GetDeviceUpdateInfo(struct soap*, int, int, void*, size_t, const void*, size_t);
 
-#ifndef SOAP_TYPE__icd1__TestSessionResponse
-#define SOAP_TYPE__icd1__TestSessionResponse (21)
+#ifndef SOAP_TYPE__icd1__GetServiceInfoResponse
+#define SOAP_TYPE__icd1__GetServiceInfoResponse (21)
 #endif
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_out__icd1__TestSessionResponse(struct soap*, const char*, int, const _icd1__TestSessionResponse *, const char*);
-SOAP_FMAC3 _icd1__TestSessionResponse * SOAP_FMAC4 soap_in__icd1__TestSessionResponse(struct soap*, const char*, _icd1__TestSessionResponse *, const char*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out__icd1__GetServiceInfoResponse(struct soap*, const char*, int, const _icd1__GetServiceInfoResponse *, const char*);
+SOAP_FMAC3 _icd1__GetServiceInfoResponse * SOAP_FMAC4 soap_in__icd1__GetServiceInfoResponse(struct soap*, const char*, _icd1__GetServiceInfoResponse *, const char*);
 
-#ifndef soap_write__icd1__TestSessionResponse
-#define soap_write__icd1__TestSessionResponse(soap, data) ( soap_begin_send(soap) || ((data)->soap_serialize(soap), 0) || (data)->soap_put(soap, "icd1:TestSessionResponse", NULL) || soap_end_send(soap) )
-#endif
-
-
-#ifndef soap_read__icd1__TestSessionResponse
-#define soap_read__icd1__TestSessionResponse(soap, data) ( soap_begin_recv(soap) || !soap_get__icd1__TestSessionResponse(soap, data, NULL, NULL) || soap_end_recv(soap) )
-#endif
-
-SOAP_FMAC3 _icd1__TestSessionResponse * SOAP_FMAC4 soap_get__icd1__TestSessionResponse(struct soap*, _icd1__TestSessionResponse *, const char*, const char*);
-
-#define soap_new__icd1__TestSessionResponse(soap, n) soap_instantiate__icd1__TestSessionResponse(soap, n, NULL, NULL, NULL)
-
-
-#define soap_delete__icd1__TestSessionResponse(soap, p) soap_delete(soap, p)
-
-SOAP_FMAC1 _icd1__TestSessionResponse * SOAP_FMAC2 soap_instantiate__icd1__TestSessionResponse(struct soap*, int, const char*, const char*, size_t*);
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy__icd1__TestSessionResponse(struct soap*, int, int, void*, size_t, const void*, size_t);
-
-#ifndef SOAP_TYPE__icd1__TestSession
-#define SOAP_TYPE__icd1__TestSession (20)
-#endif
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_out__icd1__TestSession(struct soap*, const char*, int, const _icd1__TestSession *, const char*);
-SOAP_FMAC3 _icd1__TestSession * SOAP_FMAC4 soap_in__icd1__TestSession(struct soap*, const char*, _icd1__TestSession *, const char*);
-
-#ifndef soap_write__icd1__TestSession
-#define soap_write__icd1__TestSession(soap, data) ( soap_begin_send(soap) || ((data)->soap_serialize(soap), 0) || (data)->soap_put(soap, "icd1:TestSession", NULL) || soap_end_send(soap) )
+#ifndef soap_write__icd1__GetServiceInfoResponse
+#define soap_write__icd1__GetServiceInfoResponse(soap, data) ( soap_begin_send(soap) || ((data)->soap_serialize(soap), 0) || (data)->soap_put(soap, "icd1:GetServiceInfoResponse", NULL) || soap_end_send(soap) )
 #endif
 
 
-#ifndef soap_read__icd1__TestSession
-#define soap_read__icd1__TestSession(soap, data) ( soap_begin_recv(soap) || !soap_get__icd1__TestSession(soap, data, NULL, NULL) || soap_end_recv(soap) )
+#ifndef soap_read__icd1__GetServiceInfoResponse
+#define soap_read__icd1__GetServiceInfoResponse(soap, data) ( soap_begin_recv(soap) || !soap_get__icd1__GetServiceInfoResponse(soap, data, NULL, NULL) || soap_end_recv(soap) )
 #endif
 
-SOAP_FMAC3 _icd1__TestSession * SOAP_FMAC4 soap_get__icd1__TestSession(struct soap*, _icd1__TestSession *, const char*, const char*);
+SOAP_FMAC3 _icd1__GetServiceInfoResponse * SOAP_FMAC4 soap_get__icd1__GetServiceInfoResponse(struct soap*, _icd1__GetServiceInfoResponse *, const char*, const char*);
 
-#define soap_new__icd1__TestSession(soap, n) soap_instantiate__icd1__TestSession(soap, n, NULL, NULL, NULL)
+#define soap_new__icd1__GetServiceInfoResponse(soap, n) soap_instantiate__icd1__GetServiceInfoResponse(soap, n, NULL, NULL, NULL)
 
 
-#define soap_delete__icd1__TestSession(soap, p) soap_delete(soap, p)
+#define soap_delete__icd1__GetServiceInfoResponse(soap, p) soap_delete(soap, p)
 
-SOAP_FMAC1 _icd1__TestSession * SOAP_FMAC2 soap_instantiate__icd1__TestSession(struct soap*, int, const char*, const char*, size_t*);
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy__icd1__TestSession(struct soap*, int, int, void*, size_t, const void*, size_t);
+SOAP_FMAC1 _icd1__GetServiceInfoResponse * SOAP_FMAC2 soap_instantiate__icd1__GetServiceInfoResponse(struct soap*, int, const char*, const char*, size_t*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy__icd1__GetServiceInfoResponse(struct soap*, int, int, void*, size_t, const void*, size_t);
+
+#ifndef SOAP_TYPE__icd1__GetServiceInfo
+#define SOAP_TYPE__icd1__GetServiceInfo (20)
+#endif
+
+SOAP_FMAC3 int SOAP_FMAC4 soap_out__icd1__GetServiceInfo(struct soap*, const char*, int, const _icd1__GetServiceInfo *, const char*);
+SOAP_FMAC3 _icd1__GetServiceInfo * SOAP_FMAC4 soap_in__icd1__GetServiceInfo(struct soap*, const char*, _icd1__GetServiceInfo *, const char*);
+
+#ifndef soap_write__icd1__GetServiceInfo
+#define soap_write__icd1__GetServiceInfo(soap, data) ( soap_begin_send(soap) || ((data)->soap_serialize(soap), 0) || (data)->soap_put(soap, "icd1:GetServiceInfo", NULL) || soap_end_send(soap) )
+#endif
+
+
+#ifndef soap_read__icd1__GetServiceInfo
+#define soap_read__icd1__GetServiceInfo(soap, data) ( soap_begin_recv(soap) || !soap_get__icd1__GetServiceInfo(soap, data, NULL, NULL) || soap_end_recv(soap) )
+#endif
+
+SOAP_FMAC3 _icd1__GetServiceInfo * SOAP_FMAC4 soap_get__icd1__GetServiceInfo(struct soap*, _icd1__GetServiceInfo *, const char*, const char*);
+
+#define soap_new__icd1__GetServiceInfo(soap, n) soap_instantiate__icd1__GetServiceInfo(soap, n, NULL, NULL, NULL)
+
+
+#define soap_delete__icd1__GetServiceInfo(soap, p) soap_delete(soap, p)
+
+SOAP_FMAC1 _icd1__GetServiceInfo * SOAP_FMAC2 soap_instantiate__icd1__GetServiceInfo(struct soap*, int, const char*, const char*, size_t*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy__icd1__GetServiceInfo(struct soap*, int, int, void*, size_t, const void*, size_t);
 
 #ifndef SOAP_TYPE__icd1__LogoutDeviceResponse
 #define SOAP_TYPE__icd1__LogoutDeviceResponse (19)
@@ -576,7 +596,7 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy_icd1__UpdatePack(struct soap*, int, int, vo
 #ifndef WITH_NOGLOBAL
 
 #ifndef SOAP_TYPE_SOAP_ENV__Fault
-#define SOAP_TYPE_SOAP_ENV__Fault (86)
+#define SOAP_TYPE_SOAP_ENV__Fault (87)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_default_SOAP_ENV__Fault(struct soap*, struct SOAP_ENV__Fault *);
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_SOAP_ENV__Fault(struct soap*, const struct SOAP_ENV__Fault *);
@@ -609,7 +629,7 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy_SOAP_ENV__Fault(struct soap*, int, int, voi
 #ifndef WITH_NOGLOBAL
 
 #ifndef SOAP_TYPE_SOAP_ENV__Reason
-#define SOAP_TYPE_SOAP_ENV__Reason (85)
+#define SOAP_TYPE_SOAP_ENV__Reason (86)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_default_SOAP_ENV__Reason(struct soap*, struct SOAP_ENV__Reason *);
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_SOAP_ENV__Reason(struct soap*, const struct SOAP_ENV__Reason *);
@@ -642,7 +662,7 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy_SOAP_ENV__Reason(struct soap*, int, int, vo
 #ifndef WITH_NOGLOBAL
 
 #ifndef SOAP_TYPE_SOAP_ENV__Detail
-#define SOAP_TYPE_SOAP_ENV__Detail (82)
+#define SOAP_TYPE_SOAP_ENV__Detail (83)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_default_SOAP_ENV__Detail(struct soap*, struct SOAP_ENV__Detail *);
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_SOAP_ENV__Detail(struct soap*, const struct SOAP_ENV__Detail *);
@@ -675,7 +695,7 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy_SOAP_ENV__Detail(struct soap*, int, int, vo
 #ifndef WITH_NOGLOBAL
 
 #ifndef SOAP_TYPE_SOAP_ENV__Code
-#define SOAP_TYPE_SOAP_ENV__Code (80)
+#define SOAP_TYPE_SOAP_ENV__Code (81)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_default_SOAP_ENV__Code(struct soap*, struct SOAP_ENV__Code *);
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_SOAP_ENV__Code(struct soap*, const struct SOAP_ENV__Code *);
@@ -708,7 +728,7 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy_SOAP_ENV__Code(struct soap*, int, int, void
 #ifndef WITH_NOGLOBAL
 
 #ifndef SOAP_TYPE_SOAP_ENV__Header
-#define SOAP_TYPE_SOAP_ENV__Header (79)
+#define SOAP_TYPE_SOAP_ENV__Header (80)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_default_SOAP_ENV__Header(struct soap*, struct SOAP_ENV__Header *);
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_SOAP_ENV__Header(struct soap*, const struct SOAP_ENV__Header *);
@@ -739,7 +759,7 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy_SOAP_ENV__Header(struct soap*, int, int, vo
 #endif
 
 #ifndef SOAP_TYPE___icd3__GetMacIdd
-#define SOAP_TYPE___icd3__GetMacIdd (78)
+#define SOAP_TYPE___icd3__GetMacIdd (79)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd3__GetMacIdd(struct soap*, struct __icd3__GetMacIdd *);
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___icd3__GetMacIdd(struct soap*, const struct __icd3__GetMacIdd *);
@@ -768,7 +788,7 @@ SOAP_FMAC1 struct __icd3__GetMacIdd * SOAP_FMAC2 soap_instantiate___icd3__GetMac
 SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd3__GetMacIdd(struct soap*, int, int, void*, size_t, const void*, size_t);
 
 #ifndef SOAP_TYPE___icd3__GetDeviceUpdateInfo
-#define SOAP_TYPE___icd3__GetDeviceUpdateInfo (76)
+#define SOAP_TYPE___icd3__GetDeviceUpdateInfo (77)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd3__GetDeviceUpdateInfo(struct soap*, struct __icd3__GetDeviceUpdateInfo *);
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___icd3__GetDeviceUpdateInfo(struct soap*, const struct __icd3__GetDeviceUpdateInfo *);
@@ -796,37 +816,37 @@ SOAP_FMAC3 struct __icd3__GetDeviceUpdateInfo * SOAP_FMAC4 soap_get___icd3__GetD
 SOAP_FMAC1 struct __icd3__GetDeviceUpdateInfo * SOAP_FMAC2 soap_instantiate___icd3__GetDeviceUpdateInfo(struct soap*, int, const char*, const char*, size_t*);
 SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd3__GetDeviceUpdateInfo(struct soap*, int, int, void*, size_t, const void*, size_t);
 
-#ifndef SOAP_TYPE___icd3__TestSession
-#define SOAP_TYPE___icd3__TestSession (74)
+#ifndef SOAP_TYPE___icd3__GetServiceInfo
+#define SOAP_TYPE___icd3__GetServiceInfo (75)
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd3__TestSession(struct soap*, struct __icd3__TestSession *);
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___icd3__TestSession(struct soap*, const struct __icd3__TestSession *);
-SOAP_FMAC3 int SOAP_FMAC4 soap_out___icd3__TestSession(struct soap*, const char*, int, const struct __icd3__TestSession *, const char*);
-SOAP_FMAC3 struct __icd3__TestSession * SOAP_FMAC4 soap_in___icd3__TestSession(struct soap*, const char*, struct __icd3__TestSession *, const char*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd3__GetServiceInfo(struct soap*, struct __icd3__GetServiceInfo *);
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___icd3__GetServiceInfo(struct soap*, const struct __icd3__GetServiceInfo *);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out___icd3__GetServiceInfo(struct soap*, const char*, int, const struct __icd3__GetServiceInfo *, const char*);
+SOAP_FMAC3 struct __icd3__GetServiceInfo * SOAP_FMAC4 soap_in___icd3__GetServiceInfo(struct soap*, const char*, struct __icd3__GetServiceInfo *, const char*);
 
-#ifndef soap_write___icd3__TestSession
-#define soap_write___icd3__TestSession(soap, data) ( soap_begin_send(soap) || (soap_serialize___icd3__TestSession(soap, data), 0) || soap_put___icd3__TestSession(soap, data, "-icd3:TestSession", NULL) || soap_end_send(soap) )
-#endif
-
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_put___icd3__TestSession(struct soap*, const struct __icd3__TestSession *, const char*, const char*);
-
-#ifndef soap_read___icd3__TestSession
-#define soap_read___icd3__TestSession(soap, data) ( soap_begin_recv(soap) || !soap_get___icd3__TestSession(soap, data, NULL, NULL) || soap_end_recv(soap) )
+#ifndef soap_write___icd3__GetServiceInfo
+#define soap_write___icd3__GetServiceInfo(soap, data) ( soap_begin_send(soap) || (soap_serialize___icd3__GetServiceInfo(soap, data), 0) || soap_put___icd3__GetServiceInfo(soap, data, "-icd3:GetServiceInfo", NULL) || soap_end_send(soap) )
 #endif
 
-SOAP_FMAC3 struct __icd3__TestSession * SOAP_FMAC4 soap_get___icd3__TestSession(struct soap*, struct __icd3__TestSession *, const char*, const char*);
 
-#define soap_new___icd3__TestSession(soap, n) soap_instantiate___icd3__TestSession(soap, n, NULL, NULL, NULL)
+SOAP_FMAC3 int SOAP_FMAC4 soap_put___icd3__GetServiceInfo(struct soap*, const struct __icd3__GetServiceInfo *, const char*, const char*);
+
+#ifndef soap_read___icd3__GetServiceInfo
+#define soap_read___icd3__GetServiceInfo(soap, data) ( soap_begin_recv(soap) || !soap_get___icd3__GetServiceInfo(soap, data, NULL, NULL) || soap_end_recv(soap) )
+#endif
+
+SOAP_FMAC3 struct __icd3__GetServiceInfo * SOAP_FMAC4 soap_get___icd3__GetServiceInfo(struct soap*, struct __icd3__GetServiceInfo *, const char*, const char*);
+
+#define soap_new___icd3__GetServiceInfo(soap, n) soap_instantiate___icd3__GetServiceInfo(soap, n, NULL, NULL, NULL)
 
 
-#define soap_delete___icd3__TestSession(soap, p) soap_delete(soap, p)
+#define soap_delete___icd3__GetServiceInfo(soap, p) soap_delete(soap, p)
 
-SOAP_FMAC1 struct __icd3__TestSession * SOAP_FMAC2 soap_instantiate___icd3__TestSession(struct soap*, int, const char*, const char*, size_t*);
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd3__TestSession(struct soap*, int, int, void*, size_t, const void*, size_t);
+SOAP_FMAC1 struct __icd3__GetServiceInfo * SOAP_FMAC2 soap_instantiate___icd3__GetServiceInfo(struct soap*, int, const char*, const char*, size_t*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd3__GetServiceInfo(struct soap*, int, int, void*, size_t, const void*, size_t);
 
 #ifndef SOAP_TYPE___icd3__LogoutDevice
-#define SOAP_TYPE___icd3__LogoutDevice (72)
+#define SOAP_TYPE___icd3__LogoutDevice (73)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd3__LogoutDevice(struct soap*, struct __icd3__LogoutDevice *);
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___icd3__LogoutDevice(struct soap*, const struct __icd3__LogoutDevice *);
@@ -855,7 +875,7 @@ SOAP_FMAC1 struct __icd3__LogoutDevice * SOAP_FMAC2 soap_instantiate___icd3__Log
 SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd3__LogoutDevice(struct soap*, int, int, void*, size_t, const void*, size_t);
 
 #ifndef SOAP_TYPE___icd3__SendData3
-#define SOAP_TYPE___icd3__SendData3 (70)
+#define SOAP_TYPE___icd3__SendData3 (71)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd3__SendData3(struct soap*, struct __icd3__SendData3 *);
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___icd3__SendData3(struct soap*, const struct __icd3__SendData3 *);
@@ -884,7 +904,7 @@ SOAP_FMAC1 struct __icd3__SendData3 * SOAP_FMAC2 soap_instantiate___icd3__SendDa
 SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd3__SendData3(struct soap*, int, int, void*, size_t, const void*, size_t);
 
 #ifndef SOAP_TYPE___icd3__SendData
-#define SOAP_TYPE___icd3__SendData (68)
+#define SOAP_TYPE___icd3__SendData (69)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd3__SendData(struct soap*, struct __icd3__SendData *);
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___icd3__SendData(struct soap*, const struct __icd3__SendData *);
@@ -913,7 +933,7 @@ SOAP_FMAC1 struct __icd3__SendData * SOAP_FMAC2 soap_instantiate___icd3__SendDat
 SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd3__SendData(struct soap*, int, int, void*, size_t, const void*, size_t);
 
 #ifndef SOAP_TYPE___icd3__LoginDevice
-#define SOAP_TYPE___icd3__LoginDevice (66)
+#define SOAP_TYPE___icd3__LoginDevice (67)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd3__LoginDevice(struct soap*, struct __icd3__LoginDevice *);
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___icd3__LoginDevice(struct soap*, const struct __icd3__LoginDevice *);
@@ -942,7 +962,7 @@ SOAP_FMAC1 struct __icd3__LoginDevice * SOAP_FMAC2 soap_instantiate___icd3__Logi
 SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd3__LoginDevice(struct soap*, int, int, void*, size_t, const void*, size_t);
 
 #ifndef SOAP_TYPE___icd3__GetTime
-#define SOAP_TYPE___icd3__GetTime (64)
+#define SOAP_TYPE___icd3__GetTime (65)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd3__GetTime(struct soap*, struct __icd3__GetTime *);
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___icd3__GetTime(struct soap*, const struct __icd3__GetTime *);
@@ -971,7 +991,7 @@ SOAP_FMAC1 struct __icd3__GetTime * SOAP_FMAC2 soap_instantiate___icd3__GetTime(
 SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd3__GetTime(struct soap*, int, int, void*, size_t, const void*, size_t);
 
 #ifndef SOAP_TYPE___icd2__GetMacIdd
-#define SOAP_TYPE___icd2__GetMacIdd (62)
+#define SOAP_TYPE___icd2__GetMacIdd (63)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd2__GetMacIdd(struct soap*, struct __icd2__GetMacIdd *);
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___icd2__GetMacIdd(struct soap*, const struct __icd2__GetMacIdd *);
@@ -1000,7 +1020,7 @@ SOAP_FMAC1 struct __icd2__GetMacIdd * SOAP_FMAC2 soap_instantiate___icd2__GetMac
 SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd2__GetMacIdd(struct soap*, int, int, void*, size_t, const void*, size_t);
 
 #ifndef SOAP_TYPE___icd2__GetDeviceUpdateInfo
-#define SOAP_TYPE___icd2__GetDeviceUpdateInfo (58)
+#define SOAP_TYPE___icd2__GetDeviceUpdateInfo (59)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd2__GetDeviceUpdateInfo(struct soap*, struct __icd2__GetDeviceUpdateInfo *);
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___icd2__GetDeviceUpdateInfo(struct soap*, const struct __icd2__GetDeviceUpdateInfo *);
@@ -1028,37 +1048,37 @@ SOAP_FMAC3 struct __icd2__GetDeviceUpdateInfo * SOAP_FMAC4 soap_get___icd2__GetD
 SOAP_FMAC1 struct __icd2__GetDeviceUpdateInfo * SOAP_FMAC2 soap_instantiate___icd2__GetDeviceUpdateInfo(struct soap*, int, const char*, const char*, size_t*);
 SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd2__GetDeviceUpdateInfo(struct soap*, int, int, void*, size_t, const void*, size_t);
 
-#ifndef SOAP_TYPE___icd2__TestSession
-#define SOAP_TYPE___icd2__TestSession (54)
+#ifndef SOAP_TYPE___icd2__GetServiceInfo
+#define SOAP_TYPE___icd2__GetServiceInfo (55)
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd2__TestSession(struct soap*, struct __icd2__TestSession *);
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___icd2__TestSession(struct soap*, const struct __icd2__TestSession *);
-SOAP_FMAC3 int SOAP_FMAC4 soap_out___icd2__TestSession(struct soap*, const char*, int, const struct __icd2__TestSession *, const char*);
-SOAP_FMAC3 struct __icd2__TestSession * SOAP_FMAC4 soap_in___icd2__TestSession(struct soap*, const char*, struct __icd2__TestSession *, const char*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd2__GetServiceInfo(struct soap*, struct __icd2__GetServiceInfo *);
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___icd2__GetServiceInfo(struct soap*, const struct __icd2__GetServiceInfo *);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out___icd2__GetServiceInfo(struct soap*, const char*, int, const struct __icd2__GetServiceInfo *, const char*);
+SOAP_FMAC3 struct __icd2__GetServiceInfo * SOAP_FMAC4 soap_in___icd2__GetServiceInfo(struct soap*, const char*, struct __icd2__GetServiceInfo *, const char*);
 
-#ifndef soap_write___icd2__TestSession
-#define soap_write___icd2__TestSession(soap, data) ( soap_begin_send(soap) || (soap_serialize___icd2__TestSession(soap, data), 0) || soap_put___icd2__TestSession(soap, data, "-icd2:TestSession", NULL) || soap_end_send(soap) )
-#endif
-
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_put___icd2__TestSession(struct soap*, const struct __icd2__TestSession *, const char*, const char*);
-
-#ifndef soap_read___icd2__TestSession
-#define soap_read___icd2__TestSession(soap, data) ( soap_begin_recv(soap) || !soap_get___icd2__TestSession(soap, data, NULL, NULL) || soap_end_recv(soap) )
+#ifndef soap_write___icd2__GetServiceInfo
+#define soap_write___icd2__GetServiceInfo(soap, data) ( soap_begin_send(soap) || (soap_serialize___icd2__GetServiceInfo(soap, data), 0) || soap_put___icd2__GetServiceInfo(soap, data, "-icd2:GetServiceInfo", NULL) || soap_end_send(soap) )
 #endif
 
-SOAP_FMAC3 struct __icd2__TestSession * SOAP_FMAC4 soap_get___icd2__TestSession(struct soap*, struct __icd2__TestSession *, const char*, const char*);
 
-#define soap_new___icd2__TestSession(soap, n) soap_instantiate___icd2__TestSession(soap, n, NULL, NULL, NULL)
+SOAP_FMAC3 int SOAP_FMAC4 soap_put___icd2__GetServiceInfo(struct soap*, const struct __icd2__GetServiceInfo *, const char*, const char*);
+
+#ifndef soap_read___icd2__GetServiceInfo
+#define soap_read___icd2__GetServiceInfo(soap, data) ( soap_begin_recv(soap) || !soap_get___icd2__GetServiceInfo(soap, data, NULL, NULL) || soap_end_recv(soap) )
+#endif
+
+SOAP_FMAC3 struct __icd2__GetServiceInfo * SOAP_FMAC4 soap_get___icd2__GetServiceInfo(struct soap*, struct __icd2__GetServiceInfo *, const char*, const char*);
+
+#define soap_new___icd2__GetServiceInfo(soap, n) soap_instantiate___icd2__GetServiceInfo(soap, n, NULL, NULL, NULL)
 
 
-#define soap_delete___icd2__TestSession(soap, p) soap_delete(soap, p)
+#define soap_delete___icd2__GetServiceInfo(soap, p) soap_delete(soap, p)
 
-SOAP_FMAC1 struct __icd2__TestSession * SOAP_FMAC2 soap_instantiate___icd2__TestSession(struct soap*, int, const char*, const char*, size_t*);
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd2__TestSession(struct soap*, int, int, void*, size_t, const void*, size_t);
+SOAP_FMAC1 struct __icd2__GetServiceInfo * SOAP_FMAC2 soap_instantiate___icd2__GetServiceInfo(struct soap*, int, const char*, const char*, size_t*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd2__GetServiceInfo(struct soap*, int, int, void*, size_t, const void*, size_t);
 
 #ifndef SOAP_TYPE___icd2__LogoutDevice
-#define SOAP_TYPE___icd2__LogoutDevice (50)
+#define SOAP_TYPE___icd2__LogoutDevice (51)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd2__LogoutDevice(struct soap*, struct __icd2__LogoutDevice *);
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___icd2__LogoutDevice(struct soap*, const struct __icd2__LogoutDevice *);
@@ -1087,7 +1107,7 @@ SOAP_FMAC1 struct __icd2__LogoutDevice * SOAP_FMAC2 soap_instantiate___icd2__Log
 SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd2__LogoutDevice(struct soap*, int, int, void*, size_t, const void*, size_t);
 
 #ifndef SOAP_TYPE___icd2__SendData3
-#define SOAP_TYPE___icd2__SendData3 (46)
+#define SOAP_TYPE___icd2__SendData3 (47)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd2__SendData3(struct soap*, struct __icd2__SendData3 *);
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___icd2__SendData3(struct soap*, const struct __icd2__SendData3 *);
@@ -1116,7 +1136,7 @@ SOAP_FMAC1 struct __icd2__SendData3 * SOAP_FMAC2 soap_instantiate___icd2__SendDa
 SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd2__SendData3(struct soap*, int, int, void*, size_t, const void*, size_t);
 
 #ifndef SOAP_TYPE___icd2__SendData
-#define SOAP_TYPE___icd2__SendData (42)
+#define SOAP_TYPE___icd2__SendData (43)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd2__SendData(struct soap*, struct __icd2__SendData *);
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___icd2__SendData(struct soap*, const struct __icd2__SendData *);
@@ -1145,7 +1165,7 @@ SOAP_FMAC1 struct __icd2__SendData * SOAP_FMAC2 soap_instantiate___icd2__SendDat
 SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd2__SendData(struct soap*, int, int, void*, size_t, const void*, size_t);
 
 #ifndef SOAP_TYPE___icd2__LoginDevice
-#define SOAP_TYPE___icd2__LoginDevice (38)
+#define SOAP_TYPE___icd2__LoginDevice (39)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd2__LoginDevice(struct soap*, struct __icd2__LoginDevice *);
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___icd2__LoginDevice(struct soap*, const struct __icd2__LoginDevice *);
@@ -1174,7 +1194,7 @@ SOAP_FMAC1 struct __icd2__LoginDevice * SOAP_FMAC2 soap_instantiate___icd2__Logi
 SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd2__LoginDevice(struct soap*, int, int, void*, size_t, const void*, size_t);
 
 #ifndef SOAP_TYPE___icd2__GetTime
-#define SOAP_TYPE___icd2__GetTime (34)
+#define SOAP_TYPE___icd2__GetTime (35)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_default___icd2__GetTime(struct soap*, struct __icd2__GetTime *);
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize___icd2__GetTime(struct soap*, const struct __icd2__GetTime *);
@@ -1205,7 +1225,7 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy___icd2__GetTime(struct soap*, int, int, voi
 #ifndef WITH_NOGLOBAL
 
 #ifndef SOAP_TYPE_PointerToSOAP_ENV__Reason
-#define SOAP_TYPE_PointerToSOAP_ENV__Reason (88)
+#define SOAP_TYPE_PointerToSOAP_ENV__Reason (89)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerToSOAP_ENV__Reason(struct soap*, struct SOAP_ENV__Reason *const*);
 SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerToSOAP_ENV__Reason(struct soap*, const char *, int, struct SOAP_ENV__Reason *const*, const char *);
@@ -1228,7 +1248,7 @@ SOAP_FMAC3 struct SOAP_ENV__Reason ** SOAP_FMAC4 soap_get_PointerToSOAP_ENV__Rea
 #ifndef WITH_NOGLOBAL
 
 #ifndef SOAP_TYPE_PointerToSOAP_ENV__Detail
-#define SOAP_TYPE_PointerToSOAP_ENV__Detail (87)
+#define SOAP_TYPE_PointerToSOAP_ENV__Detail (88)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerToSOAP_ENV__Detail(struct soap*, struct SOAP_ENV__Detail *const*);
 SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerToSOAP_ENV__Detail(struct soap*, const char *, int, struct SOAP_ENV__Detail *const*, const char *);
@@ -1251,7 +1271,7 @@ SOAP_FMAC3 struct SOAP_ENV__Detail ** SOAP_FMAC4 soap_get_PointerToSOAP_ENV__Det
 #ifndef WITH_NOGLOBAL
 
 #ifndef SOAP_TYPE_PointerToSOAP_ENV__Code
-#define SOAP_TYPE_PointerToSOAP_ENV__Code (81)
+#define SOAP_TYPE_PointerToSOAP_ENV__Code (82)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerToSOAP_ENV__Code(struct soap*, struct SOAP_ENV__Code *const*);
 SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerToSOAP_ENV__Code(struct soap*, const char *, int, struct SOAP_ENV__Code *const*, const char *);
@@ -1272,7 +1292,7 @@ SOAP_FMAC3 struct SOAP_ENV__Code ** SOAP_FMAC4 soap_get_PointerToSOAP_ENV__Code(
 #endif
 
 #ifndef SOAP_TYPE_PointerTo_icd1__GetMacIddResponse
-#define SOAP_TYPE_PointerTo_icd1__GetMacIddResponse (60)
+#define SOAP_TYPE_PointerTo_icd1__GetMacIddResponse (61)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__GetMacIddResponse(struct soap*, _icd1__GetMacIddResponse *const*);
 SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_icd1__GetMacIddResponse(struct soap*, const char *, int, _icd1__GetMacIddResponse *const*, const char *);
@@ -1291,7 +1311,7 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__GetMacIddResponse(struct soap
 SOAP_FMAC3 _icd1__GetMacIddResponse ** SOAP_FMAC4 soap_get_PointerTo_icd1__GetMacIddResponse(struct soap*, _icd1__GetMacIddResponse **, const char*, const char*);
 
 #ifndef SOAP_TYPE_PointerTo_icd1__GetMacIdd
-#define SOAP_TYPE_PointerTo_icd1__GetMacIdd (59)
+#define SOAP_TYPE_PointerTo_icd1__GetMacIdd (60)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__GetMacIdd(struct soap*, _icd1__GetMacIdd *const*);
 SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_icd1__GetMacIdd(struct soap*, const char *, int, _icd1__GetMacIdd *const*, const char *);
@@ -1310,7 +1330,7 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__GetMacIdd(struct soap*, _icd1
 SOAP_FMAC3 _icd1__GetMacIdd ** SOAP_FMAC4 soap_get_PointerTo_icd1__GetMacIdd(struct soap*, _icd1__GetMacIdd **, const char*, const char*);
 
 #ifndef SOAP_TYPE_PointerTo_icd1__GetDeviceUpdateInfoResponse
-#define SOAP_TYPE_PointerTo_icd1__GetDeviceUpdateInfoResponse (56)
+#define SOAP_TYPE_PointerTo_icd1__GetDeviceUpdateInfoResponse (57)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__GetDeviceUpdateInfoResponse(struct soap*, _icd1__GetDeviceUpdateInfoResponse *const*);
 SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_icd1__GetDeviceUpdateInfoResponse(struct soap*, const char *, int, _icd1__GetDeviceUpdateInfoResponse *const*, const char *);
@@ -1329,7 +1349,7 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__GetDeviceUpdateInfoResponse(s
 SOAP_FMAC3 _icd1__GetDeviceUpdateInfoResponse ** SOAP_FMAC4 soap_get_PointerTo_icd1__GetDeviceUpdateInfoResponse(struct soap*, _icd1__GetDeviceUpdateInfoResponse **, const char*, const char*);
 
 #ifndef SOAP_TYPE_PointerTo_icd1__GetDeviceUpdateInfo
-#define SOAP_TYPE_PointerTo_icd1__GetDeviceUpdateInfo (55)
+#define SOAP_TYPE_PointerTo_icd1__GetDeviceUpdateInfo (56)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__GetDeviceUpdateInfo(struct soap*, _icd1__GetDeviceUpdateInfo *const*);
 SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_icd1__GetDeviceUpdateInfo(struct soap*, const char *, int, _icd1__GetDeviceUpdateInfo *const*, const char *);
@@ -1347,46 +1367,46 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__GetDeviceUpdateInfo(struct so
 
 SOAP_FMAC3 _icd1__GetDeviceUpdateInfo ** SOAP_FMAC4 soap_get_PointerTo_icd1__GetDeviceUpdateInfo(struct soap*, _icd1__GetDeviceUpdateInfo **, const char*, const char*);
 
-#ifndef SOAP_TYPE_PointerTo_icd1__TestSessionResponse
-#define SOAP_TYPE_PointerTo_icd1__TestSessionResponse (52)
+#ifndef SOAP_TYPE_PointerTo_icd1__GetServiceInfoResponse
+#define SOAP_TYPE_PointerTo_icd1__GetServiceInfoResponse (53)
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__TestSessionResponse(struct soap*, _icd1__TestSessionResponse *const*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_icd1__TestSessionResponse(struct soap*, const char *, int, _icd1__TestSessionResponse *const*, const char *);
-SOAP_FMAC3 _icd1__TestSessionResponse ** SOAP_FMAC4 soap_in_PointerTo_icd1__TestSessionResponse(struct soap*, const char*, _icd1__TestSessionResponse **, const char*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__GetServiceInfoResponse(struct soap*, _icd1__GetServiceInfoResponse *const*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_icd1__GetServiceInfoResponse(struct soap*, const char *, int, _icd1__GetServiceInfoResponse *const*, const char *);
+SOAP_FMAC3 _icd1__GetServiceInfoResponse ** SOAP_FMAC4 soap_in_PointerTo_icd1__GetServiceInfoResponse(struct soap*, const char*, _icd1__GetServiceInfoResponse **, const char*);
 
-#ifndef soap_write_PointerTo_icd1__TestSessionResponse
-#define soap_write_PointerTo_icd1__TestSessionResponse(soap, data) ( soap_begin_send(soap) || (soap_serialize_PointerTo_icd1__TestSessionResponse(soap, data), 0) || soap_put_PointerTo_icd1__TestSessionResponse(soap, data, "icd1:TestSessionResponse", NULL) || soap_end_send(soap) )
-#endif
-
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__TestSessionResponse(struct soap*, _icd1__TestSessionResponse *const*, const char*, const char*);
-
-#ifndef soap_read_PointerTo_icd1__TestSessionResponse
-#define soap_read_PointerTo_icd1__TestSessionResponse(soap, data) ( soap_begin_recv(soap) || !soap_get_PointerTo_icd1__TestSessionResponse(soap, data, NULL, NULL) || soap_end_recv(soap) )
+#ifndef soap_write_PointerTo_icd1__GetServiceInfoResponse
+#define soap_write_PointerTo_icd1__GetServiceInfoResponse(soap, data) ( soap_begin_send(soap) || (soap_serialize_PointerTo_icd1__GetServiceInfoResponse(soap, data), 0) || soap_put_PointerTo_icd1__GetServiceInfoResponse(soap, data, "icd1:GetServiceInfoResponse", NULL) || soap_end_send(soap) )
 #endif
 
-SOAP_FMAC3 _icd1__TestSessionResponse ** SOAP_FMAC4 soap_get_PointerTo_icd1__TestSessionResponse(struct soap*, _icd1__TestSessionResponse **, const char*, const char*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__GetServiceInfoResponse(struct soap*, _icd1__GetServiceInfoResponse *const*, const char*, const char*);
 
-#ifndef SOAP_TYPE_PointerTo_icd1__TestSession
-#define SOAP_TYPE_PointerTo_icd1__TestSession (51)
-#endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__TestSession(struct soap*, _icd1__TestSession *const*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_icd1__TestSession(struct soap*, const char *, int, _icd1__TestSession *const*, const char *);
-SOAP_FMAC3 _icd1__TestSession ** SOAP_FMAC4 soap_in_PointerTo_icd1__TestSession(struct soap*, const char*, _icd1__TestSession **, const char*);
-
-#ifndef soap_write_PointerTo_icd1__TestSession
-#define soap_write_PointerTo_icd1__TestSession(soap, data) ( soap_begin_send(soap) || (soap_serialize_PointerTo_icd1__TestSession(soap, data), 0) || soap_put_PointerTo_icd1__TestSession(soap, data, "icd1:TestSession", NULL) || soap_end_send(soap) )
+#ifndef soap_read_PointerTo_icd1__GetServiceInfoResponse
+#define soap_read_PointerTo_icd1__GetServiceInfoResponse(soap, data) ( soap_begin_recv(soap) || !soap_get_PointerTo_icd1__GetServiceInfoResponse(soap, data, NULL, NULL) || soap_end_recv(soap) )
 #endif
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__TestSession(struct soap*, _icd1__TestSession *const*, const char*, const char*);
+SOAP_FMAC3 _icd1__GetServiceInfoResponse ** SOAP_FMAC4 soap_get_PointerTo_icd1__GetServiceInfoResponse(struct soap*, _icd1__GetServiceInfoResponse **, const char*, const char*);
 
-#ifndef soap_read_PointerTo_icd1__TestSession
-#define soap_read_PointerTo_icd1__TestSession(soap, data) ( soap_begin_recv(soap) || !soap_get_PointerTo_icd1__TestSession(soap, data, NULL, NULL) || soap_end_recv(soap) )
+#ifndef SOAP_TYPE_PointerTo_icd1__GetServiceInfo
+#define SOAP_TYPE_PointerTo_icd1__GetServiceInfo (52)
+#endif
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__GetServiceInfo(struct soap*, _icd1__GetServiceInfo *const*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_icd1__GetServiceInfo(struct soap*, const char *, int, _icd1__GetServiceInfo *const*, const char *);
+SOAP_FMAC3 _icd1__GetServiceInfo ** SOAP_FMAC4 soap_in_PointerTo_icd1__GetServiceInfo(struct soap*, const char*, _icd1__GetServiceInfo **, const char*);
+
+#ifndef soap_write_PointerTo_icd1__GetServiceInfo
+#define soap_write_PointerTo_icd1__GetServiceInfo(soap, data) ( soap_begin_send(soap) || (soap_serialize_PointerTo_icd1__GetServiceInfo(soap, data), 0) || soap_put_PointerTo_icd1__GetServiceInfo(soap, data, "icd1:GetServiceInfo", NULL) || soap_end_send(soap) )
 #endif
 
-SOAP_FMAC3 _icd1__TestSession ** SOAP_FMAC4 soap_get_PointerTo_icd1__TestSession(struct soap*, _icd1__TestSession **, const char*, const char*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__GetServiceInfo(struct soap*, _icd1__GetServiceInfo *const*, const char*, const char*);
+
+#ifndef soap_read_PointerTo_icd1__GetServiceInfo
+#define soap_read_PointerTo_icd1__GetServiceInfo(soap, data) ( soap_begin_recv(soap) || !soap_get_PointerTo_icd1__GetServiceInfo(soap, data, NULL, NULL) || soap_end_recv(soap) )
+#endif
+
+SOAP_FMAC3 _icd1__GetServiceInfo ** SOAP_FMAC4 soap_get_PointerTo_icd1__GetServiceInfo(struct soap*, _icd1__GetServiceInfo **, const char*, const char*);
 
 #ifndef SOAP_TYPE_PointerTo_icd1__LogoutDeviceResponse
-#define SOAP_TYPE_PointerTo_icd1__LogoutDeviceResponse (48)
+#define SOAP_TYPE_PointerTo_icd1__LogoutDeviceResponse (49)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__LogoutDeviceResponse(struct soap*, _icd1__LogoutDeviceResponse *const*);
 SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_icd1__LogoutDeviceResponse(struct soap*, const char *, int, _icd1__LogoutDeviceResponse *const*, const char *);
@@ -1405,7 +1425,7 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__LogoutDeviceResponse(struct s
 SOAP_FMAC3 _icd1__LogoutDeviceResponse ** SOAP_FMAC4 soap_get_PointerTo_icd1__LogoutDeviceResponse(struct soap*, _icd1__LogoutDeviceResponse **, const char*, const char*);
 
 #ifndef SOAP_TYPE_PointerTo_icd1__LogoutDevice
-#define SOAP_TYPE_PointerTo_icd1__LogoutDevice (47)
+#define SOAP_TYPE_PointerTo_icd1__LogoutDevice (48)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__LogoutDevice(struct soap*, _icd1__LogoutDevice *const*);
 SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_icd1__LogoutDevice(struct soap*, const char *, int, _icd1__LogoutDevice *const*, const char *);
@@ -1424,7 +1444,7 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__LogoutDevice(struct soap*, _i
 SOAP_FMAC3 _icd1__LogoutDevice ** SOAP_FMAC4 soap_get_PointerTo_icd1__LogoutDevice(struct soap*, _icd1__LogoutDevice **, const char*, const char*);
 
 #ifndef SOAP_TYPE_PointerTo_icd1__SendData3Response
-#define SOAP_TYPE_PointerTo_icd1__SendData3Response (44)
+#define SOAP_TYPE_PointerTo_icd1__SendData3Response (45)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__SendData3Response(struct soap*, _icd1__SendData3Response *const*);
 SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_icd1__SendData3Response(struct soap*, const char *, int, _icd1__SendData3Response *const*, const char *);
@@ -1443,7 +1463,7 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__SendData3Response(struct soap
 SOAP_FMAC3 _icd1__SendData3Response ** SOAP_FMAC4 soap_get_PointerTo_icd1__SendData3Response(struct soap*, _icd1__SendData3Response **, const char*, const char*);
 
 #ifndef SOAP_TYPE_PointerTo_icd1__SendData3
-#define SOAP_TYPE_PointerTo_icd1__SendData3 (43)
+#define SOAP_TYPE_PointerTo_icd1__SendData3 (44)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__SendData3(struct soap*, _icd1__SendData3 *const*);
 SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_icd1__SendData3(struct soap*, const char *, int, _icd1__SendData3 *const*, const char *);
@@ -1462,7 +1482,7 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__SendData3(struct soap*, _icd1
 SOAP_FMAC3 _icd1__SendData3 ** SOAP_FMAC4 soap_get_PointerTo_icd1__SendData3(struct soap*, _icd1__SendData3 **, const char*, const char*);
 
 #ifndef SOAP_TYPE_PointerTo_icd1__SendDataResponse
-#define SOAP_TYPE_PointerTo_icd1__SendDataResponse (40)
+#define SOAP_TYPE_PointerTo_icd1__SendDataResponse (41)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__SendDataResponse(struct soap*, _icd1__SendDataResponse *const*);
 SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_icd1__SendDataResponse(struct soap*, const char *, int, _icd1__SendDataResponse *const*, const char *);
@@ -1481,7 +1501,7 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__SendDataResponse(struct soap*
 SOAP_FMAC3 _icd1__SendDataResponse ** SOAP_FMAC4 soap_get_PointerTo_icd1__SendDataResponse(struct soap*, _icd1__SendDataResponse **, const char*, const char*);
 
 #ifndef SOAP_TYPE_PointerTo_icd1__SendData
-#define SOAP_TYPE_PointerTo_icd1__SendData (39)
+#define SOAP_TYPE_PointerTo_icd1__SendData (40)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__SendData(struct soap*, _icd1__SendData *const*);
 SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_icd1__SendData(struct soap*, const char *, int, _icd1__SendData *const*, const char *);
@@ -1500,7 +1520,7 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__SendData(struct soap*, _icd1_
 SOAP_FMAC3 _icd1__SendData ** SOAP_FMAC4 soap_get_PointerTo_icd1__SendData(struct soap*, _icd1__SendData **, const char*, const char*);
 
 #ifndef SOAP_TYPE_PointerTo_icd1__LoginDeviceResponse
-#define SOAP_TYPE_PointerTo_icd1__LoginDeviceResponse (36)
+#define SOAP_TYPE_PointerTo_icd1__LoginDeviceResponse (37)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__LoginDeviceResponse(struct soap*, _icd1__LoginDeviceResponse *const*);
 SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_icd1__LoginDeviceResponse(struct soap*, const char *, int, _icd1__LoginDeviceResponse *const*, const char *);
@@ -1519,7 +1539,7 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__LoginDeviceResponse(struct so
 SOAP_FMAC3 _icd1__LoginDeviceResponse ** SOAP_FMAC4 soap_get_PointerTo_icd1__LoginDeviceResponse(struct soap*, _icd1__LoginDeviceResponse **, const char*, const char*);
 
 #ifndef SOAP_TYPE_PointerTo_icd1__LoginDevice
-#define SOAP_TYPE_PointerTo_icd1__LoginDevice (35)
+#define SOAP_TYPE_PointerTo_icd1__LoginDevice (36)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__LoginDevice(struct soap*, _icd1__LoginDevice *const*);
 SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_icd1__LoginDevice(struct soap*, const char *, int, _icd1__LoginDevice *const*, const char *);
@@ -1538,7 +1558,7 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__LoginDevice(struct soap*, _ic
 SOAP_FMAC3 _icd1__LoginDevice ** SOAP_FMAC4 soap_get_PointerTo_icd1__LoginDevice(struct soap*, _icd1__LoginDevice **, const char*, const char*);
 
 #ifndef SOAP_TYPE_PointerTo_icd1__GetTimeResponse
-#define SOAP_TYPE_PointerTo_icd1__GetTimeResponse (32)
+#define SOAP_TYPE_PointerTo_icd1__GetTimeResponse (33)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__GetTimeResponse(struct soap*, _icd1__GetTimeResponse *const*);
 SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_icd1__GetTimeResponse(struct soap*, const char *, int, _icd1__GetTimeResponse *const*, const char *);
@@ -1557,7 +1577,7 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__GetTimeResponse(struct soap*,
 SOAP_FMAC3 _icd1__GetTimeResponse ** SOAP_FMAC4 soap_get_PointerTo_icd1__GetTimeResponse(struct soap*, _icd1__GetTimeResponse **, const char*, const char*);
 
 #ifndef SOAP_TYPE_PointerTo_icd1__GetTime
-#define SOAP_TYPE_PointerTo_icd1__GetTime (31)
+#define SOAP_TYPE_PointerTo_icd1__GetTime (32)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerTo_icd1__GetTime(struct soap*, _icd1__GetTime *const*);
 SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerTo_icd1__GetTime(struct soap*, const char *, int, _icd1__GetTime *const*, const char *);
@@ -1576,7 +1596,7 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerTo_icd1__GetTime(struct soap*, _icd1__
 SOAP_FMAC3 _icd1__GetTime ** SOAP_FMAC4 soap_get_PointerTo_icd1__GetTime(struct soap*, _icd1__GetTime **, const char*, const char*);
 
 #ifndef SOAP_TYPE_PointerToicd1__GetMacIddPack
-#define SOAP_TYPE_PointerToicd1__GetMacIddPack (30)
+#define SOAP_TYPE_PointerToicd1__GetMacIddPack (31)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerToicd1__GetMacIddPack(struct soap*, icd1__GetMacIddPack *const*);
 SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerToicd1__GetMacIddPack(struct soap*, const char *, int, icd1__GetMacIddPack *const*, const char *);
@@ -1595,7 +1615,7 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_put_PointerToicd1__GetMacIddPack(struct soap*, ic
 SOAP_FMAC3 icd1__GetMacIddPack ** SOAP_FMAC4 soap_get_PointerToicd1__GetMacIddPack(struct soap*, icd1__GetMacIddPack **, const char*, const char*);
 
 #ifndef SOAP_TYPE_PointerToicd1__UpdatePack
-#define SOAP_TYPE_PointerToicd1__UpdatePack (29)
+#define SOAP_TYPE_PointerToicd1__UpdatePack (30)
 #endif
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_PointerToicd1__UpdatePack(struct soap*, icd1__UpdatePack *const*);
 SOAP_FMAC3 int SOAP_FMAC4 soap_out_PointerToicd1__UpdatePack(struct soap*, const char *, int, icd1__UpdatePack *const*, const char *);

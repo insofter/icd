@@ -8,9 +8,10 @@ class SOAP_CMAC icd1__UpdatePack
 {
 	std::string *Link;	/* optional element of type xsd:string */
 	std::string *md5;	/* optional element of type xsd:string */
-	int FileSize;	/* required element of type xsd:int */
+	LONG64 FileSize;	/* required element of type xsd:long */
 	std::string *UpdateForce;	/* optional element of type xsd:string */
 	std::string *NewVersion;	/* optional element of type xsd:string */
+	std::string *Message;	/* optional element of type xsd:string */
 };
 
 class SOAP_CMAC icd1__GetMacIddPack
@@ -75,13 +76,13 @@ class SOAP_CMAC _icd1__LogoutDeviceResponse
 	std::string *message;	/* optional element of type xsd:string */
 };
 
-class SOAP_CMAC _icd1__TestSession
+class SOAP_CMAC _icd1__GetServiceInfo
 {
 };
 
-class SOAP_CMAC _icd1__TestSessionResponse
+class SOAP_CMAC _icd1__GetServiceInfoResponse
 {
-	int TestSessionResult;	/* SOAP 1.2 RPC return element (when namespace qualified) */	/* required element of type xsd:int */
+	std::string *GetServiceInfoResult;	/* SOAP 1.2 RPC return element (when namespace qualified) */	/* optional element of type xsd:string */
 };
 
 class SOAP_CMAC _icd1__GetDeviceUpdateInfo
@@ -136,9 +137,9 @@ struct __icd2__LogoutDevice
 };
 
 /* Operation wrapper: */
-struct __icd2__TestSession
+struct __icd2__GetServiceInfo
 {
-	_icd1__TestSession *icd1__TestSession;	/* optional element of type icd1:TestSession */
+	_icd1__GetServiceInfo *icd1__GetServiceInfo;	/* optional element of type icd1:GetServiceInfo */
 };
 
 /* Operation wrapper: */
@@ -184,9 +185,9 @@ struct __icd3__LogoutDevice
 };
 
 /* Operation wrapper: */
-struct __icd3__TestSession
+struct __icd3__GetServiceInfo
 {
-	_icd1__TestSession *icd1__TestSession;	/* optional element of type icd1:TestSession */
+	_icd1__GetServiceInfo *icd1__GetServiceInfo;	/* optional element of type icd1:GetServiceInfo */
 };
 
 /* Operation wrapper: */

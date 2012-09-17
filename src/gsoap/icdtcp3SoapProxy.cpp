@@ -382,27 +382,27 @@ int icdtcp3SoapProxy::LogoutDevice(const char *endpoint, const char *soap_action
 	return soap_closesock(soap);
 }
 
-int icdtcp3SoapProxy::TestSession(const char *endpoint, const char *soap_action, _icd1__TestSession *icd1__TestSession, _icd1__TestSessionResponse *icd1__TestSessionResponse)
+int icdtcp3SoapProxy::GetServiceInfo(const char *endpoint, const char *soap_action, _icd1__GetServiceInfo *icd1__GetServiceInfo, _icd1__GetServiceInfoResponse *icd1__GetServiceInfoResponse)
 {	struct soap *soap = this;
-	struct __icd2__TestSession soap_tmp___icd2__TestSession;
+	struct __icd2__GetServiceInfo soap_tmp___icd2__GetServiceInfo;
 	if (endpoint)
 		soap_endpoint = endpoint;
 	if (!soap_endpoint)
 		soap_endpoint = "http://192.168.123.194/icdtcp3/icdtcp3.asmx";
 	if (!soap_action)
-		soap_action = "http://insofter.pl/webservices/TestSession";
+		soap_action = "http://insofter.pl/webservices/GetServiceInfo";
 	soap->encodingStyle = NULL;
-	soap_tmp___icd2__TestSession.icd1__TestSession = icd1__TestSession;
+	soap_tmp___icd2__GetServiceInfo.icd1__GetServiceInfo = icd1__GetServiceInfo;
 	soap_begin(soap);
 	soap_serializeheader(soap);
-	soap_serialize___icd2__TestSession(soap, &soap_tmp___icd2__TestSession);
+	soap_serialize___icd2__GetServiceInfo(soap, &soap_tmp___icd2__GetServiceInfo);
 	if (soap_begin_count(soap))
 		return soap->error;
 	if (soap->mode & SOAP_IO_LENGTH)
 	{	if (soap_envelope_begin_out(soap)
 		 || soap_putheader(soap)
 		 || soap_body_begin_out(soap)
-		 || soap_put___icd2__TestSession(soap, &soap_tmp___icd2__TestSession, "-icd2:TestSession", NULL)
+		 || soap_put___icd2__GetServiceInfo(soap, &soap_tmp___icd2__GetServiceInfo, "-icd2:GetServiceInfo", NULL)
 		 || soap_body_end_out(soap)
 		 || soap_envelope_end_out(soap))
 			 return soap->error;
@@ -413,20 +413,20 @@ int icdtcp3SoapProxy::TestSession(const char *endpoint, const char *soap_action,
 	 || soap_envelope_begin_out(soap)
 	 || soap_putheader(soap)
 	 || soap_body_begin_out(soap)
-	 || soap_put___icd2__TestSession(soap, &soap_tmp___icd2__TestSession, "-icd2:TestSession", NULL)
+	 || soap_put___icd2__GetServiceInfo(soap, &soap_tmp___icd2__GetServiceInfo, "-icd2:GetServiceInfo", NULL)
 	 || soap_body_end_out(soap)
 	 || soap_envelope_end_out(soap)
 	 || soap_end_send(soap))
 		return soap_closesock(soap);
-	if (!icd1__TestSessionResponse)
+	if (!icd1__GetServiceInfoResponse)
 		return soap_closesock(soap);
-	icd1__TestSessionResponse->soap_default(soap);
+	icd1__GetServiceInfoResponse->soap_default(soap);
 	if (soap_begin_recv(soap)
 	 || soap_envelope_begin_in(soap)
 	 || soap_recv_header(soap)
 	 || soap_body_begin_in(soap))
 		return soap_closesock(soap);
-	icd1__TestSessionResponse->soap_get(soap, "icd1:TestSessionResponse", "");
+	icd1__GetServiceInfoResponse->soap_get(soap, "icd1:GetServiceInfoResponse", "");
 	if (soap->error)
 		return soap_recv_fault(soap, 0);
 	if (soap_body_end_in(soap)

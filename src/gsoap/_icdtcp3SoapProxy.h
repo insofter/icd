@@ -26,9 +26,9 @@
     _icd1__LogoutDeviceResponse *icd1__LogoutDeviceResponse
 ) 
 
-	virtual	int TestSession(
-    _icd1__TestSession *icd1__TestSession,
-    _icd1__TestSessionResponse *icd1__TestSessionResponse
+	virtual	int GetServiceInfo(
+    _icd1__GetServiceInfo *icd1__GetServiceInfo,
+    _icd1__GetServiceInfoResponse *icd1__GetServiceInfoResponse
 ) 
 
 	virtual	int GetDeviceUpdateInfo(

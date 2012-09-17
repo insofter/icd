@@ -82,9 +82,9 @@ class SOAP_CMAC icdtcp3SoapProxy : public soap
 	virtual	int LogoutDevice(_icd1__LogoutDevice *icd1__LogoutDevice, _icd1__LogoutDeviceResponse *icd1__LogoutDeviceResponse) { return LogoutDevice(NULL, NULL, icd1__LogoutDevice, icd1__LogoutDeviceResponse); }
 	virtual	int LogoutDevice(const char *endpoint, const char *soap_action, _icd1__LogoutDevice *icd1__LogoutDevice, _icd1__LogoutDeviceResponse *icd1__LogoutDeviceResponse);
 
-	/// Web service operation 'TestSession' (returns error code or SOAP_OK)
-	virtual	int TestSession(_icd1__TestSession *icd1__TestSession, _icd1__TestSessionResponse *icd1__TestSessionResponse) { return TestSession(NULL, NULL, icd1__TestSession, icd1__TestSessionResponse); }
-	virtual	int TestSession(const char *endpoint, const char *soap_action, _icd1__TestSession *icd1__TestSession, _icd1__TestSessionResponse *icd1__TestSessionResponse);
+	/// Web service operation 'GetServiceInfo' (returns error code or SOAP_OK)
+	virtual	int GetServiceInfo(_icd1__GetServiceInfo *icd1__GetServiceInfo, _icd1__GetServiceInfoResponse *icd1__GetServiceInfoResponse) { return GetServiceInfo(NULL, NULL, icd1__GetServiceInfo, icd1__GetServiceInfoResponse); }
+	virtual	int GetServiceInfo(const char *endpoint, const char *soap_action, _icd1__GetServiceInfo *icd1__GetServiceInfo, _icd1__GetServiceInfoResponse *icd1__GetServiceInfoResponse);
 
 	/// Web service operation 'GetDeviceUpdateInfo' (returns error code or SOAP_OK)
 	virtual	int GetDeviceUpdateInfo(_icd1__GetDeviceUpdateInfo *icd1__GetDeviceUpdateInfo, _icd1__GetDeviceUpdateInfoResponse *icd1__GetDeviceUpdateInfoResponse) { return GetDeviceUpdateInfo(NULL, NULL, icd1__GetDeviceUpdateInfo, icd1__GetDeviceUpdateInfoResponse); }
