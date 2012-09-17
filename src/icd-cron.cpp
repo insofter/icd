@@ -120,8 +120,8 @@ int main( int argc, char *argv[] ) {
   while( 1==1 ) {
 
     system( cmd.c_str() );
-    system( "date" );
-    system( "date >> /tmp/last" );
+    system( "date" );//TODO: usunąć
+    system( "date >> /tmp/last" );//TODO: usunąć
 
     db.open( s.c_str() );
     db.busy_timeout(db_timeout);
@@ -142,20 +142,14 @@ int main( int argc, char *argv[] ) {
     close( rfile );
 
     int t=time(NULL);//time
-//    std::cerr << " time=" << t << std::endl;
 
     t/=delay;
     t*=delay;//time rounded to last sending time
-//    std::cerr << " last=" << t << std::endl;
   
     t+=delay;//time of next sending
-//    std::cerr << " next=" << t << std::endl;
 
     t+=( (float)delay*(float)rand/(float)UINT_MAX*0.1 );
               //time shifted with 0.1*delay*random
-
-//    std::cerr << "shift=" << t << std::endl;
-//    std::cerr << "sleep=" << t-time(NULL) << std::endl;
 
     sleep( t-time(NULL) );
 //    sleep( 1 );
