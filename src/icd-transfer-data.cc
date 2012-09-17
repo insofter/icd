@@ -205,7 +205,33 @@ void getInitWIthFullSession( Clog & log ) {
   setTime( *(rtime.GetTimeResult) );                                          //
   //pobranie czasu -- koniec -------------------------------------------------//
 
-
+  //pobranie podstawowej konfiguracji -- -------------------------------------//
+  _icd1__GetMacIdd gmi;                                                       //
+  _icd1__GetMacIddResponse rgmi;                                              //
+                                                                              //
+  log.okParams( 43, "GetMacIdd" );                                            //
+                                                                              //
+  ans=service.GetMacIdd(&gmi, &rgmi);                                         //
+                                                                              //
+  if( ans!=SOAP_OK ) {                                                        //
+    log.errSoap( 47, service.soap_fault_detail(), ans, "Błąd transmisji" );   //
+    exit(1);                                                                  //
+  }                                                                           //
+  log.okSoap( 47, "GetMacIdd" );                                              //
+                                                                              //
+  if( rgmi.GetMacIddResult==0 ) {                                             //
+    char ch[10];                                                              //
+    sprintf(ch,"%i",rgmi.response->Idd);                                      //
+    globalConfig->set_entry( "device", "idd", ch);                            //
+    globalConfig->set_entry( "device", "mac", *(rgmi.response->mac) );        //
+    log.okServerAns( 49, *(rgmi.response->message) );                         //
+  } else {                                                                    //
+    log.errServerAns( 49, *(rgmi.response->message), "GetIdd", "GI",          //
+        "Bład pobierania podstawowej konfiguracji" );                         //
+    exit(1);                                                                  //
+  }                                                                           //
+  //pobranie podstawowej konfiguracji -- koniec-------------------------------//
+  
   //wylogowanie --------------------------------------------------------------//
   _icd1__LogoutDevice out;                                                    //
   _icd1__LogoutDeviceResponse rout;                                           //
@@ -219,7 +245,6 @@ void getInitWIthFullSession( Clog & log ) {
     exit(1);                                                                  //
   }                                                                           //
   log.okSoap( 97, "LogoutDevice" );                                           //
-                                                                              //
                                                                               //
   if( rout.LogoutDeviceResult==0 ) {                                          //
     log.okServerAns( 99, *(rout.message) );                                   //
@@ -302,8 +327,8 @@ int main( int argc, char *argv[] ) {
   globalConfig=new icd::config( *globalDb );
 
   //sprawdzenie czy nie ma komunikacji w tle ---------------------------------//
-  std::string x=globalConfig->entry("current", "last-send-status");           //
-  if( x.size()>=1 && x[0]=='?' ) {                                            //
+  s=globalConfig->entry("current", "last-send-status");                       //
+  if( s.size()>=1 && s[0]=='?' ) {                                            //
     log.errTrInProgress();                                                    //
     exit(1);                                                                  //
   }                                                                           //
@@ -311,7 +336,9 @@ int main( int argc, char *argv[] ) {
 
 
   //dla idd == 0 pobieramy dane ----------------------------------------------//
-  if( atoi( (globalConfig->entry( "device", "idd")).c_str() ) == 0 ) {        //
+  s=globalConfig->entry( "device", "mac");                                    //
+  if( atoi( (globalConfig->entry( "device", "idd")).c_str() ) == 0            //
+      || s.size() != 17 || s.compare( "00:1C:D3:00:00:00" ) == 0 ) {          //
     getInitWIthFullSession( log );                                            //
   }                                                                           //
   //dla idd == 0 pobieramy dane -- koniec ------------------------------------//
