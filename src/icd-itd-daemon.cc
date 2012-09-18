@@ -44,6 +44,135 @@ void print_version(char *argv0)
     << copyright << std::endl;
 }
 
+template <class T>
+inline std::string to_string (const T& t)
+{
+  std::stringstream ss;
+  ss << t;
+  return ss.str();
+}
+
+#include "db-config.h"
+#include <memory>
+
+namespace icd
+{
+class vd_collection
+{
+public:
+  vd_collection(const std::string& db_name, int db_timeout)
+  : db_name_(db_name), db_timeout_(db_timeout) {}
+  virtual ~vd_collection();
+
+  void create();
+
+  void start();
+  void stop();
+
+protected:
+  void add(virtual_device* vd);
+
+private:
+  std::vector<virtual_device*> vds_;
+  std::string db_name_;
+  int db_timeout_;
+};
+
+void vd_collection::create()
+{
+  sqlite3cc::conn db;
+  db.open(db_name_.c_str());
+  db.busy_timeout(db_timeout_);
+  config config(db);
+
+  long aggr_period_mins = config.entry_long("device","aggr-period-mins", 15);
+
+  aggr_timer_vd* aggr_timer = new aggr_timer_vd("timer0");
+  aggr_timer->set_aggr_period(time::from_mins(aggr_period_mins));
+  add(aggr_timer);
+
+  event_logger_vd* event_logger = NULL;
+
+  for (int i = 0; i < 4; i++)
+  {
+    std::string dev_name = "itd" + to_string(i);
+    bool enabled  = config.entry_bool(dev_name, "enabled", false);
+    long engage_delay_ms = config.entry_long(dev_name, "engage-delay-ms", false);
+    long release_delay_ms = config.entry_long(dev_name, "release-delay-ms", false);
+    bool active_low = config.entry_bool(dev_name, "active-low", false);
+    std::string log_events = config.entry(dev_name, "log-events");
+    std::string test_mode = config.entry(dev_name, "test-mode");
+    std::string test_file = config.entry(dev_name, "test-file");
+
+
+    virtual_device* itd = NULL;
+    if (test_mode == "file")
+    {
+      itd = new file_itd_vd(dev_name, test_file);
+      static_cast<file_itd_vd*>(itd)->set_aggr_period(time::from_mins(aggr_period_mins));
+    }
+    else if (test_mode == "rand")
+      itd = new rand_itd_vd(dev_name);
+    else
+    {
+      itd = new itd_vd(dev_name);
+      static_cast<itd_vd*>(itd)->set_active_low(active_low);
+    }
+    add(itd);
+
+    filter_vd* filter = new filter_vd("filter" + to_string(i));
+    filter->set_itd_vd(*itd);
+    filter->set_aggr_timer_vd(*aggr_timer);
+    filter->set_engage_delay(time::from_msec(engage_delay_ms));
+    filter->set_release_delay(time::from_msec(release_delay_ms));
+    add(filter);
+
+    aggr_vd* aggr = new aggr_vd("aggr" + to_string(i), db_name_, db_timeout_);
+    aggr->set_filter_vd(*filter);
+    aggr->set_aggr_period(time::from_mins(aggr_period_mins));
+    add(aggr);
+
+    if (log_events == "raw" || log_events == "filered" )
+    {
+      if (event_logger == NULL)
+      {
+        event_logger = new event_logger_vd("log0", db_name_, db_timeout_);
+        add(event_logger);
+      }
+      event_logger->add_publisher((log_events == "raw") ? *itd : *filter);
+    }
+  }
+
+  db.close();
+}
+
+void vd_collection::add(virtual_device* vd)
+{
+  vds_.push_back(vd);
+}
+
+void vd_collection::start()
+{
+  std::vector<virtual_device*>::iterator i;
+  for (i = vds_.begin(); i != vds_.end(); i++)
+    (*i)->start();
+}
+
+void vd_collection::stop()
+{
+  std::vector<virtual_device*>::iterator i;
+  for (i = vds_.begin(); i != vds_.end(); i++)
+    (*i)->stop();
+}
+
+vd_collection::~vd_collection()
+{
+  std::vector<virtual_device*>::iterator i;
+  for (i = vds_.begin(); i != vds_.end(); i++)
+    delete (*i);
+}
+}
+
 int main(int argc, char *argv[])
 {
   icd::syslogstream::initialize(basename(argv[0]), LOG_PERROR);
@@ -139,27 +268,37 @@ int main(int argc, char *argv[])
       sigaddset (&signal_mask, SIGTERM);
       int res = pthread_sigmask (SIG_BLOCK, &signal_mask, NULL);
       if (res != 0)
-        throw std::runtime_error("sigmask failed"); 
+        throw std::runtime_error("sigmask failed");
 
-      icd::timer_vd tm("timer0");
+      icd::vd_collection collection(db_name, db_timeout);
+      collection.create();
+      collection.start();
+
+
+
+/*      icd::timer_vd tm("timer0");
       tm.set_periodic(true);
       tm.set_aligned(true);
       tm.set_interval(icd::time(10,0));
+      tm.set_priority(10);
 
       icd::rand_itd_vd itd0("itd0");
 
       icd::filter_vd filter("filter0");
       filter.set_delay(icd::time(1,0));
-      filter.set_itd_vd_name("itd0");
-      filter.set_aggr_vd_name("timer0");
-      itd0.subscribe(filter);
-      tm.subscribe(filter);
+      filter.set_itd_vd(itd0);
+      filter.set_aggr_timer_vd(tm);
+
+      icd::aggr_vd aggr0("aggr0", db_name, db_timeout);
+      aggr0.set_aggr_period(icd::time(10,0));
+      aggr0.set_delay(icd::time(1,0));
+      aggr0.set_filter_vd(filter);
 
       icd::dbglog_vd log("log0");
       log.set_delay(icd::time(1,0));
-      filter.subscribe(log);
-      itd0.subscribe(log);
-      tm.subscribe(log);
+      log.add_publisher(filter);
+      log.add_publisher(itd0);
+      log.add_publisher(tm);
 
 //      icd::event_writer_vd evwr("evwr0", db_name, db_timeout);
 //      itd0.subscribe(evwr);
@@ -167,8 +306,9 @@ int main(int argc, char *argv[])
       tm.start();
       itd0.start();
       filter.start();
+      aggr0.start();
       log.start();
-//      evwr.start();
+//      evwr.start();*/
 
       syslog << icd::info << "Waiting for termination signal" << std::endl;
       int sig_caught;
@@ -177,11 +317,14 @@ int main(int argc, char *argv[])
         throw std::runtime_error("sigwait failed");
       syslog << icd::info << "Signal received, terminating" << std::endl;
 
-      tm.stop();
+/*      tm.stop();
       itd0.stop();
       filter.stop();
-      log.stop();
+      aggr0.stop();
+      log.stop();*/
 //      evwr.stop();
+
+      collection.stop();
     }
   }
   catch(std::exception& e)

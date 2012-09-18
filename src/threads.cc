@@ -24,11 +24,6 @@ namespace icd
     return time(c / 1000000, c % 1000000);
   }
 
-  time::operator float() const
-  {
-    return float(sec_) + float(usec_) / 1000000.0;
-  }
-
   std::ostream& operator <<(std::ostream &os,const time &ref)
   {
     char s[32];
@@ -37,6 +32,13 @@ namespace icd
     strftime(s, sizeof(s), "%Y-%m-%dT%H:%M:%S", m);
     os << s << "." << std::setw(6) << std::setfill('0') << ref.usec_;
     return os;
+  }
+
+  void time::operator+=(const time &ref)
+  {
+    long usec = usec_ + ref.usec_;
+    sec_ += ref.sec_ + usec / 1000000;
+    usec_ = usec % 1000000;
   }
 
   time operator+(const time &ref1, const time &ref2)
