@@ -1,3 +1,5 @@
+#include "threads.h"
+
 #include <cstdio>
 #include <stdexcept>
 #include <time.h>
@@ -5,7 +7,7 @@
 #include <iostream>
 #include <iomanip>
 #include <errno.h>
-#include "threads.h"
+#include <signal.h>
 
 namespace icd
 {
@@ -17,9 +19,9 @@ namespace icd
   }
 
   time time::align(const time& dtm, const time& interval)
-  {
-    long long a = dtm.sec() * 1000000 + dtm.usec();
-    long long b = interval.sec() * 1000000 + interval.usec();
+  {  
+    long long a = (long long)dtm.sec() * 1000000 + (long long)dtm.usec();
+    long long b = (long long)interval.sec() * 1000000 + (long long)interval.usec();
     long long c = (a / b) * b;
     return time(c / 1000000, c % 1000000);
   }
@@ -94,6 +96,28 @@ namespace icd
 
   void thread::start()
   {
+    create();
+  }
+
+  void thread::stop()
+  {
+    cancel();
+    join();
+  }
+
+  void thread::mask_signal(bool block, int signal)
+  {
+    sigset_t signal_mask;
+    sigemptyset (&signal_mask);
+    sigaddset(&signal_mask, signal);
+    int how = block ? SIG_BLOCK : SIG_UNBLOCK;
+    int res = pthread_sigmask (how, &signal_mask, NULL);
+    if (res != 0)
+      throw std::runtime_error("sigmask failed");
+  }
+
+  void thread::create()
+  {
     pthread_attr_t attr;
     pthread_attr_init(&attr);
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
@@ -103,12 +127,6 @@ namespace icd
       throw std::runtime_error("pthread_create failed");
 
     pthread_attr_destroy(&attr);
-  }
-
-  void thread::stop()
-  {
-    cancel();
-    join();
   }
 
   void thread::cancel()

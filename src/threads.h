@@ -1,9 +1,9 @@
-#include <iostream>
-
-#include <pthread.h>
-
 #ifndef __THREADS_H__
 #define __THREADS_H__
+
+#include <iostream>
+#include <pthread.h>
+#include <signal.h>
 
 namespace icd
 {
@@ -57,12 +57,15 @@ namespace icd
   {
   public:
     thread() {}
-    ~thread() {}
+    virtual ~thread() {}
 
-    void start();
+    virtual void start();
     virtual void stop();
 
+    static void mask_signal(bool block, int signal);
+
   protected:
+    void create();
     void cancel();
     void join();
 
