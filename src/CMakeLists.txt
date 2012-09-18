@@ -81,4 +81,4 @@ target_link_libraries(icd-fc-daemon db-config daemonizer
 
 
 install (TARGETS icd-config icd-sql icd-itd-daemon icd-fc-daemon
-  icd-transfer-data DESTINATION bin)
+  icd-transfer-data icd-cron DESTINATION bin)

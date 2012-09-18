@@ -44,7 +44,32 @@ void print_usage(char *argv0) {
     ;
 }
 
+float randVal() {
+  unsigned int rand;
+  int rfile = open("/dev/urandom", O_RDONLY);
+  read(rfile, (void*) &rand, sizeof( int ) );
+  close( rfile );
+
+  return (float)rand/(float)UINT_MAX;
+}
  
+int getDelay( std::string & s, int db_timeout ) {
+  int delay;
+  sqlite3cc::conn db;
+  db.open( s.c_str() );
+  db.busy_timeout(db_timeout);
+  icd::config config( db );
+
+  delay=60*atoi( (config.entry( "device",
+          "server-sync-period-mins" )).c_str() );   
+  db.close();
+
+  if( delay < 60 ) {
+    delay = 60;
+  }//delay == delay time in seconds
+  return delay;
+}
+
 int main( int argc, char *argv[] ) {
 
   int db_timeout = 60000; 
@@ -53,7 +78,7 @@ int main( int argc, char *argv[] ) {
   int ans;
   daemonizer daemon;
   bool run_as_daemon = false;
-  std::string s;
+  std::string db;
 
 
 //parametry uruchomienia
@@ -74,7 +99,7 @@ int main( int argc, char *argv[] ) {
         break;
       switch(ch) {
       case 'd':
-        s = optarg;
+        db = optarg;
         break;
       case 't':
         db_timeout = strtol(optarg, NULL, 0);
@@ -99,7 +124,7 @@ int main( int argc, char *argv[] ) {
         break;
       }
     }
-    if( !end && s.empty() ) {
+    if( !end && db.empty() ) {
       std::cerr << "Missing '--db' parameter" << std::endl;
       exit(1);
     }
@@ -109,50 +134,43 @@ int main( int argc, char *argv[] ) {
     }
 //parametry uruchomienia -- koniec
 
-  sqlite3cc::conn db;
 
   std::string cmd;
   cmd="icd-transfer-data --db=\"";
-  cmd+=s;
+  cmd+=db;
   cmd+="\"";
+
+  int delay;//delay time
+  int ndelay;
+  int next;
+
+  //sleep for first sync to avoid flooding
+  sleep( randVal()*20.0+10 );
 
 
   while( 1==1 ) {
 
-    system( cmd.c_str() );
-    system( "date" );//TODO: usunąć
-    system( "date >> /tmp/last" );//TODO: usunąć
+    system( cmd.c_str() );//run command
 
-    db.open( s.c_str() );
-    db.busy_timeout(db_timeout);
-    icd::config config( db );
-
-    int delay;//delay time
-    delay=60*atoi( (config.entry( "device",
-            "server-sync-period-mins" )).c_str() );   
-    db.close();
-
-    if( delay < 60 ) {
-      delay = 60;
-    }//delay == delay time in seconds
-
-    unsigned int rand;//random value
-    int rfile = open("/dev/urandom", O_RDONLY);
-    read(rfile, (void*) &rand, sizeof( int ) );
-    close( rfile );
-
-    int t=time(NULL);//time
-
-    t/=delay;
-    t*=delay;//time rounded to last sending time
+    next=time(NULL);//time
+    delay=getDelay( db, db_timeout );
+    next/=delay;
+    next*=delay;//time rounded to last sending time
   
-    t+=delay;//time of next sending
-
-    t+=( (float)delay*(float)rand/(float)UINT_MAX*0.1 );
+    next+=delay*( randVal()*0.1+1 );//time of next sending
               //time shifted with 0.1*delay*random
 
-    sleep( t-time(NULL) );
-//    sleep( 1 );
+    while( time(NULL) < next ) {
+      sleep( 30+30*randVal() );
+      ndelay=getDelay( db, db_timeout );
+      if( delay!=ndelay ) {
+        delay=ndelay;
+        next=time(NULL);
+        next/=delay;
+        next*=delay;
+        next+=delay*( randVal()*0.1+1 );
+      }
+    }
   }
 
   return 0;
