@@ -45,7 +45,8 @@ void print_version(char *argv0) {
 
 
 int main(int argc, char *argv[]) {
-  syslogstream syslog(basename(argv[0]), LOG_PERROR);
+  icd::syslogstream::initialize(basename(argv[0]), LOG_PERROR);
+  icd::syslogstream syslog;
 
   try {
     daemonizer daemon;
