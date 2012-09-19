@@ -15,7 +15,7 @@ compiling, linking, and/or using OpenSSL is allowed.
 
 #include "H.h"
 
-SOAP_SOURCE_STAMP("@(#) C.cpp ver 2.8.8 2012-09-17 10:51:28 GMT")
+SOAP_SOURCE_STAMP("@(#) C.cpp ver 2.8.8 2012-09-19 13:13:17 GMT")
 
 
 #ifndef WITH_NOGLOBAL
@@ -3521,16 +3521,16 @@ void icd1__GetMacIddPack::soap_default(struct soap *soap)
 {
 	this->soap = soap;
 	soap_default_int(soap, &this->icd1__GetMacIddPack::Idd);
-	this->icd1__GetMacIddPack::mac = NULL;
-	this->icd1__GetMacIddPack::message = NULL;
+	this->icd1__GetMacIddPack::Mac = NULL;
+	this->icd1__GetMacIddPack::Message = NULL;
 	/* transient soap skipped */
 }
 
 void icd1__GetMacIddPack::soap_serialize(struct soap *soap) const
 {
 	(void)soap; /* appease -Wall -Werror */
-	soap_serialize_PointerTostd__string(soap, &this->icd1__GetMacIddPack::mac);
-	soap_serialize_PointerTostd__string(soap, &this->icd1__GetMacIddPack::message);
+	soap_serialize_PointerTostd__string(soap, &this->icd1__GetMacIddPack::Mac);
+	soap_serialize_PointerTostd__string(soap, &this->icd1__GetMacIddPack::Message);
 	/* transient soap skipped */
 }
 
@@ -3545,9 +3545,9 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_out_icd1__GetMacIddPack(struct soap *soap, const 
 		return soap->error;
 	if (soap_out_int(soap, "icd1:Idd", -1, &(a->icd1__GetMacIddPack::Idd), ""))
 		return soap->error;
-	if (soap_out_PointerTostd__string(soap, "icd1:mac", -1, &(a->icd1__GetMacIddPack::mac), ""))
+	if (soap_out_PointerTostd__string(soap, "icd1:Mac", -1, &(a->icd1__GetMacIddPack::Mac), ""))
 		return soap->error;
-	if (soap_out_PointerTostd__string(soap, "icd1:message", -1, &(a->icd1__GetMacIddPack::message), ""))
+	if (soap_out_PointerTostd__string(soap, "icd1:Message", -1, &(a->icd1__GetMacIddPack::Message), ""))
 		return soap->error;
 	/* transient soap skipped */
 	return soap_element_end_out(soap, tag);
@@ -3574,8 +3574,8 @@ SOAP_FMAC3 icd1__GetMacIddPack * SOAP_FMAC4 soap_in_icd1__GetMacIddPack(struct s
 		}
 	}
 	size_t soap_flag_Idd1 = 1;
-	size_t soap_flag_mac1 = 1;
-	size_t soap_flag_message1 = 1;
+	size_t soap_flag_Mac1 = 1;
+	size_t soap_flag_Message1 = 1;
 	if (soap->body && !*soap->href)
 	{
 		for (;;)
@@ -3585,14 +3585,14 @@ SOAP_FMAC3 icd1__GetMacIddPack * SOAP_FMAC4 soap_in_icd1__GetMacIddPack(struct s
 				{	soap_flag_Idd1--;
 					continue;
 				}
-			if (soap_flag_mac1 && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
-				if (soap_in_PointerTostd__string(soap, "icd1:mac", &(a->icd1__GetMacIddPack::mac), "xsd:string"))
-				{	soap_flag_mac1--;
+			if (soap_flag_Mac1 && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
+				if (soap_in_PointerTostd__string(soap, "icd1:Mac", &(a->icd1__GetMacIddPack::Mac), "xsd:string"))
+				{	soap_flag_Mac1--;
 					continue;
 				}
-			if (soap_flag_message1 && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
-				if (soap_in_PointerTostd__string(soap, "icd1:message", &(a->icd1__GetMacIddPack::message), "xsd:string"))
-				{	soap_flag_message1--;
+			if (soap_flag_Message1 && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
+				if (soap_in_PointerTostd__string(soap, "icd1:Message", &(a->icd1__GetMacIddPack::Message), "xsd:string"))
+				{	soap_flag_Message1--;
 					continue;
 				}
 			/* transient soap skipped */
@@ -3678,7 +3678,7 @@ void icd1__UpdatePack::soap_default(struct soap *soap)
 {
 	this->soap = soap;
 	this->icd1__UpdatePack::Link = NULL;
-	this->icd1__UpdatePack::md5 = NULL;
+	this->icd1__UpdatePack::Md5 = NULL;
 	soap_default_LONG64(soap, &this->icd1__UpdatePack::FileSize);
 	this->icd1__UpdatePack::UpdateForce = NULL;
 	this->icd1__UpdatePack::NewVersion = NULL;
@@ -3690,7 +3690,7 @@ void icd1__UpdatePack::soap_serialize(struct soap *soap) const
 {
 	(void)soap; /* appease -Wall -Werror */
 	soap_serialize_PointerTostd__string(soap, &this->icd1__UpdatePack::Link);
-	soap_serialize_PointerTostd__string(soap, &this->icd1__UpdatePack::md5);
+	soap_serialize_PointerTostd__string(soap, &this->icd1__UpdatePack::Md5);
 	soap_serialize_PointerTostd__string(soap, &this->icd1__UpdatePack::UpdateForce);
 	soap_serialize_PointerTostd__string(soap, &this->icd1__UpdatePack::NewVersion);
 	soap_serialize_PointerTostd__string(soap, &this->icd1__UpdatePack::Message);
@@ -3708,7 +3708,7 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_out_icd1__UpdatePack(struct soap *soap, const cha
 		return soap->error;
 	if (soap_out_PointerTostd__string(soap, "icd1:Link", -1, &(a->icd1__UpdatePack::Link), ""))
 		return soap->error;
-	if (soap_out_PointerTostd__string(soap, "icd1:md5", -1, &(a->icd1__UpdatePack::md5), ""))
+	if (soap_out_PointerTostd__string(soap, "icd1:Md5", -1, &(a->icd1__UpdatePack::Md5), ""))
 		return soap->error;
 	if (soap_out_LONG64(soap, "icd1:FileSize", -1, &(a->icd1__UpdatePack::FileSize), ""))
 		return soap->error;
@@ -3743,7 +3743,7 @@ SOAP_FMAC3 icd1__UpdatePack * SOAP_FMAC4 soap_in_icd1__UpdatePack(struct soap *s
 		}
 	}
 	size_t soap_flag_Link1 = 1;
-	size_t soap_flag_md51 = 1;
+	size_t soap_flag_Md51 = 1;
 	size_t soap_flag_FileSize1 = 1;
 	size_t soap_flag_UpdateForce1 = 1;
 	size_t soap_flag_NewVersion1 = 1;
@@ -3757,9 +3757,9 @@ SOAP_FMAC3 icd1__UpdatePack * SOAP_FMAC4 soap_in_icd1__UpdatePack(struct soap *s
 				{	soap_flag_Link1--;
 					continue;
 				}
-			if (soap_flag_md51 && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
-				if (soap_in_PointerTostd__string(soap, "icd1:md5", &(a->icd1__UpdatePack::md5), "xsd:string"))
-				{	soap_flag_md51--;
+			if (soap_flag_Md51 && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
+				if (soap_in_PointerTostd__string(soap, "icd1:Md5", &(a->icd1__UpdatePack::Md5), "xsd:string"))
+				{	soap_flag_Md51--;
 					continue;
 				}
 			if (soap_flag_FileSize1 && soap->error == SOAP_TAG_MISMATCH)

@@ -118,7 +118,7 @@ int icdtcp3SoapProxy::GetTime(const char *endpoint, const char *soap_action, _ic
 	if (endpoint)
 		soap_endpoint = endpoint;
 	if (!soap_endpoint)
-		soap_endpoint = "http://192.168.123.194/icdtcp3/icdtcp3.asmx";
+		soap_endpoint = "http://www.insofter.pl/icdtcp3/icdtcp3.asmx";
 	if (!soap_action)
 		soap_action = "http://insofter.pl/webservices/GetTime";
 	soap->encodingStyle = NULL;
@@ -172,7 +172,7 @@ int icdtcp3SoapProxy::LoginDevice(const char *endpoint, const char *soap_action,
 	if (endpoint)
 		soap_endpoint = endpoint;
 	if (!soap_endpoint)
-		soap_endpoint = "http://192.168.123.194/icdtcp3/icdtcp3.asmx";
+		soap_endpoint = "http://www.insofter.pl/icdtcp3/icdtcp3.asmx";
 	if (!soap_action)
 		soap_action = "http://insofter.pl/webservices/LoginDevice";
 	soap->encodingStyle = NULL;
@@ -226,7 +226,7 @@ int icdtcp3SoapProxy::SendData(const char *endpoint, const char *soap_action, _i
 	if (endpoint)
 		soap_endpoint = endpoint;
 	if (!soap_endpoint)
-		soap_endpoint = "http://192.168.123.194/icdtcp3/icdtcp3.asmx";
+		soap_endpoint = "http://www.insofter.pl/icdtcp3/icdtcp3.asmx";
 	if (!soap_action)
 		soap_action = "http://insofter.pl/webservices/SendData";
 	soap->encodingStyle = NULL;
@@ -280,7 +280,7 @@ int icdtcp3SoapProxy::SendData3(const char *endpoint, const char *soap_action, _
 	if (endpoint)
 		soap_endpoint = endpoint;
 	if (!soap_endpoint)
-		soap_endpoint = "http://192.168.123.194/icdtcp3/icdtcp3.asmx";
+		soap_endpoint = "http://www.insofter.pl/icdtcp3/icdtcp3.asmx";
 	if (!soap_action)
 		soap_action = "http://insofter.pl/webservices/SendData3";
 	soap->encodingStyle = NULL;
@@ -334,7 +334,7 @@ int icdtcp3SoapProxy::LogoutDevice(const char *endpoint, const char *soap_action
 	if (endpoint)
 		soap_endpoint = endpoint;
 	if (!soap_endpoint)
-		soap_endpoint = "http://192.168.123.194/icdtcp3/icdtcp3.asmx";
+		soap_endpoint = "http://www.insofter.pl/icdtcp3/icdtcp3.asmx";
 	if (!soap_action)
 		soap_action = "http://insofter.pl/webservices/LogoutDevice";
 	soap->encodingStyle = NULL;
@@ -388,7 +388,7 @@ int icdtcp3SoapProxy::GetServiceInfo(const char *endpoint, const char *soap_acti
 	if (endpoint)
 		soap_endpoint = endpoint;
 	if (!soap_endpoint)
-		soap_endpoint = "http://192.168.123.194/icdtcp3/icdtcp3.asmx";
+		soap_endpoint = "http://www.insofter.pl/icdtcp3/icdtcp3.asmx";
 	if (!soap_action)
 		soap_action = "http://insofter.pl/webservices/GetServiceInfo";
 	soap->encodingStyle = NULL;
@@ -442,7 +442,7 @@ int icdtcp3SoapProxy::GetDeviceUpdateInfo(const char *endpoint, const char *soap
 	if (endpoint)
 		soap_endpoint = endpoint;
 	if (!soap_endpoint)
-		soap_endpoint = "http://192.168.123.194/icdtcp3/icdtcp3.asmx";
+		soap_endpoint = "http://www.insofter.pl/icdtcp3/icdtcp3.asmx";
 	if (!soap_action)
 		soap_action = "http://insofter.pl/webservices/GetDeviceUpdateInfo";
 	soap->encodingStyle = NULL;
@@ -496,7 +496,7 @@ int icdtcp3SoapProxy::GetMacIdd(const char *endpoint, const char *soap_action, _
 	if (endpoint)
 		soap_endpoint = endpoint;
 	if (!soap_endpoint)
-		soap_endpoint = "http://192.168.123.194/icdtcp3/icdtcp3.asmx";
+		soap_endpoint = "http://www.insofter.pl/icdtcp3/icdtcp3.asmx";
 	if (!soap_action)
 		soap_action = "http://insofter.pl/webservices/GetMacIdd";
 	soap->encodingStyle = NULL;
