@@ -120,7 +120,7 @@ void CmenuItemDbParam::screen(Clcd *lcd) {
 
     _param._lastPos+=16;
   } else {
-    lcd->_refresh=0;
+    lcd->_refresh=10000;
     lcd->_lcd[1]=val;
     lcd->_cur._car=Ccur::none;
   }

@@ -389,7 +389,9 @@ int main( int argc, char *argv[] ) {
   if( rlogin.LoginDeviceResult==0 ) {                                         //
     log.okServerAns( 10, *(rlogin.message) );                                 //
   } else {                                                                    //
-    log.errServerAns( 10, *(rlogin.message), "błąd", "LD", "błąd logowania" );//
+    char bl[9];                                                              //
+    sprintf("bl. %3i", rlogin.LoginDeviceResult);                             //
+    log.errServerAns( 10, *(rlogin.message), bl, "LD", "błąd logowania" );    //
     exit(1);                                                                  //
   }                                                                           //
   //logownaie -- koniec ------------------------------------------------------//
