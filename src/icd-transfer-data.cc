@@ -223,10 +223,10 @@ void getInitWIthFullSession( Clog & log ) {
     char ch[10];                                                              //
     sprintf(ch,"%i",rgmi.response->Idd);                                      //
     globalConfig->set_entry( "device", "idd", ch);                            //
-    globalConfig->set_entry( "device", "mac", *(rgmi.response->mac) );        //
-    log.okServerAns( 49, *(rgmi.response->message) );                         //
+    globalConfig->set_entry( "device", "mac", *(rgmi.response->Mac) );        //
+    log.okServerAns( 49, *(rgmi.response->Message) );                         //
   } else {                                                                    //
-    log.errServerAns( 49, *(rgmi.response->message), "GetIdd", "GI",          //
+    log.errServerAns( 49, *(rgmi.response->Message), "GetIdd", "GI",          //
         "Bład pobierania podstawowej konfiguracji" );                         //
     exit(1);                                                                  //
   }                                                                           //
@@ -389,7 +389,9 @@ int main( int argc, char *argv[] ) {
   if( rlogin.LoginDeviceResult==0 ) {                                         //
     log.okServerAns( 10, *(rlogin.message) );                                 //
   } else {                                                                    //
-    log.errServerAns( 10, *(rlogin.message), "błąd", "LD", "błąd logowania" );//
+    char bl[9];                                                              //
+    sprintf(bl, "bl. %3i", rlogin.LoginDeviceResult);                             //
+    log.errServerAns( 10, *(rlogin.message), bl, "LD", "błąd logowania" );    //
     exit(1);                                                                  //
   }                                                                           //
   //logownaie -- koniec ------------------------------------------------------//
@@ -514,7 +516,7 @@ int main( int argc, char *argv[] ) {
       FILE *md5Chk = popen("md5sum /tmp/update.img", "r");                    //
       fscanf( md5Chk, "%32s", md5sum );                                       //
       pclose( md5Chk );                                                       //
-      if( (*(rupdate.response->md5)).compare( md5sum ) == 0 ) {                //
+      if( (*(rupdate.response->Md5)).compare( md5sum ) == 0 ) {                //
         if( (*(rupdate.response->UpdateForce)).compare( "FORCE" ) == 0 ) {     //
 //          system(  "icdtcp3-update-sw --force /tmp/update.img "               //
 //              "&& sleep 3 && reboot &" );                                     //

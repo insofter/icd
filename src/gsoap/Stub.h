@@ -54,7 +54,7 @@ class SOAP_CMAC icd1__UpdatePack
 {
 public:
 	std::string *Link;	/* optional element of type xsd:string */
-	std::string *md5;	/* optional element of type xsd:string */
+	std::string *Md5;	/* optional element of type xsd:string */
 	LONG64 FileSize;	/* required element of type xsd:long */
 	std::string *UpdateForce;	/* optional element of type xsd:string */
 	std::string *NewVersion;	/* optional element of type xsd:string */
@@ -80,8 +80,8 @@ class SOAP_CMAC icd1__GetMacIddPack
 {
 public:
 	int Idd;	/* required element of type xsd:int */
-	std::string *mac;	/* optional element of type xsd:string */
-	std::string *message;	/* optional element of type xsd:string */
+	std::string *Mac;	/* optional element of type xsd:string */
+	std::string *Message;	/* optional element of type xsd:string */
 	struct soap *soap;	/* transient */
 public:
 	virtual int soap_type() const { return 9; } /* = unique id SOAP_TYPE_icd1__GetMacIddPack */
