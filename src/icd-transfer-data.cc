@@ -390,7 +390,7 @@ int main( int argc, char *argv[] ) {
     log.okServerAns( 10, *(rlogin.message) );                                 //
   } else {                                                                    //
     char bl[9];                                                              //
-    sprintf("bl. %3i", rlogin.LoginDeviceResult);                             //
+    sprintf(bl, "bl. %3i", rlogin.LoginDeviceResult);                             //
     log.errServerAns( 10, *(rlogin.message), bl, "LD", "błąd logowania" );    //
     exit(1);                                                                  //
   }                                                                           //

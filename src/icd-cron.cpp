@@ -134,6 +134,7 @@ int main( int argc, char *argv[] ) {
     }
 //parametry uruchomienia -- koniec
 
+#define FLUSH 180
 
   std::string cmd;
   cmd="icd-transfer-data --db=\"";
@@ -143,6 +144,8 @@ int main( int argc, char *argv[] ) {
   int delay;//delay time
   int ndelay;
   int next;
+  int flush;
+  flush=time(NULL)+FLUSH;
 
   //sleep for first sync to avoid flooding
   sleep( randVal()*20.0+10 );
@@ -160,6 +163,11 @@ int main( int argc, char *argv[] ) {
     next+=delay*( randVal()*0.1+1 );//time of next sending
               //time shifted with 0.1*delay*random
 
+    if( time(NULL) > flush ) {
+      system( "icd-sync-db" );
+      flush=time(NULL)+FLUSH;
+    }
+
     while( time(NULL) < next ) {
       sleep( 30+30*randVal() );
       ndelay=getDelay( db, db_timeout );
@@ -169,6 +177,10 @@ int main( int argc, char *argv[] ) {
         next/=delay;
         next*=delay;
         next+=delay*( randVal()*0.1+1 );
+      }
+      if( time(NULL) > flush ) {
+        system( "icd-sync-db" );
+        flush=time(NULL)+FLUSH;
       }
     }
   }
