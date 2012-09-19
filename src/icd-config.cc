@@ -265,6 +265,7 @@ int main(int argc, char *argv[])
       sqlite3cc::conn db;
       db.open(db_name.c_str());
       db.busy_timeout(db_timeout);
+      db.exec("PRAGMA foreign_keys = ON");
       db.exec("BEGIN EXCLUSIVE TRANSACTION");
 
       command_parser parser(db, argc - optind, argv + optind);
