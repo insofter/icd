@@ -19,6 +19,7 @@
 #include <fcntl.h>
 
 icd::config *globalConfig;
+sqlite3cc::conn *globalDb;
 
 void print_usage(char *argv0) {
   std::cerr <<
@@ -168,6 +169,15 @@ int main(int argc, char *argv[]) {
  *       +--Nazwa
  *       +--Nazwa
  */
+
+
+    globalDb=new sqlite3cc::conn();
+    globalDb->open( db_name.c_str() );
+    globalDb->busy_timeout(db_timeout);
+    globalConfig=new icd::config( *globalDb );
+
+
+
     ClcdDriver lcdDrv;
     Clcd lcd;
     CmenuList *menu = new CmenuList("Menu");
@@ -249,10 +259,7 @@ int main(int argc, char *argv[]) {
 
     if (!exit) {
       //glowna petla
-      sqlite3cc::conn db;
-      db.open(db_name.c_str());
-      db.busy_timeout(db_timeout);
-      globalConfig=new icd::config(db);
+
       int wait=MIN_WAIT;
       int toReturn;
 
@@ -329,7 +336,7 @@ int main(int argc, char *argv[]) {
         }
 
       }
-      db.close();
+      globalDb->close();
     }
   } catch(std::exception& e) {
     syslog << basename(argv[0]) << " error: " << e.what() << std::endl;

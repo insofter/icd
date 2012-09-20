@@ -42,6 +42,7 @@ class CmenuItemTimeFoto: public CmenuItemFrontMenu {
 protected:
   int _a;
   int _b;
+  sqlite3cc::stmt *stmt;
 
 public:
   /**
@@ -50,6 +51,7 @@ public:
    * @param b Id of second detector
    */
   CmenuItemTimeFoto(int a, int b);
+  virtual ~CmenuItemTimeFoto();
 
   virtual void screen(Clcd *lcd);
 };

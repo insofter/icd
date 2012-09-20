@@ -78,7 +78,7 @@ class c_icdtcp {
                                 $licznik['cnt_last']=$row['cnt'];
                         }
                         $sql="SELECT sum(cnt) AS sum FROM flow WHERE itd='itd$i'
-				AND `dtm` < ".time()." AND `dtm` > ".(time()-24*3600);
+				AND `dtm` < ".time()." AND `dtm` > ".( ((int)(time()/(24*3600)))*24*3600 );
         	        $ans=$this->baza->query($sql);
         	        $licznik['cnt_sum']=0;
                         foreach( $ans as $row ) {
