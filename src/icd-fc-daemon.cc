@@ -257,8 +257,14 @@ int main(int argc, char *argv[]) {
 #define DEFAULT_WAIT 1000
 #define RETURN_TIME 600000
 
+#define KEY_UP 259
+#define KEY_DOWN 258
+#define KEY_LEFT 9999 //TODO: poprawne kody klawiszy
+#define KEY_RIGHT 9998
+#define KEY_ENTER 257
+#define KEY_ESC 256
+
     if (!exit) {
-      //glowna petla
 
       int wait=MIN_WAIT;
       int toReturn;
@@ -286,13 +292,14 @@ int main(int argc, char *argv[]) {
         poll( fds, 1, wait );
         toReturn+=wait;
 
+
         if( fds[0].revents & POLLIN ) {
           read( kbd, (char*)&ev, sizeof(ev) );
           if( ev.code!=0 ) {//rzucany pusty event niewiadomo czemu
             toReturn=0;
-            if( ev.value==1 && ev.code==256 ) {//wciśniecie esc
+            if( ev.value==1 && ev.code==KEY_ESC ) {//wciśniecie esc
               esc=1;
-            } else if( ev.value==0 && ev.code==256 ) {//puszczenie esc
+            } else if( ev.value==0 && ev.code==KEY_ESC  ) {//puszczenie esc
               if( esc==1 ) {//esc nie uzyty jako shift
                 mainMenu->esc(&lcd);
               }
@@ -300,23 +307,23 @@ int main(int argc, char *argv[]) {
             } else if( ev.value==0 ) {//puszczenie innego klawisza
               if( esc!=0 ) {//esc wcisniety i puszczono inny
                   esc=2;
-                switch(ev.code) {//TODO kody klawiszy
-                  case 11259: mainMenu->up(&lcd); break;
-                  case 11258: mainMenu->down(&lcd); break;
-                  case 259:   mainMenu->fastGoto( conntestid );
-                              mainMenu->screen(&lcd); break;
-                  case 258:   mainMenu->fastGoto( fototestid );
-                              mainMenu->screen(&lcd); break;
-                  case 257:   mainMenu->fastGoto( poweroff );
-                              mainMenu->screen(&lcd); break;
+                switch(ev.code) {
+                  //case 11259: mainMenu->up(&lcd); break;
+                  //case 11258: mainMenu->down(&lcd); break;
+                  case KEY_UP:    mainMenu->fastGoto( conntestid );
+                                  mainMenu->screen(&lcd); break;
+                  case KEY_DOWN:  mainMenu->fastGoto( fototestid );
+                                  mainMenu->screen(&lcd); break;
+                  case KEY_ENTER: mainMenu->fastGoto( poweroff );
+                                  mainMenu->screen(&lcd); break;
                 }
               } else {//puszczono inny bez esc
-                switch(ev.code) {//TODO kody klawiszy
-                  case 259:   mainMenu->up(&lcd); break;
-                  case 258:   mainMenu->down(&lcd); break;
-                  case 11259: mainMenu->left(&lcd); break;
-                  case 11258: mainMenu->right(&lcd); break;
-                  case 257:   mainMenu->enter(&lcd); break;
+                switch(ev.code) {
+                  case KEY_UP:   mainMenu->up(&lcd); break;
+                  case KEY_DOWN:   mainMenu->down(&lcd); break;
+                  case KEY_LEFT: mainMenu->left(&lcd); break;
+                  case KEY_RIGHT: mainMenu->right(&lcd); break;
+                  case KEY_ENTER:   mainMenu->enter(&lcd); break;
                 }
               }
             }

@@ -389,8 +389,8 @@ int main( int argc, char *argv[] ) {
   if( rlogin.LoginDeviceResult==0 ) {                                         //
     log.okServerAns( 10, *(rlogin.message) );                                 //
   } else {                                                                    //
-    char bl[9];                                                              //
-    sprintf(bl, "bl. %3i", rlogin.LoginDeviceResult);                             //
+    char bl[9];                                                               //
+    sprintf(bl, "bl. %3i", rlogin.LoginDeviceResult);                         //
     log.errServerAns( 10, *(rlogin.message), bl, "LD", "błąd logowania" );    //
     exit(1);                                                                  //
   }                                                                           //
@@ -506,25 +506,25 @@ int main( int argc, char *argv[] ) {
 
   //wykonianie aktualizacji --------------------------------------------------//
   if( rupdate.GetDeviceUpdateInfoResult==0 ) {                                //
-    std::cerr << ":: update start" << std::endl;                              //
+    std::cerr << ":: update start" << std::endl;                              
     s="wget -q -O /tmp/update.img http://";                                   //
     s+=globalConfig->entry( "device", "address" );                            //
     s+="/icdtcp3";                                                            //
-    s+=*rupdate.response->Link;                                                //
+    s+=*rupdate.response->Link;                                               //
     if( system( s.c_str() ) == 0 ) {                                          //
       char md5sum[33];                                                        //
       FILE *md5Chk = popen("md5sum /tmp/update.img", "r");                    //
       fscanf( md5Chk, "%32s", md5sum );                                       //
       pclose( md5Chk );                                                       //
-      if( (*(rupdate.response->Md5)).compare( md5sum ) == 0 ) {                //
-        if( (*(rupdate.response->UpdateForce)).compare( "FORCE" ) == 0 ) {     //
+      if( (*(rupdate.response->Md5)).compare( md5sum ) == 0 ) {               //
+        if( (*(rupdate.response->UpdateForce)).compare( "FORCE" ) == 0 ) {    //
 //          system(  "icdtcp3-update-sw --force /tmp/update.img "               //
-//              "&& sleep 3 && reboot &" );                                     //
+//              "&& sleep 3 && ict-sutdown --reboot &" );                                     //
           std::cerr << ":: FORCE update with file: "
             << "/tmp/update.img" << std::endl;
         } else {                                                              //
 //          system(  "icdtcp3-update-sw --type=icdtcp3 /tmp/update.img "        //
-//              "&& sleep 3 && reboot &" );                                     //
+//              "&& sleep 3 && ict-sutdown --reboot &" );                                     //
           std::cerr << ":: update with file: "
             << "/tmp/update.img" << std::endl;
         }                                                                     //
