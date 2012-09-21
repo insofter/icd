@@ -80,11 +80,11 @@ void setTime( std::string & data ) {
     data[10]='-';
     data[13]=':';
     data[16]=':';
-    s="date -s ";
+    s="sudo -n date -s ";
     s+=data;
     s+=" &>/dev/null";
     if( system( s.c_str() ) == 0 ) {
-      system( "hwclock -w" );
+      system( "sudo -n hwclock -w" );
     }
   }
 }
@@ -518,12 +518,12 @@ int main( int argc, char *argv[] ) {
       pclose( md5Chk );                                                       //
       if( (*(rupdate.response->Md5)).compare( md5sum ) == 0 ) {               //
         if( (*(rupdate.response->UpdateForce)).compare( "FORCE" ) == 0 ) {    //
-//          system(  "icdtcp3-update-sw --force /tmp/update.img "               //
+//          system(  "sudo -n icdtcp3-update-sw --force /tmp/update.img "               //
 //              "&& sleep 3 && ict-sutdown --reboot &" );                                     //
           std::cerr << ":: FORCE update with file: "
             << "/tmp/update.img" << std::endl;
         } else {                                                              //
-//          system(  "icdtcp3-update-sw --type=icdtcp3 /tmp/update.img "        //
+//          system(  "sudo -n icdtcp3-update-sw --type=icdtcp3 /tmp/update.img "        //
 //              "&& sleep 3 && ict-sutdown --reboot &" );                                     //
           std::cerr << ":: update with file: "
             << "/tmp/update.img" << std::endl;

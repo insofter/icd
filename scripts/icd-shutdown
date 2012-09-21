@@ -20,9 +20,9 @@ echo 100
 
 if [ "$1" = "--reboot" ]
 then
-  reboot -d 3 &
+  sudo -n reboot -d 3 &
   echo "Restart..."
 else
-  halt -d 3 &
+  sudo -n halt -d 3 &
   echo "Wyłączam się..."
 fi
