@@ -187,13 +187,13 @@ namespace icd
        create();
        start();
        cond_.wait(lock_);
+       stop();
     }
     catch(std::exception& e)
     {
       stop();
-      throw e;
+      throw;
     }
-    stop();
   }
 
   void vd_farm::add(virtual_device* vd)
@@ -213,7 +213,15 @@ namespace icd
   {
     std::vector<virtual_device*>::iterator i;
     for (i = vds_.begin(); i != vds_.end(); i++)
-      (*i)->stop();
+    {
+      try
+      {
+        (*i)->stop();
+      }
+      catch(std::exception& e)
+      {
+      }
+    }
   }
 
   vd_farm::~vd_farm()

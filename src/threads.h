@@ -56,7 +56,7 @@ namespace icd
   class thread
   {
   public:
-    thread() {}
+    thread() : raw_thread_(0), created_(false)   {}
     virtual ~thread() {}
 
     virtual void start();
@@ -73,6 +73,7 @@ namespace icd
 
   private:
     pthread_t raw_thread_;
+    bool created_;
 
     static void *start_routine(void* data);
   };

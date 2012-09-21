@@ -14,7 +14,7 @@ namespace icd
 
   syslogbuf::~syslogbuf()
   {
-    closelog();
+//    closelog();
   }
 
   syslogbuf::int_type syslogbuf::overflow(int_type ch)

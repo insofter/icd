@@ -1,5 +1,8 @@
 cmake_minimum_required (VERSION 2.8)
 
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 " CACHE STRING "icd CFLAGS" FORCE)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 " CACHE STRING "icd CXXFLAGS" FORCE)
+
 #add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/version.cc 
 #  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/version.cc.in
 #    ${CMAKE_CURRENT_BINARY_DIR}/version.cc

@@ -118,6 +118,9 @@ namespace icd
 
   void thread::create()
   {
+    if (created_)
+      throw std::runtime_error("thread already created");
+
     pthread_attr_t attr;
     pthread_attr_init(&attr);
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
@@ -127,20 +130,21 @@ namespace icd
       throw std::runtime_error("pthread_create failed");
 
     pthread_attr_destroy(&attr);
+
+    created_ = true;
   }
 
   void thread::cancel()
   {
-    int res = pthread_cancel(raw_thread_);
-    if (res != 0)
-      throw std::runtime_error("pthread_cancel failed");
+    if (created_)
+      pthread_cancel(raw_thread_);
   }
 
   void thread::join()
   {
-    int res = pthread_join(raw_thread_, NULL);
-    if (res != 0)
-      throw std::runtime_error("pthread_join failed");
+    if (created_)
+      pthread_join(raw_thread_, NULL);
+    created_ = false;
   }
 
   void *thread::start_routine(void* data)
