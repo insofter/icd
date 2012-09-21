@@ -18,7 +18,7 @@ echo 50
 sync
 echo 100
 
-if [ "$1" = --reboot ]
+if [ "$1" = "--reboot" ]
 then
   reboot -d 3 &
   echo "Restart..."
