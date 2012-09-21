@@ -32,39 +32,64 @@ void CmenuItemFrontMenu::fullEsc() {
 
 
 CmenuItemTimeFoto::CmenuItemTimeFoto(int a, int b): _a(a), _b(b) {
+  stmt = new sqlite3cc::stmt( *globalDb );
+  stmt->prepare( "SELECT `cnt` FROM flow WHERE itd = ?1 ORDER BY `dtm` DESC LIMIT 1" );
+
+}
+
+CmenuItemTimeFoto::~CmenuItemTimeFoto() {
+  stmt->finalize();
+  delete stmt;
 }
 
 void CmenuItemTimeFoto::screen(Clcd *lcd) {
   /*TODO pobranie danych z bazy*/
-  int i=23;
+  int i;
   char buf[17];
   char timebuf[9];
   time_t rawtime;
   struct tm * timeinfo;
+  char sql[8];
 
   time( &rawtime );
   timeinfo = localtime ( &rawtime );
 
   strftime(timebuf,8,"%y.%m.%d",timeinfo);
   timebuf[8]=0;
-  //sprintf(buf, "%s%c%c%c:%5i", timebuf, Cletter::byte1, Cletter::byte2Eth, 'A'+_a, i);
+
+
+  sprintf(sql, "itd%i", _a);
+  stmt->bind_text( 1, sql );
+  if( stmt->step() == SQLITE_ROW ) {
+    i=stmt->column_int(0);
+  } else {
+    i=0;
+  }
+
+  stmt->reset();
+
   sprintf(buf, "%s %c:%5i", timebuf, 'A'+_a, i);
   lcd->_lcd[0]=buf;
 
   strftime(timebuf,8,"%H:%M:%S",timeinfo);
   timebuf[8]=0;
-/*  if( rawtime%10 > 5 )
-  {
-    sprintf(buf, "%s%c%c%c:%5i", timebuf, Cletter::byte1, Cletter::byte2Wifi, 'A'+_b, i+3423);
-  } else {
-    sprintf(buf, "%s%c%c%c:%5i", timebuf, Cletter::byte1, Cletter::byte2Gsm, 'A'+_b, i+3423);
-  }*/
 
-  sprintf(buf, "%s %c:%5i", timebuf, 'A'+_b, i+3423);
+
+  sprintf(sql, "itd%i", _b);
+  stmt->bind_text( 1, sql );
+  if( stmt->step() == SQLITE_ROW ) {
+    i=stmt->column_int(0);
+  } else {
+    i=0;
+  }
+  stmt->reset();
+
+  sprintf(buf, "%s %c:%5i", timebuf, 'A'+_b, i);
   lcd->_lcd[1]=buf;
 
   lcd->_refresh=300;
   lcd->_cur._car=Ccur::none;
+  //sprintf(buf, "%s%c%c%c:%5i", timebuf, Cletter::byte1, Cletter::byte2Eth, 'A'+_a, i);
 }
 
 
