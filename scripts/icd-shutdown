@@ -18,6 +18,11 @@ echo 50
 sync
 echo 100
 
-
-halt -d 3 &
-echo "Wyłączam się..."
+if [ "$1" = --reboot ]
+then
+  reboot -d 3 &
+  echo "Restart..."
+else
+  halt -d 3 &
+  echo "Wyłączam się..."
+fi
