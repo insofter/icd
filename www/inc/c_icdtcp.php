@@ -257,6 +257,10 @@ class c_icdtcp {
 		}
 		return $wyniki;
 	}
+        function test_wysylania()
+        {
+          return shell_exec( "icd-transfer-data --db=/tmp/live.db --log=long" ); 
+        }
 }
 
 ?>

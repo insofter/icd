@@ -1,6 +1,8 @@
 <?php
 defined('INSOFTER') or die('<h1>Your Kung-Fu is too weak.</h1>');
 
+/*print_r($_POST);*/
+
 $icdtcp = new c_icdtcp();
 
 if( isset($_POST['ids']) ) {
@@ -101,7 +103,7 @@ foreach( $icdtcp->czas_dlugi as $wart=>$opis ) {
 $tresc.='</select></td></tr>
 <tr><th><input type="submit" value="Ustaw">
 <input type="reset" value="Anuluj">
-<input type="button" value="Test wysyłania"></th><td>&nbsp;
+<input type="button" value="Test wysyłania" onclick="location.href='."'./?strona=test_wysylania'".'"></th><td>&nbsp;
 
 </td></tr>
 </table></form></div>';
