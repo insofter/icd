@@ -7,110 +7,110 @@ $wpa = new c_wpa();
 
 //$wpa->start();
 if( isset( $_GET['usun'] ) ) {
-	$wpa->deln($_GET['usun']);
-	header('Location ./?strona=wpa');
+  $wpa->deln($_GET['usun']);
+  header('Location ./?strona=wpa');
 }
 if( isset( $_GET['wylacz'] ) ) {
-	$wpa->disb($_GET['wylacz']);
-	header('Location ./?strona=wpa');
+  $wpa->disb($_GET['wylacz']);
+  header('Location ./?strona=wpa');
 }
 if( isset( $_GET['wlacz'] ) ) {
-	$wpa->enab($_GET['wlacz']);
-	header('Location ./?strona=wpa');
+  $wpa->enab($_GET['wlacz']);
+  header('Location ./?strona=wpa');
 }
 
 
 if( isset( $_GET['dodaj'] ) ) {
 
-	if( $_GET['dodaj']=='' ) {
+  if( $_GET['dodaj']=='' ) {
 
-	if( !isset( $_SESSION['lastscan'] ) || time()-$_SESSION['lastscan']>30 ) {
-		$wpa->scan();
-		$_SESSION['lastscan']=time();
-	}
+    if( !isset( $_SESSION['lastscan'] ) || time()-$_SESSION['lastscan']>30 ) {
+      $wpa->scan();
+      $_SESSION['lastscan']=time();
+    }
 
-	$scan=$wpa->rscn();//scan();
-//	$wpa->scan();
-//	print_r($scan);
+    $scan=$wpa->rscn();//scan();
+    //	$wpa->scan();
+    //	print_r($scan);
 
-	$naglowekcd.='<meta http-equiv="refresh" content="10">';
+    $naglowekcd.='<meta http-equiv="refresh" content="10">';
 
-	$tresc='<div id="tresc"><h3>Dodaj sieć</h3><table>
-		<tr><th colspan="3">Wyniki skanowania</th>';
+    $tresc='<div id="tresc"><h3>Dodaj sieć</h3><table>
+      <tr><th colspan="3">Wyniki skanowania</th>';
 
-	foreach($scan as $s) {
-		$tresc.='<tr><th>
-<a href="./?strona=wpa&amp;dodaj='.$s[4].'">'.$s[4].'</a></th><td>Moc: '.$s[2].'%</td><td>'.$s[3].'</td></tr>';
-	}
-	$tresc.='</table></div>';
-	} else {
-		$tresc='<div id="tresc"><h3>Dodaj sieć</h3>
-<form action="./?strona=wpa" method="POST">
-<table>
-<tr><th><label for="ssid">SSID</label></th><td>
-<input type="text" name="ssid" id="ssid" value="'.$_GET['dodaj'].'">
-</td></tr>
-<tr><th><label for="psk">Klucz</label></th><td>
-<input type="text" name="psk" id="psk">
-</td></tr>
-<tr><td colspan="2">
-<input type="submit" value="Dodaj">
-</td></tr>
-</table>
-</form>';
+    foreach($scan as $s) {
+      $tresc.='<tr><th>
+        <a href="./?strona=wpa&amp;dodaj='.$s[4].'">'.$s[4].'</a></th><td>Moc: '.$s[2].'%</td><td>'.$s[3].'</td></tr>';
+    }
+    $tresc.='</table></div>';
+  } else {
+    $tresc='<div id="tresc"><h3>Dodaj sieć</h3>
+      <form action="./?strona=wpa" method="POST">
+      <table>
+      <tr><th><label for="ssid">SSID</label></th><td>
+      <input type="text" name="ssid" id="ssid" value="'.$_GET['dodaj'].'">
+      </td></tr>
+      <tr><th><label for="psk">Klucz</label></th><td>
+      <input type="text" name="psk" id="psk">
+      </td></tr>
+      <tr><td colspan="2">
+      <input type="submit" value="Dodaj">
+      </td></tr>
+      </table>
+      </form>';
 
-	}
+  }
 } else {
 
-	$naglowekcd.='<meta http-equiv="refresh" content="15">';
+  $naglowekcd.='<meta http-equiv="refresh" content="15">';
 
-	$tresc='<div id="tresc"><h3>Konfiguracja WiFi</h3>';
+  $tresc='<div id="tresc"><h3>Konfiguracja WiFi</h3>';
 
-	if( isset( $_POST['ssid'] ) ) {
-		$wpa->addn( $_POST['ssid'], $_POST['psk'] );
-		$tresc.='<h4>Dodano sieć: '.$_POST['ssid'].'</h4>';
-	}
+  if( isset( $_POST['ssid'] ) ) {
+    $wpa->addn( $_POST['ssid'], $_POST['psk'] );
+    $tresc.='<h4>Dodano sieć: '.$_POST['ssid'].'</h4>';
+  }
 
-	$tresc.='<table><tr><th colspan="2">Stan</th></tr>';
-	$stat=$wpa->stat();
-	foreach($stat as $k=>$v) {
-		$tresc.='<tr><th>'.$k.'</th><td>'.$v.'</td></tr>';
-	}
+  $tresc.='<table><tr><th colspan="2">Stan</th></tr>';
+  $stat=$wpa->stat();
+  foreach($stat as $k=>$v) {
+    $tresc.='<tr><th>'.$k.'</th><td>'.$v.'</td></tr>';
+  }
 
-	$tresc.='</table>';
+  $tresc.='</table>';
 
-	$lstn=$wpa->lstn();
+  $lstn=$wpa->lstn();
 
-	$tresc.='<br><br><table><tr><th colspan="3">Sieci skonfigurowane</th></tr>';
-	foreach($lstn as $net) {
-		$tresc.='<tr><th>'.$net[1].'</th><td>';
+  $tresc.='<br><br><table><tr><th colspan="3">Sieci skonfigurowane</th></tr>';
+  foreach($lstn as $net) {
+    $tresc.='<tr><th>'.$net[1].'</th><td>';
 
-		if( isset( $net[3] ) ) {
-			switch( $net[3] ) {
-				case '[DISABLED]':
-					$tresc.='nieaktywna';
-					break;
-				case '[ENABLED]':
-					$tresc.='aktywna';
-					break;
-				case '[CURRENT]':
-					$tresc.='<em>połączona</em>';
-					break;
-			}
-		} else {
-			$tresc.='aktywna';
-		}
-		$tresc.='</td><td>
-			<a onclick="return confirm(\'Usunąć sieć '.$net[1].'?\');" href="./?strona=wpa&amp;usun='.$net[0].'">usuń</a>';
-		if( isset( $net[3] ) && $net[3]=='[DISABLED]' ) {
-			$tresc.=' <a href="./?strona=wpa&amp;wlacz='.$net[0].'">włącz</a>';
-		} else {
-			$tresc.=' <a href="./?strona=wpa&amp;wylacz='.$net[0].'">wyłącz</a>';
-		}
-		$tresc.='</td></tr>';
-	}
+    if( isset( $net[3] ) ) {
+      switch( $net[3] ) {
+      case '[DISABLED]':
+        $tresc.='nieaktywna';
+        break;
+      case '[ENABLED]':
+        $tresc.='aktywna';
+        break;
+      case '[CURRENT]':
+        $tresc.='<em>połączona</em>';
+        break;
+      }
+    } else {
+      $tresc.='aktywna';
+    }
+    $tresc.='</td><td>
+      <a onclick="return confirm(\'Usunąć sieć '.$net[1].'?\');" href="./?strona=wpa&amp;usun='.$net[0].'">usuń</a>';
+    if( isset( $net[3] ) && $net[3]=='[DISABLED]' ) {
+      $tresc.=' <a href="./?strona=wpa&amp;wlacz='.$net[0].'">włącz</a>';
+    } else {
+      $tresc.=' <a href="./?strona=wpa&amp;wylacz='.$net[0].'">wyłącz</a>';
+    }
+    $tresc.='</td></tr>';
+  }
 
-	$tresc.='<tr><th colspan="3"><a href="./?strona=wpa&amp;dodaj">Dodaj sieć</a></th><td></td></tr>';
-	$tresc.='</table></div>';
+  $tresc.='<tr><th colspan="3"><a href="./?strona=wpa&amp;dodaj">Dodaj sieć</a></th><td></td></tr>';
+  $tresc.='</table></div>';
 }
 ?>

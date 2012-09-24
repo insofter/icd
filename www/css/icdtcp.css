@@ -24,7 +24,7 @@ ul.menu, .menu li {
 .menu li {
   display: block;
   float: left;
-/*  width: 110px;*/
+  /*  width: 110px;*/
   width: 94px;
   text-align: center;
 }
@@ -108,7 +108,7 @@ h3 {
 input, select {
   font-size: 14px;
   font-family: Arial, sans-serif;
-/*  background-color: #fff;
+  /*  background-color: #fff;
   border-width: 1px;
   border-color: black;
   border-style: solid;*/
