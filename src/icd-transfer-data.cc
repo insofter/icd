@@ -362,9 +362,14 @@ int main( int argc, char *argv[] ) {
   _icd1__LoginDeviceResponse rlogin;                                          //
                                                                               //
   login.idd=atoi( (globalConfig->entry( "device", "idd")).c_str() );          //
-  login.mac=new std::string( globalConfig->entry( "device", "mac" ) );
+  login.mac=new std::string( globalConfig->entry( "device", "mac" ) );        //
   login.deviceIds=new std::string( globalConfig->entry( "device", "ids" ) );  //
-  login.devInfo=new std::string("icdtcp3");                                   //
+                                                                              //
+  std::fstream etc_soft( "/etc/software_version" , std::ios_base::in );       //
+  etc_soft >> s;                                                              //
+  etc_soft.close();                                                           //
+                                                                              //
+  login.devInfo=new std::string( s );                                         //
   s="idd='";                                                                  //
   s+=globalConfig->entry( "device", "idd");                                   //
   s+="', deviceIds='";                                                        //
@@ -456,30 +461,30 @@ int main( int argc, char *argv[] ) {
 
 
   //sprawdzenie aktualizacji -------------------------------------------------//
-  _icd1__GetDeviceUpdateInfo update;
-  _icd1__GetDeviceUpdateInfoResponse rupdate;
-
-  std::fstream soft_type( "/etc/software_type" , std::ios_base::in );
-  soft_type >> s;
-  soft_type.close();
-
-  update.softVersion=&s;
-
-  log.okParams( 83, "Update" );
-
-  ans=service.GetDeviceUpdateInfo( &update, &rupdate );
-
-  if( ans!=SOAP_OK ) {
-    log.errSoap( 87, service.soap_fault_detail(), ans, "Błąd transmisji" );
-    exit(1);
-  }
+  _icd1__GetDeviceUpdateInfo update;                                          //
+  _icd1__GetDeviceUpdateInfoResponse rupdate;                                 //
+                                                                              //
+  etc_soft.open( "/etc/software_type" , std::ios_base::in );                  //
+  etc_soft >> s;                                                              //
+  etc_soft.close();                                                           //
+                                                                              //
+  update.softVersion=&s;                                                      //
+                                                                              //
+  log.okParams( 83, "Update" );                                               //
+                                                                              //
+  ans=service.GetDeviceUpdateInfo( &update, &rupdate );                       //
+                                                                              //
+  if( ans!=SOAP_OK ) {                                                        //
+    log.errSoap( 87, service.soap_fault_detail(), ans, "Błąd transmisji" );   //
+    exit(1);                                                                  //
+  }                                                                           //
   log.okSoap( 87, s/*"Update"*/ );//parametry SoftVersion=xxxx
-
-  if( rupdate.GetDeviceUpdateInfoResult==0 ) {
-    log.okServerAns( 89, "Dostępne nowe oprogramowanie" );
-  } else {
-    log.okServerAns( 89, "System aktualny" );
-  }
+                                                                              //
+  if( rupdate.GetDeviceUpdateInfoResult==0 ) {                                //
+    log.okServerAns( 89, "Dostępne nowe oprogramowanie" );                    //
+  } else {                                                                    //
+    log.okServerAns( 89, "System aktualny" );                                 //
+  }                                                                           //
   //sprawdzenie aktualizacji -- koniec ---------------------------------------//
 
 
@@ -522,15 +527,17 @@ int main( int argc, char *argv[] ) {
       pclose( md5Chk );                                                       //
       if( (*(rupdate.response->Md5)).compare( md5sum ) == 0 ) {               //
         if( (*(rupdate.response->UpdateForce)).compare( "FORCE" ) == 0 ) {    //
-//          system(  "sudo -n icdtcp3-update-sw --force /tmp/update.img "               //
-//              "&& sleep 3 && ict-sutdown --reboot &" );                                     //
+//          system(  "sudo -n icdtcp3-update-sw --force /tmp/update.img "       //
+//              "&& sleep 3 && ict-shutdown --reboot &" );                      //
           std::cerr << ":: FORCE update with file: "
             << "/tmp/update.img" << std::endl;
         } else {                                                              //
-//          system(  "sudo -n icdtcp3-update-sw --type=icdtcp3 /tmp/update.img "        //
-//              "&& sleep 3 && ict-sutdown --reboot &" );                                     //
+          s="sudo -n icdtcp3-update-sw --type=";                              //
+          s+=(*(rupdate.response->NewVersion));                               //
+          s+=" /tmp/update.img && sleep 3 && ict-shutdown --reboot &";        //
+//          system(  s.c_str() );                                               //
           std::cerr << ":: update with file: "
-            << "/tmp/update.img" << std::endl;
+            << "/tmp/update.img, cmd: " << s << std::endl;
         }                                                                     //
       }                                                                       //
     }                                                                         //

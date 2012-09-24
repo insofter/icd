@@ -86,6 +86,9 @@ if( isset($_GET['strona']) ) {
    	        case 'wpa':
 	                include('inc/wpa.php');
 	                break;
+          case 'test_wysylania':
+                include('inc/test_wysylania.php');
+                break;
 	        default:
 	                $tresc='<div id="tresc">taka strona nie istnieje</div>';
 	                break;
