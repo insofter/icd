@@ -6,6 +6,7 @@
 #include <getopt.h>
 #include <sstream>
 #include <cmath>
+#include <fstream>
 
 #include "gsoap/icdtcp3SoapProxy.h"
 #include "gsoap/icdtcp3Soap.nsmap"
@@ -458,8 +459,11 @@ int main( int argc, char *argv[] ) {
   _icd1__GetDeviceUpdateInfo update;
   _icd1__GetDeviceUpdateInfoResponse rupdate;
 
+  std::fstream soft_type( "/etc/software_type" , std::ios_base::in );
+  soft_type >> s;
+  soft_type.close();
+
   update.softVersion=&s;
-  //TODO: cat etc/br-version
 
   log.okParams( 83, "Update" );
 
@@ -469,7 +473,7 @@ int main( int argc, char *argv[] ) {
     log.errSoap( 87, service.soap_fault_detail(), ans, "Błąd transmisji" );
     exit(1);
   }
-  log.okSoap( 87, "Update" );//parametry SoftVersion=xxxx
+  log.okSoap( 87, s/*"Update"*/ );//parametry SoftVersion=xxxx
 
   if( rupdate.GetDeviceUpdateInfoResult==0 ) {
     log.okServerAns( 89, "Dostępne nowe oprogramowanie" );
