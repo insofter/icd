@@ -60,7 +60,11 @@ $tresc.='</table>
   50-950 Wrocław<br>
   tel./fax +48 (071) 328 23 41<br>
   e-mail: <a href="mailto:liczniki@insofter.pl">liczniki@insofter.pl</a>
-  </p>
+  <br>
+  <br>
+  <br>
+  <br>
+  Wygenerowano '.date('d.m.Y').'r. o godzinie '.date('G:i:s').'</p>
   ';
 
 $tresc.='</div>';
