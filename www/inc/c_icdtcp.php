@@ -78,7 +78,7 @@ class c_icdtcp {
         $licznik['cnt_last']=$row['cnt'];
       }
       $sql="SELECT sum(cnt) AS sum FROM flow WHERE itd='itd$i'
-        AND `dtm` < ".time()." AND `dtm` > ".( ((int)(time()/(24*3600)))*24*3600 );
+        AND `dtm` < ".(time()*1000)." AND `dtm` > ".( ((int)(time()/(24*3600)))*24*3600*1000 );
       $ans=$this->baza->query($sql);
       $licznik['cnt_sum']=0;
       foreach( $ans as $row ) {
@@ -125,7 +125,8 @@ class c_icdtcp {
     if( $co!='no' ) {
       $co='yes';
     }
-    $sql="UPDATE config SET `value`='$co' WHERE section_id=(SELECT `id` FROM config_section WHERE name='tcpip') AND `key`='dhcp'";
+    $sql="UPDATE config SET `value`='$co' WHERE section_id".
+      "=(SELECT `id` FROM config_section WHERE name='tcpip') AND `key`='dhcp'";
     $ans=$this->baza->query($sql);
   }
 
@@ -170,7 +171,7 @@ class c_icdtcp {
       WHERE cs.name='device' AND ( c.key='ids' OR c.key='idd' OR c.key='address'
       OR c.key='user' OR c.key='transfer-enabled' OR c.key='aggr-period-mins'
       OR c.key='event-retention-period-count' OR c.key='flow-entry-retention-period-mins'
-      OR c.key='pass' OR c.key='server-sync-period-mins' OR 'test-retention-period-mins' )";
+      OR c.key='pass' OR c.key='server-sync-period-mins' OR c.key='test-retention-period-mins' )";
     $ans=$this->baza->query($sql);
     foreach( $ans as $row ) {
       $tcp[$row['key']]=$row['value'];

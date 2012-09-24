@@ -33,7 +33,7 @@ $stopka='
   </body></html>';
 
 $menulista=array('tcpip'=>'TCPIP',
-  'wpa'=>'WiFi',
+  /*  'wpa'=>'WiFi',*/
   'licznik'=>'Licznik',
   'wysylanie'=>'Wysyłanie',
   'wyniki'=>'Wyniki',
@@ -43,7 +43,7 @@ $menulista=array('tcpip'=>'TCPIP',
 
 $menu='<ul class="menu">
   ';
-if( isset($_GET['strona']) ) {
+if( isset($_GET['strona']) && isset($menulista[$_GET['strona']]) ) {
   $menu.='<li><a href="./">Info</a></li>';
   $tytul.=' - '.$menulista[$_GET['strona']];
 } else {

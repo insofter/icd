@@ -16,6 +16,9 @@ h1 {
 #klikniete {
   color: green;
 }
+ul.menu {
+  margin: auto;
+}
 ul.menu, .menu li {
   list-style-type: none;
   padding: 0;
@@ -24,8 +27,8 @@ ul.menu, .menu li {
 .menu li {
   display: block;
   float: left;
-  /*  width: 110px;*/
-  width: 94px;
+  width: 110px;
+  /*width: 94px;*/
   text-align: center;
 }
 .menu li:hover {
