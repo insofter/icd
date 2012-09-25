@@ -154,7 +154,7 @@ void getInitWIthFullSession( Clog & log ) {
   _icd1__LoginDeviceResponse rlogin;                                          //
                                                                               //
   login.idd=atoi( (globalConfig->entry( "device", "idd")).c_str() );          //
-  login.mac=new std::string( globalConfig->entry( "device", "mac" ) );        //
+  login.mac=new std::string( globalConfig->entry( "tcpip", "mac" ) );         //
   login.deviceIds=new std::string( globalConfig->entry( "device", "ids" ) );  //
   login.devInfo=new std::string("icdtcp3");                                   //
   s="idd='";                                                                  //
@@ -224,7 +224,7 @@ void getInitWIthFullSession( Clog & log ) {
     char ch[10];                                                              //
     sprintf(ch,"%i",rgmi.response->Idd);                                      //
     globalConfig->set_entry( "device", "idd", ch);                            //
-    globalConfig->set_entry( "device", "mac", *(rgmi.response->Mac) );        //
+    globalConfig->set_entry( "tcpip", "mac", *(rgmi.response->Mac) );         //
     log.okServerAns( 49, *(rgmi.response->Message) );                         //
   } else {                                                                    //
     log.errServerAns( 49, *(rgmi.response->Message), "GetIdd", "GI",          //
@@ -337,7 +337,7 @@ int main( int argc, char *argv[] ) {
 
 
   //dla idd == 0 pobieramy dane ----------------------------------------------//
-  s=globalConfig->entry( "device", "mac");                                    //
+  s=globalConfig->entry( "tcpip", "mac");                                     //
   if( atoi( (globalConfig->entry( "device", "idd")).c_str() ) == 0            //
       || s.size() != 17 || s.compare( "00:1C:D3:00:00:00" ) == 0 ) {          //
     getInitWIthFullSession( log );                                            //
@@ -362,7 +362,7 @@ int main( int argc, char *argv[] ) {
   _icd1__LoginDeviceResponse rlogin;                                          //
                                                                               //
   login.idd=atoi( (globalConfig->entry( "device", "idd")).c_str() );          //
-  login.mac=new std::string( globalConfig->entry( "device", "mac" ) );        //
+  login.mac=new std::string( globalConfig->entry( "tcpip", "mac" ) );         //
   login.deviceIds=new std::string( globalConfig->entry( "device", "ids" ) );  //
                                                                               //
   std::fstream etc_soft( "/etc/software_version" , std::ios_base::in );       //
