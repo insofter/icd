@@ -22,6 +22,14 @@ extern sqlite3cc::conn *globalDb;
  * Struct describes values which can be get from database.
  */
 struct CdbParam {
+  enum editMode {
+    readOnly,
+    editBool,
+    editInt,
+    editIp,
+    editText
+  }; 
+
   /**
    * Name, which will be shown on 1st linie.
    */
@@ -46,6 +54,11 @@ struct CdbParam {
    * For long parameters, more than 16 characters.
    */
   unsigned int _lastSize;
+
+  /**
+   * Describes possibility and type of editing
+   */
+  editMode _editMode;
 
   /**
    * Constructor, sets 0.
@@ -201,7 +214,7 @@ public:
    * @param key Database parameter key for config table.
    * @return Number of item in list.
    */
-  int itemAdd(std::string name, std::string sect, std::string key);
+  int itemAdd(std::string name, std::string sect, std::string key, CdbParam::editMode _editMode=CdbParam::readOnly);
   virtual void screen(Clcd *lcd);
   virtual int up(Clcd *lcd);
   virtual int left(Clcd *lcd);

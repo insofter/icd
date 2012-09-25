@@ -23,24 +23,24 @@ sqlite3cc::conn *globalDb;
 
 void print_usage(char *argv0) {
   std::cerr <<
-            "\n"
-            "Usage: " << basename(argv0) << " OPTION...\n"
-            "\n"
-            "A front controller daemon. Provides user interface via lcd and buttons.\n"
-            "\n"
-            "Options:\n"
-            "  -d|--db=DB_NAME              Database file path; Mandatory option\n"
-            "  -t|--timeout=TIMEOUT_MS      Timeout for access to the database in ms\n"
-            "  -b|--daemon                  Run as a daemon\n"
-            "  -p|--pidfile=FILE            Create pid file (if a daemon)\n"
-            "  -h|--help\n"
-            "  -v|--version\n"
-            << std::endl;
+    "\n"
+    "Usage: " << basename(argv0) << " OPTION...\n"
+    "\n"
+    "A front controller daemon. Provides user interface via lcd and buttons.\n"
+    "\n"
+    "Options:\n"
+    "  -d|--db=DB_NAME              Database file path; Mandatory option\n"
+    "  -t|--timeout=TIMEOUT_MS      Timeout for access to the database in ms\n"
+    "  -b|--daemon                  Run as a daemon\n"
+    "  -p|--pidfile=FILE            Create pid file (if a daemon)\n"
+    "  -h|--help\n"
+    "  -v|--version\n"
+    << std::endl;
 }
 
 void print_version(char *argv0) {
   std::cerr << basename(argv0) << " " << version << "\n"
-            << copyright << std::endl;
+    << copyright << std::endl;
 }
 
 
@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
     bool run_as_daemon = false;
     bool exit = false;
 
-//parametry uruchomienia
+    //parametry uruchomienia
     struct option long_options[] = {
       { "db", required_argument, 0, 'd' },
       { "timeout", required_argument, 0, 't' },
@@ -73,31 +73,31 @@ int main(int argc, char *argv[]) {
       if (ch == -1)
         break;
       switch(ch) {
-      case 'd':
-        db_name = optarg;
-        break;
-      case 't':
-        db_timeout = strtol(optarg, NULL, 0);
-        break;
-      case 'b':
-        run_as_daemon = true;
-        break;
-      case 'p':
-        daemon.pid_file(optarg);
-        break;
-      case 'h':
-        print_usage(argv[0]);
-        exit = true;
-        break;
-      case 'v':
-        print_version(argv[0]);
-        exit = true;
-        break;
-      MIN:
-        std::ostringstream oss;
-        oss << "Unknown option '" << char(ch) << "'";
-        throw std::runtime_error(oss.str());
-        break;
+        case 'd':
+          db_name = optarg;
+          break;
+        case 't':
+          db_timeout = strtol(optarg, NULL, 0);
+          break;
+        case 'b':
+          run_as_daemon = true;
+          break;
+        case 'p':
+          daemon.pid_file(optarg);
+          break;
+        case 'h':
+          print_usage(argv[0]);
+          exit = true;
+          break;
+        case 'v':
+          print_version(argv[0]);
+          exit = true;
+          break;
+MIN:
+          std::ostringstream oss;
+          oss << "Unknown option '" << char(ch) << "'";
+          throw std::runtime_error(oss.str());
+          break;
       }
       if(exit) {
         break;
@@ -110,65 +110,65 @@ int main(int argc, char *argv[]) {
     if (!exit && run_as_daemon) {
       exit = daemon.fork();
     }
-//parametry uruchomienia -- koniec
+    //parametry uruchomienia -- koniec
 
-//menu
-/* Menu visualisation
- * * F - item in shortcuts
- * * M - menu in main screen
- *
- * mainMenu
- * |
- * +--CmenuItemTimeFoto AB
- * +--CmenuItemTimeFoto CD
- * +--CmenuItemIdds
- * +--CmenuItemDbParam: Adres IP 
- * +--CmenuItemDbParam: Status wysyłania
- * |
- * F--Test połączenia
- * F--Test fotokomórek
- * F--Wyłączanie
- * |
- * M--Menu
- *    |
- *    +--TCPIP
- *    |  |
- *    |  +--Aktualna
- *    |  |  |
- *    |  |  +--DHCP
- *    |  |  +--Adres IP
- *    |  |  +--Maska
- *    |  |  +--Brama
- *    |  |  +--DNS 1
- *    |  |  +--DNS 2
- *    |  |
- *    |  +--Statyczna
- *    |  |  |
- *    |  |  +--DHCP
- *    |  |  +--Adres IP
- *    |  |  +--Maska
- *    |  |  +--Brama
- *    |  |  +--DNS 1
- *    |  |  +--DNS 2
- *    |  |
- *    |  +--WiFi
- *    |  |
- *    |  +--GSM
- *    |
- *    +--Wysyłanie
- *    |  |
- *    |  +--IDS
- *    |  +--IDD
- *    |  +--Adres wysyłania
- *    |  +--Uzytkownik
- *    |
- *    +--Fotokomórki
- *       |
- *       +--Nazwa
- *       +--Nazwa
- *       +--Nazwa
- *       +--Nazwa
- */
+    //menu
+    /* Menu visualisation
+     * * F - item in shortcuts
+     * * M - menu in main screen
+     *
+     * mainMenu
+     * |
+     * +--CmenuItemTimeFoto AB
+     * +--CmenuItemTimeFoto CD
+     * +--CmenuItemIdds
+     * +--CmenuItemDbParam: Adres IP 
+     * +--CmenuItemDbParam: Status wysyłania
+     * |
+     * F--Test połączenia
+     * F--Test fotokomórek
+     * F--Wyłączanie
+     * |
+     * M--Menu
+     *    |
+     *    +--TCPIP
+     *    |  |
+     *    |  +--Aktualna
+     *    |  |  |
+     *    |  |  +--DHCP
+     *    |  |  +--Adres IP
+     *    |  |  +--Maska
+     *    |  |  +--Brama
+     *    |  |  +--DNS 1
+     *    |  |  +--DNS 2
+     *    |  |
+     *    |  +--Statyczna
+     *    |  |  |
+     *    |  |  +--DHCP (edit: bool)
+     *    |  |  +--Adres IP (edit: ip)
+     *    |  |  +--Maska (edit: ip)
+     *    |  |  +--Brama (edit: ip)
+     *    |  |  +--DNS 1 (edit: ip)
+     *    |  |  +--DNS 2 (edit: ip)
+     *    |  |
+     *    |  +--WiFi
+     *    |  |
+     *    |  +--GSM
+     *    |
+     *    +--Wysyłanie
+     *    |  |
+     *    |  +--IDS (edit: text)
+     *    |  +--IDD (edit: num)
+     *    |  +--Adres wysyłania (edit: text)
+     *    |  +--Uzytkownik (edit: text)
+     *    |
+     *    +--Fotokomórki
+     *       |
+     *       +--Nazwa
+     *       +--Nazwa
+     *       +--Nazwa
+     *       +--Nazwa
+     */
 
 
     globalDb=new sqlite3cc::conn();
@@ -251,18 +251,18 @@ int main(int argc, char *argv[]) {
     int poweroff=mainMenu->fastAdd(
         new CmenuItemRunTestApp( "Wyłącz ICDTCP3", "> Wyłączyć?",
           "icd-shutdown", "Wyłączanie  - -", "Wyłączanie   - -" ) );
-//end menu
+    //end menu
 
 #define MIN_WAIT 333
 #define DEFAULT_WAIT 1000
 #define RETURN_TIME 600000
 
-#define KEY_UP 259
-#define KEY_DOWN 258
-#define KEY_LEFT 9999 //TODO: poprawne kody klawiszy
-#define KEY_RIGHT 9998
-#define KEY_ENTER 257
-#define KEY_ESC 256
+#define KBD_UP 259
+#define KBD_DOWN 258
+#define KBD_LEFT 9999 //TODO: poprawne kody klawiszy
+#define KBD_RIGHT 9998
+#define KBD_ENTER 257
+#define KBD_ESC 256
 
     if (!exit) {
 
@@ -299,33 +299,33 @@ int main(int argc, char *argv[]) {
           if( ev.code!=0 ) {//rzucany pusty event niewiadomo czemu
             toReturn=0;
             //TODO: włącz podswietlenia (po kliknieciu)
-            if( ev.value==1 && ev.code==KEY_ESC ) {//wciśniecie esc
+            if( ev.value==1 && ev.code==KBD_ESC ) {//wciśniecie esc
               esc=1;
-            } else if( ev.value==0 && ev.code==KEY_ESC  ) {//puszczenie esc
+            } else if( ev.value==0 && ev.code==KBD_ESC  ) {//puszczenie esc
               if( esc==1 ) {//esc nie uzyty jako shift
                 mainMenu->esc(&lcd);
               }
               esc=0;
             } else if( ev.value==0 ) {//puszczenie innego klawisza
               if( esc!=0 ) {//esc wcisniety i puszczono inny
-                  esc=2;
+                esc=2;
                 switch(ev.code) {
                   //case 11259: mainMenu->up(&lcd); break;
                   //case 11258: mainMenu->down(&lcd); break;
-                  case KEY_UP:    mainMenu->fastGoto( conntestid );
+                  case KBD_UP:    mainMenu->fastGoto( conntestid );
                                   mainMenu->screen(&lcd); break;
-                  case KEY_DOWN:  mainMenu->fastGoto( fototestid );
+                  case KBD_DOWN:  mainMenu->fastGoto( fototestid );
                                   mainMenu->screen(&lcd); break;
-                  case KEY_ENTER: mainMenu->fastGoto( poweroff );
+                  case KBD_ENTER: mainMenu->fastGoto( poweroff );
                                   mainMenu->screen(&lcd); break;
                 }
               } else {//puszczono inny bez esc
                 switch(ev.code) {
-                  case KEY_UP:   mainMenu->up(&lcd); break;
-                  case KEY_DOWN:   mainMenu->down(&lcd); break;
-                  case KEY_LEFT: mainMenu->left(&lcd); break;
-                  case KEY_RIGHT: mainMenu->right(&lcd); break;
-                  case KEY_ENTER:   mainMenu->enter(&lcd); break;
+                  case KBD_UP:    mainMenu->up(&lcd); break;
+                  case KBD_DOWN:  mainMenu->down(&lcd); break;
+                  case KBD_LEFT:  mainMenu->left(&lcd); break;
+                  case KBD_RIGHT: mainMenu->right(&lcd); break;
+                  case KBD_ENTER: mainMenu->enter(&lcd); break;
                 }
               }
             }

@@ -2,7 +2,7 @@
 #include <cmath>
 
 
-CdbParam::CdbParam(): _lastPos(0), _lastSize(0) {
+CdbParam::CdbParam(): _lastPos(0), _lastSize(0), _editMode(readOnly) {
 }
 
 
@@ -180,7 +180,8 @@ CmenuDbParamList::CmenuDbParamList(std::string newname): CmenuItem(newname) {
 CmenuDbParamList::~CmenuDbParamList() {
 }
 
-int CmenuDbParamList::itemAdd(std::string name, std::string sect, std::string key) {
+int CmenuDbParamList::itemAdd(std::string name, std::string sect, 
+    std::string key, CdbParam::editMode _editMode) {
   CdbParam param;
   param._key=key;
   param._sect=sect;
