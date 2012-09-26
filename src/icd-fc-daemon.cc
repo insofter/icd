@@ -21,10 +21,10 @@
 icd::config *globalConfig;
 sqlite3cc::conn *globalDb;
 
-void print_usage(char *argv0) {
+void print_usage( char *argv0 ) {
   std::cerr <<
     "\n"
-    "Usage: " << basename(argv0) << " OPTION...\n"
+    "Usage: " << basename( argv0 ) << " OPTION...\n"
     "\n"
     "A front controller daemon. Provides user interface via lcd and buttons.\n"
     "\n"
@@ -32,21 +32,21 @@ void print_usage(char *argv0) {
     "  -d|--db=DB_NAME              Database file path; Mandatory option\n"
     "  -t|--timeout=TIMEOUT_MS      Timeout for access to the database in ms\n"
     "  -b|--daemon                  Run as a daemon\n"
-    "  -p|--pidfile=FILE            Create pid file (if a daemon)\n"
+    "  -p|--pidfile=FILE            Create pid file ( if a daemon )\n"
     "  -h|--help\n"
     "  -v|--version\n"
     << std::endl;
 }
 
-void print_version(char *argv0) {
-  std::cerr << basename(argv0) << " " << version << "\n"
+void print_version( char *argv0 ) {
+  std::cerr << basename( argv0 ) << " " << version << "\n"
     << copyright << std::endl;
 }
 
 
 
-int main(int argc, char *argv[]) {
-  icd::syslogstream::initialize(basename(argv[0]), LOG_PERROR);
+int main( int argc, char *argv[] ) {
+  icd::syslogstream::initialize( basename( argv[0] ), LOG_PERROR );
   icd::syslogstream syslog;
 
   try {
@@ -69,45 +69,45 @@ int main(int argc, char *argv[]) {
 
     while( 1==1 ) {
       int option_index = 0;
-      int ch = getopt_long(argc, argv, "d:t:bphv", long_options, &option_index);
-      if (ch == -1)
+      int ch = getopt_long( argc, argv, "d:t:bphv", long_options, &option_index );
+      if ( ch == -1 )
         break;
-      switch(ch) {
+      switch( ch ) {
         case 'd':
           db_name = optarg;
           break;
         case 't':
-          db_timeout = strtol(optarg, NULL, 0);
+          db_timeout = strtol( optarg, NULL, 0 );
           break;
         case 'b':
           run_as_daemon = true;
           break;
         case 'p':
-          daemon.pid_file(optarg);
+          daemon.pid_file( optarg );
           break;
         case 'h':
-          print_usage(argv[0]);
+          print_usage( argv[0] );
           exit = true;
           break;
         case 'v':
-          print_version(argv[0]);
+          print_version( argv[0] );
           exit = true;
           break;
 MIN:
           std::ostringstream oss;
-          oss << "Unknown option '" << char(ch) << "'";
-          throw std::runtime_error(oss.str());
+          oss << "Unknown option '" << char( ch ) << "'";
+          throw std::runtime_error( oss.str() );
           break;
       }
-      if(exit) {
+      if( exit ) {
         break;
       }
     }
     if( !exit && db_name.empty() ) {
-      throw std::runtime_error("Missing '--db' parameter");
+      throw std::runtime_error( "Missing '--db' parameter" );
     }
 
-    if (!exit && run_as_daemon) {
+    if ( !exit && run_as_daemon ) {
       exit = daemon.fork();
     }
     //parametry uruchomienia -- koniec
@@ -144,12 +144,12 @@ MIN:
      *    |  |
      *    |  +--Statyczna
      *    |  |  |
-     *    |  |  +--DHCP (edit: bool)
-     *    |  |  +--Adres IP (edit: ip)
-     *    |  |  +--Maska (edit: ip)
-     *    |  |  +--Brama (edit: ip)
-     *    |  |  +--DNS 1 (edit: ip)
-     *    |  |  +--DNS 2 (edit: ip)
+     *    |  |  +--DHCP ( edit: bool )
+     *    |  |  +--Adres IP ( edit: ip )
+     *    |  |  +--Maska ( edit: ip )
+     *    |  |  +--Brama ( edit: ip )
+     *    |  |  +--DNS 1 ( edit: ip )
+     *    |  |  +--DNS 2 ( edit: ip )
      *    |  |
      *    |  +--WiFi
      *    |  |
@@ -157,10 +157,10 @@ MIN:
      *    |
      *    +--Wysyłanie
      *    |  |
-     *    |  +--IDS (edit: text)
-     *    |  +--IDD (edit: num)
-     *    |  +--Adres wysyłania (edit: text)
-     *    |  +--Uzytkownik (edit: text)
+     *    |  +--IDS ( edit: text )
+     *    |  +--IDD ( edit: num )
+     *    |  +--Adres wysyłania ( edit: text )
+     *    |  +--Uzytkownik ( edit: text )
      *    |
      *    +--Fotokomórki
      *       |
@@ -173,66 +173,66 @@ MIN:
 
     globalDb=new sqlite3cc::conn();
     globalDb->open( db_name.c_str() );
-    globalDb->busy_timeout(db_timeout);
+    globalDb->busy_timeout( db_timeout );
     globalConfig=new icd::config( *globalDb );
 
 
 
     ClcdDriver lcdDrv;
     Clcd lcd;
-    CmenuList *menu = new CmenuList("Menu");
+    CmenuList *menu = new CmenuList( "Menu" );
     CmenuList *item;
     CmenuDbParamList *pl;
 
-    item = new CmenuList("TCPIP");
+    item = new CmenuList( "TCPIP" );
 
-    pl=new CmenuDbParamList("Aktualna");
-    pl->itemAdd("DHCP", "current", "dhcp");
-    pl->itemAdd("Adres IP", "current", "ip");
-    pl->itemAdd("Maska", "current", "mask");
-    pl->itemAdd("Brama", "current", "gate");
-    pl->itemAdd("DNS 1", "current", "dns1");
-    pl->itemAdd("DNS 2", "current", "dns2");
-    item->itemAdd(pl);
+    pl=new CmenuDbParamList( "Aktualna" );
+    pl->itemAdd( "DHCP", "current", "dhcp" );
+    pl->itemAdd( "Adres IP", "current", "ip" );
+    pl->itemAdd( "Maska", "current", "mask" );
+    pl->itemAdd( "Brama", "current", "gate" );
+    pl->itemAdd( "DNS 1", "current", "dns1" );
+    pl->itemAdd( "DNS 2", "current", "dns2" );
+    item->itemAdd( pl );
 
-    pl=new CmenuDbParamList("Statyczna");
-    pl->itemAdd("DHCP", "tcpip", "dhcp");
-    pl->itemAdd("Adres IP", "tcpip", "ip");
-    pl->itemAdd("Maska", "tcpip", "mask");
-    pl->itemAdd("Brama", "tcpip", "gate");
-    pl->itemAdd("DNS 1", "tcpip", "dns1");
-    pl->itemAdd("DNS 2", "tcpip", "dns2");
-    item->itemAdd(pl);
+    pl=new CmenuDbParamList( "Statyczna" );
+    pl->itemAdd( "DHCP", "tcpip", "dhcp", CdbParam::editBool );
+    pl->itemAdd( "Adres IP", "tcpip", "ip", CdbParam::editIp );
+    pl->itemAdd( "Maska", "tcpip", "mask", CdbParam::editIp );
+    pl->itemAdd( "Brama", "tcpip", "gate", CdbParam::editIp );
+    pl->itemAdd( "DNS 1", "tcpip", "dns1", CdbParam::editIp );
+    pl->itemAdd( "DNS 2", "tcpip", "dns2", CdbParam::editIp );
+    item->itemAdd( pl );
 
-    pl=new CmenuDbParamList("WiFi");
-    item->itemAdd(pl);
+    pl=new CmenuDbParamList( "WiFi" );
+    item->itemAdd( pl );
 
-    pl=new CmenuDbParamList("GSM");
-    item->itemAdd(pl);
+    pl=new CmenuDbParamList( "GSM" );
+    item->itemAdd( pl );
 
     menu->itemAdd( item );
 
-    pl=new CmenuDbParamList("Wysyłanie");
-    pl->itemAdd("IDS - id salonu", "device", "ids");
-    pl->itemAdd("IDD - id urządz.", "device", "idd");
-    pl->itemAdd("Adres wysyłania", "device", "address");
-    pl->itemAdd("Użytkownik", "device", "user");
+    pl=new CmenuDbParamList( "Wysyłanie" );
+    pl->itemAdd( "IDS - id salonu", "device", "ids" );
+    pl->itemAdd( "IDD - id urządz.", "device", "idd" );
+    pl->itemAdd( "Adres wysyłania", "device", "address" );
+    pl->itemAdd( "Użytkownik", "device", "user" );
 
     menu->itemAdd( pl );
 
-    pl=new CmenuDbParamList("Fotokomórki");
-    pl->itemAdd("Nazwa", "itd0", "name");
-    pl->itemAdd("Nazwa", "itd1", "name");
-    pl->itemAdd("Nazwa", "itd2", "name");
-    pl->itemAdd("Nazwa", "itd3", "name");
+    pl=new CmenuDbParamList( "Fotokomórki" );
+    pl->itemAdd( "Nazwa", "itd0", "name" );
+    pl->itemAdd( "Nazwa", "itd1", "name" );
+    pl->itemAdd( "Nazwa", "itd2", "name" );
+    pl->itemAdd( "Nazwa", "itd3", "name" );
 
     menu->itemAdd( pl );
 
-    CmenuContainerNoRoot *mainMenu = new CmenuContainerNoRoot( menu, new CmenuItemTimeFoto(0, 1) );
-    mainMenu->itemAdd( new CmenuItemTimeFoto(2, 3) );
+    CmenuContainerNoRoot *mainMenu = new CmenuContainerNoRoot( menu, new CmenuItemTimeFoto( 0, 1 ) );
+    mainMenu->itemAdd( new CmenuItemTimeFoto( 2, 3 ) );
     mainMenu->itemAdd( new CmenuItemIdds );
-    mainMenu->itemAdd( new CmenuItemDbParam("Adres IP", "current", "ip") );
-    mainMenu->itemAdd( new CmenuItemDbParam("Status wysyłania", "current", "last-send-status") );
+    mainMenu->itemAdd( new CmenuItemDbParam( "Adres IP", "current", "ip" ) );
+    mainMenu->itemAdd( new CmenuItemDbParam( "Status wysyłania", "current", "last-send-status" ) );
     std::string cmd;
     cmd="icd-transfer-data --log=short --db=\"";
     cmd+=db_name;
@@ -248,7 +248,7 @@ MIN:
         new CmenuItemRunTestApp( "Test fotokomórek","> Testuj",
           cmd, "Test fotokomórek", "", true ) );
 
-    int poweroff=mainMenu->fastAdd(
+    int poweroff=mainMenu->fastAdd( 
         new CmenuItemRunTestApp( "Wyłącz ICDTCP3", "> Wyłączyć?",
           "icd-shutdown", "Wyłączanie  - -", "Wyłączanie   - -" ) );
     //end menu
@@ -264,29 +264,29 @@ MIN:
 #define KBD_ENTER 257
 #define KBD_ESC 256
 
-    if (!exit) {
+    if ( !exit ) {
 
       int wait=MIN_WAIT;
       int toReturn;
 
-      mainMenu->screen(&lcd);
-      lcdDrv.print(lcd);
+      mainMenu->screen( &lcd );
+      lcdDrv.print( lcd );
 
       int kbd;
-      kbd=open("/dev/input/event0", O_RDONLY);
+      kbd=open( "/dev/input/event0", O_RDONLY );
 
       struct input_event ev;
       struct pollfd fds[1];
 
       int esc=0;
 
-      while(!exit) {
+      while( !exit ) {
         fds[0].fd=kbd;
         fds[0].events=POLLIN;
 
         if( toReturn >= RETURN_TIME ) {
           mainMenu->fullEsc();
-          mainMenu->screen(&lcd);
+          mainMenu->screen( &lcd );
           //TODO: wyłącz podswietlenie
           toReturn=0;
         }
@@ -295,45 +295,50 @@ MIN:
 
 
         if( fds[0].revents & POLLIN ) {
-          read( kbd, (char*)&ev, sizeof(ev) );
+          read( kbd, ( char* )&ev, sizeof( ev ) );
           if( ev.code!=0 ) {//rzucany pusty event niewiadomo czemu
             toReturn=0;
-            //TODO: włącz podswietlenia (po kliknieciu)
+            //TODO: włącz podswietlenia ( po kliknieciu )
             if( ev.value==1 && ev.code==KBD_ESC ) {//wciśniecie esc
               esc=1;
             } else if( ev.value==0 && ev.code==KBD_ESC  ) {//puszczenie esc
               if( esc==1 ) {//esc nie uzyty jako shift
-                mainMenu->esc(&lcd);
+                mainMenu->esc( &lcd );
               }
               esc=0;
             } else if( ev.value==0 ) {//puszczenie innego klawisza
               if( esc!=0 ) {//esc wcisniety i puszczono inny
                 esc=2;
-                switch(ev.code) {
-                  //case 11259: mainMenu->up(&lcd); break;
-                  //case 11258: mainMenu->down(&lcd); break;
-                  case KBD_UP:    mainMenu->fastGoto( conntestid );
-                                  mainMenu->screen(&lcd); break;
+                switch( ev.code ) {//esc wcisniety i puszczono inny
+                  //case 11259: mainMenu->up( &lcd ); break;
+                  //case 11258: mainMenu->down( &lcd ); break;
+/*                  case KBD_UP:    mainMenu->fastGoto( conntestid );
+                                  mainMenu->screen( &lcd ); break;
                   case KBD_DOWN:  mainMenu->fastGoto( fototestid );
-                                  mainMenu->screen(&lcd); break;
+                                  mainMenu->screen( &lcd ); break;*/
                   case KBD_ENTER: mainMenu->fastGoto( poweroff );
-                                  mainMenu->screen(&lcd); break;
+                                  mainMenu->screen( &lcd ); break;
+
+                  case KBD_UP:    mainMenu->left( &lcd ); break;
+                  case KBD_DOWN:  mainMenu->right( &lcd ); break;
+
+
                 }
               } else {//puszczono inny bez esc
-                switch(ev.code) {
-                  case KBD_UP:    mainMenu->up(&lcd); break;
-                  case KBD_DOWN:  mainMenu->down(&lcd); break;
-                  case KBD_LEFT:  mainMenu->left(&lcd); break;
-                  case KBD_RIGHT: mainMenu->right(&lcd); break;
-                  case KBD_ENTER: mainMenu->enter(&lcd); break;
+                switch( ev.code ) {
+                  case KBD_UP:    mainMenu->up( &lcd ); break;
+                  case KBD_DOWN:  mainMenu->down( &lcd ); break;
+                  case KBD_LEFT:  mainMenu->left( &lcd ); break;//off
+                  case KBD_RIGHT: mainMenu->right( &lcd ); break;//off
+                  case KBD_ENTER: mainMenu->enter( &lcd ); break;
                 }
               }
             }
-            lcdDrv.print(lcd);
+            lcdDrv.print( lcd );
           }
         } else if( lcd._refresh!=0 ) {//skonczony czas bez klawisza
-          mainMenu->screen(&lcd);
-          lcdDrv.print(lcd);
+          mainMenu->screen( &lcd );
+          lcdDrv.print( lcd );
         }
 
         if( lcd._refresh==0 ) {
@@ -347,8 +352,8 @@ MIN:
       }
       globalDb->close();
     }
-  } catch(std::exception& e) {
-    syslog << basename(argv[0]) << " error: " << e.what() << std::endl;
+  } catch( std::exception& e ) {
+    syslog << basename( argv[0] ) << " error: " << e.what() << std::endl;
     return 1;
   }
   return 0;

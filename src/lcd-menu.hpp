@@ -197,12 +197,17 @@ public:
 };
 
 /**
- * List of database parameters, read-only.
+ * List of database parameters, editable if ypu wish.
  */
 class CmenuDbParamList: public CmenuItem {
 protected:
   std::vector<CdbParam> _list;
   int _active;
+  bool _editing;
+  std::string _tmps;
+  int _tmpi[6];
+  int _tmpp;
+
 public:
   CmenuDbParamList(std::string newname);
   virtual ~CmenuDbParamList();

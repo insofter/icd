@@ -170,11 +170,12 @@ void CmenuContainer::screen(Clcd *lcd) {
     }
   }
 }
-
-
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
 
 CmenuDbParamList::CmenuDbParamList(std::string newname): CmenuItem(newname) {
   _active=-1;
+  _editing=false;
 }
 
 CmenuDbParamList::~CmenuDbParamList() {
@@ -186,6 +187,7 @@ int CmenuDbParamList::itemAdd(std::string name, std::string sect,
   param._key=key;
   param._sect=sect;
   param._name=name;
+  param._editMode=_editMode;
   _list.push_back(param);
   return _list.size()-1;
 }
@@ -194,6 +196,16 @@ void CmenuDbParamList::screen(Clcd *lcd) {
   if( _active==-1 ) {
     lcd->_lcd[0]=name;
     lcd->_lcd[1]="..";
+  } else if( _editing ) {//reparse tmp values to string with cursor
+    lcd->_lcd[0]=_list[_active]._name;//.substr( 0, 14 );
+//    lcd->_lcd[0]+="(E";//edit sign
+    char x[16];
+    sprintf(x,"%3i.%3i.%3i.%3i", _tmpi[0],  _tmpi[1], _tmpi[2], _tmpi[3] );
+    lcd->_lcd[1]=x;
+    lcd->_refresh=0;
+    lcd->_cur._y=1;
+    lcd->_cur._x=_tmpp+(_tmpp/3);
+    lcd->_cur._car=Ccur::blinkLine;
   } else {
     std::string val;
     lcd->_lcd[0]=_list[_active]._name;
@@ -210,7 +222,7 @@ void CmenuDbParamList::screen(Clcd *lcd) {
       int ktora=std::floor( _list[_active]._lastPos/16 )+1;
 
       lcd->_cur._x=(( ktora*16 ) / ilCzesci)-1;
-        
+
       lcd->_cur._y=1;
       lcd->_cur._car=Ccur::line;
 
@@ -225,49 +237,132 @@ void CmenuDbParamList::screen(Clcd *lcd) {
 }
 
 int CmenuDbParamList::up(Clcd *lcd) {
-  if( _active==-1) {
-    _active=_list.size()-1;
+  if( _editing ) {
+    //_tmpp/3 == which number is edited
+    //_tmpp%3 == which digit  is edited
+    if( _tmpp%3 == 0 ) {
+      _tmpi[ _tmpp/3 ]+=100;
+    } else if( _tmpp%3 == 1 ) {
+      _tmpi[ _tmpp/3 ]+=10;
+    } else {
+      _tmpi[ _tmpp/3 ]+=1;
+    }
+    if( _tmpi[ _tmpp/3 ] > 255 ) {//overflow 
+      _tmpi[ _tmpp/3 ]=0;
+    }
   } else {
-    --_active;
-  }
-  if( _active!=-1 ) {
-    _list[_active]._lastSize=0;
+    if( _active==-1) {
+      _active=_list.size()-1;
+    } else {
+      --_active;
+    }
+    if( _active!=-1 ) {
+      _list[_active]._lastSize=0;
+    }
   }
   this->screen(lcd);
   return 0;
 }
 
 int CmenuDbParamList::left(Clcd *lcd) {
-  return this->up(lcd);
+  if( _editing ) {
+    if( _tmpp == 0 ) {
+      _tmpp=11;
+    } else {
+      --_tmpp;
+    }
+    this->screen(lcd);
+    return 0;
+  } else {
+    return this->up(lcd);
+  }
 }
 
 int CmenuDbParamList::down(Clcd *lcd) {
-  if( _active==((int)_list.size())-1 ) {
-    _active=-1;
+  if( _editing ) {
+    //_tmpp/3 == which number is edited
+    //_tmpp%3 == which digit  is edited
+    if( _tmpp%3 == 0 ) {
+      _tmpi[ _tmpp/3 ]-=100;
+    } else if( _tmpp%3 == 1 ) {
+      _tmpi[ _tmpp/3 ]-=10;
+    } else {
+      _tmpi[ _tmpp/3 ]-=1;
+    }
+    if( _tmpi[ _tmpp/3 ] < 0 ) {//overflow 
+      _tmpi[ _tmpp/3 ]=255;
+    }
   } else {
-    ++_active;
-  }
-  if( _active!=-1 ) {
-    _list[_active]._lastSize=0;
+    if( _active==((int)_list.size())-1 ) {
+      _active=-1;
+    } else {
+      ++_active;
+    }
+    if( _active!=-1 ) {
+      _list[_active]._lastSize=0;
+    }
   }
   this->screen(lcd);
   return 0;
 }
 
 int CmenuDbParamList::right(Clcd *lcd) {
-  return this->down(lcd);
+  if( _editing ) {
+    if( _tmpp == 11 ) {
+      _tmpp=0;
+    } else {
+      ++_tmpp;
+    }
+    this->screen(lcd);
+    return 0;
+  } else {
+    return this->down(lcd);
+  }
 }
 
 int CmenuDbParamList::enter(Clcd *lcd) {
   if( _active==-1 ) {
     return 1;
   } else {
+    if( _editing ) {
+      //TODO:save
+      char c[16];
+      sprintf(c,"%i.%i.%i.%i", _tmpi[0],  _tmpi[1], _tmpi[2], _tmpi[3] );
+      globalConfig->set_entry( _list[_active]._sect, _list[_active]._key, c );
+      _editing=false;
+    } else if( _list[_active]._editMode!=CdbParam::readOnly ){
+      switch( _list[_active]._editMode ) {
+        case CdbParam::editBool:
+          break;
+        case CdbParam::editInt:
+          break;
+        case CdbParam::editIp:
+          _tmpi[0]=0;
+          _tmpi[1]=0;
+          _tmpi[2]=0;
+          _tmpi[3]=0;
+          sscanf( ( globalConfig->entry( _list[_active]._sect, 
+                _list[_active]._key) ).c_str(), "%i.%i.%i.%i", 
+              _tmpi, _tmpi+1, _tmpi+2, _tmpi+3 );
+          _tmpp=0; //string from db is parsed to 4 integers, editpos=0;
+          break;
+        case CdbParam::editText:
+          break;
+        default:
+          std::cerr << "bug w CmenuDbParamList::enter" << std::endl;
+          exit(1);
+          break;
+      }
+      _editing=true;
+    }
     this->screen(lcd);
     return 0;
   }
 }
 
 int CmenuDbParamList::esc(Clcd *lcd) {
+  _editing=false;
+  _active=-1;
   return 1;
 }
 
@@ -275,16 +370,17 @@ void CmenuDbParamList::fullEsc() {
   _active=-1;
 }
 
-
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
 
 CmenuContainerNoRoot::CmenuContainerNoRoot(CmenuItem* menu, CmenuItem* item, std::string newname):
   CmenuList(newname), _menu(menu) {
-   ++(_menu->refCnt);
-   ++(item->refCnt);
-  _list.push_back(item);
-  _active=0;
-  _fastActive=-1;
-}
+    ++(_menu->refCnt);
+    ++(item->refCnt);
+    _list.push_back(item);
+    _active=0;
+    _fastActive=-1;
+  }
 CmenuContainerNoRoot::~CmenuContainerNoRoot() {
   if( _menu->refCnt == 1 ) {
     delete _menu;
