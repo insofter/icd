@@ -197,14 +197,18 @@ void CmenuDbParamList::screen(Clcd *lcd) {
     lcd->_lcd[0]=name;
     lcd->_lcd[1]="..";
   } else if( _editing ) {//reparse tmp values to string with cursor
+    lcd->_lcd[0]=_list[_active]._name;
     switch( _list[_active]._editMode ) {
       case CdbParam::editBool:
+        if( _tmpi[0]==1 ) {
+          lcd->_lcd[1]="yes";
+        } else {
+          lcd->_lcd[1]="no";
+        }
         break;
       case CdbParam::editInt:
         break;
       case CdbParam::editIp:
-        lcd->_lcd[0]=_list[_active]._name;//.substr( 0, 14 );
-        //    lcd->_lcd[0]+="(E";//edit sign
         char x[16];
         sprintf(x,"%03i.%03i.%03i.%03i", _tmpi[0],  _tmpi[1], _tmpi[2], _tmpi[3] );
         lcd->_lcd[1]=x;
@@ -250,6 +254,11 @@ int CmenuDbParamList::up(Clcd *lcd) {
   if( _editing ) {
     switch( _list[_active]._editMode ) {
       case CdbParam::editBool:
+        if( _tmpi[0]==1 ) {
+          _tmpi[0]=0;
+        } else {
+          _tmpi[0]=1;
+        }
         break;
       case CdbParam::editInt:
         break;
@@ -312,6 +321,11 @@ int CmenuDbParamList::down(Clcd *lcd) {
   if( _editing ) {
     switch( _list[_active]._editMode ) {
       case CdbParam::editBool:
+        if( _tmpi[0]==1 ) {
+          _tmpi[0]=0;
+        } else {
+          _tmpi[0]=1;
+        }
         break;
       case CdbParam::editInt:
         break;
@@ -377,6 +391,11 @@ int CmenuDbParamList::enter(Clcd *lcd) {
     if( _editing ) {
       switch( _list[_active]._editMode ) {
         case CdbParam::editBool:
+          if( _tmpi[0]==1 ) {
+            globalConfig->set_entry( _list[_active]._sect, _list[_active]._key, "yes" );
+          } else {
+            globalConfig->set_entry( _list[_active]._sect, _list[_active]._key, "no" );
+          }
           break;
         case CdbParam::editInt:
           break;
@@ -389,9 +408,15 @@ int CmenuDbParamList::enter(Clcd *lcd) {
           break;
       }
       _editing=false;
-    } else if( _list[_active]._editMode!=CdbParam::readOnly ){
+    } else if( _list[_active]._editMode!=CdbParam::readOnly ) {
       switch( _list[_active]._editMode ) {
         case CdbParam::editBool:
+          if( ( globalConfig->entry( _list[_active]._sect,
+                  _list[_active]._key) ).compare( "yes" ) == 0 ) {
+            _tmpi[0]=1;
+          } else {
+            _tmpi[0]=0;
+          }
           break;
         case CdbParam::editInt:
           break;
