@@ -198,8 +198,11 @@ void CmenuDbParamList::screen(Clcd *lcd) {
     lcd->_lcd[1]="..";
   } else if( _editing ) {//reparse tmp values to string with cursor
     lcd->_lcd[0]=_list[_active]._name;
+    lcd->_cur._y=1;
+    char x[16];
     switch( _list[_active]._editMode ) {
       case CdbParam::editBool:
+        lcd->_cur._x=0;
         if( _tmpi[0]==1 ) {
           lcd->_lcd[1]="yes";
         } else {
@@ -207,13 +210,14 @@ void CmenuDbParamList::screen(Clcd *lcd) {
         }
         break;
       case CdbParam::editInt:
+        sprintf(x,"%09i", _tmpi[0]);
+        lcd->_lcd[1]=x;
+        lcd->_cur._x=_tmpp;
         break;
       case CdbParam::editIp:
-        char x[16];
         sprintf(x,"%03i.%03i.%03i.%03i", _tmpi[0],  _tmpi[1], _tmpi[2], _tmpi[3] );
         lcd->_lcd[1]=x;
         lcd->_refresh=0;
-        lcd->_cur._y=1;
         lcd->_cur._x=_tmpp+(_tmpp/3);
         break;
       case CdbParam::editText:
@@ -261,6 +265,10 @@ int CmenuDbParamList::up(Clcd *lcd) {
         }
         break;
       case CdbParam::editInt:
+        _tmpi[0]+=std::pow(10, (8-_tmpp) );
+        if( _tmpi[0] > 999999999 ) {
+          _tmpi[0]=0;
+        }
         break;
       case CdbParam::editIp:
         //_tmpp/3 == which number is edited
@@ -299,6 +307,11 @@ int CmenuDbParamList::left(Clcd *lcd) {
       case CdbParam::editBool:
         break;
       case CdbParam::editInt:
+        if( _tmpp == 0 ) {
+          _tmpp=8;
+        } else {
+          --_tmpp;
+        }
         break;
       case CdbParam::editIp:
         if( _tmpp == 0 ) {
@@ -328,6 +341,10 @@ int CmenuDbParamList::down(Clcd *lcd) {
         }
         break;
       case CdbParam::editInt:
+        _tmpi[0]-=std::pow(10, (8-_tmpp) );
+        if( _tmpi[0] < 0 ) {
+          _tmpi[0]=999999999;
+        }
         break;
       case CdbParam::editIp:
         //_tmpp/3 == which number is edited
@@ -366,6 +383,11 @@ int CmenuDbParamList::right(Clcd *lcd) {
       case CdbParam::editBool:
         break;
       case CdbParam::editInt:
+        if( _tmpp == 8 ) {
+          _tmpp=0;
+        } else {
+          ++_tmpp;
+        }
         break;
       case CdbParam::editIp:
         if( _tmpp == 11 ) {
@@ -389,6 +411,7 @@ int CmenuDbParamList::enter(Clcd *lcd) {
     return 1;
   } else {
     if( _editing ) {
+      char c[16];
       switch( _list[_active]._editMode ) {
         case CdbParam::editBool:
           if( _tmpi[0]==1 ) {
@@ -398,9 +421,10 @@ int CmenuDbParamList::enter(Clcd *lcd) {
           }
           break;
         case CdbParam::editInt:
+          sprintf(c,"%i", _tmpi[0]);
+          globalConfig->set_entry( _list[_active]._sect, _list[_active]._key, c );
           break;
         case CdbParam::editIp:
-          char c[16];
           sprintf(c,"%i.%i.%i.%i", _tmpi[0],  _tmpi[1], _tmpi[2], _tmpi[3] );
           globalConfig->set_entry( _list[_active]._sect, _list[_active]._key, c );
           break;
@@ -419,6 +443,9 @@ int CmenuDbParamList::enter(Clcd *lcd) {
           }
           break;
         case CdbParam::editInt:
+          _tmpi[0]=atoi( (globalConfig->entry( _list[_active]._sect,
+                                  _list[_active]._key)).c_str() );
+          _tmpp=0;
           break;
         case CdbParam::editIp:
           _tmpi[0]=0;
@@ -445,9 +472,14 @@ int CmenuDbParamList::enter(Clcd *lcd) {
 }
 
 int CmenuDbParamList::esc(Clcd *lcd) {
-  _editing=false;
-  _active=-1;
-  return 1;
+  if( _editing ) {
+    _editing=false;
+    this->screen(lcd);
+    return 0;
+  } else {
+    _active=-1;
+    return 1;
+  }
 }
 
 void CmenuDbParamList::fullEsc() {
