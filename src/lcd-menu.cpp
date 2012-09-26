@@ -445,7 +445,7 @@ int CmenuDbParamList::enter(Clcd *lcd) {
         case CdbParam::editInt:
           _tmpi[0]=atoi( (globalConfig->entry( _list[_active]._sect,
                                   _list[_active]._key)).c_str() );
-          _tmpp=0;
+          _tmpp=8;
           break;
         case CdbParam::editIp:
           _tmpi[0]=0;
