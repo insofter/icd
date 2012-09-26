@@ -257,12 +257,12 @@ MIN:
 #define DEFAULT_WAIT 1000
 #define RETURN_TIME 600000
 
-#define KBD_UP 259
-#define KBD_DOWN 258
-#define KBD_LEFT 9999 //TODO: poprawne kody klawiszy
-#define KBD_RIGHT 9998
-#define KBD_ENTER 257
-#define KBD_ESC 256
+#define KBD_UP 260
+#define KBD_DOWN 261
+#define KBD_LEFT 259 //TODO: poprawne kody klawiszy
+#define KBD_RIGHT 258
+#define KBD_ENTER 256
+#define KBD_ESC 257
 
     if ( !exit ) {
 
@@ -298,6 +298,7 @@ MIN:
           read( kbd, ( char* )&ev, sizeof( ev ) );
           if( ev.code!=0 ) {//rzucany pusty event niewiadomo czemu
             toReturn=0;
+            //printf("key code: %i\n",  ev.code );
             //TODO: włącz podswietlenia ( po kliknieciu )
             if( ev.value==1 && ev.code==KBD_ESC ) {//wciśniecie esc
               esc=1;
@@ -310,19 +311,14 @@ MIN:
               if( esc!=0 ) {//esc wcisniety i puszczono inny
                 esc=2;
                 switch( ev.code ) {//esc wcisniety i puszczono inny
-                  //case 11259: mainMenu->up( &lcd ); break;
-                  //case 11258: mainMenu->down( &lcd ); break;
-/*                  case KBD_UP:    mainMenu->fastGoto( conntestid );
+                  case KBD_UP:    mainMenu->fastGoto( conntestid );
                                   mainMenu->screen( &lcd ); break;
                   case KBD_DOWN:  mainMenu->fastGoto( fototestid );
-                                  mainMenu->screen( &lcd ); break;*/
+                                  mainMenu->screen( &lcd ); break;
+                  case KBD_LEFT:  break;
+                  case KBD_RIGHT: break;
                   case KBD_ENTER: mainMenu->fastGoto( poweroff );
                                   mainMenu->screen( &lcd ); break;
-
-                  case KBD_UP:    mainMenu->left( &lcd ); break;
-                  case KBD_DOWN:  mainMenu->right( &lcd ); break;
-
-
                 }
               } else {//puszczono inny bez esc
                 switch( ev.code ) {
