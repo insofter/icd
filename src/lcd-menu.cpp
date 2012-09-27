@@ -176,6 +176,7 @@ void CmenuContainer::screen(Clcd *lcd) {
 CmenuDbParamList::CmenuDbParamList(std::string newname): CmenuItem(newname) {
   _active=-1;
   _editing=false;
+  _typingText=false;
 }
 
 CmenuDbParamList::~CmenuDbParamList() {
@@ -193,63 +194,71 @@ int CmenuDbParamList::itemAdd(std::string name, std::string sect,
 }
 
 void CmenuDbParamList::screen(Clcd *lcd) {
-  if( _active==-1 ) {
-    lcd->_lcd[0]=name;
-    lcd->_lcd[1]="..";
-  } else if( _editing ) {//reparse tmp values to string with cursor
-    lcd->_lcd[0]=_list[_active]._name;
-    lcd->_cur._y=1;
-    char x[16];
-    switch( _list[_active]._editMode ) {
-      case CdbParam::editBool:
-        lcd->_cur._x=0;
-        if( _tmpi[0]==1 ) {
-          lcd->_lcd[1]="yes";
-        } else {
-          lcd->_lcd[1]="no";
-        }
-        break;
-      case CdbParam::editInt:
-        sprintf(x,"%09i", _tmpi[0]);
-        lcd->_lcd[1]=x;
-        lcd->_cur._x=_tmpp;
-        break;
-      case CdbParam::editIp:
-        sprintf(x,"%03i.%03i.%03i.%03i", _tmpi[0],  _tmpi[1], _tmpi[2], _tmpi[3] );
-        lcd->_lcd[1]=x;
-        lcd->_refresh=0;
-        lcd->_cur._x=_tmpp+(_tmpp/3);
-        break;
-      case CdbParam::editText:
-        break;
-    }
-    lcd->_cur._car=Ccur::blinkLine;
+  if( _typingText ) {
+    _typeText.screen( lcd );
   } else {
-    std::string val;
-    lcd->_lcd[0]=_list[_active]._name;
-    val=globalConfig->entry(_list[_active]._sect, _list[_active]._key);
-    if( val.size()>16 ) {
-      lcd->_refresh=2000;
-      if( val.size()!=_list[_active]._lastSize || _list[_active]._lastPos>=val.size() ) {
-        _list[_active]._lastPos=0;
-        _list[_active]._lastSize=val.size();
-      }
-      lcd->_lcd[1]=val.substr(_list[_active]._lastPos, 16);
-
-      int ilCzesci=std::ceil( ((float)_list[_active]._lastSize)/16 );
-      int ktora=std::floor( _list[_active]._lastPos/16 )+1;
-
-      lcd->_cur._x=(( ktora*16 ) / ilCzesci)-1;
-
+    if( _active==-1 ) {
+      lcd->_lcd[0]=name;
+      lcd->_lcd[1]="..";
+    } else if( _editing ) {//reparse tmp values to string with cursor
+      lcd->_lcd[0]=_list[_active]._name;
       lcd->_cur._y=1;
-      lcd->_cur._car=Ccur::line;
-
-      _list[_active]._lastPos+=16;
-
-    } else {
+      char x[16];
+      switch( _list[_active]._editMode ) {
+        case CdbParam::editBool:
+          lcd->_cur._x=0;
+          if( _tmpi[0]==1 ) {
+            lcd->_lcd[1]="yes";
+          } else {
+            lcd->_lcd[1]="no";
+          }
+          break;
+        case CdbParam::editInt:
+          sprintf(x,"%09i", _tmpi[0]);
+          lcd->_lcd[1]=x;
+          lcd->_cur._x=_tmpp;
+          break;
+        case CdbParam::editIp:
+          sprintf(x,"%03i.%03i.%03i.%03i", _tmpi[0],  _tmpi[1], _tmpi[2], _tmpi[3] );
+          lcd->_lcd[1]=x;
+          lcd->_cur._x=_tmpp+(_tmpp/3);
+          break;
+        case CdbParam::editText:
+          lcd->_lcd[1]=_tmps;
+          lcd->_lcd[1]+="¶";
+          lcd->_cur._x=_tmpp;
+          //TODO: scroll
+          break;
+      }
       lcd->_refresh=0;
-      lcd->_lcd[1]=val;
-      lcd->_cur._car=Ccur::none;
+      lcd->_cur._car=Ccur::blinkLine;
+    } else {
+      std::string val;
+      lcd->_lcd[0]=_list[_active]._name;
+      val=globalConfig->entry(_list[_active]._sect, _list[_active]._key);
+      if( val.size()>16 ) {
+        lcd->_refresh=2000;
+        if( val.size()!=_list[_active]._lastSize || _list[_active]._lastPos>=val.size() ) {
+          _list[_active]._lastPos=0;
+          _list[_active]._lastSize=val.size();
+        }
+        lcd->_lcd[1]=val.substr(_list[_active]._lastPos, 16);
+
+        int ilCzesci=std::ceil( ((float)_list[_active]._lastSize)/16 );
+        int ktora=std::floor( _list[_active]._lastPos/16 )+1;
+
+        lcd->_cur._x=(( ktora*16 ) / ilCzesci)-1;
+
+        lcd->_cur._y=1;
+        lcd->_cur._car=Ccur::line;
+
+        _list[_active]._lastPos+=16;
+
+      } else {
+        lcd->_refresh=0;
+        lcd->_lcd[1]=val;
+        lcd->_cur._car=Ccur::none;
+      }
     }
   }
 }
@@ -285,6 +294,17 @@ int CmenuDbParamList::up(Clcd *lcd) {
         }
         break;
       case CdbParam::editText:
+        if( _typingText ) {
+          _typeText.up( lcd );
+        } else {
+          if( _tmps.size()==_tmpp )
+          {
+            _typeText.gotoChar( 13 );
+          } else {
+            _typeText.gotoChar( _tmps[ _tmpp ] );
+          }
+          _typingText=true;
+        }
         break;
     }
   } else {
@@ -321,6 +341,16 @@ int CmenuDbParamList::left(Clcd *lcd) {
         }
         break;
       case CdbParam::editText:
+        if( _typingText ) {
+          _typeText.left( lcd );
+        } else {
+
+          if( _tmpp == 0 ) {
+            _tmpp=_tmps.size();
+          } else {
+            --_tmpp;
+          }
+        }
         break;
     }
     this->screen(lcd);
@@ -361,6 +391,17 @@ int CmenuDbParamList::down(Clcd *lcd) {
         }
         break;
       case CdbParam::editText:
+        if( _typingText ) {
+          _typeText.down( lcd );
+        } else {
+          if( _tmps.size()==_tmpp )
+          {
+            _typeText.gotoChar( 13 );
+          } else {
+            _typeText.gotoChar( _tmps[ _tmpp ] );
+          }
+          _typingText=true;
+        }
         break;
     }
   } else {
@@ -397,6 +438,15 @@ int CmenuDbParamList::right(Clcd *lcd) {
         }
         break;
       case CdbParam::editText:
+        if( _typingText ) {
+          _typeText.right( lcd );
+        } else {
+          if( _tmpp == _tmps.size() ) {
+            _tmpp=0;
+          } else {
+            ++_tmpp;
+          }
+        }
         break;
     }
     this->screen(lcd);
@@ -411,27 +461,45 @@ int CmenuDbParamList::enter(Clcd *lcd) {
     return 1;
   } else {
     if( _editing ) {
-      char c[16];
-      switch( _list[_active]._editMode ) {
-        case CdbParam::editBool:
-          if( _tmpi[0]==1 ) {
-            globalConfig->set_entry( _list[_active]._sect, _list[_active]._key, "yes" );
-          } else {
-            globalConfig->set_entry( _list[_active]._sect, _list[_active]._key, "no" );
+      if( _typingText ) {
+        char x = _typeText.enter( lcd );
+        if( x == 13 ) {
+          if( _tmpp<_tmps.size() ) {
+            _tmps.erase( _tmpp );
           }
-          break;
-        case CdbParam::editInt:
-          sprintf(c,"%i", _tmpi[0]);
-          globalConfig->set_entry( _list[_active]._sect, _list[_active]._key, c );
-          break;
-        case CdbParam::editIp:
-          sprintf(c,"%i.%i.%i.%i", _tmpi[0],  _tmpi[1], _tmpi[2], _tmpi[3] );
-          globalConfig->set_entry( _list[_active]._sect, _list[_active]._key, c );
-          break;
-        case CdbParam::editText:
-          break;
+        } else {
+          if( _tmpp==_tmps.size() ) {
+            _tmps+=x;
+          } else {
+            _tmps[ _tmpp ] = x;
+          }
+          ++_tmpp;
+        }
+        _typingText=false;
+      } else {
+        char c[16];
+        switch( _list[_active]._editMode ) {
+          case CdbParam::editBool:
+            if( _tmpi[0]==1 ) {
+              globalConfig->set_entry( _list[_active]._sect, _list[_active]._key, "yes" );
+            } else {
+              globalConfig->set_entry( _list[_active]._sect, _list[_active]._key, "no" );
+            }
+            break;
+          case CdbParam::editInt:
+            sprintf(c,"%i", _tmpi[0]);
+            globalConfig->set_entry( _list[_active]._sect, _list[_active]._key, c );
+            break;
+          case CdbParam::editIp:
+            sprintf(c,"%i.%i.%i.%i", _tmpi[0],  _tmpi[1], _tmpi[2], _tmpi[3] );
+            globalConfig->set_entry( _list[_active]._sect, _list[_active]._key, c );
+            break;
+          case CdbParam::editText:
+            globalConfig->set_entry( _list[_active]._sect, _list[_active]._key, _tmps );
+            break;
+        }
+        _editing=false;
       }
-      _editing=false;
     } else if( _list[_active]._editMode!=CdbParam::readOnly ) {
       switch( _list[_active]._editMode ) {
         case CdbParam::editBool:
@@ -458,6 +526,8 @@ int CmenuDbParamList::enter(Clcd *lcd) {
           _tmpp=0; //string from db is parsed to 4 integers, editpos=0;
           break;
         case CdbParam::editText:
+          _tmps=globalConfig->entry( _list[_active]._sect, _list[_active]._key);
+          _tmpp=0;
           break;
         default:
           std::cerr << "bug w CmenuDbParamList::enter" << std::endl;
@@ -473,8 +543,15 @@ int CmenuDbParamList::enter(Clcd *lcd) {
 
 int CmenuDbParamList::esc(Clcd *lcd) {
   if( _editing ) {
-    _editing=false;
-    this->screen(lcd);
+    if( _typingText ) {
+      if( _typeText.esc( lcd )!=0 ) {
+        _typingText=false;
+        this->screen(lcd);
+      }
+    } else {
+      _editing=false;
+      this->screen(lcd);
+    }
     return 0;
   } else {
     _active=-1;
@@ -485,6 +562,8 @@ int CmenuDbParamList::esc(Clcd *lcd) {
 void CmenuDbParamList::fullEsc() {
   _active=-1;
   _editing=false;
+  _typingText=false;
+  _typeText.fullEsc();
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -667,5 +746,134 @@ void CmenuContainerNoRoot::screen(Clcd *lcd) {
   }
 }
 
+//////////////////////////////////////////////////////
+CmenuTypeText::CmenuTypeText(): CmenuItem("") {
+         //0123456789012
+  _tab[0]="ABCDEFGHIJKLM";
+  _tab[1]="NOPQRSTUVWXYZ";
+  _tab[2]="abcdefghijklm";
+  _tab[3]="nopqrstuvwxyz";
+  _tab[4]=" 0123456789?¶";
+  _tab[5]=".,/-_+=:;#!@&";
+  _tx=0;
+  _ty=2;
+  _ln=0;
+}
+ 
+CmenuTypeText::~CmenuTypeText() {
+}
 
+void CmenuTypeText::gotoChar( char c ){
+  int y;
+  int x;
+  _tx=-1;
+  if( c==13 ) {
+    _tx=12;
+    _ty=4;
+    _old=13;
+  } else {
+    for( y=0; y<6; ++y ) {
+      for( x=0; x<13; ++x ) {
+        if(  _tab[y][x]==c ) {
+          _ty=y;
+          _tx=x;
+          _old=_tab[_ty][_tx];
+          y=6;
+          break;
+        }
+      }
+    }
+  }
+  if( _tx==-1 ) {
+    _tx=0;
+    _ty=2;
+    _old='a';
+  }
+  if( _ty==5 ) {
+    _ln=1;
+  } else {
+    _ln=0;
+  }
+}
+
+int CmenuTypeText::up(Clcd *lcd) {
+  if( _ty==0 ) {
+    _ty=5;
+    _ln=1;
+  } else {
+    --_ty;
+    if( _ln==1 ) {
+      _ln=0;
+    }
+  }
+  this->screen(lcd);
+  return 0;
+}
+int CmenuTypeText::down(Clcd *lcd) {
+  if( _ty==5 ) {
+    _ty=0;
+    _ln=0;
+  } else {
+    ++_ty;
+    if( _ln==0 ) {
+      _ln=1;
+    }
+  }
+  this->screen(lcd);
+  return 0;
+}
+int CmenuTypeText::left(Clcd *lcd) {
+  if( _tx==0 ) {
+    _tx=12;
+  } else {
+    --_tx;
+  }
+  this->screen(lcd);
+  return 0;
+}
+int CmenuTypeText::right(Clcd *lcd) {
+  if( _tx==12 ) {
+    _tx=0;
+  } else {
+    ++_tx;
+  }
+  this->screen(lcd);
+  return 0;
+}
+int CmenuTypeText::enter(Clcd *lcd) {
+  if( _tx==12 && _ty==4 ) {
+    return 13;
+  } else {
+    return _tab[_ty][_tx];
+  }
+}
+int CmenuTypeText::esc(Clcd *lcd) {
+  return 1;
+}
+void CmenuTypeText::screen(Clcd *lcd) {
+  if( _ln==0 ) {
+    lcd->_lcd[0]=_tab[_ty];
+    lcd->_lcd[1]=_tab[_ty+1];
+  } else {
+    lcd->_lcd[0]=_tab[_ty-1];
+    lcd->_lcd[1]=_tab[_ty];
+  }
+  lcd->_lcd[0]+=" >";
+  if( _old==13 ) {
+    lcd->_lcd[0]+="¶";
+  } else {
+    lcd->_lcd[0]+=_old;
+  }
+  lcd->_lcd[1]+=" <";
+  if( _tx==12 && _ty==4 ) {
+    lcd->_lcd[1]+="¶";
+  } else {
+    lcd->_lcd[1]+=_tab[_ty][_tx];
+  }
+  lcd->_cur._x=_tx;
+  lcd->_cur._y=_ln;
+  lcd->_cur._car=Ccur::blinkLine;
+}
+void CmenuTypeText::fullEsc() {
+}
 

@@ -197,6 +197,35 @@ public:
 };
 
 /**
+ * Class implements menu for typing text.
+ */
+class CmenuTypeText: public CmenuItem {
+protected:
+  std::string _tab[6];
+  int _tx;
+  int _ty;
+  int _ln;
+  char _old;
+public:
+  CmenuTypeText();
+  virtual ~CmenuTypeText();
+
+    /**
+     * Moves cursor to given character.
+     * @param c Character, 13 for EOL (¶)
+     */
+  void gotoChar( char c );
+
+  virtual int up(Clcd *lcd);
+  virtual int down(Clcd *lcd);
+  virtual int left(Clcd *lcd);
+  virtual int right(Clcd *lcd);
+  virtual int enter(Clcd *lcd);
+  virtual int esc(Clcd *lcd);
+  virtual void screen(Clcd *lcd);
+  virtual void fullEsc();
+};
+/**
  * List of database parameters, editable if ypu wish.
  */
 class CmenuDbParamList: public CmenuItem {
@@ -207,6 +236,9 @@ protected:
   std::string _tmps;
   int _tmpi[6];
   int _tmpp;
+
+  bool _typingText;
+  CmenuTypeText _typeText;
 
 public:
   CmenuDbParamList(std::string newname);

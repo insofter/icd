@@ -213,10 +213,10 @@ MIN:
     menu->itemAdd( item );
 
     pl=new CmenuDbParamList( "Wysyłanie" );
-    pl->itemAdd( "IDS - id salonu", "device", "ids" );
+    pl->itemAdd( "IDS - id salonu", "device", "ids", CdbParam::editText );
     pl->itemAdd( "IDD - id urządz.", "device", "idd", CdbParam::editInt );
-    pl->itemAdd( "Adres wysyłania", "device", "address" );
-    pl->itemAdd( "Użytkownik", "device", "user" );
+    pl->itemAdd( "Adres wysyłania", "device", "address", CdbParam::editText );
+    pl->itemAdd( "Użytkownik", "device", "user", CdbParam::editText );
 
     menu->itemAdd( pl );
 
