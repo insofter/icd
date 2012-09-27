@@ -224,10 +224,14 @@ void CmenuDbParamList::screen(Clcd *lcd) {
           lcd->_cur._x=_tmpp+(_tmpp/3);
           break;
         case CdbParam::editText:
-          lcd->_lcd[1]=_tmps;
+          if( _tmpp>15 ) {
+            lcd->_lcd[1]=_tmps.substr( _tmpp-15, 15);
+            lcd->_cur._x=15;
+          } else {
+            lcd->_lcd[1]=_tmps;
+            lcd->_cur._x=_tmpp;
+          }
           lcd->_lcd[1]+="¶";
-          lcd->_cur._x=_tmpp;
-          //TODO: scroll
           break;
       }
       lcd->_refresh=0;
