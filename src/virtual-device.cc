@@ -187,13 +187,14 @@ namespace icd
        create();
        start();
        cond_.wait(lock_);
-       stop();
     }
     catch(std::exception& e)
     {
       stop();
       throw;
     }
+
+    stop();
   }
 
   void vd_farm::add(virtual_device* vd)
