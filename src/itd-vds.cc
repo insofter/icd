@@ -545,7 +545,7 @@ namespace icd
     update_stmt_.reset();
     update_stmt_.clear_bindings();
     update_stmt_.bind_text(1, device_);
-    update_stmt_.bind_int64(2, dtm_.to_msec());
+    update_stmt_.bind_int64(2, dtm_.sec());
     update_stmt_.bind_int(3, cnt_);
     update_stmt_.bind_int64(4, blocked_time_.to_msec());
     update_stmt_.bind_int64(5, (clear_time_ + blocked_time_).to_msec());
@@ -560,7 +560,7 @@ namespace icd
       insert_stmt_.reset();
       insert_stmt_.clear_bindings();
       insert_stmt_.bind_text(1, device_);
-      insert_stmt_.bind_int64(2, dtm_.to_msec());
+      insert_stmt_.bind_int64(2, dtm_.sec());
       insert_stmt_.bind_int(3, cnt_);
       insert_stmt_.bind_int64(4, blocked_time_.to_msec());
       insert_stmt_.bind_int64(5, (clear_time_ + blocked_time_).to_msec());
