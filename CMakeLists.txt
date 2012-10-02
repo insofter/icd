@@ -31,15 +31,15 @@ endif ()
 
 # Check for libroxml library
 
-check_library_exists(roxml roxml_load_buf '' HAVE_ROXML_LIB)
-if (NOT (${HAVE_ROXML_LIB}))
-  message(FATAL_ERROR "Missing roxml library")
-endif ()
+#check_library_exists(roxml roxml_load_buf '' HAVE_ROXML_LIB)
+#if (NOT (${HAVE_ROXML_LIB}))
+#  message(FATAL_ERROR "Missing roxml library")
+#endif ()
 
-check_include_files(roxml.h HAVE_ROXML_H)
-if (NOT (${HAVE_ROXML_H}))
-  message(FATAL_ERROR "Missing roxml.h header file")
-endif ()
+#check_include_files(roxml.h HAVE_ROXML_H)
+#if (NOT (${HAVE_ROXML_H}))
+#  message(FATAL_ERROR "Missing roxml.h header file")
+#endif ()
 
 # Include targets in src
 
