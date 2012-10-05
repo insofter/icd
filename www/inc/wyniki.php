@@ -5,13 +5,15 @@ $icdtcp = new c_icdtcp();
 
 $i=1000;
 
-$wyniki=$icdtcp->wyniki();
+$wyniki=$icdtcp->raport_biezacy( time() );
+
+print_r( $wyniki );
 
 $tresc='<div id="tresc">
   <h3>Wyniki</h3>
   <table>
   ';
-foreach( $wyniki as $wynik ) {
+/*foreach( $wyniki as $wynik ) {
   if( $i>20 ) {
     $tresc.='<tr>';
     foreach( $wynik as $key=>$val ) {
@@ -30,7 +32,7 @@ foreach( $wyniki as $wynik ) {
   ++$i;
 }
 
-
+ */
 
 $tresc.='</table>
   </div>';
