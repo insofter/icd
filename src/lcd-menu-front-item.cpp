@@ -32,14 +32,14 @@ void CmenuItemFrontMenu::fullEsc() {
 
 
 CmenuItemTimeFoto::CmenuItemTimeFoto(int a, int b): _a(a), _b(b) {
-  stmt = new sqlite3cc::stmt( *globalDb );
-  stmt->prepare( "SELECT `cnt` FROM flow WHERE itd = ?1 ORDER BY `dtm` DESC LIMIT 1" );
+//  stmt = new sqlite3cc::stmt( *globalDb );
+//  stmt->prepare( "SELECT `cnt` FROM flow WHERE itd = ?1 ORDER BY `dtm` DESC LIMIT 1" );
 
 }
 
 CmenuItemTimeFoto::~CmenuItemTimeFoto() {
-  stmt->finalize();
-  delete stmt;
+//  stmt->finalize();
+//  delete stmt;
 }
 
 void CmenuItemTimeFoto::screen(Clcd *lcd) {
@@ -59,14 +59,14 @@ void CmenuItemTimeFoto::screen(Clcd *lcd) {
 
 
   sprintf(sql, "itd%i", _a);
-  stmt->bind_text( 1, sql );
-  if( stmt->step() == SQLITE_ROW ) {
-    i=stmt->column_int(0);
-  } else {
+//  stmt->bind_text( 1, sql );
+//  if( stmt->step() == SQLITE_ROW ) {
+//    i=stmt->column_int(0);
+//  } else {
     i=0;
-  }
+//  }
 
-  stmt->reset();
+//  stmt->reset();
 
   sprintf(buf, "%s %c:%5i", timebuf, 'A'+_a, i);
   lcd->_lcd[0]=buf;
@@ -76,13 +76,13 @@ void CmenuItemTimeFoto::screen(Clcd *lcd) {
 
 
   sprintf(sql, "itd%i", _b);
-  stmt->bind_text( 1, sql );
-  if( stmt->step() == SQLITE_ROW ) {
-    i=stmt->column_int(0);
-  } else {
+//  stmt->bind_text( 1, sql );
+//  if( stmt->step() == SQLITE_ROW ) {
+//    i=stmt->column_int(0);
+//  } else {
     i=0;
-  }
-  stmt->reset();
+//  }
+//  stmt->reset();
 
   sprintf(buf, "%s %c:%5i", timebuf, 'A'+_b, i);
   lcd->_lcd[1]=buf;

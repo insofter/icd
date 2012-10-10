@@ -11,7 +11,7 @@ print_info "$1"
 case "$1" in
   deconfig)
     setdown_interface
-    cmd="icd-config --db=\"${ICD_TEMP_DIR}/live.db\""
+    cmd="icd-config --db=\"${ICD_CONFIG_DB}\""
     cmd=${cmd}" set current dhcp_lease_last_renewal \"\""
     cmd=${cmd}" set current dhcp_lease_time \"\""
     eval ${cmd}
@@ -20,7 +20,7 @@ case "$1" in
 
   renew|bound)
     setup_interface
-    cmd="icd-config --db=\"${ICD_TEMP_DIR}/live.db\""
+    cmd="icd-config --db=\"${ICD_CONFIG_DB}\""
     cmd=${cmd}" set current dhcp_lease_last_renewal \"${dtm}\""
     cmd=${cmd}" set current dhcp_lease_time \"${lease}\""
     eval ${cmd}

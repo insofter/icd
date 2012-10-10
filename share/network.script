@@ -10,7 +10,7 @@ update_current_config()
   subnet=`ifconfig ${interface} | sed -n 's/^[^M]*Mask:\([0-9.][0-9.]*\).*$/\1/p'`
   router=`route | sed -n 's/^default[[:space:]]*\([0-9.][0-9.]*\).*$/\1/p'`
 
-  cmd="icd-config --db=\"${ICD_TEMP_DIR}/live.db\""
+  cmd="icd-config --db=\"${ICD_CONFIG_DB}\""
   cmd=${cmd}" set current interface \"${interface}\""
   cmd=${cmd}" set current hwaddr \"${hwaddr}\""
   cmd=${cmd}" set current ip \"${ip}\""
@@ -19,7 +19,7 @@ update_current_config()
   cmd=${cmd}" set current gate \"${router}\""
 
   # First clean all dns entries in current config
-  entries=`icd-config --db="${ICD_TEMP_DIR}/live.db" list current | sed -n 's/^current:\(dns[[:digit:]]*\):.*$/\1/p'`
+  entries=`icd-config --db="${ICD_CONFIG_DB}" list current | sed -n 's/^current:\(dns[[:digit:]]*\):.*$/\1/p'`
   for entry in $entries; do
     test "x$entry" != "x" && cmd=${cmd}" set current $entry \"\""
   done
