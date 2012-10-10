@@ -23,10 +23,6 @@ INSERT INTO config (section, key, value) VALUES ( 'device', 'server-sync-period-
 INSERT INTO config (section, key, value) VALUES ( 'device', 'event-retention-period-count', '100000' );
 INSERT INTO config (section, key, value) VALUES ( 'device', 'flow-entry-retention-period-mins', '120' );
 
-INSERT INTO config (section, key, value) VALUES ( 'wifi', 'enabled', 'no' );
-INSERT INTO config (section, key, value) VALUES ( 'gsm', 'enabled', 'no' );
-
-
 INSERT INTO counters (id, name, enabled, device, engage_delay_ms, release_delay_ms,
   active_low, direction_enabled, thickness_enabled, disabling_enabled) 
   VALUES(1,'wej0','TRUE','/dev/itd0',200,200,'TRUE','FALSE','FALSE','FALSE');
