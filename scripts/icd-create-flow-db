@@ -10,8 +10,8 @@ check_error()
   fi
 }
 
-if [ ! -f "${ICD_DATA_DIR}/flow.db" ]; then
-  icd-sql --db="${ICD_DATA_DIR}/flow.db" \
+if [ ! -f "${ICD_DATA_DB}" ]; then
+  icd-sql --db="${ICD_DATA_DB}" \
     "${ICD_SHARE_DIR}/create-schema-flow.sql"
   check_error
 fi

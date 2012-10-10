@@ -10,22 +10,11 @@ check_error()
   fi
 }
 
-rm -f "${ICD_TEMP_DIR}/live.db" 
+rm -f "${ICD_LIVE_DB}" 
 
-icd-sql --db="${ICD_TEMP_DIR}/live.db" \
-  "${ICD_SHARE_DIR}/create-schema-events.sql" \
-  "${ICD_SHARE_DIR}/create-schema-tests.sql" \
+icd-sql --db="${ICD_LIVE_DB}" \
   "${ICD_SHARE_DIR}/create-schema-flow.sql" \
-  "${ICD_SHARE_DIR}/create-schema-config.sql"
 check_error
 
-icd-sql --db="${ICD_TEMP_DIR}/live.db" \
-  --extern-db="${ICD_DATA_DIR}/config.db" \
-  "${ICD_SHARE_DIR}/sync-config.sql"
-check_error
-
-icd-sql --db="${ICD_TEMP_DIR}/live.db" \
-  --extern-db="${ICD_DATA_DIR}/flow.db" \
-  "${ICD_SHARE_DIR}/sync-flow.sql"
-check_error
+chmod a+w "${ICD_LIVE_DB}"
 
