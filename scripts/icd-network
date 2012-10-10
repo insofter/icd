@@ -7,11 +7,11 @@ read_static_ip_config()
 {
   local dns1 dns2
 
-  ip=`icd-config --db="${ICD_TEMP_DIR}/live.db" get tcpip ip | cut -d: -f3`
-  subnet=`icd-config --db="${ICD_TEMP_DIR}/live.db" get tcpip mask | cut -d: -f3`
-  router=`icd-config --db="${ICD_TEMP_DIR}/live.db" get tcpip gate | cut -d: -f3`
-  dns1=`icd-config --db="${ICD_TEMP_DIR}/live.db" get tcpip dns1 | cut -d: -f3`
-  dns2=`icd-config --db="${ICD_TEMP_DIR}/live.db" get tcpip dns2 | cut -d: -f3`
+  ip=`icd-config --db="${ICD_CONFIG_DB}" get tcpip ip | cut -d: -f3`
+  subnet=`icd-config --db="${ICD_CONFIG_DB}" get tcpip mask | cut -d: -f3`
+  router=`icd-config --db="${ICD_CONFIG_DB}" get tcpip gate | cut -d: -f3`
+  dns1=`icd-config --db="${ICD_CONFIG_DB}" get tcpip dns1 | cut -d: -f3`
+  dns2=`icd-config --db="${ICD_CONFIG_DB}" get tcpip dns2 | cut -d: -f3`
 
   if [ "x${dns1}" != "x" -a "x${dns2}" != "x" ]; then
     dns="${dns1} ${dns2}"
@@ -28,7 +28,7 @@ start_network()
 {
   local ip broadcast subnet router dns
 
-  ifup=`icd-config --db="${ICD_TEMP_DIR}/live.db" get current ifup | cut -d: -f3`
+  ifup=`icd-config --db="${ICD_CONFIG_DB}" get current ifup | cut -d: -f3`
   test "x${ifup}" == "x"
   exit_on_error "Network already configured"
 
@@ -36,21 +36,21 @@ start_network()
 
   ifconfig ${interface} up
 
-  dhcp=`icd-config --db="${ICD_TEMP_DIR}/live.db" get tcpip dhcp | cut -d: -f3`
+  dhcp=`icd-config --db="${ICD_CONFIG_DB}" get tcpip dhcp | cut -d: -f3`
 
   if [ "$dhcp" == "yes" -o "$dhcp" == "true" -o "$dhcp" == "1" ]; then
     print_info "Starting dhcp client..."
     udhcpc -i ${interface} -t 3 -R -S -s "${ICD_SHARE_DIR}/udhcpc.script"
     warn_on_error "Starting dhcp client failed"
 
-    icd-config --db="${ICD_TEMP_DIR}/live.db" set current ifup yes set current dhcp yes
+    icd-config --db="${ICD_CONFIG_DB}" set current ifup yes set current dhcp yes
     warn_on_error "Updating current config failed"
 
   elif [ "x$dhcp" == "x" -o "$dhcp" == "no" -o "$dhcp" == "false" -o "$dhcp" == "0" ]; then
     read_static_ip_config
     setup_interface
 
-    icd-config --db="${ICD_TEMP_DIR}/live.db" set current ifup yes set current dhcp no
+    icd-config --db="${ICD_CONFIG_DB}" set current ifup yes set current dhcp no
     warn_on_error "Updating current config failed"
 
   else
@@ -65,7 +65,7 @@ stop_network()
 {
   local cmd
 
-  ifup=`icd-config --db="${ICD_TEMP_DIR}/live.db" get current ifup | cut -d: -f3`
+  ifup=`icd-config --db="${ICD_CONFIG_DB}" get current ifup | cut -d: -f3`
   test "${ifup}" == "yes"
   exit_on_error "Network not configured"
 
@@ -78,7 +78,7 @@ stop_network()
 
   ifconfig ${interface} down
 
-  cmd="icd-config --db=\"${ICD_TEMP_DIR}/live.db\""
+  cmd="icd-config --db=\"${ICD_CONFIG_DB}\""
   cmd=${cmd}" set current ifup \"\""
   cmd=${cmd}" set current dhcp \"\""
   eval ${cmd}

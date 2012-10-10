@@ -8,6 +8,6 @@ CREATE TABLE flow (
   dark_time INTEGER DEFAULT 0, -- time the detector was blocked in milisecs
   work_time INTEGER DEFAULT 0, -- time the detector was operational within current flow entry
   flags INTEGER DEFAULT 1,     -- 1 - NOT SENT, 0 - SENT
-  UNIQUE(itd, dtm)
+  UNIQUE(counter_id, dtm)
 );
 --  test TEXT,                   -- TODO
