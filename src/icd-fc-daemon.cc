@@ -20,7 +20,7 @@
 
 icd::config *globalConfig;
 sqlite3cc::conn *globalConfigDb;
-sqlite3cc::conn *globalDataDb;
+sqlite3cc::conn *globalLiveDb;
 
 void print_usage( char *argv0 ) {
   std::cerr <<
@@ -178,9 +178,9 @@ MIN:
     globalConfigDb->busy_timeout( db_timeout );
     globalConfig=new icd::config( *globalConfigDb );
 
-    globalDataDb=new sqlite3cc::conn();
-    globalDataDb->open( std::getenv("ICD_DATA_DB") );
-    globalDataDb->busy_timeout( db_timeout );
+    globalLiveDb=new sqlite3cc::conn();
+    globalLiveDb->open( std::getenv("ICD_LIVE_DB") );
+    globalLiveDb->busy_timeout( db_timeout );
 
 
     ClcdDriver lcdDrv;

@@ -35,14 +35,14 @@ Clog::~Clog() {
   if( ! destrLock ) {
     std::string x=globalConfig->entry("current", "last-send-status"); 
     if( x.size()>=1 && x[0]=='?' ) {
-      globalConfig->set_entry("current", 
-          "last-send-status", "--ERR TR. BROKEN");
+//    //  globalConfig->set_entry("current", 
+//          "last-send-status", "--ERR TR. BROKEN");
     }
   }
 }
 void Clog::okParams( int percent, const std::string & cmd ) {
   sprintf(progress+12,"%3i%%", percent);
-  globalConfig->set_entry("current","last-send-status", progress);
+////  globalConfig->set_entry("current","last-send-status", progress);
 
   switch( _log ) {
     case SHORT:
@@ -59,7 +59,7 @@ void Clog::okParams( int percent, const std::string & cmd ) {
  
 void Clog::okSoap( int percent, const std::string & servQuery ) {
   sprintf(progress+12,"%3i%%", percent);
-  globalConfig->set_entry("current","last-send-status", progress);
+////  globalConfig->set_entry("current","last-send-status", progress);
 
   switch( _log ) {
     case SHORT:
@@ -78,7 +78,7 @@ void Clog::okSoap( int percent, const std::string & servQuery ) {
  
 void Clog::okServerAns( int percent, const std::string & servAns ) {
   sprintf(progress+12,"%3i%%", percent);
-  globalConfig->set_entry("current","last-send-status", progress);
+//  globalConfig->set_entry("current","last-send-status", progress);
 
   switch( _log ) {
     case SHORT:
@@ -100,7 +100,7 @@ void Clog::errParams( int percent, const std::string & cmd,
   std::ostringstream ss;
 
   ss << "--ERR CR:" << short_err;
-  globalConfig->set_entry( "current","last-send-status", ss.str() );
+//  globalConfig->set_entry( "current","last-send-status", ss.str() );
 
   switch( _log ) {
     case SHORT:
@@ -123,7 +123,7 @@ void Clog::errSoap( int percent, const std::string & soapTxt,
 
   char ss[17];
   sprintf(ss,"--ERR SOAP:%4i", soapCode );
-  globalConfig->set_entry("current","last-send-status", ss);
+//  globalConfig->set_entry("current","last-send-status", ss);
 
   switch( _log ) {
     case SHORT:
@@ -146,7 +146,7 @@ void Clog::errServerAns( int percent, const std::string & servAns,
   std::ostringstream ss;
 
   ss << "--ERR " << shortCmd << ":" << shortAns;
-  globalConfig->set_entry( "current","last-send-status", ss.str() );
+//  globalConfig->set_entry( "current","last-send-status", ss.str() );
 
   switch( _log ) {
     case SHORT:
@@ -179,7 +179,7 @@ void Clog::done( int warn ) {
   } else {
     ss << "++WARNINGS: " << warn;
   }
-  globalConfig->set_entry( "current","last-send-status", ss.str() );
+//  globalConfig->set_entry( "current","last-send-status", ss.str() );
   
   switch( _log ) {
     case SHORT:
@@ -199,7 +199,7 @@ void Clog::done( int warn ) {
 void Clog::error( int err ) {
   std::ostringstream ss;
   ss << "--ERRORS: " << err;
-  globalConfig->set_entry( "current","last-send-status", ss.str() );
+//  globalConfig->set_entry( "current","last-send-status", ss.str() );
 
   
   switch( _log ) {

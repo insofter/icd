@@ -17,12 +17,13 @@
 
 icd::config *globalConfig;
 sqlite3cc::conn *globalConfigDb;
+sqlite3cc::conn *globalDataDb;
 
 
 int iloscDanych() {
-  sqlite3cc::stmt stmt( *globalConfigDb );
+  sqlite3cc::stmt stmt( *globalDataDb );
   stmt.prepare( "SELECT COUNT(*) FROM flow WHERE flags > 0 "
-      "ORDER BY dtm ASC LIMIT 4" );
+      "ORDER BY dtm ASC LIMIT 16" );//ilosc rekordow
   stmt.step();
   int x=stmt.column_int(0);
   stmt.finalize();
@@ -31,11 +32,11 @@ int iloscDanych() {
 
 
 int createData( std::string & data ) {
-  sqlite3cc::stmt stmt( *globalConfigDb );
+  sqlite3cc::stmt stmt( *globalDataDb );
   std::ostringstream ss;
-  stmt.prepare( "SELECT id, itd, "
+  stmt.prepare( "SELECT id, counter_id, "
       "datetime(dtm, 'unixepoch', 'localtime'), cnt, dark_time, "
-      "work_time FROM flow WHERE flags > 0 ORDER BY dtm ASC LIMIT 4" );
+      "work_time FROM flow WHERE flags > 0 ORDER BY dtm ASC LIMIT 16" );//ilosc rekordow
   while( stmt.step() == SQLITE_ROW ) {
     ss << stmt.column_int(0) << ';' //id
       << stmt.column_text(1) << ';' //itd
@@ -56,7 +57,12 @@ int createData( std::string & data ) {
 
 
 void commitData( const std::string & data, int ilDanych ) {
-  sqlite3cc::stmt stmt( *globalConfigDb );
+
+  sqlite3cc::stmt stmt( *globalDataDb );
+  stmt.prepare( "BEGIN TRANSACTION" );
+  stmt.step();
+  stmt.finalize();
+
   stmt.prepare( "UPDATE flow SET flags = ?1 WHERE id == ?2" );
   std::istringstream ss( data );
   int i, f;
@@ -70,6 +76,10 @@ void commitData( const std::string & data, int ilDanych ) {
     stmt.reset();
     --ilDanych;
   }
+  stmt.finalize();
+
+  stmt.prepare( "COMMIT" );
+  stmt.step();
   stmt.finalize();
 }
 
@@ -327,13 +337,18 @@ MIN:
   globalConfigDb->open( std::getenv("ICD_CONFIG_DB") );
   globalConfigDb->busy_timeout( db_timeout );
   globalConfig=new icd::config( *globalConfigDb );
+  
+  globalDataDb=new sqlite3cc::conn();
+  globalDataDb->open( std::getenv("ICD_DATA_DB") );
+  globalDataDb->busy_timeout( db_timeout );
+
 
   //TODO: tmp
   //sprawdzenie czy nie ma komunikacji w tle ---------------------------------//
   s=globalConfig->entry("current", "last-send-status");                       //
   if( s.size()>=1 && s[0]=='?' ) {                                            //
     log.errTrInProgress();                                                    //
-    exit(1);                                                                  //
+//    exit(1);                                                                  //
   }                                                                           //
   //sprawdzenie czy nie ma komunikacji w tle -- koniec -----------------------//
 

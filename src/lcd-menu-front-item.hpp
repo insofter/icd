@@ -17,6 +17,10 @@
   #include <unistd.h>
 #endif
 
+
+extern sqlite3cc::conn *globalLiveDb;
+
+
 /**
  * Class describes interface for items in front menu. For example: date and time, Counters stats etc.
  * By default that items don't accept keys and always return 1;
