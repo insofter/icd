@@ -14,7 +14,7 @@
 #include "lcd-driver.hpp"
 
 extern icd::config *globalConfig;
-extern sqlite3cc::conn *globalDb;
+extern sqlite3cc::conn *globalConfigDb;
 
 
 /**

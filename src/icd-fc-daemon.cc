@@ -19,7 +19,8 @@
 #include <fcntl.h>
 
 icd::config *globalConfig;
-sqlite3cc::conn *globalDb;
+sqlite3cc::conn *globalConfigDb;
+sqlite3cc::conn *globalDataDb;
 
 void print_usage( char *argv0 ) {
   std::cerr <<
@@ -29,7 +30,7 @@ void print_usage( char *argv0 ) {
     "A front controller daemon. Provides user interface via lcd and buttons.\n"
     "\n"
     "Options:\n"
-    "  -d|--db=DB_NAME              Database file path; Mandatory option\n"
+//    "  -d|--db=DB_NAME              Database file path; Mandatory option\n"
     "  -t|--timeout=TIMEOUT_MS      Timeout for access to the database in ms\n"
     "  -b|--daemon                  Run as a daemon\n"
     "  -p|--pidfile=FILE            Create pid file ( if a daemon )\n"
@@ -51,14 +52,14 @@ int main( int argc, char *argv[] ) {
 
   try {
     daemonizer daemon;
-    std::string db_name;
+//    std::string db_name;
     int db_timeout = 60000; // MIN timeout is 60 seconds
     bool run_as_daemon = false;
     bool exit = false;
 
     //parametry uruchomienia
     struct option long_options[] = {
-      { "db", required_argument, 0, 'd' },
+//      { "db", required_argument, 0, 'd' },
       { "timeout", required_argument, 0, 't' },
       { "daemon", no_argument, 0, 'b' },
       { "pidfile", required_argument, 0, 'p' },
@@ -69,13 +70,14 @@ int main( int argc, char *argv[] ) {
 
     while( 1==1 ) {
       int option_index = 0;
-      int ch = getopt_long( argc, argv, "d:t:bphv", long_options, &option_index );
+      int ch = getopt_long( argc, argv, "t:bphv", long_options, &option_index );
+//      int ch = getopt_long( argc, argv, "d:t:bphv", long_options, &option_index );
       if ( ch == -1 )
         break;
       switch( ch ) {
-        case 'd':
-          db_name = optarg;
-          break;
+//        case 'd':
+//          db_name = optarg;
+//          break;
         case 't':
           db_timeout = strtol( optarg, NULL, 0 );
           break;
@@ -103,9 +105,9 @@ MIN:
         break;
       }
     }
-    if( !exit && db_name.empty() ) {
-      throw std::runtime_error( "Missing '--db' parameter" );
-    }
+//    if( !exit && db_name.empty() ) {
+//      throw std::runtime_error( "Missing '--db' parameter" );
+//    }
 
     if ( !exit && run_as_daemon ) {
       exit = daemon.fork();
@@ -171,11 +173,14 @@ MIN:
      */
 
 
-    globalDb=new sqlite3cc::conn();
-    globalDb->open( db_name.c_str() );
-    globalDb->busy_timeout( db_timeout );
-    globalConfig=new icd::config( *globalDb );
+    globalConfigDb=new sqlite3cc::conn();
+    globalConfigDb->open( std::getenv("ICD_CONFIG_DB") );
+    globalConfigDb->busy_timeout( db_timeout );
+    globalConfig=new icd::config( *globalConfigDb );
 
+    globalDataDb=new sqlite3cc::conn();
+    globalDataDb->open( std::getenv("ICD_DATA_DB") );
+    globalDataDb->busy_timeout( db_timeout );
 
 
     ClcdDriver lcdDrv;
@@ -234,16 +239,16 @@ MIN:
     mainMenu->itemAdd( new CmenuItemDbParam( "Adres IP", "current", "ip" ) );
     mainMenu->itemAdd( new CmenuItemDbParam( "Status wysyłania", "current", "last-send-status" ) );
     std::string cmd;
-    cmd="icd-transfer-data --log=short --db=\"";
-    cmd+=db_name;
-    cmd+="\"";
+    cmd="icd-transfer-data --log=short";// --db=\"";
+//    cmd+=db_name;
+//    cmd+="\"";
     int conntestid=mainMenu->fastAdd( 
         new CmenuItemRunTestApp( "Test połączenia", "> Uruchomić?",
           cmd, "Test połączenia*", "Test połączenia" ) );
 
-    cmd="icd-test --log=short --db=\"";
-    cmd+=db_name;
-    cmd+="\"";
+    cmd="icd-test --log=short";// --db=\"";
+//    cmd+=db_name;
+//    cmd+="\"";
     int fototestid=mainMenu->fastAdd( 
         new CmenuItemRunTestApp( "Test fotokomórek","> Testuj",
           cmd, "Test fotokomórek", "", true ) );
@@ -346,7 +351,7 @@ MIN:
         }
 
       }
-      globalDb->close();
+      globalConfigDb->close();
     }
   } catch( std::exception& e ) {
     syslog << basename( argv[0] ) << " error: " << e.what() << std::endl;

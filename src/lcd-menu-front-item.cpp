@@ -32,7 +32,7 @@ void CmenuItemFrontMenu::fullEsc() {
 
 
 CmenuItemTimeFoto::CmenuItemTimeFoto(int a, int b): _a(a), _b(b) {
-//  stmt = new sqlite3cc::stmt( *globalDb );
+//  stmt = new sqlite3cc::stmt( *globalConfigDb );
 //  stmt->prepare( "SELECT `cnt` FROM flow WHERE itd = ?1 ORDER BY `dtm` DESC LIMIT 1" );
 
 }

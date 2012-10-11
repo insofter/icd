@@ -4,6 +4,7 @@
 #include "daemonizer.h"
 #include "logger.hpp"
 #include <getopt.h>
+#include <cstdlib>
 #include <sstream>
 #include <cmath>
 #include <fstream>
@@ -15,11 +16,11 @@
 //gsoap/_Service1SoapProxy.h -- funkcje serwera
 
 icd::config *globalConfig;
-sqlite3cc::conn *globalDb;
+sqlite3cc::conn *globalConfigDb;
 
 
 int iloscDanych() {
-  sqlite3cc::stmt stmt( *globalDb );
+  sqlite3cc::stmt stmt( *globalConfigDb );
   stmt.prepare( "SELECT COUNT(*) FROM flow WHERE flags > 0 "
       "ORDER BY dtm ASC LIMIT 4" );
   stmt.step();
@@ -30,7 +31,7 @@ int iloscDanych() {
 
 
 int createData( std::string & data ) {
-  sqlite3cc::stmt stmt( *globalDb );
+  sqlite3cc::stmt stmt( *globalConfigDb );
   std::ostringstream ss;
   stmt.prepare( "SELECT id, itd, "
       "datetime(dtm, 'unixepoch', 'localtime'), cnt, dark_time, "
@@ -55,14 +56,14 @@ int createData( std::string & data ) {
 
 
 void commitData( const std::string & data, int ilDanych ) {
-  sqlite3cc::stmt stmt( *globalDb );
+  sqlite3cc::stmt stmt( *globalConfigDb );
   stmt.prepare( "UPDATE flow SET flags = ?1 WHERE id == ?2" );
   std::istringstream ss( data );
   int i, f;
   char x;
   while( ( ! ss.eof() ) && ilDanych ) {
     ss >> i >> x >> f ; 
-//    std::cerr << "........ i=" << i << " f=" << f << std::endl;
+    //    std::cerr << "........ i=" << i << " f=" << f << std::endl;
     stmt.bind_int( 1, f );
     stmt.bind_int( 2, i );
     stmt.step();
@@ -142,9 +143,9 @@ void getInitWIthFullSession( Clog & log ) {
   s+="/icdtcp3/icdtcp3.asmx";                                                 //
   servAddr=new_c_str( s );                                                    //
   icdtcp3SoapProxy service( servAddr );                                       //
-                                                                              //
+  //
   service.userid = new_c_str( globalConfig->entry( "device", "user" ) );      //
-                                                                              //
+  //
   service.passwd = new_c_str( globalConfig->entry( "device", "pass" ) );      //
   //przygotowanie połaczenia -- koniec ---------------------------------------//
 
@@ -152,7 +153,7 @@ void getInitWIthFullSession( Clog & log ) {
   //logowanie ----------------------------------------------------------------//
   _icd1__LoginDevice login;                                                   //
   _icd1__LoginDeviceResponse rlogin;                                          //
-                                                                              //
+  //
   login.idd=atoi( (globalConfig->entry( "device", "idd")).c_str() );          //
   login.mac=new std::string( globalConfig->entry( "tcpip", "mac" ) );         //
   login.deviceIds=new std::string( globalConfig->entry( "device", "ids" ) );  //
@@ -164,21 +165,21 @@ void getInitWIthFullSession( Clog & log ) {
   s+="', devInfo='";                                                          //
   s+=*(login.devInfo);                                                        //
   s+="'";                                                                     //
-                                                                              //
+  //
   log.okParams( 3, "LoginDevice" );                                           //
-                                                                              //
+  //
   ans=service.LoginDevice( &login, &rlogin );                                 //
   delete login.deviceIds;                                                     //
   delete login.devInfo;                                                       //
   delete login.mac;                                                           //
-                                                                              //
+  //
   if( ans!=SOAP_OK ) {                                                        //
     log.errSoap( 7, service.soap_fault_detail(), ans, "Błąd transmisji" );    //
     exit(1);                                                                  //
   }                                                                           //
   log.okSoap( 7, s );                                                         //
-                                                                              //
-                                                                              //
+  //
+  //
   if( rlogin.LoginDeviceResult==0 ) {                                         //
     log.okServerAns( 10, *(rlogin.message) );                                 //
   } else {                                                                    //
@@ -191,17 +192,17 @@ void getInitWIthFullSession( Clog & log ) {
   //pobranie czasu -----------------------------------------------------------//
   _icd1__GetTime time;                                                        //
   _icd1__GetTimeResponse rtime;                                               //
-                                                                              //
+  //
   log.okParams( 13, "GetTime" );                                              //
-                                                                              //
+  //
   ans=service.GetTime(&time, &rtime);                                         //
-                                                                              //
+  //
   if( ans!=SOAP_OK ) {                                                        //
     log.errSoap( 17, service.soap_fault_detail(), ans, "Błąd transmisji" );   //
     exit(1);                                                                  //
   }                                                                           //
   log.okSoap( 17, "GetTime" );                                                //
-                                                                              //
+  //
   log.okServerAns( 20, *(rtime.GetTimeResult) );                              //
   setTime( *(rtime.GetTimeResult) );                                          //
   //pobranie czasu -- koniec -------------------------------------------------//
@@ -209,17 +210,17 @@ void getInitWIthFullSession( Clog & log ) {
   //pobranie podstawowej konfiguracji -- -------------------------------------//
   _icd1__GetMacIdd gmi;                                                       //
   _icd1__GetMacIddResponse rgmi;                                              //
-                                                                              //
+  //
   log.okParams( 43, "GetMacIdd" );                                            //
-                                                                              //
+  //
   ans=service.GetMacIdd(&gmi, &rgmi);                                         //
-                                                                              //
+  //
   if( ans!=SOAP_OK ) {                                                        //
     log.errSoap( 47, service.soap_fault_detail(), ans, "Błąd transmisji" );   //
     exit(1);                                                                  //
   }                                                                           //
   log.okSoap( 47, "GetMacIdd" );                                              //
-                                                                              //
+  //
   if( rgmi.GetMacIddResult==0 ) {                                             //
     char ch[10];                                                              //
     sprintf(ch,"%i",rgmi.response->Idd);                                      //
@@ -232,21 +233,21 @@ void getInitWIthFullSession( Clog & log ) {
     exit(1);                                                                  //
   }                                                                           //
   //pobranie podstawowej konfiguracji -- koniec-------------------------------//
-  
+
   //wylogowanie --------------------------------------------------------------//
   _icd1__LogoutDevice out;                                                    //
   _icd1__LogoutDeviceResponse rout;                                           //
-                                                                              //
+  //
   log.okParams( 93, "LogoutDevice" );                                         //
-                                                                              //
+  //
   ans=service.LogoutDevice(&out, &rout);                                      //
-                                                                              //
+  //
   if( ans!=SOAP_OK ) {                                                        //
     log.errSoap( 97, service.soap_fault_detail(), ans, "Błąd transmisji" );   //
     exit(1);                                                                  //
   }                                                                           //
   log.okSoap( 97, "LogoutDevice" );                                           //
-                                                                              //
+  //
   if( rout.LogoutDeviceResult==0 ) {                                          //
     log.okServerAns( 99, *(rout.message) );                                   //
   } else {                                                                    //
@@ -255,14 +256,14 @@ void getInitWIthFullSession( Clog & log ) {
     exit(1);                                                                  //
   }                                                                           //
   //wylogowanie -- koniec ----------------------------------------------------//
-  
+
   delete service.userid;
   delete service.passwd;
   delete servAddr;
 }
 
 
- 
+
 int main( int argc, char *argv[] ) {
 
   Clog log;
@@ -272,25 +273,26 @@ int main( int argc, char *argv[] ) {
   char * mem;
   int ans;
 
-//parametry uruchomienia
-    struct option long_options[] = {
-      { "db", required_argument, 0, 'd' },
-      { "timeout", required_argument, 0, 't' },
-      { "log", optional_argument, 0, 'l' },
-      { "help", no_argument, 0, 'h' },
-      { "version", no_argument, 0, 'v' },
-      { 0, 0, 0, 0 }
-    };
+  //parametry uruchomienia
+  struct option long_options[] = {
+    { "db", required_argument, 0, 'd' },
+    { "timeout", required_argument, 0, 't' },
+    { "log", optional_argument, 0, 'l' },
+    { "help", no_argument, 0, 'h' },
+    { "version", no_argument, 0, 'v' },
+    { 0, 0, 0, 0 }
+  };
 
-    while( end==false ) {
-      int option_index = 0;
-      int ch=getopt_long(argc, argv, "d:t:l::hv", long_options, &option_index);
-      if (ch == -1)
-        break;
-      switch(ch) {
-      case 'd':
-        s = optarg;
-        break;
+  while( end==false ) {
+    int option_index = 0;
+//    int ch=getopt_long(argc, argv, "d:t:l::hv", long_options, &option_index);
+    int ch=getopt_long(argc, argv, "t:l::hv", long_options, &option_index);
+    if (ch == -1)
+      break;
+    switch(ch) {
+//      case 'd':
+//        s = optarg;
+//        break;
       case 't':
         db_timeout = strtol(optarg, NULL, 0);
         break;
@@ -310,23 +312,23 @@ int main( int argc, char *argv[] ) {
         print_version(argv[0]);
         end = true;
         break;
-      MIN:
+MIN:
         std::cerr << "Unknown option ` " << char(ch) << " '" << std::endl;
         exit(1);
         break;
-      }
     }
-    if( !end && s.empty() ) {
-      std::cerr << "Missing '--db' parameter" << std::endl;
-      exit(1);
-    }
-//parametry uruchomienia -- koniec
+  }
+//  if( !end && s.empty() ) {
+//    std::cerr << "Missing '--db' parameter" << std::endl;
+//    exit(1);
+//  }
+  //parametry uruchomienia -- koniec
+  globalConfigDb=new sqlite3cc::conn();
+  globalConfigDb->open( std::getenv("ICD_CONFIG_DB") );
+  globalConfigDb->busy_timeout( db_timeout );
+  globalConfig=new icd::config( *globalConfigDb );
 
-  globalDb=new sqlite3cc::conn();
-  globalDb->open( s.c_str());
-  globalDb->busy_timeout(db_timeout);
-  globalConfig=new icd::config( *globalDb );
-
+  //TODO: tmp
   //sprawdzenie czy nie ma komunikacji w tle ---------------------------------//
   s=globalConfig->entry("current", "last-send-status");                       //
   if( s.size()>=1 && s[0]=='?' ) {                                            //
@@ -350,9 +352,9 @@ int main( int argc, char *argv[] ) {
   s+=globalConfig->entry( "device", "address" );                              //
   s+="/icdtcp3/icdtcp3.asmx";                                                 //
   icdtcp3SoapProxy service( new_c_str( s ) );                                 //
-                                                                              //
+  //
   service.userid = new_c_str( globalConfig->entry( "device", "user" ) );      //
-                                                                              //
+  //
   service.passwd = new_c_str( globalConfig->entry( "device", "pass" ) );      //
   //przygotowanie połaczenia -- koniec ---------------------------------------//
 
@@ -360,15 +362,15 @@ int main( int argc, char *argv[] ) {
   //logowanie ----------------------------------------------------------------//
   _icd1__LoginDevice login;                                                   //
   _icd1__LoginDeviceResponse rlogin;                                          //
-                                                                              //
+  //
   login.idd=atoi( (globalConfig->entry( "device", "idd")).c_str() );          //
   login.mac=new std::string( globalConfig->entry( "tcpip", "mac" ) );         //
   login.deviceIds=new std::string( globalConfig->entry( "device", "ids" ) );  //
-                                                                              //
+  //
   std::fstream etc_soft( "/etc/software_version" , std::ios_base::in );       //
   etc_soft >> s;                                                              //
   etc_soft.close();                                                           //
-                                                                              //
+  //
   login.devInfo=new std::string( s );                                         //
   s="idd='";                                                                  //
   s+=globalConfig->entry( "device", "idd");                                   //
@@ -377,21 +379,21 @@ int main( int argc, char *argv[] ) {
   s+="', devInfo='";                                                          //
   s+=*(login.devInfo);                                                        //
   s+="'";                                                                     //
-                                                                              //
+  //
   log.okParams( 3, "LoginDevice" );                                           //
-                                                                              //
+  //
   ans=service.LoginDevice( &login, &rlogin );                                 //
   delete login.deviceIds;                                                     //
   delete login.devInfo;                                                       //
   delete login.mac;                                                           //
-                                                                              //
+  //
   if( ans!=SOAP_OK ) {                                                        //
     log.errSoap( 7, service.soap_fault_detail(), ans, "Błąd transmisji" );    //
     exit(1);                                                                  //
   }                                                                           //
   log.okSoap( 7, s );                                                         //
-                                                                              //
-                                                                              //
+  //
+  //
   if( rlogin.LoginDeviceResult==0 ) {                                         //
     log.okServerAns( 10, *(rlogin.message) );                                 //
   } else {                                                                    //
@@ -406,46 +408,46 @@ int main( int argc, char *argv[] ) {
   //pobranie czasu -----------------------------------------------------------//
   _icd1__GetTime time;                                                        //
   _icd1__GetTimeResponse rtime;                                               //
-                                                                              //
+  //
   log.okParams( 13, "GetTime" );                                              //
-                                                                              //
+  //
   ans=service.GetTime(&time, &rtime);                                         //
-                                                                              //
+  //
   if( ans!=SOAP_OK ) {                                                        //
     log.errSoap( 17, service.soap_fault_detail(), ans, "Błąd transmisji" );   //
     exit(1);                                                                  //
   }                                                                           //
   log.okSoap( 17, "GetTime" );                                                //
-                                                                              //
+  //
   log.okServerAns( 20, *(rtime.GetTimeResult) );                              //
   setTime( *(rtime.GetTimeResult) );                                          //
   //pobranie czasu -- koniec -------------------------------------------------//
 
 
   //wysyłanie danych ---------------------------------------------------------//
-  #define PROCENT_NA_TRANSFER 50                                              //
+#define PROCENT_NA_TRANSFER 50                                              //
   _icd1__SendData3 data;                                                      //
   _icd1__SendData3Response rdata;                                             //
   data.data = &s;                                                             //
   int ilDanych=iloscDanych();                                                 //
   int ilPaczek=std::ceil( ((float)ilDanych)/4 );                              //
   int aktPaczka=0;                                                            //
-                                                                              //
+  //
   while( createData( s ) && aktPaczka<ilPaczek ) {                            //
     log.okParams( 20+PROCENT_NA_TRANSFER*(aktPaczka*3+1)/(ilPaczek*3),        //
         "SendData3" );                                                        //
-                                                                              //
+    //
     ans=service.SendData3(&data, &rdata);                                     //
-                                                                              //
+    //
     if( ans!=SOAP_OK ) {                                                      //
       log.errSoap( 20+PROCENT_NA_TRANSFER*(aktPaczka*3+2)/(ilPaczek*3),       //
           service.soap_fault_detail(), ans, "Błąd transmisji" );              //
       exit(1);                                                                //
     }                                                                         //
     log.okSoap( 20+PROCENT_NA_TRANSFER*(aktPaczka*3+2)/(ilPaczek*3), s );     //
-                                                                              //
+    //
     commitData( *rdata.message, ilDanych );                                   //
-                                                                              //
+    //
     if( rdata.SendData3Result>0 ) {                                           //
       log.errServerAns( 20+PROCENT_NA_TRANSFER*(aktPaczka*3+3)/(ilPaczek*3),  //
           *(rdata.message),                                                   //
@@ -463,23 +465,23 @@ int main( int argc, char *argv[] ) {
   //sprawdzenie aktualizacji -------------------------------------------------//
   _icd1__GetDeviceUpdateInfo update;                                          //
   _icd1__GetDeviceUpdateInfoResponse rupdate;                                 //
-                                                                              //
+  //
   etc_soft.open( "/etc/software_type" , std::ios_base::in );                  //
   etc_soft >> s;                                                              //
   etc_soft.close();                                                           //
-                                                                              //
+  //
   update.softVersion=&s;                                                      //
-                                                                              //
+  //
   log.okParams( 83, "Update" );                                               //
-                                                                              //
+  //
   ans=service.GetDeviceUpdateInfo( &update, &rupdate );                       //
-                                                                              //
+  //
   if( ans!=SOAP_OK ) {                                                        //
     log.errSoap( 87, service.soap_fault_detail(), ans, "Błąd transmisji" );   //
     exit(1);                                                                  //
   }                                                                           //
   log.okSoap( 87, s/*"Update"*/ );//parametry SoftVersion=xxxx
-                                                                              //
+  //
   if( rupdate.GetDeviceUpdateInfoResult==0 ) {                                //
     log.okServerAns( 89, "Dostępne nowe oprogramowanie" );                    //
   } else {                                                                    //
@@ -491,18 +493,18 @@ int main( int argc, char *argv[] ) {
   //wylogowanie --------------------------------------------------------------//
   _icd1__LogoutDevice out;                                                    //
   _icd1__LogoutDeviceResponse rout;                                           //
-                                                                              //
+  //
   log.okParams( 93, "LogoutDevice" );                                         //
-                                                                              //
+  //
   ans=service.LogoutDevice(&out, &rout);                                      //
-                                                                              //
+  //
   if( ans!=SOAP_OK ) {                                                        //
     log.errSoap( 97, service.soap_fault_detail(), ans, "Błąd transmisji" );   //
     exit(1);                                                                  //
   }                                                                           //
   log.okSoap( 97, "LogoutDevice" );                                           //
-                                                                              //
-                                                                              //
+  //
+  //
   if( rout.LogoutDeviceResult==0 ) {                                          //
     log.okServerAns( 99, *(rout.message) );                                   //
   } else {                                                                    //
@@ -527,15 +529,15 @@ int main( int argc, char *argv[] ) {
       pclose( md5Chk );                                                       //
       if( (*(rupdate.response->Md5)).compare( md5sum ) == 0 ) {               //
         if( (*(rupdate.response->UpdateForce)).compare( "FORCE" ) == 0 ) {    //
-//          system(  "sudo -n icdtcp3-update-sw --force /tmp/update.img "       //
-//              "&& sleep 3 && ict-shutdown --reboot &" );                      //
+          //          system(  "sudo -n icdtcp3-update-sw --force /tmp/update.img "       //
+          //              "&& sleep 3 && ict-shutdown --reboot &" );                      //
           std::cerr << ":: FORCE update with file: "
             << "/tmp/update.img" << std::endl;
         } else {                                                              //
           s="sudo -n icdtcp3-update-sw --type=";                              //
           s+=(*(rupdate.response->NewVersion));                               //
           s+=" /tmp/update.img && sleep 3 && ict-shutdown --reboot &";        //
-//          system(  s.c_str() );                                               //
+          //          system(  s.c_str() );                                               //
           std::cerr << ":: update with file: "
             << "/tmp/update.img, cmd: " << s << std::endl;
         }                                                                     //
