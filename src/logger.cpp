@@ -32,17 +32,25 @@ Clog::Clog( log_type log ): _log(log) {
 
 
 Clog::~Clog() {
-  if( ! destrLock ) {
-    std::string x=globalConfig->entry("current", "last-send-status"); 
-    if( x.size()>=1 && x[0]=='?' ) {
-//    //  globalConfig->set_entry("current", 
-//          "last-send-status", "--ERR TR. BROKEN");
+  if( destrLock ) {
+    std::fstream sendstat( "/tmp/last-send-status",  std::ios_base::in );
+    if( sendstat.is_open() ) {
+      char x=0;
+      sendstat >> x;
+      if( x=='?' ) {
+        sendstat.close();
+        sendstat.open( "/tmp/last-send-status",  std::ios_base::trunc | std::ios_base::out );
+        sendstat << "--ERR TR. BROKEN";
+      }
+      sendstat.close();
     }
   }
 }
 void Clog::okParams( int percent, const std::string & cmd ) {
   sprintf(progress+12,"%3i%%", percent);
-////  globalConfig->set_entry("current","last-send-status", progress);
+  std::fstream sendstat( "/tmp/last-send-status",  std::ios_base::trunc | std::ios_base::out );
+  sendstat << progress;
+  sendstat.close();
 
   switch( _log ) {
     case SHORT:
@@ -60,6 +68,10 @@ void Clog::okParams( int percent, const std::string & cmd ) {
 void Clog::okSoap( int percent, const std::string & servQuery ) {
   sprintf(progress+12,"%3i%%", percent);
 ////  globalConfig->set_entry("current","last-send-status", progress);
+
+  std::fstream sendstat( "/tmp/last-send-status",  std::ios_base::trunc | std::ios_base::out );
+  sendstat << progress;
+  sendstat.close();
 
   switch( _log ) {
     case SHORT:
@@ -79,6 +91,9 @@ void Clog::okSoap( int percent, const std::string & servQuery ) {
 void Clog::okServerAns( int percent, const std::string & servAns ) {
   sprintf(progress+12,"%3i%%", percent);
 //  globalConfig->set_entry("current","last-send-status", progress);
+  std::fstream sendstat( "/tmp/last-send-status",  std::ios_base::trunc | std::ios_base::out );
+  sendstat << progress;
+  sendstat.close();
 
   switch( _log ) {
     case SHORT:
@@ -101,6 +116,9 @@ void Clog::errParams( int percent, const std::string & cmd,
 
   ss << "--ERR CR:" << short_err;
 //  globalConfig->set_entry( "current","last-send-status", ss.str() );
+  std::fstream sendstat( "/tmp/last-send-status",  std::ios_base::trunc | std::ios_base::out );
+  sendstat << ss.str();
+  sendstat.close();
 
   switch( _log ) {
     case SHORT:
@@ -124,6 +142,9 @@ void Clog::errSoap( int percent, const std::string & soapTxt,
   char ss[17];
   sprintf(ss,"--ERR SOAP:%4i", soapCode );
 //  globalConfig->set_entry("current","last-send-status", ss);
+  std::fstream sendstat( "/tmp/last-send-status",  std::ios_base::trunc | std::ios_base::out );
+  sendstat << ss;
+  sendstat.close();
 
   switch( _log ) {
     case SHORT:
@@ -147,6 +168,9 @@ void Clog::errServerAns( int percent, const std::string & servAns,
 
   ss << "--ERR " << shortCmd << ":" << shortAns;
 //  globalConfig->set_entry( "current","last-send-status", ss.str() );
+  std::fstream sendstat( "/tmp/last-send-status",  std::ios_base::trunc | std::ios_base::out );
+  sendstat << ss.str();
+  sendstat.close();
 
   switch( _log ) {
     case SHORT:
@@ -180,6 +204,9 @@ void Clog::done( int warn ) {
     ss << "++WARNINGS: " << warn;
   }
 //  globalConfig->set_entry( "current","last-send-status", ss.str() );
+  std::fstream sendstat( "/tmp/last-send-status",  std::ios_base::trunc | std::ios_base::out );
+  sendstat << ss.str();
+  sendstat.close();
   
   switch( _log ) {
     case SHORT:
@@ -200,6 +227,9 @@ void Clog::error( int err ) {
   std::ostringstream ss;
   ss << "--ERRORS: " << err;
 //  globalConfig->set_entry( "current","last-send-status", ss.str() );
+  std::fstream sendstat( "/tmp/last-send-status",  std::ios_base::trunc | std::ios_base::out );
+  sendstat << ss.str();
+  sendstat.close();
 
   
   switch( _log ) {

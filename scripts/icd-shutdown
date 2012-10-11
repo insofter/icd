@@ -3,7 +3,7 @@
 source "/etc/profile.d/icd.sh"
 
 
-if icd-config --db="${ICD_TEMP_DIR}/live.db" sget current last-send-status | grep -q "??" 
+if cat /tmp/last-send-status | grep -q "??" 
 then  
   echo "--ERR Poł. w tle"
   exit 1

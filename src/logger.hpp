@@ -14,6 +14,7 @@
 #include <string>
 #include <cstdio>
 #include <iostream>
+#include <fstream>
 #ifdef DESKTOP//different headers on arm and desktop,
               //use -DDESKTOP durng compilation on desktop 
 #include <unistd.h>

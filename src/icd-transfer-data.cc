@@ -280,7 +280,6 @@ int main( int argc, char *argv[] ) {
   std::string s;
   int db_timeout = 60000; 
   bool end = false;
-  char * mem;
   int ans;
 
   //parametry uruchomienia
@@ -345,10 +344,15 @@ MIN:
 
   //TODO: tmp
   //sprawdzenie czy nie ma komunikacji w tle ---------------------------------//
-  s=globalConfig->entry("current", "last-send-status");                       //
-  if( s.size()>=1 && s[0]=='?' ) {                                            //
-    log.errTrInProgress();                                                    //
-//    exit(1);                                                                  //
+  std::fstream sendstat("/tmp/last-send-status", std::ios_base::in);          //
+  if( sendstat.is_open() ) {                                                  //
+    char x;                                                                   //
+    sendstat >> x;                                                            //
+    if( x=='?' ) {                                                            //
+      log.errTrInProgress();                                                  //
+      exit(1);                                                                //
+    }                                                                         //
+    sendstat.close();                                                         //
   }                                                                           //
   //sprawdzenie czy nie ma komunikacji w tle -- koniec -----------------------//
 
