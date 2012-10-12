@@ -154,6 +154,52 @@ void CmenuItemDbParam::screen(Clcd *lcd) {
 
 
 
+CmenuItemFileParam::CmenuItemFileParam(std::string fpname, 
+    std::string file) {
+  _file=file;
+  name=fpname;
+  _lastSize=0;
+  _lastPos=0;
+}
+
+void CmenuItemFileParam::screen(Clcd *lcd) {
+  std::string val;
+  lcd->_lcd[0]=name;
+//  val=globalConfig->entry(_param._sect, _param._key);
+  std::fstream sendstat( _file.c_str() );
+  if( sendstat.is_open() ) {
+    getline( sendstat, val );
+    sendstat.close();  
+  }  
+
+  if( val.size()>16 ) {
+    lcd->_refresh=2000;
+    if( val.size()!=_lastSize || _lastPos>=val.size() ) {
+      _lastPos=0;
+      _lastSize=val.size();
+    }
+    lcd->_lcd[1]=val.substr(_lastPos, 16);
+    
+    int ilCzesci=std::ceil( ((float)_lastSize)/16 );
+    int ktora=std::floor( _lastPos/16 )+1;
+
+    lcd->_cur._x=(( ktora*16 ) / ilCzesci)-1;
+
+    lcd->_cur._y=1;
+    lcd->_cur._car=Ccur::line;
+
+    _lastPos+=16;
+  } else {
+    lcd->_refresh=10000;
+    lcd->_lcd[1]=val;
+    lcd->_cur._car=Ccur::none;
+  }
+}
+
+
+
+
+
 
 int CmenuItemRunTestApp::down(Clcd *lcd) {
     return this->up(lcd);

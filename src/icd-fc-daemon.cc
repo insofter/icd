@@ -237,7 +237,8 @@ MIN:
     mainMenu->itemAdd( new CmenuItemTimeFoto( 2, 3 ) );
     mainMenu->itemAdd( new CmenuItemIdds );
     mainMenu->itemAdd( new CmenuItemDbParam( "Adres IP", "current", "ip" ) );
-    mainMenu->itemAdd( new CmenuItemDbParam( "Status wysyłania", "current", "last-send-status" ) );
+    mainMenu->itemAdd( new CmenuItemFileParam( "Status wysyłania", "/tmp/last-send-status" ) );
+//    mainMenu->itemAdd( new CmenuItemDbParam( "Status wysyłania", "current", "last-send-status" ) );
     std::string cmd;
     cmd="icd-transfer-data --log=short";// --db=\"";
 //    cmd+=db_name;

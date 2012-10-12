@@ -12,6 +12,7 @@
 #include <ctime>
 #include <cmath>
 #include <poll.h>
+#include <fstream>
 #ifdef DESKTOP//different headers on arm and desktop,
               //use -DDESKTOP durng compilation on desktop 
   #include <unistd.h>
@@ -79,6 +80,18 @@ public:
   virtual void screen(Clcd *lcd);
 };
 
+/**
+ * Show first line from file
+ */
+class CmenuItemFileParam: public CmenuItemFrontMenu {
+private:
+  std::string _file;
+  int _lastPos;
+  int _lastSize; 
+public:
+  CmenuItemFileParam(std::string name, std::string file);
+  virtual void screen(Clcd *lcd);
+};
 
 
 /**
