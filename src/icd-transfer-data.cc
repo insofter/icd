@@ -19,11 +19,12 @@ icd::config *globalConfig;
 sqlite3cc::conn *globalConfigDb;
 sqlite3cc::conn *globalDataDb;
 
+#define TRANSFER_PACKAGE_CNT "32" //have to be string, not int
 
 int iloscDanych() {
   sqlite3cc::stmt stmt( *globalDataDb );
   stmt.prepare( "SELECT COUNT(*) FROM flow WHERE flags > 0 "
-      "ORDER BY dtm ASC LIMIT 16" );//ilosc rekordow
+      "ORDER BY dtm ASC LIMIT " TRANSFER_PACKAGE_CNT );//ilosc rekordow
   stmt.step();
   int x=stmt.column_int(0);
   stmt.finalize();
@@ -36,7 +37,7 @@ int createData( std::string & data ) {
   std::ostringstream ss;
   stmt.prepare( "SELECT id, counter_id, "
       "datetime(dtm, 'unixepoch', 'localtime'), cnt, dark_time, "
-      "work_time FROM flow WHERE flags > 0 ORDER BY dtm ASC LIMIT 16" );//ilosc rekordow
+      "work_time FROM flow WHERE flags > 0 ORDER BY dtm ASC LIMIT " TRANSFER_PACKAGE_CNT );//ilosc rekordow
   while( stmt.step() == SQLITE_ROW ) {
     ss << stmt.column_int(0) << ';' //id
       << stmt.column_text(1) << ';' //itd
