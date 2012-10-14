@@ -45,6 +45,19 @@ class c_icdtcp {
       250000=>'250 000',
       500000=>'500 000',
       1000000=>'1 000 000');
+
+
+    foreach( file("/etc/profile.d/icd.sh", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $tmp ) {
+      $tmp=explode( '=', strtr( $tmp, array('export '=>'', '$'=>'', '('=>'', ';'=>'', ) ) );
+      eval( '$'.$tmp[ 0 ].'="'.$tmp[ 1 ].'";' );
+    }
+
+
+    //print_r( $ICD_DATA_DB ) ;
+
+
+
+
     try {
       /*	$this->dataDb = new PDO( 'mysql:host=localhost;dbname=icdtcp3db','root','');*/
       $this->dataDb = new PDO("sqlite:/home/data/data.db");
