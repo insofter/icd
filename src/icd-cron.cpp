@@ -9,18 +9,20 @@
 #include <iostream>
 #include <libgen.h>
 #ifdef DESKTOP//different headers on arm and desktop,
-              //use -DDESKTOP durng compilation on desktop 
-  #include <unistd.h>
+//use -DDESKTOP durng compilation on desktop 
+#include <unistd.h>
 #endif
 #include <fcntl.h>
 #include <limits.h>
 
 
+icd::config *globalConfig;
+sqlite3cc::conn *globalConfigDb;
+
 void print_version(char *argv0) {
   std::cerr << basename(argv0) << " " << version << "\n"
     << copyright << std::endl;
 }
-
 
 void print_usage(char *argv0) {
   std::cerr 
@@ -52,20 +54,16 @@ float randVal() {
 
   return (float)rand/(float)UINT_MAX;
 }
- 
-int getDelay( std::string & s, int db_timeout ) {
+
+#define MIN_SYNC_DELAY 180
+int getDelay() {
   int delay;
-  sqlite3cc::conn db;
-  db.open( s.c_str() );
-  db.busy_timeout(db_timeout);
-  icd::config config( db );
 
-  delay=60*atoi( (config.entry( "device",
+  delay=MIN_SYNC_DELAY*atoi( (globalConfig->entry( "device",
           "server-sync-period-mins" )).c_str() );   
-  db.close();
 
-  if( delay < 60 ) {
-    delay = 60;
+  if( delay < MIN_SYNC_DELAY ) {
+    delay = MIN_SYNC_DELAY;
   }//delay == delay time in seconds
   return delay;
 }
@@ -78,29 +76,24 @@ int main( int argc, char *argv[] ) {
   int ans;
   daemonizer daemon;
   bool run_as_daemon = false;
-  std::string db;
 
 
-//parametry uruchomienia
-    struct option long_options[] = {
-      { "db", required_argument, 0, 'd' },
-      { "timeout", required_argument, 0, 't' },
-      { "daemon", no_argument, 0, 'b' },
-      { "pidfile", required_argument, 0, 'p' },
-      { "help", no_argument, 0, 'h' },
-      { "version", no_argument, 0, 'v' },
-      { 0, 0, 0, 0 }
-    };
+  //parametry uruchomienia
+  struct option long_options[] = {
+    { "timeout", required_argument, 0, 't' },
+    { "daemon", no_argument, 0, 'b' },
+    { "pidfile", required_argument, 0, 'p' },
+    { "help", no_argument, 0, 'h' },
+    { "version", no_argument, 0, 'v' },
+    { 0, 0, 0, 0 }
+  };
 
-    while( end==false ) {
-      int option_index = 0;
-      int ch=getopt_long(argc, argv, "d:t:bphv", long_options, &option_index);
-      if (ch == -1)
-        break;
-      switch(ch) {
-      case 'd':
-        db = optarg;
-        break;
+  while( end==false ) {
+    int option_index = 0;
+    int ch=getopt_long(argc, argv, "d:t:bphv", long_options, &option_index);
+    if (ch == -1)
+      break;
+    switch(ch) {
       case 't':
         db_timeout = strtol(optarg, NULL, 0);
         break;
@@ -118,72 +111,76 @@ int main( int argc, char *argv[] ) {
         print_version(argv[0]);
         end = true;
         break;
-      MIN:
+MIN:
         std::cerr << "Unknown option ` " << char(ch) << " '" << std::endl;
         exit(1);
         break;
-      }
     }
-    if( !end && db.empty() ) {
-      std::cerr << "Missing '--db' parameter" << std::endl;
-      exit(1);
-    }
-    if (run_as_daemon && daemon.fork() ) {
-      std::cerr << "Forking to background..." << std::endl;
-      exit(0);
-    }
-//parametry uruchomienia -- koniec
+  }
+  if (run_as_daemon && daemon.fork() ) {
+    std::cerr << "Forking to background..." << std::endl;
+    exit(0);
+  }
+  //parametry uruchomienia -- koniec
 
-#define FLUSH 180
+  globalConfigDb=new sqlite3cc::conn();
+  globalConfigDb->open( std::getenv("ICD_CONFIG_DB") );
+  globalConfigDb->busy_timeout( db_timeout );
+  globalConfig=new icd::config( *globalConfigDb );
 
-  std::string cmd;
-  cmd="icd-transfer-data --db=\"";
-  cmd+=db;
-  cmd+="\"";
 
-  int delay;//delay time
-  int ndelay;
-  int next;
-  int flush;
-  flush=time(NULL)+FLUSH;
+#define FLUSH_DELAY 180
 
-  //sleep for first sync to avoid flooding
   sleep( randVal()*20.0+10 );
+  system( "echo && date" ); 
+  system( "icd-transfer-data" );//first sync
+
+
+  int timeOfNextTransfer;
+  int timeOfNextFlush;
+  int timeNow;
+  int delayNow=0;
 
 
   while( 1==1 ) {
 
-    system( cmd.c_str() );//run command
+    sleep( FLUSH_DELAY-30 );
+    timeNow=time(NULL);
+    timeOfNextFlush=timeNow;
+    timeOfNextFlush/=FLUSH_DELAY;
+    timeOfNextFlush+=1;
+    timeOfNextFlush*=FLUSH_DELAY;
+    timeOfNextFlush+=5;//rounded to 3 min, + 5 secs
 
-    next=time(NULL);//time
-    delay=getDelay( db, db_timeout );
-    next/=delay;
-    next*=delay;//time rounded to last sending time
-  
-    next+=delay*( randVal()*0.1+1 );//time of next sending
-              //time shifted with 0.1*delay*random
-
-    if( time(NULL) > flush ) {
-      system( "icd-sync-db" );
-      flush=time(NULL)+FLUSH;
+    if( delayNow!=getDelay() ) {//delay changed by user or transfer 
+      delayNow=getDelay();
+      timeOfNextTransfer=timeNow;
+      timeOfNextTransfer/=delayNow;
+      timeOfNextTransfer+=1;
+      timeOfNextTransfer*=delayNow;
+      timeOfNextTransfer+=randVal()*0.1*delayNow;
+      timeOfNextTransfer+=10;
     }
 
-    while( time(NULL) < next ) {
-      sleep( 30+30*randVal() );
-      ndelay=getDelay( db, db_timeout );
-      if( delay!=ndelay ) {
-        delay=ndelay;
-        next=time(NULL);
-        next/=delay;
-        next*=delay;
-        next+=delay*( randVal()*0.1+1 );
+    if( timeOfNextTransfer<=timeOfNextFlush ) {//transfer will be faster than flush
+      if( timeOfNextTransfer-timeNow > 0 ) {
+        sleep( timeOfNextTransfer-timeNow );
       }
-      if( time(NULL) > flush ) {
-        system( "icd-sync-db" );
-        flush=time(NULL)+FLUSH;
+      system( "echo && date" ); 
+      system( "icd-flush-db" );
+      system( "date" ); 
+      system( "icd-transfer-data" );
+      delayNow=0;//force get delay and calculate new time
+
+    } else {//only flush
+      if( timeOfNextFlush-timeNow > 0 ) {
+        sleep( timeOfNextFlush-timeNow );
       }
+      system( "echo && date" ); 
+      system( "icd-flush-db" );
+
     }
-  }
+  }//end while( 1==1 )
 
   return 0;
 }

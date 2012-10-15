@@ -240,7 +240,7 @@ MIN:
     mainMenu->itemAdd( new CmenuItemFileParam( "Status wysyłania", "/tmp/last-send-status" ) );
 //    mainMenu->itemAdd( new CmenuItemDbParam( "Status wysyłania", "current", "last-send-status" ) );
     std::string cmd;
-    cmd="icd-transfer-data --log=short";// --db=\"";
+    cmd="icd-flush-db && icd-transfer-data --log=short";// --db=\"";
 //    cmd+=db_name;
 //    cmd+="\"";
     int conntestid=mainMenu->fastAdd( 
