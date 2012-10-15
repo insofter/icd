@@ -14,6 +14,7 @@
 #endif
 #include <fcntl.h>
 #include <limits.h>
+#include <cstdio>
 
 
 icd::config *globalConfig;
@@ -59,7 +60,7 @@ float randVal() {
 int getDelay() {
   int delay;
 
-  delay=MIN_SYNC_DELAY*atoi( (globalConfig->entry( "device",
+  delay=60*atoi( (globalConfig->entry( "device",
           "server-sync-period-mins" )).c_str() );   
 
   if( delay < MIN_SYNC_DELAY ) {
@@ -143,6 +144,9 @@ MIN:
 
 
   while( 1==1 ) {
+    printf("   flush=%i\n",timeOfNextFlush);
+    printf("wh) time=%i\n",timeNow);
+    printf("transfer=%i\n\n",timeOfNextTransfer);
 
     sleep( FLUSH_DELAY-30 );
     timeNow=time(NULL);
@@ -162,6 +166,9 @@ MIN:
       timeOfNextTransfer+=10;
     }
 
+    printf("   flush=%i\n",timeOfNextFlush);
+    printf("if) time=%i\n",timeNow);
+    printf("transfer=%i\n\n",timeOfNextTransfer);
     if( timeOfNextTransfer<=timeOfNextFlush ) {//transfer will be faster than flush
       if( timeOfNextTransfer-timeNow > 0 ) {
         sleep( timeOfNextTransfer-timeNow );
