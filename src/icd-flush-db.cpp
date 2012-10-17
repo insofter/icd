@@ -6,24 +6,17 @@
 #include <cstdio>
 
 
-
-
 icd::config *globalConfig;
 sqlite3cc::conn *globalConfigDb;
 sqlite3cc::conn *globalDataDb;
 sqlite3cc::conn *globalLiveDb;
+
 
 void print_version(char *argv0) {
   std::cerr << basename(argv0) << " " << version << "\n"
     << copyright << std::endl;
 }
 
-
-char * new_c_str( const std::string & s ) {
-  char * mem = new char[ s.size()+1 ];
-  strcpy( mem, s.c_str() );
-  return mem;
-}
 
 int main( int argc, char *argv[] ) {
 
@@ -43,28 +36,25 @@ int main( int argc, char *argv[] ) {
   globalLiveDb->busy_timeout( db_timeout );
 
 
-  sqlite3cc::stmt dataDbSql( *globalDataDb );//begin transaction on data.db
+  sqlite3cc::stmt dataDbSql( *globalDataDb );
   dataDbSql.prepare( "BEGIN TRANSACTION" );
   dataDbSql.step();
   dataDbSql.finalize();
 
   sqlite3cc::stmt dataDbSqlSelect( *globalDataDb );
-  dataDbSqlSelect.prepare( "SELECT id FROM flow WHERE counter_id == ?1 AND dtm ==?2 LIMIT 1" );
+  dataDbSqlSelect.prepare( "SELECT id FROM flow WHERE counter_id == ?1 AND dtm == ?2 LIMIT 1" );
 
   sqlite3cc::stmt dataDbSqlUpdate( *globalDataDb );
   dataDbSqlUpdate.prepare( "UPDATE flow SET cnt = ?3, dark_time = ?4, work_time = ?5, flags = ?6 WHERE counter_id == ?1 AND dtm ==?2" );
 
-
   sqlite3cc::stmt dataDbSqlInsert( *globalDataDb );
   dataDbSqlInsert.prepare( "INSERT INTO flow (counter_id, dtm, cnt, dark_time, work_time, flags) VALUES( ?1, ?2, ?3, ?4, ?5, ?6 )" );
-
 
   sqlite3cc::stmt liveDbSqlSelect( *globalLiveDb );
   liveDbSqlSelect.prepare( "SELECT counter_id, dtm, cnt, dark_time, work_time, flags FROM flow" );
 
   while( liveDbSqlSelect.step() == SQLITE_ROW ) {
     // "SELECT id FROM flow WHERE counter_id == ?1 AND dtm ==?2"
-    printf("counter_id=%i, dtm=%i\n", liveDbSqlSelect.column_int(0), liveDbSqlSelect.column_int(1));
     dataDbSqlSelect.bind_int( 1, liveDbSqlSelect.column_int(0) );
     dataDbSqlSelect.bind_int( 2, liveDbSqlSelect.column_int(1) );
     if( dataDbSqlSelect.step() == SQLITE_ROW ) {
@@ -91,7 +81,6 @@ int main( int argc, char *argv[] ) {
     dataDbSqlSelect.reset();
   }
   liveDbSqlSelect.finalize();
-  dataDbSqlSelect.finalize();
   dataDbSqlUpdate.finalize();
   dataDbSqlInsert.finalize();
 
@@ -99,8 +88,28 @@ int main( int argc, char *argv[] ) {
   dataDbSql.step();
   dataDbSql.finalize();
 
+  //live.db cleanup
+  sqlite3cc::stmt liveDbSqlDelete( *globalLiveDb );
+  liveDbSqlDelete.prepare( "DELETE FROM flow WHERE counter_id == ?1 AND dtm == ?2" );
 
-//todo rm old records
+  liveDbSqlSelect.prepare( "SELECT counter_id, dtm FROM flow WHERE flags = 2" );
+  while( liveDbSqlSelect.step() == SQLITE_ROW ) {
+    dataDbSqlSelect.bind_int( 1, liveDbSqlSelect.column_int(0) );
+    dataDbSqlSelect.bind_int( 2, liveDbSqlSelect.column_int(1) );
+    if( dataDbSqlSelect.step() == SQLITE_ROW ) {
+      liveDbSqlDelete.bind_int( 1, liveDbSqlSelect.column_int(0) );//counter_id
+      liveDbSqlDelete.bind_int( 2, liveDbSqlSelect.column_int(1) );//dtm
+      liveDbSqlDelete.step();
+      liveDbSqlDelete.reset();
+    }
+    dataDbSqlSelect.reset();
+  }
+  dataDbSqlSelect.finalize();
+  liveDbSqlDelete.finalize();
+
+
+//TODO rm old records from live
+
   /*
    * begin transaction datadb
    * select * from livedb
