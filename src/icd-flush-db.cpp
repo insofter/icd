@@ -10,6 +10,7 @@
 icd::config *globalConfig;
 sqlite3cc::conn *globalConfigDb;
 sqlite3cc::conn *globalDataDb;
+sqlite3cc::conn *globalLiveDb;
 
 void print_version(char *argv0) {
   std::cerr << basename(argv0) << " " << version << "\n"
@@ -36,10 +37,28 @@ int main( int argc, char *argv[] ) {
   globalDataDb->open( std::getenv("ICD_DATA_DB") );
   globalDataDb->busy_timeout( db_timeout );
 
-  globalDataDb=new sqlite3cc::conn();
-  globalDataDb->open( std::getenv("ICD_LIVE_DB") );
-  globalDataDb->busy_timeout( db_timeout );
+  globalLiveDb=new sqlite3cc::conn();
+  globalLiveDb->open( std::getenv("ICD_LIVE_DB") );
+  globalLiveDb->busy_timeout( db_timeout );
 
+  /*
+   * begin transaction datadb
+   * select * from livedb
+   * for every:
+   *    select from datadb
+   *    if id!=null 
+   *      then update
+   *      else insert
+   * commit datadb
+   * select from livedb where flags = 2
+   * for every:
+   *    select from data
+   *    ifexist
+   *      delete from livedb
+   *
+   *
+   * http://www.sqlite.org/lang_transaction.html
+*/
 
   return 0;
 }

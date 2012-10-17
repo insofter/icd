@@ -148,7 +148,7 @@ MIN:
     //printf("wh) time=%i\n",timeNow);
     //printf("transfer=%i\n\n",timeOfNextTransfer);
 
-    sleep( FLUSH_DELAY-30 );
+    sleep( 30 );//sleep to avoid running loop twice in one second
     timeNow=time(NULL);
     timeOfNextFlush=timeNow;
     timeOfNextFlush/=FLUSH_DELAY;
@@ -162,7 +162,7 @@ MIN:
       timeOfNextTransfer/=delayNow;
       timeOfNextTransfer+=1;
       timeOfNextTransfer*=delayNow;
-      timeOfNextTransfer+=randVal()*0.1*delayNow;
+      timeOfNextTransfer+=(int)((double)randVal()*(double)0.1*(double)delayNow);
       timeOfNextTransfer+=10;
     }
 
@@ -175,7 +175,6 @@ MIN:
       }
       system( "echo && date" ); 
       system( "icd-flush-db" );
-      system( "date" ); 
       system( "icd-transfer-data" );
       delayNow=0;//force get delay and calculate new time
 
