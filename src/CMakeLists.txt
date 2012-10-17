@@ -74,6 +74,9 @@ target_link_libraries(icd-cron
   sqlite3 version db-config daemonizer)
 
 
+add_executable(icd-flush-db icd-flush-db.cpp)
+target_link_libraries(icd-flush-db
+  sqlite3 version db-config daemonizer)
 
 #add_executable(icd-fc-daemon icd-fc-daemon.cc)
 #target_link_libraries(icd-fc-daemon db-config daemonizer

@@ -144,9 +144,9 @@ MIN:
 
 
   while( 1==1 ) {
-    printf("   flush=%i\n",timeOfNextFlush);
-    printf("wh) time=%i\n",timeNow);
-    printf("transfer=%i\n\n",timeOfNextTransfer);
+    //printf("   flush=%i\n",timeOfNextFlush);
+    //printf("wh) time=%i\n",timeNow);
+    //printf("transfer=%i\n\n",timeOfNextTransfer);
 
     sleep( FLUSH_DELAY-30 );
     timeNow=time(NULL);
@@ -166,9 +166,9 @@ MIN:
       timeOfNextTransfer+=10;
     }
 
-    printf("   flush=%i\n",timeOfNextFlush);
-    printf("if) time=%i\n",timeNow);
-    printf("transfer=%i\n\n",timeOfNextTransfer);
+   // printf("   flush=%i\n",timeOfNextFlush);
+    //printf("if) time=%i\n",timeNow);
+    //printf("transfer=%i\n\n",timeOfNextTransfer);
     if( timeOfNextTransfer<=timeOfNextFlush ) {//transfer will be faster than flush
       if( timeOfNextTransfer-timeNow > 0 ) {
         sleep( timeOfNextTransfer-timeNow );
