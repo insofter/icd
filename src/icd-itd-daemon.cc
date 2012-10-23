@@ -12,6 +12,9 @@
 #include <getopt.h>
 #include <libgen.h>
 
+#define CONFIG_DB_ENV_VARIABLE "ICD_CONFIG_DB"
+#define DATA_DB_ENV_VARIABLE "ICD_LIVE_DB"
+
 void print_usage(char *argv0)
 {
   std::cerr << 
@@ -22,7 +25,12 @@ void print_usage(char *argv0)
     "and stores in the flow table entries.\n"
     "\n"
     "Options:\n"
-    "  -d|--db=DB_NAME           Database file path; Mandatory option\n"
+    "  -c|--config_db=NAME       Config database file path; Mandatory option\n"
+    "                            Can be also provided as ICD_CONFIG_DB\n"
+    "                            environment variable\n"
+    "  -d|--data_db=NAME         Data database file path; Mandatory option\n"
+    "                            Can be also provided as ICD_LIVE_DB\n"
+    "                            environment variable\n"
     "  -t|--timeout=TIMEOUT_MS   Timeout for waiting for acces to\n"
     "                            the database in ms. The default is 60sec\n"
     "  -b|--daemon               Run as a daemon\n"
@@ -46,13 +54,15 @@ int main(int argc, char *argv[])
   try
   {
     daemonizer daemon;
-    std::string db_name;
+    std::string config_db_name;
+    std::string data_db_name;
     int db_timeout = 60000; // default timeout is 60 seconds
     bool run_as_daemon = false;
     bool exit = false;
 
     struct option long_options[] = {
-      { "db", required_argument, 0, 'd' },
+      { "config_db", required_argument, 0, 'c' },
+      { "data_db", required_argument, 0, 'd' },
       { "timeout", required_argument, 0, 't' },
       { "daemon", no_argument, 0, 'b' },
       { "pidfile", required_argument, 0, 'p' },
@@ -64,14 +74,17 @@ int main(int argc, char *argv[])
     while(1)
     {
       int option_index = 0;
-      int ch = getopt_long(argc, argv, "d:t:bp:hv", long_options, &option_index);
+      int ch = getopt_long(argc, argv, "c:d:t:bp:hv", long_options, &option_index);
       if (ch == -1)
         break;
 
       switch(ch)
       {
+        case 'c':
+          config_db_name = optarg;
+          break;
         case 'd':
-          db_name = optarg;
+          data_db_name = optarg;
           break;
         case 't':
           db_timeout = strtol(optarg, NULL, 0);
@@ -102,8 +115,23 @@ int main(int argc, char *argv[])
         break;
     }
 
-    if (!exit && db_name.empty())
-      throw std::runtime_error("Missing '--db' parameter");
+    if (!exit && config_db_name.empty())
+    {
+      char *env = std::getenv(CONFIG_DB_ENV_VARIABLE);
+      if (env != NULL)
+        config_db_name = std::string(env);
+      else
+        throw std::runtime_error("Missing '--config_db' parameter");
+    }
+
+    if (!exit && data_db_name.empty())
+    {
+      char *env = std::getenv(DATA_DB_ENV_VARIABLE);
+      if (env != NULL)
+        data_db_name = std::string(env);
+      else
+        throw std::runtime_error("Missing '--data_db' parameter");
+    }
 
     if (!exit && run_as_daemon)
       exit = daemon.fork();
@@ -112,7 +140,7 @@ int main(int argc, char *argv[])
     {
       icd::thread::mask_signal(true, SIGINT);
 
-      icd::itd_farm farm(db_name, db_timeout);
+      icd::itd_farm farm(config_db_name, data_db_name, db_timeout);
       farm.run();
     }
   }

@@ -51,7 +51,6 @@ namespace icd
     virtual void dbg_print(std::ostream& os) const;
   };
 
-
   class virtual_device : public thread
   {
   public:
@@ -94,6 +93,7 @@ namespace icd
     virtual void initialize() {}
     virtual void destroy() {}
     virtual void handle_event(const event& e) = 0;
+    virtual void handle_queue_empty() {}
 
   private:
     struct prioritize_events
@@ -110,7 +110,6 @@ namespace icd
     time delay_;
     mutex lock_;
     condition queue_cond_;
-    condition delay_cond_;
     bool terminate_;
 
     virtual void run_vd();

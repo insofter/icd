@@ -36,9 +36,15 @@ namespace icd
   void stats_event::dbg_print(std::ostream& os) const
   {
     os << "stats_event(" << publisher() << "," << dtm() << "," << priority()
-      << "," << clear_time_.to_float() << "," << blocked_time_.to_float() << ")";
+      << "," << clear_time_.to_float() << "," << blocked_time_.to_float() 
+      << "," << aggr_period_ << ")";
   }
 
+  void filter_event::dbg_print(std::ostream& os) const
+  {
+    os << "filter_event(" << publisher() << "," << dtm() << "," << priority()
+      << "," << queue_empty_ << ")";
+  }
 
   itd_vd::itd_vd(const std::string& name, const std::string& dev_path)
     : virtual_device(name)
@@ -63,6 +69,21 @@ namespace icd
     os.close();
   }
 
+  void itd_vd::restart(void)
+  {
+    std::string path = sysfs_path_ + "/restart";
+    std::ofstream os;
+    os.open(path.c_str());
+    if (!os)
+      throw_ios_writing_failure(path);
+
+    os << "1" << std::endl;
+    if (!os)
+      throw_ios_writing_failure(path);
+
+    os.close();
+  }
+
   void itd_vd::start()
   {
     is_.open(dev_path_.c_str());
@@ -79,6 +100,8 @@ namespace icd
 
   void itd_vd::run_vd()
   {
+    restart();
+
     while(1)
     {
       if (!getline(is_, line_))
@@ -213,16 +236,45 @@ namespace icd
     aggr_timer_vd_name_ = aggr_timer_vd.name();
   }
 
+  void filter_vd::set_led_state(bool on)
+  {
+    led_ctrl_os_ << std::string(on ? "1" : "0") << std::endl;
+    if (!led_ctrl_os_)
+    {
+      std::ostringstream oss;
+      oss << "Writting file '" << led_ctrl_os_ << "' failed";
+      throw std::ios_base::failure(oss.str());
+    }
+  }
+
   void filter_vd::initialize()
   {
+    led_ctrl_path_ = "/sys/devices/platform/gpio-itd.";
+    led_ctrl_path_ += itd_vd_name_.substr(3);
+    led_ctrl_path_ += "/led_ctrl";
+
+    led_ctrl_os_.open(led_ctrl_path_.c_str());
+    if (!led_ctrl_os_)
+    {
+      std::ostringstream oss;
+      oss << "Opening file '" << led_ctrl_os_ << "' failed";
+      throw std::ios_base::failure(oss.str());
+    }
+
+    set_led_state(true);
+
     fsm_event_ = itd_event(name(), time(0,0));
     device_ = std::string();
     fsm_state_ = FILTER_FSM_UNINITIALIZED;
     dtm_ = time(0,0);
-    stats_sent_dtm_ = time(0,0);
     state_ = ITD_STATE_UNKNOWN;
     clear_time_ = time(0,0);
     blocked_time_ = time(0,0);
+  }
+
+  void filter_vd::destroy()
+  {
+    led_ctrl_os_.close();
   }
 
   void filter_vd::handle_event(const event& e)
@@ -242,19 +294,35 @@ namespace icd
       case timer_event::ID:
       {
         const timer_event& te = static_cast<const timer_event&>(e);
-        if (e.publisher() == name())
-          handle_filter_event(te);
-        else if (e.publisher() == aggr_timer_vd_name_)
+        if (e.publisher() == aggr_timer_vd_name_)
           handle_aggr_event(te);
         else
           syslog() << warning << "filter_vd: unknown event publisher, "
             << e << std::endl;
         break;
       }
+      case filter_event::ID:
+      {
+        const filter_event& fe = static_cast<const filter_event&>(e);
+        if (e.publisher() == name())
+          handle_filter_event(fe);
+        else
+          syslog() << warning << "filter_vd: unknown event publisher, "
+            << e << std::endl;
+        break;
+      }
+
       default:
         syslog() << warning << "filter_vd: unknown event id, "
           << e << std::endl;
     }
+  }
+
+  void filter_vd::handle_queue_empty()
+  {
+    filter_event ev(name(), time::now() + time(10,0), 10);
+    ev.set_queue_empty(true);
+    queue_event(ev);
   }
 
   void filter_vd::handle_itd_event(const itd_event& e)
@@ -264,6 +332,10 @@ namespace icd
     {
       syslog() << debug << "filter_vd::handle_itd_event: processing event, "
         << e << std::endl;
+
+
+      syslog() << debug << "engage_delay_=" << engage_delay_.to_float() << std::endl;
+      syslog() << debug << "release_delay_=" << release_delay_.to_float() << std::endl;
 
       switch(fsm_state_)
       {
@@ -279,7 +351,7 @@ namespace icd
           if (e.state() == ITD_STATE_BLOCKED)
           {
             fsm_event_ = e;
-            queue_event(timer_event(name(), e.dtm() + engage_delay_, 10));
+            queue_event(filter_event(name(), e.dtm() + engage_delay_, 10));
             update_fsm(FILTER_FSM_ENGAGING);
           }
           break;
@@ -293,7 +365,7 @@ namespace icd
           if (e.state() == ITD_STATE_CLEAR)
           {
             fsm_event_ = e;
-            queue_event(timer_event(name(), e.dtm() + release_delay_, 10));
+            queue_event(filter_event(name(), e.dtm() + release_delay_, 10));
             update_fsm(FILTER_FSM_RELEASING);
           }
           break;
@@ -312,7 +384,7 @@ namespace icd
         << e << std::endl;
   }
 
-  void filter_vd::handle_filter_event(const timer_event& e)
+  void filter_vd::handle_filter_event(const filter_event& e)
   {
     syslog() << debug << "filter_vd::handle_filter_event: processing event, "
       << e << std::endl;
@@ -338,6 +410,10 @@ namespace icd
           update_fsm(FILTER_FSM_CLEAR);
         }
         break;
+
+      default:
+        if (e.queue_empty())
+          send_stats_event();
     }
   }
 
@@ -349,7 +425,7 @@ namespace icd
       syslog() << debug << "filter_vd::handle_aggr_event: processing event, "
         << e << std::endl;
       update_stats(e.dtm());
-      send_stats_event();
+      send_stats_event(true);
     }
     else
       syslog() << debug << "filter_vd::handle_aggr_event: event discarded, "
@@ -379,7 +455,13 @@ namespace icd
   {
     syslog() << debug << "filter_vd:update_fsm: " << fsm_state_str(fsm_state_)
       << " --> " << fsm_state_str(fsm_state) << std::endl;
+
     fsm_state_ = fsm_state;
+
+    if (fsm_state_ ==  FILTER_FSM_CLEAR || fsm_state_ == FILTER_FSM_ENGAGING)
+      set_led_state(false);
+    else 
+      set_led_state(true);
   }
 
   void filter_vd::update_stats(const time& dtm)
@@ -401,20 +483,17 @@ namespace icd
     notify_subscribers(e);
   }
 
-  void filter_vd::send_stats_event()
+  void filter_vd::send_stats_event(bool aggr_period)
   {
-    if (stats_sent_dtm_ < dtm_)
-    {
-      stats_event e(name(), dtm_, 10);
-      e.set_device(device_);
-      e.set_clear_time(clear_time_);
-      e.set_blocked_time(blocked_time_);
-      syslog() << debug << "filter_vd::send_stats_event: " << e << std::endl;
-      notify_subscribers(e);
-      clear_time_ = time(0,0);
-      blocked_time_ = time(0,0);
-    }
-    stats_sent_dtm_ = dtm_;
+    stats_event e(name(), dtm_, aggr_period ? 10 : 20);
+    e.set_device(device_);
+    e.set_clear_time(clear_time_);
+    e.set_blocked_time(blocked_time_);
+    e.set_aggr_period(aggr_period);
+    syslog() << debug << "filter_vd::send_stats_event: " << e << std::endl;
+    notify_subscribers(e);
+    clear_time_ = time(0,0);
+    blocked_time_ = time(0,0);
   }
 
   void aggr_vd::set_filter_vd(virtual_device& filter)
@@ -430,21 +509,20 @@ namespace icd
     db_.busy_timeout(db_timeout_);
 
     const char *insert_sql = 
-      "INSERT INTO flow (itd, dtm, cnt, dark_time, work_time, flags)"
+      "INSERT INTO flow (counter_id, dtm, cnt, dark_time, work_time, flags)"
       " VALUES (?1, ?2, ?3, ?4, ?5, ?6)";
     insert_stmt_.prepare(insert_sql);
 
     const char *update_sql = 
       "UPDATE flow SET cnt = ?3, dark_time = ?4,"
-      " work_time = ?5, flags = ?6 WHERE itd = ?1 AND dtm = ?2";
+      " work_time = ?5, flags = ?6 WHERE counter_id = ?1 AND dtm = ?2";
     update_stmt_.prepare(update_sql);
 
-    device_ = std::string();
-    dtm_ = time(0,0);
+    dtm_ = time::now();
     cnt_ = 0;
     clear_time_ = time(0,0);
     blocked_time_ = time(0,0);
-    initialized_ = false;
+    insert_flow();
   }
 
   void aggr_vd::destroy()
@@ -503,53 +581,36 @@ namespace icd
 
   void aggr_vd::handle_stats_event(const stats_event& e)
   {
-    if (initialized_ && (e.dtm() < dtm_ || e.dtm() > dtm_ + aggr_period_))
-      syslog() << debug << "aggr_vd::handle_stats_event: event outside aggr period"
-        << ",dtm_=" << dtm_ << std::endl;
-
     clear_time_ += e.clear_time();
     blocked_time_ += e.blocked_time();
+    update_flow(e.aggr_period() ? FLOW_FLAG_COMPLETE : FLOW_FLAG_OPEN);
+    syslog() << debug << "aggr_vd::handle_stats_event: updating"
+      << ",dtm_=" << dtm_ << ",cnt_=" << cnt_
+      << ",clear_time_=" << clear_time_.to_float()
+      << ",blocked_time_=" << blocked_time_.to_float() << std::endl;
 
-    if (!initialized_)
+    if (e.aggr_period())
     {
-      device_ = e.device();
-      dtm_ = time::align(e.dtm() - time(0,1), aggr_period_);
-      initialized_ = true;
-      insert_flow();
-      syslog() << debug << "aggr_vd::handle_stats_event: initializing"
-        << ",dtm_=" << dtm_ << std::endl;
-    }
-    else
-    {
-       update_flow();
-       syslog() << debug << "aggr_vd::handle_stats_event: updating"
-        << ",dtm_=" << dtm_ << ",cnt_=" << cnt_
-        << ",clear_time_=" << clear_time_.to_float()
-        << ",blocked_time_=" << blocked_time_.to_float() << std::endl;
-    }
-
-    if (e.dtm() == dtm_ + aggr_period_)
-    {
-      dtm_ = dtm_ + aggr_period_;
+      dtm_ = e.dtm();
       cnt_ = 0;
       clear_time_ = time(0,0);
-      blocked_time_ = time(0,0);; 
+      blocked_time_ = time(0,0);
       insert_flow();
       syslog() << debug << "aggr_vd::handle_stats_event: new aggregation period"
         << ",dtm_=" << dtm_ << std::endl;
     }
   }
 
-  void aggr_vd::update_flow()
+  void aggr_vd::update_flow(const flow_flag& flag)
   {
     update_stmt_.reset();
     update_stmt_.clear_bindings();
-    update_stmt_.bind_text(1, device_);
+    update_stmt_.bind_int(1, counter_id_);
     update_stmt_.bind_int64(2, dtm_.sec());
     update_stmt_.bind_int(3, cnt_);
     update_stmt_.bind_int64(4, blocked_time_.to_msec());
     update_stmt_.bind_int64(5, (clear_time_ + blocked_time_).to_msec());
-    update_stmt_.bind_int(6, FLOW_FLAG_NOT_SENT);
+    update_stmt_.bind_int(6, flag);
     update_stmt_.step();
   }
 
@@ -559,12 +620,12 @@ namespace icd
     {
       insert_stmt_.reset();
       insert_stmt_.clear_bindings();
-      insert_stmt_.bind_text(1, device_);
+      insert_stmt_.bind_int(1, counter_id_);
       insert_stmt_.bind_int64(2, dtm_.sec());
       insert_stmt_.bind_int(3, cnt_);
       insert_stmt_.bind_int64(4, blocked_time_.to_msec());
       insert_stmt_.bind_int64(5, (clear_time_ + blocked_time_).to_msec());
-      insert_stmt_.bind_int(6, FLOW_FLAG_NOT_SENT);
+      insert_stmt_.bind_int(6, FLOW_FLAG_OPEN);
       insert_stmt_.step();
     }
     catch(std::exception& e)
@@ -617,7 +678,7 @@ namespace icd
   void itd_farm::create()
   {
     sqlite3cc::conn db;
-    db.open(db_name_.c_str());
+    db.open(config_db_name_.c_str());
     db.busy_timeout(db_timeout_);
     config config(db);
 
@@ -631,15 +692,17 @@ namespace icd
 
     for (int i = 0; i < 4; i++)
     {
-      std::string dev_name = "itd" + to_string(i);
+      std::string counter_name = "counter" + to_string(i);
 
-      bool enabled  = config.entry_bool(dev_name, "enabled", false);
-      long engage_delay_ms = config.entry_long(dev_name, "engage-delay-ms", false);
-      long release_delay_ms = config.entry_long(dev_name, "release-delay-ms", false);
-      bool active_low = config.entry_bool(dev_name, "active-low", false);
-      std::string log_events = config.entry(dev_name, "log-events");
-      std::string test_mode = config.entry(dev_name, "test-mode");
-      std::string test_file = config.entry(dev_name, "test-file");
+      bool enabled  = config.entry_bool(counter_name, "enabled", false);
+      long counter_id = config.entry_long(counter_name, "id", 0);
+      std::string dev_name = config.entry(counter_name, "dev");
+      long engage_delay_ms = config.entry_long(counter_name, "dev-engage", 200);
+      long release_delay_ms = config.entry_long(counter_name, "dev-release", 200);
+      bool active_low = config.entry_bool(counter_name, "dev-active-low", false);
+      std::string log_events = config.entry(counter_name, "log-events");
+      std::string test_mode = config.entry(counter_name, "test-mode");
+      std::string test_file = config.entry(counter_name, "test-file");
 
       if (!enabled)
         continue;
@@ -660,27 +723,28 @@ namespace icd
       add(itd);
 
       filter_vd* filter = new filter_vd("filter" + to_string(i));
-      filter->set_delay(time(1,0));
+      filter->set_delay(time::from_msec(0));
       filter->set_itd_vd(*itd);
       filter->set_aggr_timer_vd(*aggr_timer);
       filter->set_engage_delay(time::from_msec(engage_delay_ms));
       filter->set_release_delay(time::from_msec(release_delay_ms));
       add(filter);
 
-      aggr_vd* aggr = new aggr_vd("aggr" + to_string(i), db_name_, db_timeout_);
-      aggr->set_delay(time(2,0));
+      aggr_vd* aggr = new aggr_vd("aggr" + to_string(i), data_db_name_, db_timeout_);
+      aggr->set_delay(time::from_msec(500));
       aggr->set_filter_vd(*filter);
       aggr->set_aggr_period(time::from_mins(aggr_period_mins));
+      aggr->set_counter_id(counter_id);
       add(aggr);
 
       if (log_events == "raw" || log_events == "filered" )
       {
         if (event_logger == NULL)
         {
-          event_logger = new event_logger_vd("log0", db_name_, db_timeout_);
+          event_logger = new event_logger_vd("log0", data_db_name_, db_timeout_);
           add(event_logger);
         }
-        event_logger->set_delay(time(2,0));
+        event_logger->set_delay(time::from_msec(500));
         event_logger->add_publisher((log_events == "raw") ? *itd : *filter);
       }
     }

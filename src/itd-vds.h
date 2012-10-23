@@ -17,7 +17,7 @@ namespace icd
   class itd_event : public event
   {
   public:
-    enum { ID = 2 };
+    enum { ID = 101 };
 
     itd_event(const std::string& publisher, const time& dtm, int priority = 0)
       : event(publisher, dtm, ID, priority), state_(ITD_STATE_UNKNOWN) {}
@@ -41,10 +41,10 @@ namespace icd
   class stats_event : public event
   {
   public:
-    enum { ID = 3 };
+    enum { ID = 102 };
 
     stats_event(const std::string& publisher, const time& dtm, int priority = 0)
-      : event(publisher, dtm, ID, priority) {}
+      : event(publisher, dtm, ID, priority), aggr_period_(false)  {}
     virtual ~stats_event() {}
 
     virtual event *clone() const { return new stats_event(*this); }
@@ -52,15 +52,38 @@ namespace icd
     void set_device(const std::string& device) { device_ = device; }
     void set_clear_time(const time& clear_time) { clear_time_ = clear_time; }
     void set_blocked_time(const time& blocked_time) { blocked_time_ = blocked_time; }
+    void set_aggr_period(bool aggr_period) { aggr_period_ = aggr_period; }
 
     std::string device() const { return device_; }
     time clear_time() const { return clear_time_; }
     time blocked_time() const { return blocked_time_; }
+    bool aggr_period() const { return aggr_period_; }
 
   private:
     std::string device_;
     time clear_time_;
     time blocked_time_;
+    bool aggr_period_;
+
+    virtual void dbg_print(std::ostream& os) const;
+  };
+
+  class filter_event : public event
+  {
+  public:
+    enum { ID = 103 };
+
+    filter_event(const std::string& publisher, const time& dtm, int priority = 0)
+      : event(publisher, dtm, ID, priority), queue_empty_(false) {}
+    virtual ~filter_event() {}
+
+    virtual event *clone() const { return new filter_event(*this); }
+
+    void set_queue_empty(bool queue_empty) { queue_empty_ = queue_empty; }
+    bool queue_empty() const { return queue_empty_; }
+
+  private:
+    bool queue_empty_;
 
     virtual void dbg_print(std::ostream& os) const;
   };
@@ -87,6 +110,7 @@ namespace icd
 
   private:
     virtual void run_vd();
+    void restart(void);
   };
 
   class file_itd_vd : public itd_vd 
@@ -175,27 +199,32 @@ namespace icd
     std::string aggr_timer_vd_name_;
     time engage_delay_;
     time release_delay_;
+    std::string led_ctrl_path_;
+    std::ofstream led_ctrl_os_;
 
     itd_event fsm_event_;
     std::string device_;
     fsm_state fsm_state_;
     time dtm_;
-    time stats_sent_dtm_;
     itd_state state_;
     time clear_time_;
     time blocked_time_;
 
-    virtual void handle_event(const event& e);
     virtual void initialize();
+    virtual void destroy();
+    virtual void handle_event(const event& e);
+    virtual void handle_queue_empty();
 
     void handle_itd_event(const itd_event& e);
-    void handle_filter_event(const timer_event& e);
+    void handle_filter_event(const filter_event& e);
     void handle_aggr_event(const timer_event& e);
     std::string fsm_state_str(const fsm_state& state);
     void update_fsm(const fsm_state& fsm_state);
     void update_stats(const time& dtm);
     void send_fsm_event();
-    void send_stats_event();
+    void send_stats_event(bool aggr_period = false);
+
+    void set_led_state(bool on);
   };
 
   class aggr_vd : public event_subscriber
@@ -203,30 +232,31 @@ namespace icd
   public:
     aggr_vd(const std::string& name, const std::string& db_name, int db_timeout)
       : event_subscriber(name), db_name_(db_name), db_timeout_(db_timeout),
-        aggr_period_(15,0), insert_stmt_(db_), update_stmt_(db_), 
-        initialized_(false), cnt_(0) {}
+        aggr_period_(15,0), counter_id_(0),  insert_stmt_(db_), update_stmt_(db_), 
+        cnt_(0) {}
     virtual ~aggr_vd() {}
 
     time aggr_period() const { return aggr_period_; }
 
     void set_filter_vd(virtual_device& filter_vd);
     void set_aggr_period(const time& aggr_period) { aggr_period_ = aggr_period; }
+    void set_counter_id(long counter_id) { counter_id_ = counter_id; }
 
   private:
     enum flow_flag
     { 
-      FLOW_FLAG_NOT_SENT = 2
-     };
+      FLOW_FLAG_OPEN = 3,
+      FLOW_FLAG_COMPLETE = 2
+    };
 
     std::string db_name_;
     int db_timeout_;
     time aggr_period_;
+    long counter_id_;
     std::string filter_vd_name_;
     sqlite3cc::conn db_;
     sqlite3cc::stmt insert_stmt_;
     sqlite3cc::stmt update_stmt_;
-    bool initialized_;
-    std::string device_;
     time dtm_;
     int cnt_;
     time clear_time_;
@@ -239,7 +269,7 @@ namespace icd
     void handle_itd_event(const itd_event& e);
     void handle_stats_event(const stats_event& e);
     void insert_flow();
-    void update_flow();
+    void update_flow(const flow_flag& flag);
   };
 
   class event_logger_vd : public event_subscriber
@@ -265,12 +295,15 @@ namespace icd
   class itd_farm : public vd_farm
   {
   public:
-    itd_farm(const std::string& db_name, int db_timeout)
-      : db_name_(db_name), db_timeout_(db_timeout) {}
+    itd_farm(const std::string& config_db_name, const std::string& data_db_name,
+      int db_timeout)
+      : config_db_name_(config_db_name), data_db_name_(data_db_name),
+        db_timeout_(db_timeout) {}
     virtual ~itd_farm() {}
 
   private:
-    std::string db_name_;
+    std::string config_db_name_;
+    std::string data_db_name_;
     int db_timeout_;
 
     virtual void create();

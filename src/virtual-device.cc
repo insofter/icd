@@ -52,7 +52,6 @@ namespace icd
       mutex_locker ml(lock_);
       terminate_ = true;
       queue_cond_.signal();
-      delay_cond_.signal();
     }
     join();
     terminate_ = false;
@@ -66,14 +65,19 @@ namespace icd
 
     while(!terminate_)
     {
-      queue_cond_.wait(lock_);
 
       while (!queue_.empty() && !terminate_)
       {
-        // apply delay
+        // apply delay;
+        // note that  this delay gets interrupted when new element is inserted
+        // into the queue, after that the time to wait is reevaluated (it may
+        // happen that newly inserted item is older and the wait will be shortened)
         time dtm = queue_.top()->dtm() + delay_;
         while (time::now() < dtm && !terminate_)
-          delay_cond_.timedwait(lock_, dtm);
+        {
+          queue_cond_.timedwait(lock_, dtm);
+          dtm = queue_.top()->dtm() + delay_;
+        }
 
         // process event
         // note that the queue top element here may be defferent to the one
@@ -89,6 +93,13 @@ namespace icd
           delete e;
         }
       }
+
+      lock_.unlock();
+      handle_queue_empty();
+      lock_.lock();
+
+      if (queue_.empty() && !terminate_)
+        queue_cond_.wait(lock_);
     }
 
     destroy();
