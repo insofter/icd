@@ -17,6 +17,10 @@ if [ ! -f "${ICD_CONFIG_DB}" ]; then
     "${ICD_SHARE_DIR}/create-schema-config.sql" \
     "${ICD_SHARE_DIR}/init-default-config.sql"
   check_error
+  chown icdtcp3:icdtcp3 $ICD_CONFIG_DB
+  check_error
+  chown icdtcp3:icdtcp3 /home/data/
+
 else
   icd-sql --db="${ICD_CONFIG_DB}" \
     "${ICD_SHARE_DIR}/clear-old-current.sql"

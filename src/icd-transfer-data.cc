@@ -537,7 +537,7 @@ MIN:
 
   //wykonianie aktualizacji --------------------------------------------------//
   if( rupdate.GetDeviceUpdateInfoResult==0 ) {                                //
-    std::cerr << ":: update start" << std::endl;                              
+//    std::cerr << ":: update start" << std::endl;                              
     s="wget -q -O /tmp/update.img http://";                                   //
     s+=globalConfig->entry( "device", "address" );                            //
     s+="/icdtcp3";                                                            //
@@ -549,17 +549,17 @@ MIN:
       pclose( md5Chk );                                                       //
       if( (*(rupdate.response->Md5)).compare( md5sum ) == 0 ) {               //
         if( (*(rupdate.response->UpdateForce)).compare( "FORCE" ) == 0 ) {    //
-          //          system(  "sudo -n icdtcp3-update-sw --force /tmp/update.img "       //
-          //              "&& sleep 3 && ict-shutdown --reboot &" );                      //
-          std::cerr << ":: FORCE update with file: "
-            << "/tmp/update.img" << std::endl;
+          system(  "sudo -n icdtcp3-update-sw --force /tmp/update.img "       //
+              "&& sleep 3 && ict-shutdown --reboot &" );                      //
+//          std::cerr << ":: FORCE update with file: "
+//            << "/tmp/update.img" << std::endl;
         } else {                                                              //
           s="sudo -n icdtcp3-update-sw --type=";                              //
           s+=(*(rupdate.response->NewVersion));                               //
           s+=" /tmp/update.img && sleep 3 && ict-shutdown --reboot &";        //
-          //          system(  s.c_str() );                                               //
-          std::cerr << ":: update with file: "
-            << "/tmp/update.img, cmd: " << s << std::endl;
+          system(  s.c_str() );                                               //
+//          std::cerr << ":: update with file: "
+//            << "/tmp/update.img, cmd: " << s << std::endl;
         }                                                                     //
       }                                                                       //
     }                                                                         //

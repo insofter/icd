@@ -285,7 +285,7 @@ class c_icdtcp {
   }
   function test_wysylania()
   {
-    return shell_exec( "icd-transfer-data --db=/tmp/live.db --log=long" ); 
+    return shell_exec( "icd-transfer-data --log=long" ); 
   }
 
   function raport_biezacy($data) {
