@@ -5,7 +5,13 @@ $icdtcp = new c_icdtcp();
 
 $i=1000;
 
-$wyniki=$icdtcp->raport_biezacy( time() );
+// $wyniki=$icdtcp->raport_biezacy( time() );
+
+$t=(int)(time()/3600/24);
+$t*=3600*24;
+
+
+$wyniki=$icdtcp->raport_od_do($t, $t+3600*24, 3600*4  );
 
 print_r( $wyniki );
 

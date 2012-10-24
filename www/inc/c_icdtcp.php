@@ -95,7 +95,7 @@ class c_icdtcp {
       }
       $licznik['nr']=$i;
 
-      $sql="SELECT `cnt` FROM flow WHERE itd='$i' ORDER BY `dtm` DESC LIMIT 1";
+      $sql="SELECT `cnt` FROM flow WHERE counter_id='".($i+1)."' ORDER BY `dtm` DESC LIMIT 1";
       $ans=$this->liveDb->query($sql);
       $licznik['cnt_last']=0;
       if( $ans!=NULL ) {
@@ -103,9 +103,9 @@ class c_icdtcp {
           $licznik['cnt_last']=$row['cnt'];
         }
       }
-      $sql="SELECT sum(cnt) AS sum FROM flow WHERE itd='itd$i'
-        AND `dtm` < ".(time()*1000)." AND `dtm` > ".( ((int)(time()/(24*3600)))*24*3600*1000 );
-      $ans=$this->liveDb->query($sql);//TODO:
+      $sql="SELECT sum(cnt) AS sum FROM flow WHERE counter_id='$i'
+        AND `dtm` < ".(time())." AND `dtm` > ".( ((int)(time()/(24*3600)))*24*3600 );
+      $ans=$this->dataDb->query($sql);//TODO:
       $licznik['cnt_sum']=0;
       if( $ans!=NULL ) {
         while( $row=$ans->fetch() ) {
@@ -260,7 +260,7 @@ class c_icdtcp {
       }
     }
   }
-  function wyniki($czas=0, $itd=-1)
+/*  function wyniki11($czas=0, $itd=-1)
   {
     if( $czas==0 ) {
       $czas=mktime( 0, 0, 1, date('n'), date('j'), date('Y') );
@@ -282,57 +282,84 @@ class c_icdtcp {
       $wyniki=array();
     }
     return $wyniki;
-  }
+  }*/
   function test_wysylania()
   {
-    return shell_exec( "icd-transfer-data --log=long" ); 
+    return shell_exec( "source /etc/profile.d/icd.sh && icd-transfer-data --log=long" ); 
   }
 
-  function raport_biezacy($data) {
-    $data=mktime( date("H"), 0, 0, date("n"),  date("j"), date("Y") );
-    $sql="SELECT `id`, `name`, `enabled` FROM counters";
+  function raport_biezacy() {
+
+    $data=(int)(time()/3600);
+    $data*=3600;
+
+    $sql="SELECT `cnt`, `counter_id` FROM flow WHERE dtm >= ".$data." AND dtm < ".($data+3600);
+
     $ans=$this->dataDb->query($sql);
+
     $ans->setFetchMode(PDO::FETCH_ASSOC);
     foreach( $ans as $row ) {
-      $sql2="SELECT `cnt` FROM flow WHERE counter_id = ".$row['id']." AND dtm >= ".$data." AND dtm < ".($data+3600);
 
-      $ans2=$this->dataDb->query($sql2);
-      $ans2->setFetchMode(PDO::FETCH_ASSOC);
-
-      $row['cnt']=0;
-      foreach( $ans2 as $row2 ) {
-        $row['cnt']+=$row2['cnt'];
+      if( isset( $wyniki[ $row['counter_id'] ]['cnt'] ) ) {
+        $wyniki[ $row['counter_id'] ]['cnt'] += $row['cnt'];
+      } else {
+        $wyniki[ $row['counter_id'] ]['cnt'] = $row['cnt'];
       }
-
-      $wyniki[] = $row;
+    }
+    foreach( $wyniki as $pom=>&$wart ) {
+      $sql="SELECT value FROM config WHERE key = 'name' AND section_id = ( SELECT section_id FROM config WHERE key = 'counter_id' AND value = $pom )";
+      $ans=$this->configDb->query($sql);
+      $ans->setFetchMode(PDO::FETCH_ASSOC);
+      $row=$ans->fetch();
+      $wart['name'] = $row[ 'value' ];
     }
     return $wyniki;
   }
-  function raport_dobowy($data) {
-    $data=mktime( 0, 0, 0, date("n"),  date("j"), date("Y") );
-    $sql="SELECT `id`, `name` FROM counters";
+
+  function raport_od_do($od, $do, $del) {
+    if( $do - $od > 3600*24*31 ) {
+      $od=$do - 3600*24*31;
+    }
+
+    $sql="SELECT `cnt`, `counter_id`, `dtm` FROM flow WHERE dtm >= ".$od." AND dtm < ".$do;
+
     $ans=$this->dataDb->query($sql);
+
+
     $ans->setFetchMode(PDO::FETCH_ASSOC);
     foreach( $ans as $row ) {
-      $sql2="SELECT `cnt` FROM flow WHERE counter_id = ".$row['id']." AND dtm >= ".$data." AND dtm < ".($data+3600);
+      $t=(int)($row['dtm']/$del);
+      $t*=$del;
+      $t=date(DATE_RFC822, $t);
 
-      $ans2=$this->dataDb->query($sql2);
-      $ans2->setFetchMode(PDO::FETCH_ASSOC);
-
-      $row['cnt']=0;
-      foreach( $ans2 as $row2 ) {
-        $row['cnt']+=$row2['cnt'];
+/*      if( isset( $wyniki[ $row['counter_id'] ]['cnt'][ $t ]) ) {
+        $wyniki[ $row['counter_id'] ]['cnt'][ $t ] += $row['cnt'];
+      } else {
+        $wyniki[ $row['counter_id'] ]['cnt'][ $t ] = $row['cnt'];
+      }*/
+      if( isset( $wyniki[ $t ][ $row['counter_id'] ]) ) {
+        $wyniki[ $t ][ $row['counter_id'] ] += $row['cnt'];
+      } else {
+        $wyniki[ $t ][ $row['counter_id'] ] = $row['cnt'];
       }
-
-      $wyniki[] = $row;
+      $wyniki['counters'][ $row['counter_id' ] ] = NULL;
     }
+      foreach( $wyniki[ 'counters' ] as $counter=>&$name ) {
+      $sql="SELECT value FROM config WHERE key = 'name' AND section_id = ( SELECT section_id FROM config WHERE key = 'counter_id' AND value = $counter )";
+      $ans=$this->configDb->query($sql);
+      $ans->setFetchMode(PDO::FETCH_ASSOC);
+      $row=$ans->fetch();
+      $name = $row[ 'value' ];
+
+}
+/*    foreach( $wyniki as $pom=>&$wart ) {
+      $sql="SELECT value FROM config WHERE key = 'name' AND section_id = ( SELECT section_id FROM config WHERE key = 'counter_id' AND value = $pom )";
+      $ans=$this->configDb->query($sql);
+      $ans->setFetchMode(PDO::FETCH_ASSOC);
+      $row=$ans->fetch();
+      $wart['name'] = $row[ 'value' ];
+}*/
     return $wyniki;
-  }
-  function raport_tygodniowy($data) {
-  }
-  function raport_miesieczny($data) {
-  }
-  function csv_export($data, $typ) {
   }
 }
 
