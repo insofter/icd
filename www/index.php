@@ -6,19 +6,28 @@ define( 'INSOFTER', 1 );
 $o_mnie=array('nazwa'=>'ICDTCP3',
   'opis'=>'Interfejs konfiguracyjny rejestratora ICDTCP3',
   'wersja_rok'=>'2012',
-  'wersja_miesiac'=>'07',
+  'wersja_miesiac'=>'11',
   'autor'=>'insofter',
   'strona'=>'www.insofter.pl');
 
 require_once('inc/c_icdtcp.php');
 
-$naglowek='<!DOCTYPE html><html><head>
+$naglowek='<!DOCTYPE html><html lang="pl"><head>
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
   <meta name="Keywords" content="">
   <title>';
 $tytul=$o_mnie['nazwa'];
 $naglowekcd='</title>
-  <link rel="stylesheet" href="css/icdtcp.css" type="text/css">';
+  <link rel="stylesheet" href="css/icdtcp.css" type="text/css">
+  <link rel="stylesheet" href="css/jquery-ui.css" />
+  <script src="js/jquery-1.8.2.js"></script>
+  <script src="js/jquery-ui.js"></script>
+  <script>
+    $(function() {
+      $( "#datepicker" ).datepicker({ dateFormat: "dd.mm.yy", duration: "fast" });
+    });
+  </script>
+  ';
 
 
 $logo='<h1>
@@ -32,7 +41,8 @@ $stopka='
   </p>
   </body></html>';
 
-$menulista=array('tcpip'=>'TCPIP',
+$menulista=array(
+  'tcpip'=>'TCPIP',
   /*  'wpa'=>'WiFi',*/
   'licznik'=>'Licznik',
   'wysylanie'=>'Wysyłanie',
@@ -40,6 +50,16 @@ $menulista=array('tcpip'=>'TCPIP',
   'log'=>'Logi',
   'plik_konf'=>'Plik konf.'
 );
+
+$menuwyniki=array(
+  'dobowy'=>'Raport dobowy',
+  'miesieczny'=>'Raport miesięczny',
+  'instalatora'=>'Raport instalacyjny'
+);
+  
+
+
+
 
 $menu='<ul class="menu">
   ';
@@ -63,6 +83,33 @@ foreach( $menulista as $key=>$val )
 $menu.='</ul>
   ';
 
+if( isset($_GET['strona']) && $_GET['strona']=='wyniki' ) {
+  $menu.='<ul class="menu menuwyniki">
+    ';
+  if( ! isset($_GET['typ']) ) {
+    $_GET['typ']='dobowy';
+  }
+
+  foreach( $menuwyniki as $key=>$val )
+  {
+    if( $_GET['typ']==$key )
+    {
+      $menu.='
+        <li><a id="klikniete" href="./?strona=wyniki&amp;typ='.$key.'">'.$val.'</a></li>';
+    } else {
+      $menu.='
+        <li><a href="./?strona=wyniki&amp;typ='.$key.'">'.$val.'</a></li>';
+    }
+  }
+  $menu.='</ul>
+    ';
+
+
+}
+
+
+
+
 if( isset($_GET['strona']) ) {
   switch( $_GET['strona'] ) {
   case 'tcpip':
@@ -75,13 +122,23 @@ if( isset($_GET['strona']) ) {
     include('inc/wysylanie.php');
     break;
   case 'wyniki':
-    include('inc/wyniki.php');
+    switch( $_GET['typ'] ) {
+    case 'dobowy':
+      include('inc/wyniki_dobowy.php');
+      break;
+    case 'miesieczny':
+      include('inc/wyniki_miesieczny.php');
+      break;
+    case 'instalatora':
+      include('inc/wyniki_instalatora.php');
+      break;
+    }
     break;
-  case 'log':
-    include('inc/log.php');
-    break;
-  case 'plik_konf':
-    include('inc/plik_konf.php');
+    case 'log':
+      include('inc/log.php');
+      break;
+    case 'plik_konf':
+      include('inc/plik_konf.php');
     break;
   case 'wpa':
     include('inc/wpa.php');
