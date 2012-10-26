@@ -331,7 +331,7 @@ export ICD_LIVE_DB=/home/insofter/projects/data/live.db*/
     foreach( $ans as $row ) {
       $t=(int)($row['dtm']/$del);
       $t*=$del;
-      $t=date(DATE_RFC822, $t);
+//      $t=date(DATE_RFC822, $t);
 
 /*      if( isset( $wyniki[ $row['counter_id'] ]['cnt'][ $t ]) ) {
         $wyniki[ $row['counter_id'] ]['cnt'][ $t ] += $row['cnt'];

@@ -7,8 +7,8 @@ $i=1000;
 
 // $wyniki=$icdtcp->raport_biezacy( time() );
 
-$t=(int)(time()/3600/24);
-$t*=3600*24;
+$t=mktime( 0, 0, 0, date("n"), date("j"), date("Y") );
+  
 
 if( isset( $_POST['datepicker'] ) ) {
   $tab=explode( '.',  $_POST['datepicker'] );
@@ -21,38 +21,55 @@ echo date(DATE_RFC822, $t);
 
 
 
-$wyniki=$icdtcp->raport_od_do($t, $t+3600*24, 3600*4  );
+$wyniki=$icdtcp->raport_od_do($t, $t+3600*24, 3600  );
 
-print_r( $wyniki );
+//print_r( $wyniki );
 
 $tresc='<div id="tresc">
   <h3>Wyniki</h3>
   <form action="./?strona=wyniki&typ=dobowy" method="POST">
-  <input type="text" id="datepicker" name="datepicker" value="'.date('d.m.Y', $t).'">
-  <input type="submit" value="Ustaw">
-  <table>
+<h4>  <input type="text" id="datepicker" name="datepicker" value="'.date('d.m.Y', $t).'">
+  <input type="submit" value="Ustaw"></h4>
+  <table border=1>
+  <tr>
+  <td>godzina&nbsp;\&nbsp;wejście</td>
   ';
-/*foreach( $wyniki as $wynik ) {
-  if( $i>20 ) {
-    $tresc.='<tr>';
-    foreach( $wynik as $key=>$val ) {
-      $tresc.='<th>'.$key.'</th>';
+  foreach( $wyniki['counters'] as $id=>$name ) {
+    $tresc.='<td>'.$name.'</td>';
+    $csum[ $id ]=0;
+  }
+  $tresc.='<td>sumy</td></tr>';
+
+  foreach( $wyniki['values'] as $dtm=>$cnt ) {
+    $tresc.='<tr><td>'.date( 'H',$dtm ).'<sup>'.date( 'i',$dtm ).'</sup> 
+      - '.date( 'H', ( $dtm+3600 ) ).'<sup>'.date( 'i', ( $dtm+3600 ) ).'</sup></td>';
+
+    $sum=0;
+    foreach( $wyniki['counters'] as $id=>$name ) {
+
+      if( isset( $cnt[ $id ] ) ) {
+        $tresc.='<td>'.$cnt[ $id ].'</td>';
+        $sum+=$cnt[ $id ];
+        $csum[ $id ]+=$cnt[ $id ];
+
+      } else {
+        $tresc.='<td>--</td>';
+      }
     }
-    $tresc.='</tr>
-      ';
-    $i=0;
-  }
-  $tresc.='<tr>';
-  foreach( $wynik as $val ) {
-    $tresc.='<td>'.$val.'</td>';
-  }
-  $tresc.='</tr>
-    ';
-  ++$i;
-}
 
- */
+    $tresc.='<td>'.$sum.'</td></tr>';
+  }
 
-$tresc.='</table>
+  $tresc.='<tr><td>sumy</td>';
+
+  $ccsum=0;
+   
+  foreach( $wyniki['counters'] as $id=>$name ) {
+    $tresc.='<td>'.$csum[ $id ].'</td>';
+    $ccsum+=$csum[ $id ];
+  }
+
+
+  $tresc.='<td>'.$ccsum.'</td></tr></table>
   </div>';
 ?>
