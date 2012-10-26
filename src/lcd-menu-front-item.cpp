@@ -68,7 +68,7 @@ void CmenuItemTimeFoto::screen(Clcd *lcd) {
 
   stmt->reset();
 
-  sprintf(buf, "%s %c:%5i", timebuf, 'A'+_a, i);
+  sprintf(buf, "%s %c:%5i", timebuf, 'A'-1+_a, i);
   lcd->_lcd[0]=buf;
 
   strftime(timebuf,8,"%H:%M:%S",timeinfo);
@@ -84,7 +84,7 @@ void CmenuItemTimeFoto::screen(Clcd *lcd) {
   }
   stmt->reset();
 
-  sprintf(buf, "%s %c:%5i", timebuf, 'A'+_b, i);
+  sprintf(buf, "%s %c:%5i", timebuf, 'A'-1+_b, i);
   lcd->_lcd[1]=buf;
 
   lcd->_refresh=300;

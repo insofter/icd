@@ -233,8 +233,8 @@ MIN:
 
     menu->itemAdd( pl );
 
-    CmenuContainerNoRoot *mainMenu = new CmenuContainerNoRoot( menu, new CmenuItemTimeFoto( 0, 1 ) );
-    mainMenu->itemAdd( new CmenuItemTimeFoto( 2, 3 ) );
+    CmenuContainerNoRoot *mainMenu = new CmenuContainerNoRoot( menu, new CmenuItemTimeFoto( 1, 2 ) );
+    mainMenu->itemAdd( new CmenuItemTimeFoto( 3, 4 ) );
     mainMenu->itemAdd( new CmenuItemIdds );
     mainMenu->itemAdd( new CmenuItemDbParam( "Adres IP", "current", "ip" ) );
     mainMenu->itemAdd( new CmenuItemFileParam( "Status wysyłania", "/tmp/last-send-status" ) );

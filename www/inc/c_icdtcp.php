@@ -70,7 +70,7 @@ class c_icdtcp {
       $this->liveDb = new PDO('sqlite:'.$ICD_LIVE_DB);
 /*      export ICD_DATA_DB=/home/insofter/projects/data/data.db
         export ICD_CONFIG_DB=/home/insofter/projects/data/config.db
-        export ICD_LIVE_DB=/home/insofter/projects/data/live.db*/
+export ICD_LIVE_DB=/home/insofter/projects/data/live.db*/
 
     } catch (PDOException $e) {
       print $e->getMessage();
@@ -282,7 +282,7 @@ class c_icdtcp {
       $wyniki=array();
     }
     return $wyniki;
-  }*/
+}*/
   function test_wysylania()
   {
     return shell_exec( "source /etc/profile.d/icd.sh && icd-transfer-data --log=long" ); 
@@ -313,6 +313,7 @@ class c_icdtcp {
       $row=$ans->fetch();
       $wart['name'] = $row[ 'value' ];
     }
+    unset( $wart );
     return $wyniki;
   }
 
@@ -321,7 +322,7 @@ class c_icdtcp {
       $od=$do - 3600*24*31;
     }
 
-    $sql="SELECT `cnt`, `counter_id`, `dtm` FROM flow WHERE dtm >= ".$od." AND dtm < ".$do;
+    $sql="SELECT `cnt`, `counter_id`, `dtm` FROM flow WHERE dtm >= ".$od." AND dtm < ".$do." ORDER BY dtm ASC";
 
     $ans=$this->dataDb->query($sql);
 
@@ -336,22 +337,22 @@ class c_icdtcp {
         $wyniki[ $row['counter_id'] ]['cnt'][ $t ] += $row['cnt'];
       } else {
         $wyniki[ $row['counter_id'] ]['cnt'][ $t ] = $row['cnt'];
-      }*/
-      if( isset( $wyniki[ $t ][ $row['counter_id'] ]) ) {
-        $wyniki[ $t ][ $row['counter_id'] ] += $row['cnt'];
+}*/
+      if( isset( $wyniki[ 'values' ][ $t ][ $row['counter_id'] ]) ) {
+        $wyniki[ 'values' ][ $t ][ $row['counter_id'] ] += $row['cnt'];
       } else {
-        $wyniki[ $t ][ $row['counter_id'] ] = $row['cnt'];
+        $wyniki[ 'values' ][ $t ][ $row['counter_id'] ] = $row['cnt'];
       }
       $wyniki['counters'][ $row['counter_id' ] ] = NULL;
     }
-      foreach( $wyniki[ 'counters' ] as $counter=>&$name ) {
+    foreach( $wyniki[ 'counters' ] as $counter=>&$name ) {
       $sql="SELECT value FROM config WHERE key = 'name' AND section_id = ( SELECT section_id FROM config WHERE key = 'counter_id' AND value = $counter )";
       $ans=$this->configDb->query($sql);
       $ans->setFetchMode(PDO::FETCH_ASSOC);
       $row=$ans->fetch();
       $name = $row[ 'value' ];
-
-}
+    }
+    unset( $name );
 /*    foreach( $wyniki as $pom=>&$wart ) {
       $sql="SELECT value FROM config WHERE key = 'name' AND section_id = ( SELECT section_id FROM config WHERE key = 'counter_id' AND value = $pom )";
       $ans=$this->configDb->query($sql);
