@@ -317,7 +317,7 @@ export ICD_LIVE_DB=/home/insofter/projects/data/live.db*/
     return $wyniki;
   }
 
-  function raport_od_do($od, $do, $del) {
+  function raport_dobowy($od, $do, $del) {
     if( $do - $od > 3600*24*31 ) {
       $od=$do - 3600*24*31;
     }
@@ -331,13 +331,7 @@ export ICD_LIVE_DB=/home/insofter/projects/data/live.db*/
     foreach( $ans as $row ) {
       $t=(int)($row['dtm']/$del);
       $t*=$del;
-//      $t=date(DATE_RFC822, $t);
 
-/*      if( isset( $wyniki[ $row['counter_id'] ]['cnt'][ $t ]) ) {
-        $wyniki[ $row['counter_id'] ]['cnt'][ $t ] += $row['cnt'];
-      } else {
-        $wyniki[ $row['counter_id'] ]['cnt'][ $t ] = $row['cnt'];
-}*/
       if( isset( $wyniki[ 'values' ][ $t ][ $row['counter_id'] ]) ) {
         $wyniki[ 'values' ][ $t ][ $row['counter_id'] ] += $row['cnt'];
       } else {
@@ -345,14 +339,59 @@ export ICD_LIVE_DB=/home/insofter/projects/data/live.db*/
       }
       $wyniki['counters'][ $row['counter_id' ] ] = NULL;
     }
-    foreach( $wyniki[ 'counters' ] as $counter=>&$name ) {
-      $sql="SELECT value FROM config WHERE key = 'name' AND section_id = ( SELECT section_id FROM config WHERE key = 'counter_id' AND value = $counter )";
-      $ans=$this->configDb->query($sql);
-      $ans->setFetchMode(PDO::FETCH_ASSOC);
-      $row=$ans->fetch();
-      $name = $row[ 'value' ];
+    if( isset( $wyniki[ 'counters' ] ) ) {
+      foreach( $wyniki[ 'counters' ] as $counter=>&$name ) {
+        $sql="SELECT value FROM config WHERE key = 'name' AND section_id = ( SELECT section_id FROM config WHERE key = 'counter_id' AND value = $counter )";
+        $ans=$this->configDb->query($sql);
+        $ans->setFetchMode(PDO::FETCH_ASSOC);
+        $row=$ans->fetch();
+        $name = $row[ 'value' ];
+      }
+      unset( $name );
+
+      natcasesort( $wyniki[ 'counters' ] );
+
+      return $wyniki;
     }
-    unset( $name );
+  }
+
+  function raport_miesieczny($od) {
+    $do=mktime( 0, 0, 0, date( 'n', $od )+1, 1, date( 'Y', $od ) );
+    $od=mktime( 0, 0, 0, date( 'n', $od ), 1, date( 'Y', $od ) );
+
+//    echo date(DATE_RFC822, $od);
+//    echo date(DATE_RFC822, $do);
+
+    $sql="SELECT `cnt`, `counter_id`, `dtm` FROM flow WHERE dtm >= ".$od." AND dtm < ".$do." ORDER BY dtm ASC";
+
+    $ans=$this->dataDb->query($sql);
+
+    $ans->setFetchMode(PDO::FETCH_ASSOC);
+    foreach( $ans as $row ) {
+
+      $t=mktime( 0, 0, 0, date( 'n', $row['dtm'] ), date( 'j', $row['dtm'] ), date( 'Y', $row['dtm'] ) );
+
+      if( isset( $wyniki[ 'values' ][ $t ][ $row['counter_id'] ]) ) {
+        $wyniki[ 'values' ][ $t ][ $row['counter_id'] ] += $row['cnt'];
+      } else {
+        $wyniki[ 'values' ][ $t ][ $row['counter_id'] ] = $row['cnt'];
+      }
+      $wyniki['counters'][ $row['counter_id' ] ] = NULL;
+    }
+    if( isset( $wyniki[ 'counters' ] ) ) {
+      foreach( $wyniki[ 'counters' ] as $counter=>&$name ) {
+        $sql="SELECT value FROM config WHERE key = 'name' AND section_id = ( SELECT section_id FROM config WHERE key = 'counter_id' AND value = $counter )";
+        $ans=$this->configDb->query($sql);
+        $ans->setFetchMode(PDO::FETCH_ASSOC);
+        $row=$ans->fetch();
+        $name = $row[ 'value' ];
+      }
+      unset( $name );
+
+      natcasesort( $wyniki[ 'counters' ] );
+
+      return $wyniki;
+    }
 /*    foreach( $wyniki as $pom=>&$wart ) {
       $sql="SELECT value FROM config WHERE key = 'name' AND section_id = ( SELECT section_id FROM config WHERE key = 'counter_id' AND value = $pom )";
       $ans=$this->configDb->query($sql);
@@ -360,7 +399,36 @@ export ICD_LIVE_DB=/home/insofter/projects/data/live.db*/
       $row=$ans->fetch();
       $wart['name'] = $row[ 'value' ];
 }*/
-    return $wyniki;
+  }
+  function raport_instalacyjny($od) {
+    $do=mktime( 0, 0, 0, date( 'n', $od ), date( 'j', $od)+1 , date( 'Y', $od ) );
+    $od=mktime( 0, 0, 0, date( 'n', $od ), date( 'j', $od) , date( 'Y', $od ) );
+
+
+    $sql="SELECT dtm, counter_id, id, cnt, dark_time, work_time, "
+      ."flags FROM flow WHERE dtm >= ".$od." AND dtm < ".$do." ORDER BY dtm, counter_id ASC";
+
+    $ans=$this->dataDb->query($sql);
+
+    $ans->setFetchMode(PDO::FETCH_ASSOC);
+    foreach( $ans as $row ) {
+      $wyniki[ 'values' ][]=$row;
+
+      $wyniki['counters'][ $row['counter_id' ] ] = NULL;
+    }
+
+    if( isset( $wyniki[ 'counters' ] ) ) {
+      foreach( $wyniki[ 'counters' ] as $counter=>&$name ) {
+        $sql="SELECT value FROM config WHERE key = 'name' AND section_id = ( SELECT section_id FROM config WHERE key = 'counter_id' AND value = $counter )";
+        $ans=$this->configDb->query($sql);
+        $ans->setFetchMode(PDO::FETCH_ASSOC);
+        $row=$ans->fetch();
+        $name = $row[ 'value' ];
+      }
+      unset( $name );
+
+      return $wyniki;
+    }
   }
 }
 

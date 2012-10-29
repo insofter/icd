@@ -54,7 +54,7 @@ $menulista=array(
 $menuwyniki=array(
   'dobowy'=>'Raport dobowy',
   'miesieczny'=>'Raport miesięczny',
-  'instalatora'=>'Raport instalacyjny'
+  'instalacyjny'=>'Raport instalacyjny'
 );
   
 
@@ -129,8 +129,8 @@ if( isset($_GET['strona']) ) {
     case 'miesieczny':
       include('inc/wyniki_miesieczny.php');
       break;
-    case 'instalatora':
-      include('inc/wyniki_instalatora.php');
+    case 'instalacyjny':
+      include('inc/wyniki_instalacyjny.php');
       break;
     }
     break;

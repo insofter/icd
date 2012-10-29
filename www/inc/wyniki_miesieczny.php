@@ -3,43 +3,72 @@ defined('INSOFTER') or die('<h1>Your Kung-Fu is too weak.</h1>');
 
 $icdtcp = new c_icdtcp();
 
-$i=1000;
+$t=mktime( 0, 0, 0, date("n"), date("j"), date("Y") );
+  
 
-// $wyniki=$icdtcp->raport_biezacy( time() );
+if( isset( $_POST['datepicker'] ) ) {
+  $tab=explode( '.',  $_POST['datepicker'] );
+  if( count( $tab ) == 3 ) {
+    $t=mktime(0, 0, 0, $tab[1], $tab[0], $tab[2] );
+  }
+}
 
-$t=(int)(time()/3600/24);
-$t*=3600*24;
 
 
-$wyniki=$icdtcp->raport_od_do($t, $t+3600*24, 3600*4  );
 
-print_r( $wyniki );
+$wyniki=$icdtcp->raport_miesieczny( $t );
+
+//print_r( $wyniki );
 
 $tresc='<div id="tresc">
   <h3>Wyniki</h3>
-  <table>
+  <form action="./?strona=wyniki&typ=miesieczny" method="POST">
+<h4>  <input type="text" id="datepicker" name="datepicker" value="'.date('d.m.Y', $t).'">
+  <input type="submit" value="Ustaw"></h4>';
+
+if( isset( $wyniki['counters'] ) ) {
+$tresc.='<table border=1>
+  <tr>
+  <td>data&nbsp;\&nbsp;wejście</td>
   ';
-/*foreach( $wyniki as $wynik ) {
-  if( $i>20 ) {
-    $tresc.='<tr>';
-    foreach( $wynik as $key=>$val ) {
-      $tresc.='<th>'.$key.'</th>';
+  foreach( $wyniki['counters'] as $id=>$name ) {
+    $tresc.='<td>'.$name.'</td>';
+    $csum[ $id ]=0;
+  }
+  $tresc.='<td>sumy</td></tr>';
+
+  foreach( $wyniki['values'] as $dtm=>$cnt ) {
+    $tresc.='<tr><td>'.date( 'j.m', $dtm+3600 ).'</td>';
+
+    $sum=0;
+    foreach( $wyniki['counters'] as $id=>$name ) {
+
+      if( isset( $cnt[ $id ] ) ) {
+        $tresc.='<td>'.number_format( $cnt[ $id ], 0, '', '&nbsp;' ).'</td>';
+        $sum+=$cnt[ $id ];
+        $csum[ $id ]+=$cnt[ $id ];
+
+      } else {
+        $tresc.='<td>--</td>';
+      }
     }
-    $tresc.='</tr>
-      ';
-    $i=0;
+
+    $tresc.='<td>'.number_format( $sum, 0, '', '&nbsp;' ).'</td></tr>';
   }
-  $tresc.='<tr>';
-  foreach( $wynik as $val ) {
-    $tresc.='<td>'.$val.'</td>';
+
+  $tresc.='<tr><td>sumy</td>';
+
+  $ccsum=0;
+   
+  foreach( $wyniki['counters'] as $id=>$name ) {
+    $tresc.='<td>'.number_format( $csum[ $id ], 0, '', '&nbsp;' ).'</td>';
+    $ccsum+=$csum[ $id ];
   }
-  $tresc.='</tr>
-    ';
-  ++$i;
+
+
+  $tresc.='<td>'.number_format( $ccsum, 0, '', '&nbsp;' ).'</td></tr></table>';
+} else {
+$tresc.='<h4 id="err">Brak wyników dla '.date('m.Y', $t).'r.</h4>';
 }
-
- */
-
-$tresc.='</table>
-  </div>';
+  $tresc.='</div>';
 ?>
