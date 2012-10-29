@@ -46,7 +46,7 @@ if( isset( $wyniki['counters'] ) ) {
   $i=0;
   foreach( $wyniki['values'] as $row ) {
     $tresc.='<tr>';
-    $tresc.='<td><small>'.$row[ 'id' ].'</small></td>';
+    $tresc.='<td><small>'.number_format( $row[ 'id' ], 0, '', ',' ).'</small></td>';
     $tresc.='<td>'
       .date( 'H', $row[ 'dtm' ] )
       .'<sup>'
@@ -57,10 +57,10 @@ if( isset( $wyniki['counters'] ) ) {
 
     $tresc.='<td>'.$wyniki['counters'][ $row[ 'counter_id' ] ]
       .'&nbsp;&nbsp;<small>(id '.$row[ 'counter_id' ].')</small></td>';
-    $tresc.='<td>'.number_format( $row[ 'cnt' ], 0, '', '&nbsp;' ).'</td>';
-    $tresc.='<td>'.number_format( $row[ 'dark_time' ], 0, '', '&nbsp;' ).'</td>';
-    $tresc.='<td>'.number_format( $row[ 'work_time' ], 0, '', '&nbsp;' ).'</td>';
-    $tresc.='<td>'.number_format( $row[ 'flags' ], 0, '', '&nbsp;' ).'</td>';
+    $tresc.='<td>'.number_format( $row[ 'cnt' ], 0, '', ',' ).'</td>';
+    $tresc.='<td>'.number_format( $row[ 'dark_time' ], 0, '', ',' ).'</td>';
+    $tresc.='<td>'.number_format( $row[ 'work_time' ], 0, '', ',' ).'</td>';
+    $tresc.='<td>'.number_format( $row[ 'flags' ], 0, '', ',' ).'</td>';
 
     $tresc.='</tr>';
     if( ++$i>=16 ) {

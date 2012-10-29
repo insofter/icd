@@ -44,7 +44,7 @@ $tresc.='<table border=1>
     foreach( $wyniki['counters'] as $id=>$name ) {
 
       if( isset( $cnt[ $id ] ) ) {
-        $tresc.='<td>'.number_format( $cnt[ $id ], 0, '', '&nbsp;' ).'</td>';
+        $tresc.='<td>'.number_format( $cnt[ $id ], 0, '', ',' ).'</td>';
         $sum+=$cnt[ $id ];
         $csum[ $id ]+=$cnt[ $id ];
 
@@ -54,7 +54,7 @@ $tresc.='<table border=1>
     }
 
 
-    $tresc.='<td>'.number_format( $sum, 0, '', '&nbsp;' ).'</td></tr>';
+    $tresc.='<td>'.number_format( $sum, 0, '', ',' ).'</td></tr>';
   }
 
   $tresc.='<tr><td>sumy</td>';
@@ -62,12 +62,12 @@ $tresc.='<table border=1>
   $ccsum=0;
    
   foreach( $wyniki['counters'] as $id=>$name ) {
-    $tresc.='<td>'.number_format( $csum[ $id ], 0, '', '&nbsp;' ).'</td>';
+    $tresc.='<td>'.number_format( $csum[ $id ], 0, '', ',' ).'</td>';
     $ccsum+=$csum[ $id ];
   }
 
 
-  $tresc.='<td>'.number_format( $ccsum, 0, '', '&nbsp;' ).'</td></tr></table>';
+  $tresc.='<td>'.number_format( $ccsum, 0, '', ',' ).'</td></tr></table>';
 } else {
 $tresc.='<h4 id="err">Brak wyników dla '.date('d.m.Y', $t).'r.</h4>';
 }
