@@ -10,4 +10,9 @@ CREATE TABLE flow (
   flags INTEGER DEFAULT 1,     -- 1 - NOT SENT, 0 - SENT
   UNIQUE(counter_id, dtm)
 );
+
+
+CREATE INDEX dtm_index ON flow ( dtm ASC, flags );--index to make searching faster
+CREATE INDEX id_index ON flow ( id );--index to make searching faster
+
 --  test TEXT,                   -- TODO
