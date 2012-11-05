@@ -44,7 +44,7 @@ CmenuItemTimeFoto::~CmenuItemTimeFoto() {
 
 void CmenuItemTimeFoto::screen(Clcd *lcd) {
   /*TODO pobranie danych z bazy*/
-  int i;
+//  int i;
   char buf[17];
   char timebuf[9];
   time_t rawtime;
@@ -61,14 +61,14 @@ void CmenuItemTimeFoto::screen(Clcd *lcd) {
 //  sprintf(sql, "itd%i", _a);
   stmt->bind_int( 1, _a );
   if( stmt->step() == SQLITE_ROW ) {
-    i=stmt->column_int(0);
+//    i=stmt->column_int(0);
+    sprintf(buf, "%s %c:%5i", timebuf, 'A'-1+_a, stmt->column_int(0));
   } else {
-    i=0;
+    sprintf(buf, "%s %c: xxx ", timebuf, 'A'-1+_a);
+    //i=0;
   }
-
   stmt->reset();
 
-  sprintf(buf, "%s %c:%5i", timebuf, 'A'-1+_a, i);
   lcd->_lcd[0]=buf;
 
   strftime(timebuf,8,"%H:%M:%S",timeinfo);
@@ -78,13 +78,14 @@ void CmenuItemTimeFoto::screen(Clcd *lcd) {
 //  sprintf(sql, "itd%i", _b);
   stmt->bind_int( 1, _b );
   if( stmt->step() == SQLITE_ROW ) {
-    i=stmt->column_int(0);
+//    i=stmt->column_int(0);
+    sprintf(buf, "%s %c:%5i", timebuf, 'A'-1+_b, stmt->column_int(0));
   } else {
-    i=0;
+//    i=0;
+    sprintf(buf, "%s %c: xxx ", timebuf, 'A'-1+_b);
   }
   stmt->reset();
 
-  sprintf(buf, "%s %c:%5i", timebuf, 'A'-1+_b, i);
   lcd->_lcd[1]=buf;
 
   lcd->_refresh=300;
