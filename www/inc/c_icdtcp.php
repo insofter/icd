@@ -86,8 +86,9 @@ export ICD_LIVE_DB=/home/insofter/projects/data/live.db*/
     }
 
     for( $i=0; $i<$this->il_foto; ++$i ) {//TODO:
+
       $sql="SELECT `key`, `value` FROM config_section cs LEFT JOIN config c on cs.id=c.section_id
-        WHERE cs.name='itd$i' AND (c.key='name' OR c.key='enabled' ) ";
+        WHERE cs.name='counter$i' AND (c.key='name' OR c.key='enabled' ) ";
       $ans=$this->configDb->query($sql);
 
       foreach( $ans as $row ) {
@@ -103,7 +104,7 @@ export ICD_LIVE_DB=/home/insofter/projects/data/live.db*/
           $licznik['cnt_last']=$row['cnt'];
         }
       }
-      $sql="SELECT sum(cnt) AS sum FROM flow WHERE counter_id='$i'
+      $sql="SELECT sum(cnt) AS sum FROM flow WHERE counter_id='".($i+1)."'
         AND `dtm` < ".(time())." AND `dtm` > ".( ((int)(time()/(24*3600)))*24*3600 );
       $ans=$this->dataDb->query($sql);//TODO:
       $licznik['cnt_sum']=0;

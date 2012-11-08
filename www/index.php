@@ -46,7 +46,6 @@ $menurozwijane=array(
   'wifi'=>'WiFi',
   'licznik'=>'Licznik',
   'wysylanie'=>'Wysyłanie',
-  'wyniki'=>'Wyniki',
   'log'=>'Logi',
   'plik_konf'=>'Plik konf.'
 );
@@ -64,24 +63,35 @@ $menuglowne=array(
 
 $menu='<ul class="menu">
   ';
-if( isset($_GET['strona']) && isset($menulista[$_GET['strona']]) ) {
+if( isset($_GET['strona']) && ( isset($menuglowne[$_GET['strona']]) || isset($menurozwijane[$_GET['strona']]) ) ) {
   $menu.='<li class="menu"><a href="./">Info</a></li>';
-  $tytul.=' - '.$menulista[$_GET['strona']];
+  if( isset($menuglowne[$_GET['strona']]) ) {
+    $tytul.=' - '.$menuglowne[$_GET['strona']]; 
+  } else {
+    $tytul.=' - '.$menurozwijane[$_GET['strona']];
+  }
 } else {
-  $menu.='<li class="menu"><a id="klikniete" href="./">Info</a></li>';
+  $menu.='<li class="menu"><a class="klikniete" href="./">Info</a></li>';
 }
 foreach( $menuglowne as $key=>$val )
 {
   if( $key=='konfiguracja' ) {
     $menu.='
       <li class="menurozwijane"><ul class="menurozwijane">
-      <li><a href="./">Konfiguracja</a></li>
+      <li>';
+    if( isset($_GET['strona']) && isset($menurozwijane[$_GET['strona']]) ) {
+      $menu.='<a class="klikniete" href="./">Konfiguracja</a>';
+    } else {
+      $menu.='<a href="./">Konfiguracja</a>';
+
+    }
+        $menu.='</li>
       ';
     foreach( $menurozwijane as $kc=>$vc ) {
       if( isset($_GET['strona']) && $_GET['strona']==$kc )
       {
         $menu.='
-          <li><a id="klikniete" href="./?strona='.$kc.'">'.$vc.'</a></li>';
+          <li><a class="klikniete" href="./?strona='.$kc.'">'.$vc.'</a></li>';
       } else {
         $menu.='
           <li><a href="./?strona='.$kc.'">'.$vc.'</a></li>';
@@ -91,7 +101,7 @@ foreach( $menuglowne as $key=>$val )
       </ul></li>';
   } else if( isset($_GET['strona']) && $_GET['strona']==$key ) {
     $menu.='
-      <li class="menu"><a id="klikniete" href="./?strona='.$key.'">'.$val.'</a></li>';
+      <li class="menu"><a class="klikniete" href="./?strona='.$key.'">'.$val.'</a></li>';
   } else {
     $menu.='
       <li class="menu"><a href="./?strona='.$key.'">'.$val.'</a></li>';
@@ -113,7 +123,7 @@ if( isset($_GET['strona']) && $_GET['strona']=='wyniki' ) {
     if( $_GET['typ']==$key )
     {
       $menu.='
-        <li><a id="klikniete" href="./?strona=wyniki&amp;typ='.$key.'">'.$val.'</a></li>';
+        <li><a class="klikniete" href="./?strona=wyniki&amp;typ='.$key.'">'.$val.'</a></li>';
     } else {
       $menu.='
         <li><a href="./?strona=wyniki&amp;typ='.$key.'">'.$val.'</a></li>';
