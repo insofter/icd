@@ -19,12 +19,12 @@ $naglowek='<!DOCTYPE html><html lang="pl"><head>
 $tytul=$o_mnie['nazwa'];
 $naglowekcd='</title>
   <link rel="stylesheet" href="css/icdtcp.css" type="text/css">
-  <link rel="stylesheet" href="css/jquery-ui.css" />
+  <link rel="stylesheet" href="css/jquery-ui.css">
   <script src="js/jquery-1.8.2.js"></script>
   <script src="js/jquery-ui.js"></script>
   <script>
-    $(function() {
-      $( "#datepicker" ).datepicker({ dateFormat: "dd.mm.yy", duration: "fast" });
+  $(function() {
+  $( "#datepicker" ).datepicker({ dateFormat: "dd.mm.yy", duration: "fast" });
     });
   </script>
   ';
@@ -41,9 +41,9 @@ $stopka='
   </p>
   </body></html>';
 
-$menulista=array(
+$menuconfig=array(
   'tcpip'=>'TCPIP',
-  /*  'wpa'=>'WiFi',*/
+  'wifi'=>'WiFi',
   'licznik'=>'Licznik',
   'wysylanie'=>'Wysyłanie',
   'wyniki'=>'Wyniki',
@@ -51,12 +51,13 @@ $menulista=array(
   'plik_konf'=>'Plik konf.'
 );
 
-$menuwyniki=array(
+$menuglowne=array(
   'dobowy'=>'Raport dobowy',
   'miesieczny'=>'Raport miesięczny',
-  'instalacyjny'=>'Raport instalacyjny'
+  'instalacyjny'=>'Raport instalacyjny',
+  'konfiguracja'=>'Konfiguracja'
 );
-  
+
 
 
 
@@ -69,10 +70,26 @@ if( isset($_GET['strona']) && isset($menulista[$_GET['strona']]) ) {
 } else {
   $menu.='<li><a id="klikniete" href="./">Info</a></li>';
 }
-foreach( $menulista as $key=>$val )
+foreach( $menuglowne as $key=>$val )
 {
-  if( isset($_GET['strona']) && $_GET['strona']==$key )
-  {
+  if( $key=='konfiguracja' ) {
+    $menu.='
+      <li><ul id="menuconfig">
+      <li><a href="./">Konfiguracja</a></li>
+      ';
+    foreach( $menuconfig as $kc=>$vc ) {
+      if( isset($_GET['strona']) && $_GET['strona']==$kc )
+      {
+        $menu.='
+          <li><a id="klikniete" href="./?strona='.$kc.'">'.$vc.'</a></li>';
+      } else {
+        $menu.='
+          <li><a href="./?strona='.$kc.'">'.$vc.'</a></li>';
+      }
+    }
+    $menu.='
+      </ul></li>';
+  } else if( isset($_GET['strona']) && $_GET['strona']==$key ) {
     $menu.='
       <li><a id="klikniete" href="./?strona='.$key.'">'.$val.'</a></li>';
   } else {
@@ -80,9 +97,10 @@ foreach( $menulista as $key=>$val )
       <li><a href="./?strona='.$key.'">'.$val.'</a></li>';
   }
 }
-$menu.='</ul>
+$menu.='
+  </ul>
   ';
-
+/*
 if( isset($_GET['strona']) && $_GET['strona']=='wyniki' ) {
   $menu.='<ul class="menu menuwyniki">
     ';
@@ -106,7 +124,7 @@ if( isset($_GET['strona']) && $_GET['strona']=='wyniki' ) {
 
 
 }
-
+ */
 
 
 
@@ -121,24 +139,20 @@ if( isset($_GET['strona']) ) {
   case 'wysylanie':
     include('inc/wysylanie.php');
     break;
-  case 'wyniki':
-    switch( $_GET['typ'] ) {
-    case 'dobowy':
-      include('inc/wyniki_dobowy.php');
-      break;
-    case 'miesieczny':
-      include('inc/wyniki_miesieczny.php');
-      break;
-    case 'instalacyjny':
-      include('inc/wyniki_instalacyjny.php');
-      break;
-    }
+  case 'dobowy':
+    include('inc/wyniki_dobowy.php');
     break;
-    case 'log':
-      include('inc/log.php');
-      break;
-    case 'plik_konf':
-      include('inc/plik_konf.php');
+  case 'miesieczny':
+    include('inc/wyniki_miesieczny.php');
+    break;
+  case 'instalacyjny':
+    include('inc/wyniki_instalacyjny.php');
+    break;
+  case 'log':
+    include('inc/log.php');
+    break;
+  case 'plik_konf':
+    include('inc/plik_konf.php');
     break;
   case 'wpa':
     include('inc/wpa.php');

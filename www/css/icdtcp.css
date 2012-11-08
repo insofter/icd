@@ -13,42 +13,59 @@ h1 {
 /*koniec logo*/
 
 /*menu*/
-#klikniete {
-  color: green;
-}
 ul.menu {
-  margin: auto;
+  display: inline;
+  position: relative;
+  z-index: 11;
 }
-ul.menu, .menu li {
+ul.menu, .menu li, .menu ul {
   list-style-type: none;
   padding: 0;
   text-indent: 0;
+  height: 30px;
+  overflow: hidden;
+  position: relative;
+  z-index: 11;
 }
 .menu li {
-  display: block;
   float: left;
-  width: 110px;
+  width: 130px;
   /*width: 94px;*/
-  text-align: center;
+  position: relative;
+  z-index: 11;
+}
+.menu li:hover  {
+  height: auto;
+  position: relative;
+  z-index: 10;
+  background-color: white;
+}
+.menuconfig, .menuconfig li {
+  z-index: 11;
+  position: relative;
+}
+.menuconfig:hover, .menuconfig li:hover {
+  z-index: 10;
+  position: relative;
+}
+/*#klikniete {
+  color: green;
 }
 .menu li:hover {
   background-color: palegreen;
-  color: white;
+  color: red;
 }
-.menu a {
+.menu a, menu li {
   color: black;
   text-decoration: none;
   font-weight: bold;
   line-height: 26px;
-  font-size: 16px;
+  font-size: 14px;
 }
 .menu a:hover {
   text-decoration: underline;
-}
+}*/
 
-.menuwyniki li {
-  width: 256px;
-}
 /*koniec menu*/
 /*tresc*/
 #lewy, #prawy {
