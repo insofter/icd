@@ -13,58 +13,59 @@ h1 {
 /*koniec logo*/
 
 /*menu*/
+/*mmenurozwijane*/
 ul.menu {
   display: inline;
-  position: relative;
-  z-index: 11;
+  z-index: 10;
 }
-ul.menu, .menu li, .menu ul {
+li.menu {
+  display: block;
+}
+.menu, .menurozwijane {
   list-style-type: none;
   padding: 0;
   text-indent: 0;
+  float: left;
+}
+.menu, .menurozwijane, .menurozwijane li {
   height: 30px;
-  overflow: hidden;
-  position: relative;
-  z-index: 11;
 }
 .menu li {
-  float: left;
-  width: 130px;
-  /*width: 94px;*/
-  position: relative;
-  z-index: 11;
+  width: 154px;
 }
-.menu li:hover  {
+ul.menurozwijane {
+  overflow: hidden;
+  z-index: 10;
+  position: relative;
+}
+ul.menurozwijane:hover {
   height: auto;
-  position: relative;
-  z-index: 10;
-  background-color: white;
 }
-.menuconfig, .menuconfig li {
-  z-index: 11;
-  position: relative;
-}
-.menuconfig:hover, .menuconfig li:hover {
-  z-index: 10;
-  position: relative;
-}
-/*#klikniete {
+/*koniec menurozwijane*/
+
+#klikniete {
   color: green;
 }
-.menu li:hover {
-  background-color: palegreen;
-  color: red;
-}
-.menu a, menu li {
+.menu, .menu a, .menu li, .menu ul  {
+  background-color: white;
   color: black;
+  text-align: center;
   text-decoration: none;
   font-weight: bold;
   line-height: 26px;
-  font-size: 14px;
+  font-size: 16px;
+}
+.menurozwijane:hover li {
+  background-color: #fafafa;
 }
 .menu a:hover {
   text-decoration: underline;
-}*/
+  background-color: palegreen;
+}
+.menu li:hover, .menu li:hover > a {
+  background-color: palegreen;
+  color: #004400;
+}
 
 /*koniec menu*/
 /*tresc*/

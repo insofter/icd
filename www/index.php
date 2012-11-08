@@ -41,7 +41,7 @@ $stopka='
   </p>
   </body></html>';
 
-$menuconfig=array(
+$menurozwijane=array(
   'tcpip'=>'TCPIP',
   'wifi'=>'WiFi',
   'licznik'=>'Licznik',
@@ -65,19 +65,19 @@ $menuglowne=array(
 $menu='<ul class="menu">
   ';
 if( isset($_GET['strona']) && isset($menulista[$_GET['strona']]) ) {
-  $menu.='<li><a href="./">Info</a></li>';
+  $menu.='<li class="menu"><a href="./">Info</a></li>';
   $tytul.=' - '.$menulista[$_GET['strona']];
 } else {
-  $menu.='<li><a id="klikniete" href="./">Info</a></li>';
+  $menu.='<li class="menu"><a id="klikniete" href="./">Info</a></li>';
 }
 foreach( $menuglowne as $key=>$val )
 {
   if( $key=='konfiguracja' ) {
     $menu.='
-      <li><ul id="menuconfig">
+      <li class="menurozwijane"><ul class="menurozwijane">
       <li><a href="./">Konfiguracja</a></li>
       ';
-    foreach( $menuconfig as $kc=>$vc ) {
+    foreach( $menurozwijane as $kc=>$vc ) {
       if( isset($_GET['strona']) && $_GET['strona']==$kc )
       {
         $menu.='
@@ -91,10 +91,10 @@ foreach( $menuglowne as $key=>$val )
       </ul></li>';
   } else if( isset($_GET['strona']) && $_GET['strona']==$key ) {
     $menu.='
-      <li><a id="klikniete" href="./?strona='.$key.'">'.$val.'</a></li>';
+      <li class="menu"><a id="klikniete" href="./?strona='.$key.'">'.$val.'</a></li>';
   } else {
     $menu.='
-      <li><a href="./?strona='.$key.'">'.$val.'</a></li>';
+      <li class="menu"><a href="./?strona='.$key.'">'.$val.'</a></li>';
   }
 }
 $menu.='
