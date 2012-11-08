@@ -13,8 +13,8 @@ network={
 }
 
 network={
-  ssid="icdtcp3"
-  psk="icdtcp3"
+  ssid="insofter"
+  psk="insofter"
   key_mgmt=WPA-PSK
   auth_alg=OPEN
 }

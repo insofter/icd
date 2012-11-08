@@ -2,18 +2,8 @@ DELETE FROM config;
 DELETE FROM config_section;
 
 INSERT INTO config_section (id, name) VALUES ( 1, 'current' );
+
 INSERT INTO config_section (id, name) VALUES ( 2, 'tcpip' );
-INSERT INTO config_section (id, name) VALUES ( 3, 'device' );
-INSERT INTO config_section (id, name) VALUES ( 4, 'itd0' );
-INSERT INTO config_section (id, name) VALUES ( 5, 'itd1' );
-INSERT INTO config_section (id, name) VALUES ( 6, 'itd2' );
-INSERT INTO config_section (id, name) VALUES ( 7, 'itd3' );
-
-INSERT INTO config_section (id, name) VALUES ( 8, 'counter0' );
-INSERT INTO config_section (id, name) VALUES ( 9, 'counter1' );
-INSERT INTO config_section (id, name) VALUES ( 10, 'counter2' );
-INSERT INTO config_section (id, name) VALUES ( 11, 'counter3' );
-
 -- section tcpip --
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'tcpip'), 'dhcp', 'yes' );
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'tcpip'), 'ip', '192.168.2.21' );
@@ -24,6 +14,8 @@ INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_sect
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'tcpip'), 'net-name', 'ICDTCP3' );
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'tcpip'), 'mac', '00:1C:D3:00:00:00' );
 
+
+INSERT INTO config_section (id, name) VALUES ( 3, 'device' );
 -- section device --
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'device'), 'ids', 'ICDTCP3' );
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'device'), 'idd', '0' );
@@ -38,6 +30,10 @@ INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_sect
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'device'), 'flow-entry-retention-period-days', '3660' );
 
 
+INSERT INTO config_section (id, name) VALUES ( 4, 'itd0' );
+INSERT INTO config_section (id, name) VALUES ( 5, 'itd1' );
+INSERT INTO config_section (id, name) VALUES ( 6, 'itd2' );
+INSERT INTO config_section (id, name) VALUES ( 7, 'itd3' );
 -- section itd0 --
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'itd0'), 'name', 'Wej 0' );-- == counter0.name
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'itd0'), 'enabled', 'yes' );-- == counter0.enabled
@@ -64,8 +60,10 @@ INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_sect
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'itd3'), 'active-low', '1' );
 
 
-
-
+INSERT INTO config_section (id, name) VALUES ( 8, 'counter0' );
+INSERT INTO config_section (id, name) VALUES ( 9, 'counter1' );
+INSERT INTO config_section (id, name) VALUES ( 10, 'counter2' );
+INSERT INTO config_section (id, name) VALUES ( 11, 'counter3' );
 -- section counter0 --
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter0'), 'name', 'Wej 0' );
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter0'), 'counter_id', '1' ); -- flow.counter_id
@@ -83,7 +81,6 @@ INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_sect
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter0'), 'thick', '-' ); -- ``-'' == disabled
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter0'), 'thick-detect-direction', 'no' );
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter0'), 'thick-active-low', 'yes' );
-
 
 -- section counter1 --
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter1'), 'name', 'Wej 1' );
@@ -103,9 +100,6 @@ INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_sect
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter1'), 'thick-detect-direction', 'no' );
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter1'), 'thick-active-low', 'yes' );
 
-
-
-
 -- section counter2 --
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter2'), 'name', 'Wej 2' );
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter2'), 'counter_id', '3' ); -- flow.counter_id
@@ -124,8 +118,6 @@ INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_sect
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter2'), 'thick-detect-direction', 'no' );
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter2'), 'thick-active-low', 'yes' );
 
-
-
 -- section counter3 --
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter3'), 'name', 'Wej 3' );
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter3'), 'counter_id', '4' ); -- flow.counter_id
@@ -143,5 +135,20 @@ INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_sect
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter3'), 'thick', '-' ); -- ``-'' == disabled
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter3'), 'thick-detect-direction', 'no' );
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter3'), 'thick-active-low', 'yes' );
+
+
+INSERT INTO config_section (id, name) VALUES ( 12, 'wifi' );
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'wifi'), 'enabled', 'yes' );
+
+INSERT INTO config_section (id, name) VALUES ( 13, 'wifinet-"IFirma"' );
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'wifinet-"IFirma"'), 'psk', '"Insofter8971002738"' );
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'wifinet-"IFirma"'), 'key_mgmt', 'WPA-PSK' );
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'wifinet-"IFirma"'), 'auth_alg', 'OPEN' );
+
+INSERT INTO config_section (id, name) VALUES ( 14, 'wifinet-"insofter"' );
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'wifinet-"insofter"'), 'psk', '"insofter"' );
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'wifinet-"insofter"'), 'key_mgmt', 'WPA-PSK' );
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'wifinet-"insofter"'), 'auth_alg', 'OPEN' );
+
 
 
