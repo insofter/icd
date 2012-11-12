@@ -50,6 +50,11 @@ class c_icdtcp {
       250000=>'250 000',
       500000=>'500 000',
       1000000=>'1 000 000');
+    $this->urzadzenia=array( 'itd0'=>'A',
+      'itd1'=>'B',
+      'itd2'=>'C',
+      'itd3'=>'D',
+      '-'=>'Brak' );
 
 
     foreach( file("/etc/profile.d/icd.sh", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $tmp ) {
@@ -58,19 +63,11 @@ class c_icdtcp {
     }
 
 
-    //print_r( $ICD_DATA_DB ) ;
-
-
-
-
     try {
       /*	$this->dataDb = new PDO( 'mysql:host=localhost;dbname=icdtcp3db','root','');*/
       $this->dataDb = new PDO('sqlite:'.$ICD_DATA_DB);
       $this->configDb = new PDO('sqlite:'.$ICD_CONFIG_DB);
       $this->liveDb = new PDO('sqlite:'.$ICD_LIVE_DB);
-/*      export ICD_DATA_DB=/home/insofter/projects/data/data.db
-        export ICD_CONFIG_DB=/home/insofter/projects/data/config.db
-export ICD_LIVE_DB=/home/insofter/projects/data/live.db*/
 
     } catch (PDOException $e) {
       print $e->getMessage();
@@ -173,7 +170,7 @@ export ICD_LIVE_DB=/home/insofter/projects/data/live.db*/
   function liczniki_pobierz() {//TODO:
     for( $i=0; $i<$this->il_foto; ++$i ) {
       $sql="SELECT `key`, `value` FROM config_section cs LEFT JOIN config c ON cs.id=c.section_id
-        WHERE cs.name='itd$i' ";
+        WHERE cs.name='counter$i' ";
       $ans=$this->configDb->query($sql);
       foreach( $ans as $row ) {
         $licznik[$row['key']]=$row['value'];
@@ -181,6 +178,7 @@ export ICD_LIVE_DB=/home/insofter/projects/data/live.db*/
       $licznik['nr']=$i;
       $liczniki[]=$licznik;
     }
+//    print_r( $liczniki );
     return $liczniki;
   }
 
@@ -188,7 +186,7 @@ export ICD_LIVE_DB=/home/insofter/projects/data/live.db*/
     for( $i=0; $i<$this->il_foto; ++$i ) {
       foreach( $nowe[$i] as $pole=>$wart ) {
         $sql="UPDATE config SET `value`=".$this->configDb->quote($wart)."
-          WHERE section_id=(SELECT `id` FROM config_section WHERE name='itd$i')
+          WHERE section_id=(SELECT `id` FROM config_section WHERE name='counter$i')
           AND `key`=".$this->configDb->quote($pole);
         $this->configDb->query($sql);
       }

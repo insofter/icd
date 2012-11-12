@@ -64,14 +64,14 @@ $menuglowne=array(
 $menu='<ul class="menu">
   ';
 if( isset($_GET['strona']) && ( isset($menuglowne[$_GET['strona']]) || isset($menurozwijane[$_GET['strona']]) ) ) {
-  $menu.='<li class="menu"><a href="./">Info</a></li>';
+  $menu.='<li class="menu menuinfo"><a href="./">Info</a></li>';
   if( isset($menuglowne[$_GET['strona']]) ) {
     $tytul.=' - '.$menuglowne[$_GET['strona']]; 
   } else {
     $tytul.=' - '.$menurozwijane[$_GET['strona']];
   }
 } else {
-  $menu.='<li class="menu"><a class="klikniete" href="./">Info</a></li>';
+  $menu.='<li class="menu menuinfo"><a class="klikniete" href="./">Info</a></li>';
 }
 foreach( $menuglowne as $key=>$val )
 {

@@ -5,7 +5,7 @@ body {
   padding: 0;
   font-family: Arial, sans-serif;
 }
-/*logą*/
+/*logo*/
 h1 {
   text-align: center;
   margin-top: 3px;
@@ -32,9 +32,12 @@ li.menu {
   height: 30px;
 }
 li.menu, .menurozwijane li  {
-  padding-left: 22px;
-  padding-right: 22px;
-//  width: 154px;
+//  padding-left: 22px;
+//  padding-right: 22px;
+  width: 178px;
+}
+li.menuinfo {
+  width: 56px;
 }
 
 ul.menurozwijane {
