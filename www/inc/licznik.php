@@ -35,35 +35,26 @@ $liczniki=$icdtcp->liczniki_pobierz();
 $tresc='<div id="tresc">
   <h3>Ustawienia licznika</h3>
   '.$info.'
-  <form action="./?strona=licznik" method="POST">
-  <table border=1>
-  <tr>
-  <th>Numer</th><th>Nazwa</th><th>Włączona</th>
-  <th>Czas zwłoki</th><th>Czas opóźnienia</th><th>Stan aktywny</th>
-  <th>Wyłącznik czasowy</th>
-  <th>Czas wyłącznika</th>
-  <th>Stan aktywny wyłącznika</th>
-  <th>Wykrywanie grubości</th>
-  <th>i kierunku</th>
-  <th>Stan aktywny wykrywania</th></tr>
-  ';
-
+  <form action="./?strona=licznik" method="POST">';
 
 foreach( $liczniki as $licznik ) {
-  $tresc.='<tr><td>'.chr(ord('A')+$licznik['nr']).'</td>
+  $tresc.='<table>
+    <tr><th>Licznik</th><td>'.chr(ord('A')+$licznik['nr']).'</td></tr></tr>
+
+    <tr><th>Nazwa</th>
     <td><input type="text" name="name['.$licznik['nr'].']" id="name'
-    .$licznik['nr'].'" value="'.$licznik['name'].'"></td>
-    <td><input type="checkbox" name="enabled['.$licznik['nr'].']" id="enabled'.$licznik['nr'].'"';
+    .$licznik['nr'].'" value="'.$licznik['name'].'"></td></tr>
+    <tr><th>Włączona</th><td><input type="checkbox" name="enabled['.$licznik['nr'].']" id="enabled'.$licznik['nr'].'"';
   if( $licznik['enabled']=='yes' ) {
     $tresc.=' checked="checked"';
   }
-  $tresc.='></td>
-    <td><input type="text" name="dev-engage['.$licznik['nr'].']"
-    id="dev-engage'.$licznik['nr'].'" value="'.$licznik['dev-engage'].'" class="cienki"></td>
-    <td><input type="text" name="dev-release['.$licznik['nr'].']"
-    id="dev-release'.$licznik['nr'].'" value="'.$licznik['dev-release'].'" class="cienki"></td>
-    <td>
-    <select name="dev-active-low['.$licznik['nr'].']" class="cienki">';
+  $tresc.='></td></tr>
+    <tr><th>Czas zwłoki</th><td><input type="text" name="dev-engage['.$licznik['nr'].']"
+    id="dev-engage'.$licznik['nr'].'" value="'.$licznik['dev-engage'].'"></td></tr>
+    <tr><th>Czas opóźnienia</th><td><input type="text" name="dev-release['.$licznik['nr'].']"
+    id="dev-release'.$licznik['nr'].'" value="'.$licznik['dev-release'].'"></td></tr>
+    <tr><th>Stan aktywny</th><td>
+    <select name="dev-active-low['.$licznik['nr'].']">';
   if( $licznik['dev-active-low']=='yes' ) {
     $tresc.='<option selected="selected" value="yes">Niski</option>
       <option value="no">Wysoki</option>';
@@ -73,8 +64,8 @@ foreach( $liczniki as $licznik ) {
   }
 
   $tresc.='</select>
-    </td>
-    <td><select name="enab['.$licznik['nr'].']" id="enab'.$licznik['nr'].'">';
+    </td></tr>
+    <tr><th>Wyłącznik czasowy</th><td><select name="enab['.$licznik['nr'].']" id="enab'.$licznik['nr'].'">';
   foreach( $icdtcp->urzadzenia as $wart=>$opis ) {
     $tresc.='<option';
     if( $wart==$licznik['enab'] ) {
@@ -83,14 +74,14 @@ foreach( $liczniki as $licznik ) {
     $tresc.=' value="'.$wart.'">'.$opis.'</option>';
   }
   $tresc.='</select>
-  </td>
-  <td>
+  </td></tr>
+  <tr><th>Czas wyłącznika</th><td>
   <input type="text" name="enab-time['.$licznik['nr'].']"
-      id="enab-time'.$licznik['nr'].'" value="'.$licznik['enab-time'].'" class="cienki">
+      id="enab-time'.$licznik['nr'].'" value="'.$licznik['enab-time'].'">
   
-  </td>
-  <td>
-  <select name="enab-active-low['.$licznik['nr'].']" class="cienki">';
+  </td></tr>
+  <tr><th>Stan aktywny wyłącznika</th><td>
+  <select name="enab-active-low['.$licznik['nr'].']">';
   if( $licznik['enab-active-low']=='yes' ) {
     $tresc.='<option selected="selected" value="yes">Niski</option>
       <option value="no">Wysoki</option>';
@@ -100,10 +91,8 @@ foreach( $liczniki as $licznik ) {
   }
 
   $tresc.='</select>
-
-  
-  </td>
-    <td><select name="thick['.$licznik['nr'].']" id="thick'.$licznik['nr'].'">';
+  </td></tr>
+    <tr><th>Wykrywanie grubości</th><td><select name="thick['.$licznik['nr'].']" id="thick'.$licznik['nr'].'">';
   foreach( $icdtcp->urzadzenia as $wart=>$opis ) {
     $tresc.='<option';
     if( $wart==$licznik['thick'] ) {
@@ -112,9 +101,10 @@ foreach( $liczniki as $licznik ) {
     $tresc.=' value="'.$wart.'">'.$opis.'</option>';
   }
   $tresc.='</select>
-  </td>
+  </td></tr>
+  <tr><th>i kierunku</th>
   <td>
-  <select name="thick-detect-direction['.$licznik['nr'].']" class="cienki">';
+  <select name="thick-detect-direction['.$licznik['nr'].']">';
   if( $licznik['thick-detect-direction']=='yes' ) {
     $tresc.='<option selected="selected" value="yes">Grubość i kierunek</option>
       <option value="no">Grubość</option>';
@@ -124,9 +114,9 @@ foreach( $liczniki as $licznik ) {
   }
   $tresc.='</select>
   
-  </td>
-  <td>
-  <select name="thick-active-low['.$licznik['nr'].']" class="cienki">';
+  </td></tr>
+  <tr><th>Stan aktywny wykrywania</th><td>
+  <select name="thick-active-low['.$licznik['nr'].']">';
   if( $licznik['thick-active-low']=='yes' ) {
     $tresc.='<option selected="selected" value="yes">Niski</option>
       <option value="no">Wysoki</option>';
@@ -135,8 +125,8 @@ foreach( $liczniki as $licznik ) {
       <option selected="selected" value="no">Wysoki</option>';
   }
   $tresc.='</select>
-    </td>
-    </tr>';
+    </td></tr>
+    </tr></table><br><br>';
 }
 
 $tresc.='
