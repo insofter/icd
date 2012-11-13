@@ -164,11 +164,11 @@ if( isset($_GET['strona']) ) {
   case 'plik_konf':
     include('inc/plik_konf.php');
     break;
-  case 'wpa':
-    include('inc/wpa.php');
-    break;
   case 'test_wysylania':
     include('inc/test_wysylania.php');
+    break;
+  case 'wifi':
+    include('inc/wifi.php');
     break;
   default:
     $tresc='<div id="tresc">taka strona nie istnieje</div>';
