@@ -150,8 +150,8 @@ input, select {
   color: black;
   margin: 1px;
 }
-select {
-  width: 150px;
+.liczniki select, .liczniki input {
+  width: 140px;
 }
 .cienki {
   width: 75px;

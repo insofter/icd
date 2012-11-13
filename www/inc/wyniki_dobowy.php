@@ -21,7 +21,7 @@ $wyniki=$icdtcp->raport_dobowy($t, $t+3600*24, 3600 );
 
 $tresc='<div id="tresc">
   <h3>Wyniki</h3>
-  <form action="./?strona=wyniki&typ=dobowy" method="POST">
+  <form action="./?strona=dobowy" method="POST">
 <h4>  <input type="text" id="datepicker" name="datepicker" value="'.date('d.m.Y', $t).'">
   <input type="submit" value="Ustaw"></h4>';
 

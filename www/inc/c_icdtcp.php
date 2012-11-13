@@ -173,10 +173,10 @@ class c_icdtcp {
         WHERE cs.name='counter$i' ";
       $ans=$this->configDb->query($sql);
       foreach( $ans as $row ) {
-        $licznik[$row['key']]=$row['value'];
+        $liczniki[$row['key']][$i]=$row['value'];
       }
-      $licznik['nr']=$i;
-      $liczniki[]=$licznik;
+//      $licznik['nr']=$i;
+//      $liczniki[]=$licznik;
     }
 //    print_r( $liczniki );
     return $liczniki;

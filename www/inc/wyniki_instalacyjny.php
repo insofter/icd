@@ -25,7 +25,7 @@ $wyniki=$icdtcp->raport_instalacyjny( $t );
 
 $tresc='<div id="tresc">
   <h3>Wyniki</h3>
-  <form action="./?strona=wyniki&typ=instalacyjny" method="POST">
+  <form action="./?strona=instalacyjny" method="POST">
   <h4>  <input type="text" id="datepicker" name="datepicker" value="'.date('d.m.Y', $t).'">
   <input type="submit" value="Ustaw"></h4>';
 

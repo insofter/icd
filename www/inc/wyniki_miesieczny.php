@@ -22,7 +22,7 @@ $wyniki=$icdtcp->raport_miesieczny( $t );
 
 $tresc='<div id="tresc">
   <h3>Wyniki</h3>
-  <form action="./?strona=wyniki&typ=miesieczny" method="POST">
+  <form action="./?strona=miesieczny" method="POST">
 <h4>  <input type="text" id="datepicker" name="datepicker" value="'.date('d.m.Y', $t).'">
   <input type="submit" value="Ustaw"></h4>';
 
