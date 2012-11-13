@@ -55,29 +55,22 @@ class c_wifi {
     exec( 'sudo wpa_cli -i wlan0 enable_network '.$num );
     exec( 'sudo wpa_cli -i wlan0 reassociate' );
     exec( 'sudo wpa_cli -i wlan0 save_config' );
-
+    exec( 'icd-wifi-cfg to' );
   }
   function deln($n) {
     exec( 'sudo wpa_cli -i wlan0 remove_network '.((int)$n), $out );
     exec( 'sudo wpa_cli -i wlan0 save_config' );
-
+    exec( 'icd-wifi-cfg to' );
   }
   function enab($n) {
     exec( 'sudo wpa_cli -i wlan0 enable_network '.((int)$n), $out );
     exec( 'sudo wpa_cli -i wlan0 save_config' );
-
+    exec( 'icd-wifi-cfg to' );
   }
   function disb($n) {
     exec( 'sudo wpa_cli -i wlan0 disable_network '.((int)$n), $out );
     exec( 'sudo wpa_cli -i wlan0 save_config' );
-
+    exec( 'icd-wifi-cfg to' );
   }
-  function cfg_to_db() {
-    //TODO:
-  }
-  function cfg_from_db() {
-    //TODO:
-  }
-
 
 }

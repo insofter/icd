@@ -195,5 +195,21 @@ namespace icd
 		stmt.finalize();
 		return list;
 	}
+
+	std::vector<std::string> config::list_like(const std::string &name)
+	{
+		std::vector<std::string> list;
+		sqlite3cc::stmt stmt(db);
+    std::string like="%";
+    like+=name;
+    like+="%";
+		const char *sql = "SELECT name FROM config_section WHERE name LIKE ?1";
+		stmt.prepare(sql);
+    stmt.bind_text(1, like.c_str());
+		while (stmt.step() == SQLITE_ROW)
+			list.push_back(stmt.column_text(0));
+		stmt.finalize();
+		return list;
+	}
 }
 

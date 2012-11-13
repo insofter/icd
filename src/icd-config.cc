@@ -38,6 +38,7 @@ class command_parser
     void run_add_section();
     void run_rm_section();
     void run_list_sections();
+    void run_list_like();
 };
 
 void command_parser::run()
@@ -62,6 +63,8 @@ void command_parser::run()
       run_rm_section();
     else if (std::string(argv[optind]).compare("list-sections") == 0)
       run_list_sections();
+    else if (std::string(argv[optind]).compare("list-like") == 0)
+      run_list_like();
     else
       throw std::runtime_error(std::string("Unknown command '") + argv[optind] + "'");
   }
@@ -163,6 +166,16 @@ void command_parser::run_list_sections()
   optind += 1;
 }
 
+void command_parser::run_list_like()
+{
+  check_num_of_args(1);
+  std::string section = argv[optind + 1];
+  std::vector<std::string> list = config.list_like( section );
+  std::vector<std::string>::iterator i;
+  for (i = list.begin() ; i < list.end(); i++)
+    std::cout << (*i) << std::endl;
+  optind += 2;
+}
 //------------------------------------------------------------------------------
 
 void print_usage(char *argv0)
@@ -182,6 +195,7 @@ void print_usage(char *argv0)
     "  add-section SECTION\n"
     "  rm-section SECTION\n"
     "  list-sections\n"
+    "  list-like\n"
     "\n"
     "Options:\n"
     "  -d|--db=DB_NAME              Database file path; Mandatory option\n"

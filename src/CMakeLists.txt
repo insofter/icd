@@ -90,4 +90,4 @@ target_link_libraries(icd-fc-daemon db-config daemonizer
 
 
 install (TARGETS icd-config icd-sql icd-itd-daemon icd-fc-daemon
-  icd-transfer-data icd-cron DESTINATION bin)
+  icd-transfer-data icd-cron icd-flush-db icd-test DESTINATION bin)

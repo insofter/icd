@@ -1,24 +1,6 @@
 #!/bin/sh
 
-cat << EOWPASUPPLCONF > /tmp/wpa_suppl.conf
-ctrl_interface=/var/run/wpa_supplicant
-ctrl_interface_group=wheel
-update_config=1
-
-network={
-  ssid="IFirma"
-  psk="Insofter8971002738"
-  key_mgmt=WPA-PSK
-  auth_alg=OPEN
-}
-
-network={
-  ssid="insofter"
-  psk="insofter"
-  key_mgmt=WPA-PSK
-  auth_alg=OPEN
-}
-EOWPASUPPLCONF
+icd-wifi-cfg from
 
 touch /tmp/log/wpa_supplicant.log
 chmod 644 /tmp/log/wpa_supplicant.log

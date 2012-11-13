@@ -1,0 +1,76 @@
+#!/bin/bash
+
+case $1 in	
+
+  from) #FROM database
+#header
+    cat << WPA_HEAD > /tmp/wpa_suppl.conf
+ctrl_interface=/var/run/wpa_supplicant
+ctrl_interface_group=wheel
+update_config=1
+
+WPA_HEAD
+
+    for x in `icd-config --db=$ICD_CONFIG_DB list-like wifinet | sed -e 's/ /~/g'` #get all networks `space' to `~'
+    do
+      y=`echo $x | sed -e 's/~/ /g'`
+      echo "network={" >> /tmp/wpa_suppl.conf #begin of network record
+      echo -n "  ssid=" >> /tmp/wpa_suppl.conf #ssid
+      echo $y | sed -e 's/wifinet-//g' >> /tmp/wpa_suppl.conf
+      icd-config --separator='=' --db=$ICD_CONFIG_DB list "$y" | sed -e "s/$y=/  /g" >> /tmp/wpa_suppl.conf #get all parameters for network y
+      echo -e "}\n" >> /tmp/wpa_suppl.conf #end of network record
+    done
+
+    ;;
+
+
+  to) #TO database
+    for x in `icd-config --db=$ICD_CONFIG_DB list-like wifinet | sed -e 's/ /~/g'`
+    do
+      y=`echo $x | sed -e 's/~/ /g'`
+      if [ "$y" != 'wifinet-"insofter"' ] && [ "$y" != 'wifinet-"IFirma"' ] #remove all sections except 2 defaults
+      then
+        icd-config --db=$ICD_CONFIG_DB rm-section "$y"
+      fi
+    done
+
+#make every network record oneline and remove header
+    for x in `cat /tmp/wpa_suppl.conf | tail -n +5 \
+      | sed '/^$/d' \
+      | sed -e 's/^[ \t]*//' \
+      | sed -e 's/ /~/g' \
+      | tr '\n' ';'\
+      | sed -e "s/network=//g;" \
+      | sed -e 's/{;//g; s/;};/\n/g'`
+  do
+    for y in `echo $x | sed -e 's/;/\n/g'` #unpack oneline record to multiline
+    do
+      if echo $y | grep -q 'ssid=' #get section
+      then
+        sect=`echo wifinet-$y | grep ssid | sed -e 's/~/ /g; s/ssid=//g'`
+      fi
+    done
+    icd-config --db=$ICD_CONFIG_DB add-section "$sect" > /dev/null 2>&1 #add this section
+
+    for y in `echo $x | sed -e 's/;/\n/g'` #add other parameters to db
+    do
+      if echo $y | grep -q -v 'ssid=' 
+      then #divided for keys and values
+        key=`echo $y | grep -v 'ssid=' | sed -e 's/~/ /g' | awk -F '=' '{ print $1 }'`
+        val=`echo $y | grep -v 'ssid=' | sed -e 's/~/ /g' | awk -F '=' '{ print $2 }'`
+        icd-config --db=$ICD_CONFIG_DB set "$sect" "$key" "$val"
+      fi
+
+    done
+
+  done
+
+  ;;
+
+esac
+
+
+
+
+
+

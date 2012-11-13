@@ -34,6 +34,7 @@ namespace icd
       void add_section(const std::string& name);
       void remove_section(const std::string& name);
       std::vector<std::string> list_sections();
+      std::vector<std::string> list_like(const std::string& name);
 
     private:
       sqlite3cc::conn& db;
