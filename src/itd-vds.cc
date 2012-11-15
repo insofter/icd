@@ -695,7 +695,7 @@ namespace icd
       std::string counter_name = "counter" + to_string(i);
 
       bool enabled  = config.entry_bool(counter_name, "enabled", false);
-      long counter_id = config.entry_long(counter_name, "id", 0);
+      long counter_id = config.entry_long(counter_name, "counter_id", 0);
       std::string dev_name = config.entry(counter_name, "dev");
       long engage_delay_ms = config.entry_long(counter_name, "dev-engage", 200);
       long release_delay_ms = config.entry_long(counter_name, "dev-release", 200);
