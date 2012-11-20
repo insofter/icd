@@ -56,6 +56,9 @@ void Clog::okParams( int percent, const std::string & cmd ) {
     case SHORT:
       print_percent( percent );
       break;
+    case WWW:
+      std::cout << cmd << " :: ";
+      break;
 
     case LONG:
       std::cout << std::endl << "[" << percent << "%] " << std::endl
@@ -65,7 +68,7 @@ void Clog::okParams( int percent, const std::string & cmd ) {
   }
 }
  
-void Clog::okSoap( int percent, const std::string & servQuery ) {
+void Clog::okSoap( int percent, const std::string & servQuery, bool longOutput ) {
   sprintf(progress+12,"%3i%%", percent);
 ////  globalConfig->set_entry("current","last-send-status", progress);
 
@@ -76,6 +79,13 @@ void Clog::okSoap( int percent, const std::string & servQuery ) {
   switch( _log ) {
     case SHORT:
       print_percent( percent );
+      break;
+    case WWW:
+      if( longOutput ) {
+        std::cout << "(" << percent << "%)" << std::endl << servQuery << std::endl;
+      } else {
+        std::cout << servQuery << " :: ";
+      }
       break;
 
     case LONG:
@@ -88,7 +98,7 @@ void Clog::okSoap( int percent, const std::string & servQuery ) {
 }
 
  
-void Clog::okServerAns( int percent, const std::string & servAns ) {
+void Clog::okServerAns( int percent, const std::string & servAns, bool longOutput ) {
   sprintf(progress+12,"%3i%%", percent);
 //  globalConfig->set_entry("current","last-send-status", progress);
   std::fstream sendstat( "/tmp/last-send-status",  std::ios_base::trunc | std::ios_base::out );
@@ -98,6 +108,13 @@ void Clog::okServerAns( int percent, const std::string & servAns ) {
   switch( _log ) {
     case SHORT:
       print_percent( percent );
+      break;
+    case WWW:
+      if( longOutput ) {
+        std::cout << ":: (" << percent << "%)" << std::endl << servAns << std::endl;
+      } else {
+        std::cout << servAns << std::endl;
+      }
       break;
 
     case LONG:
@@ -123,6 +140,12 @@ void Clog::errParams( int percent, const std::string & cmd,
   switch( _log ) {
     case SHORT:
       std::cout << ss.str() << std::endl;
+      break;
+    case WWW:
+      std::cout << std::endl << "Błąd przygotowania danych dla polecenia \""
+        << cmd << "\":" << std::endl << "    "
+        << err
+        << std::endl;
       break;
 
     case LONG:
@@ -150,6 +173,12 @@ void Clog::errSoap( int percent, const std::string & soapTxt,
     case SHORT:
       printf("%s\n", ss );
       break;
+    case WWW:
+      std::cout << std::endl
+        << "Błąd połączenia: "<< err
+        << std::endl << "    " << "SOAP: " << soapTxt
+        << std::endl;
+      break;
 
     case LONG:
       std::cout << "[" << percent << "%] " << std::endl
@@ -175,6 +204,11 @@ void Clog::errServerAns( int percent, const std::string & servAns,
   switch( _log ) {
     case SHORT:
       std::cout << ss.str() << std::endl;
+      break;
+    case WWW:
+      std::cout << std::endl
+        << "Błąd polecenia: " << errName
+        << std::endl << "    " << servAns << std::endl;
       break;
 
     case LONG:
@@ -212,6 +246,15 @@ void Clog::done( int warn ) {
     case SHORT:
       std::cout << ss.str() << std::endl;
       break;
+    case WWW:
+      std::cout << std::endl;
+      if( warn == 0 ) {
+        std::cout << "Transfer OK" << std::endl;
+      } else {
+        std::cout << "Ilość ostrzeżeń: " << warn << std::endl;
+      }
+      break;
+
     case LONG:
       std::cout << std::endl << "[100%] " << std::endl;
       if( warn == 0 ) {
@@ -236,6 +279,10 @@ void Clog::error( int err ) {
     case SHORT:
       std::cout << ss.str() << std::endl;
       break;
+    case WWW:
+      std::cout << "ERRORS: Ilość błedów: " << err << std::endl;
+      break;
+
     case LONG:
       std::cout << std::endl << "[100%] " << std::endl;
       std::cout << "--ERRORS: Ilość błedów: " << err << std::endl;
@@ -249,6 +296,8 @@ void Clog::errTrInProgress() {
     case SHORT:   //0123456789012345
       std::cout << "--TR IN PROGRESS" << std::endl;
       break;
+
+    case WWW:
     case LONG:
       std::cout << "--ERR Komunikacja w tle." << std::endl;
       break;

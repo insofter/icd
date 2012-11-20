@@ -310,6 +310,8 @@ int main( int argc, char *argv[] ) {
         //printf("%s", optarg);
         if( strcmp(optarg, "short")==0 ) {
           log._log=Clog::SHORT;
+        } else if( strcmp(optarg, "www")==0 ) {
+          log._log=Clog::WWW;
         } else if( strcmp(optarg, "long")==0 ) {
           log._log=Clog::LONG;
         } 
@@ -464,7 +466,7 @@ MIN:
           service.soap_fault_detail(), ans, "Błąd transmisji" );              //
       exit(1);                                                                //
     }                                                                         //
-    log.okSoap( 20+PROCENT_NA_TRANSFER*(aktPaczka*3+2)/(ilPaczek*3), s );     //
+    log.okSoap( 20+PROCENT_NA_TRANSFER*(aktPaczka*3+2)/(ilPaczek*3), s, true );     //
     //
     commitData( *rdata.message, ilDanych );                                   //
     //
@@ -475,7 +477,7 @@ MIN:
       break;                                                                  //
     } else {                                                                  //
       log.okServerAns( 20+PROCENT_NA_TRANSFER*(aktPaczka*3+3)/(ilPaczek*3),   // 
-          *(rdata.message) );                                                 //
+          *(rdata.message), true );                                                 //
     }                                                                         //
     ++aktPaczka;                                                              //
   }                                                                           //

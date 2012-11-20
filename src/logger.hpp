@@ -31,7 +31,7 @@ protected:
   bool destrLock;
 
 public:
-  enum log_type { SILENT, SHORT, LONG };
+  enum log_type { SILENT, SHORT, WWW, LONG };
 
 //protected:
   log_type _log;
@@ -59,14 +59,14 @@ public:
    * @param percent Precent.
    * @param servQuery Data send to server.
    */
-  void okSoap( int percent, const std::string & servQuery );
+  void okSoap( int percent, const std::string & servQuery, bool longOutput=false );
 
   /**
    * Positive server answer.
    * @param percent Precent.
    * @param servAns Server answer.
    */
-  void okServerAns( int percent, const std::string & servAns );
+  void okServerAns( int percent, const std::string & servAns, bool longOutput=false );
 
   /**
    * Error with creating parameters.
