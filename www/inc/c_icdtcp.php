@@ -408,26 +408,46 @@ class c_icdtcp {
       ."flags FROM flow WHERE dtm >= ".$od." AND dtm < ".$do." ORDER BY dtm, counter_id ASC";
 
     $ans=$this->dataDb->query($sql);
-
     $ans->setFetchMode(PDO::FETCH_ASSOC);
     foreach( $ans as $row ) {
-      $wyniki[ 'values' ][]=$row;
-
-      $wyniki['counters'][ $row['counter_id' ] ] = NULL;
+      $datawyniki[ 'values' ][]=$row;
+      $datawyniki['counters'][ $row['counter_id' ] ] = NULL;
     }
 
-    if( isset( $wyniki[ 'counters' ] ) ) {
-      foreach( $wyniki[ 'counters' ] as $counter=>&$name ) {
-        $sql="SELECT value FROM config WHERE key = 'name' AND section_id = ( SELECT section_id FROM config WHERE key = 'counter_id' AND value = $counter )";
-        $ans=$this->configDb->query($sql);
+    if( isset( $datawyniki[ 'counters' ] ) ) {
+      foreach( $datawyniki[ 'counters' ] as $counter=>&$name ) {
+        $sql2="SELECT value FROM config WHERE key = 'name' AND section_id = ( SELECT section_id FROM config WHERE key = 'counter_id' AND value = $counter )";
+        $ans=$this->configDb->query($sql2);
         $ans->setFetchMode(PDO::FETCH_ASSOC);
         $row=$ans->fetch();
         $name = $row[ 'value' ];
       }
       unset( $name );
 
-      return $wyniki;
+      $wyniki['data']=$datawyniki;
     }
+
+
+    $ans=$this->liveDb->query($sql);
+    $ans->setFetchMode(PDO::FETCH_ASSOC);
+    foreach( $ans as $row ) {
+      $livewyniki[ 'values' ][]=$row;
+      $livewyniki['counters'][ $row['counter_id' ] ] = NULL;
+    }
+
+    if( isset( $livewyniki[ 'counters' ] ) ) {
+      foreach( $livewyniki[ 'counters' ] as $counter=>&$name ) {
+        $sql2="SELECT value FROM config WHERE key = 'name' AND section_id = ( SELECT section_id FROM config WHERE key = 'counter_id' AND value = $counter )";
+        $ans=$this->configDb->query($sql2);
+        $ans->setFetchMode(PDO::FETCH_ASSOC);
+        $row=$ans->fetch();
+        $name = $row[ 'value' ];
+      }
+      unset( $name );
+
+      $wyniki['live']=$livewyniki;
+    }
+    return $wyniki;
   }
 }
 
