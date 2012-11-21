@@ -23,4 +23,21 @@ do
   #check if wpa_suppl is running and check if udhcpc -i wlan0 is running or run it
   pidof wpa_supplicant && ps | grep "udhcpc -i wlan0" | grep -q -v grep || udhcpc -i wlan0 > /tmp/log/udhcpc.log 2>&1 &
 
+
+  wifiip=`icd-config --db=$ICD_CONFIG_DB sget wifi ip`
+  wifissid=`icd-config --db=$ICD_CONFIG_DB sget wifi ssid`
+  stat=`wpa_cli -i wlan0 status`
+  newip=`echo $stat | awk -F "=" ''/'ip_address'/' {print $2}'`
+  newssid=`echo $stat | grep -v bssid | awk -F "=" ''/'ssid'/' {print $2}'`
+
+  if [ "$wifiip" != "$newip" ]
+  then 
+    icd-config --db=$ICD_CONFIG_DB set wifi ip $newip
+  fi
+  if [ "$wifissid" != "$newssid" ]
+  then
+    icd-config --db=$ICD_CONFIG_DB set wifi ssid $newssid
+  fi
+
+
 done

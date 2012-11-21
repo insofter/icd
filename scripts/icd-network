@@ -34,6 +34,7 @@ start_network()
 
   print_info "Starting network..."
 
+  ifconfig ${interface} hw ether `icd-config --db="${ICD_CONFIG_DB}" sget tcpip mac` && print_info "Setting MAC..."  #new, try to set mac from db
   ifconfig ${interface} up
 
   dhcp=`icd-config --db="${ICD_CONFIG_DB}" get tcpip dhcp | cut -d: -f3`

@@ -193,7 +193,7 @@ MIN:
 
     pl=new CmenuDbParamList( "Aktualna" );
     pl->itemAdd( "DHCP", "current", "dhcp" );
-    pl->itemAdd( "Adres IP", "current", "ip" );
+    pl->itemAdd( "Adres IP (Eth)", "current", "ip" );
     pl->itemAdd( "Maska", "current", "mask" );
     pl->itemAdd( "Brama", "current", "gate" );
     pl->itemAdd( "DNS 1", "current", "dns1" );
@@ -202,7 +202,7 @@ MIN:
 
     pl=new CmenuDbParamList( "Statyczna" );
     pl->itemAdd( "DHCP", "tcpip", "dhcp", CdbParam::editBool );
-    pl->itemAdd( "Adres IP", "tcpip", "ip", CdbParam::editIp );
+    pl->itemAdd( "Adres IP (Eth)", "tcpip", "ip", CdbParam::editIp );
     pl->itemAdd( "Maska", "tcpip", "mask", CdbParam::editIp );
     pl->itemAdd( "Brama", "tcpip", "gate", CdbParam::editIp );
     pl->itemAdd( "DNS 1", "tcpip", "dns1", CdbParam::editIp );
@@ -210,6 +210,8 @@ MIN:
     item->itemAdd( pl );
 
     pl=new CmenuDbParamList( "WiFi" );
+    pl->itemAdd( "Adres IP (WiFi)", "wifi", "ip" );
+    pl->itemAdd( "Sieć bezprzewod.", "wifi", "ssid" );
     item->itemAdd( pl );
 
     pl=new CmenuDbParamList( "GSM" );
@@ -236,20 +238,17 @@ MIN:
     CmenuContainerNoRoot *mainMenu = new CmenuContainerNoRoot( menu, new CmenuItemTimeFoto( 1, 2 ) );
     mainMenu->itemAdd( new CmenuItemTimeFoto( 3, 4 ) );
     mainMenu->itemAdd( new CmenuItemIdds );
-    mainMenu->itemAdd( new CmenuItemDbParam( "Adres IP", "current", "ip" ) );
+    mainMenu->itemAdd( new CmenuItemDbParam( "Adres IP (Eth)", "current", "ip" ) );
+    mainMenu->itemAdd( new CmenuItemDbParam( "Adres IP (WiFi)", "wifi", "ip" ) );
+    mainMenu->itemAdd( new CmenuItemDbParam( "Sieć bezprzewod.", "wifi", "ssid" ) );
     mainMenu->itemAdd( new CmenuItemFileParam( "Status wysyłania", "/tmp/last-send-status" ) );
-//    mainMenu->itemAdd( new CmenuItemDbParam( "Status wysyłania", "current", "last-send-status" ) );
     std::string cmd;
-    cmd="icd-flush-db && icd-transfer-data --log=short";// --db=\"";
-//    cmd+=db_name;
-//    cmd+="\"";
+    cmd="icd-flush-db && icd-transfer-data --log=short";
     int conntestid=mainMenu->fastAdd( 
         new CmenuItemRunTestApp( "Test połączenia", "> Uruchomić?",
           cmd, "Test połączenia*", "Test połączenia" ) );
 
-    cmd="icd-test --log=short";// --db=\"";
-//    cmd+=db_name;
-//    cmd+="\"";
+    cmd="icd-test --log=short";
     int fototestid=mainMenu->fastAdd( 
         new CmenuItemRunTestApp( "Test fotokomórek","> Testuj",
           cmd, "Test fotokomórek", "", true ) );
