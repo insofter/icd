@@ -3,8 +3,8 @@ defined('INSOFTER') or die('<h1>Your Kung-Fu is too weak.</h1>');
 
 $icdtcp = new c_icdtcp();
 
-require_once('inc/c_wpa.php');
-$wpa = new c_wpa();
+require_once('inc/c_wifi.php');
+$wpa = new c_wifi();
 
 if( isset( $_POST['nazwa_pliku'] ) )
 {

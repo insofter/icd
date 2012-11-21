@@ -9,7 +9,7 @@ $t=mktime( 0, 0, 0, date("n"), date("j"), date("Y") );
 if( isset( $_POST['datepicker'] ) ) {
   $tab=explode( '.',  $_POST['datepicker'] );
   if( count( $tab ) == 3 ) {
-    $t=mktime(0, 0, 0, $tab[1], $tab[0], $tab[2] );
+    $t=mktime(0, 0, 0, $tab[1], $tab[2], $tab[0] );
   }
 }
 
@@ -23,7 +23,7 @@ $wyniki=$icdtcp->raport_miesieczny( $t );
 $tresc='<div id="tresc">
   <h3>Wyniki</h3>
   <form action="./?strona=miesieczny" method="POST">
-<h4>  <input type="text" id="datepicker" name="datepicker" value="'.date('d.m.Y', $t).'">
+<h4>  <input type="text" id="datepicker" name="datepicker" value="'.date('Y.m.d', $t).'">
   <input type="submit" value="Ustaw"></h4>';
 
 if( isset( $wyniki['counters'] ) ) {
@@ -38,7 +38,7 @@ $tresc.='<table border=1>
   $tresc.='<td>sumy</td></tr>';
 
   foreach( $wyniki['values'] as $dtm=>$cnt ) {
-    $tresc.='<tr><td>'.date( 'j.m', $dtm+3600 ).'</td>';
+    $tresc.='<tr><td>'.date( 'm.d', $dtm+3600 ).'</td>';
 
     $sum=0;
     foreach( $wyniki['counters'] as $id=>$name ) {
@@ -68,7 +68,7 @@ $tresc.='<table border=1>
 
   $tresc.='<td>'.number_format( $ccsum, 0, '', ',' ).'</td></tr></table>';
 } else {
-$tresc.='<h4 id="err">Brak wyników dla '.date('m.Y', $t).'r.</h4>';
+$tresc.='<h4 id="err">Brak wyników dla '.date('Y.m', $t).'r.</h4>';
 }
   $tresc.='</div>';
 ?>

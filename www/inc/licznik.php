@@ -88,8 +88,8 @@ for( $i=0; $i<4; ++$i ) {
   $tresc.='</select>
     </td>';
 }
-$tresc.='</tr>
-  <tr><th>Wyłącznik czasowy</th>';
+$tresc.='</tr>';/*
+$tresc.='<tr><th>Wyłącznik czasowy</th>';
 for( $i=0; $i<4; ++$i ) {
         $tresc.='<td><select name="enab['.$i.']" id="enab'.$i.'">';
   foreach( $icdtcp->urzadzenia as $wart=>$opis ) {
@@ -173,9 +173,8 @@ for( $i=0; $i<4; ++$i ) {
   $tresc.='</select>
     </td>';
 }
-$tresc.='</tr>
-    </tr></table><br><br>';
-//}
+$tresc.='</tr>';*/
+$tresc.='</table><br><br>';
 
 $tresc.='
   </table>

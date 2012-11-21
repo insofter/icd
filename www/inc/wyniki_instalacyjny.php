@@ -11,7 +11,7 @@ $t=mktime( 0, 0, 0, date("n"), date("j"), date("Y") );
 if( isset( $_POST['datepicker'] ) ) {
   $tab=explode( '.',  $_POST['datepicker'] );
   if( count( $tab ) == 3 ) {
-    $t=mktime(0, 0, 0, $tab[1], $tab[0], $tab[2] );
+    $t=mktime(0, 0, 0, $tab[1], $tab[2], $tab[0] );
   }
 }
 
@@ -26,7 +26,7 @@ $wyniki=$icdtcp->raport_instalacyjny( $t );
 $tresc='<div id="tresc">
   <h3>Wyniki</h3>
   <form action="./?strona=instalacyjny" method="POST">
-  <h4>  <input type="text" id="datepicker" name="datepicker" value="'.date('d.m.Y', $t).'">
+  <h4>  <input type="text" id="datepicker" name="datepicker" value="'.date('Y.m.d', $t).'">
   <input type="submit" value="Ustaw"></h4>';
 
 if( isset( $wyniki['counters'] ) ) {
@@ -48,11 +48,9 @@ if( isset( $wyniki['counters'] ) ) {
     $tresc.='<tr>';
     $tresc.='<td><small>'.number_format( $row[ 'id' ], 0, '', ',' ).'</small></td>';
     $tresc.='<td>'
-      .date( 'H', $row[ 'dtm' ] )
-      .'<sup>'
-      .date('i', $row[ 'dtm' ] )
-      .'</sup>,&nbsp;&nbsp;&nbsp;'
-      .date('d.m.Y', $row[ 'dtm' ] )
+      .date( 'Y.m.d', $row[ 'dtm' ] )
+      .'&nbsp;&nbsp;'
+      .date( 'H:i', $row[ 'dtm' ] )
       .'</td>';
 
     $tresc.='<td>'.$wyniki['counters'][ $row[ 'counter_id' ] ]

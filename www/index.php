@@ -24,7 +24,7 @@ $naglowekcd='</title>
   <script src="js/jquery-ui.js"></script>
   <script>
   $(function() {
-  $( "#datepicker" ).datepicker({ dateFormat: "dd.mm.yy", duration: "fast" });
+  $( "#datepicker" ).datepicker({ dateFormat: "yy.mm.dd", duration: "fast" });
     });
   </script>
   ';
