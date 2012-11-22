@@ -26,9 +26,8 @@ do
 
   wifiip=`icd-config --db=$ICD_CONFIG_DB sget wifi ip`
   wifissid=`icd-config --db=$ICD_CONFIG_DB sget wifi ssid`
-  stat=`wpa_cli -i wlan0 status`
-  newip=`echo $stat | awk -F "=" ''/'ip_address'/' {print $2}'`
-  newssid=`echo $stat | grep -v bssid | awk -F "=" ''/'ssid'/' {print $2}'`
+  newip=`wpa_cli -i wlan0 status | awk -F "=" ''/'ip_address'/' {print $2}'`
+  newssid=`wpa_cli -i wlan0 status | grep -v bssid | awk -F "=" ''/'ssid'/' {print $2}'`
 
   if [ "$wifiip" != "$newip" ]
   then 
