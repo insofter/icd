@@ -34,6 +34,7 @@ add_library(syslogstream syslogstream.cc)
 add_library(threads threads.cc)
 add_library(virtual-device virtual-device.cc)
 add_library(itd-vds itd-vds.cc)
+add_library(itd-device itd-device.cc)
 #add_library(transfer-agent transfer-agent.cc)
 #nowe lcd
 add_library(lcd-driver lcd-driver.cpp)
@@ -52,7 +53,7 @@ target_link_libraries(icd-itd-daemon itd-vds virtual-device threads
   db-config daemonizer syslogstream sqlite3 version pthread)
 
 add_executable(icd-test icd-test.cc)
-target_link_libraries(icd-test db-config sqlite3 version)
+target_link_libraries(icd-test itd-device db-config sqlite3 version syslogstream)
 
 
 
