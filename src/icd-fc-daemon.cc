@@ -207,6 +207,7 @@ MIN:
     pl->itemAdd( "Brama", "tcpip", "gate", CdbParam::editIp );
     pl->itemAdd( "DNS 1", "tcpip", "dns1", CdbParam::editIp );
     pl->itemAdd( "DNS 2", "tcpip", "dns2", CdbParam::editIp );
+    pl->itemAdd( "MAC", "tcpip", "mac", CdbParam::editMac );
     item->itemAdd( pl );
 
     pl=new CmenuDbParamList( "WiFi" );

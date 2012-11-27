@@ -27,7 +27,8 @@ struct CdbParam {
     editBool,
     editInt,
     editIp,
-    editText
+    editText,
+    editMac
   }; 
 
   /**

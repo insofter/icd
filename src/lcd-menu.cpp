@@ -200,6 +200,7 @@ void CmenuDbParamList::screen(Clcd *lcd) {
     if( _active==-1 ) {
       lcd->_lcd[0]=name;
       lcd->_lcd[1]="..";
+      lcd->_cur._car=Ccur::none;
     } else if( _editing ) {//reparse tmp values to string with cursor
       lcd->_lcd[0]=_list[_active]._name;
       lcd->_cur._y=1;
@@ -222,6 +223,12 @@ void CmenuDbParamList::screen(Clcd *lcd) {
           sprintf(x,"%03i.%03i.%03i.%03i", _tmpi[0],  _tmpi[1], _tmpi[2], _tmpi[3] );
           lcd->_lcd[1]=x;
           lcd->_cur._x=_tmpp+(_tmpp/3);
+          break;
+        case CdbParam::editMac:
+          sprintf(x,"%02X%02X%02X%02X%02X%02X",
+              _tmpi[0],  _tmpi[1], _tmpi[2], _tmpi[3], _tmpi[4], _tmpi[5] );
+          lcd->_lcd[1]=x;
+          lcd->_cur._x=_tmpp;
           break;
         case CdbParam::editText:
           if( _tmpp>15 ) {
@@ -297,6 +304,18 @@ int CmenuDbParamList::up(Clcd *lcd) {
           _tmpi[ _tmpp/3 ]=0;
         }
         break;
+      case CdbParam::editMac:
+        //_tmpp/2 == which number is edited
+        //_tmpp%2 == which digit  is edited
+        if( _tmpp%2 == 0 ) {
+          _tmpi[ _tmpp/2 ]+=16;
+        } else {
+          _tmpi[ _tmpp/2 ]+=1;
+        }
+        if( _tmpi[ _tmpp/2 ] > 255 ) {//overflow 
+          _tmpi[ _tmpp/2 ]=0;
+        }
+        break;
       case CdbParam::editText:
         if( _typingText ) {
           _typeText.up( lcd );
@@ -338,6 +357,13 @@ int CmenuDbParamList::left(Clcd *lcd) {
         }
         break;
       case CdbParam::editIp:
+        if( _tmpp == 0 ) {
+          _tmpp=11;
+        } else {
+          --_tmpp;
+        }
+        break;
+      case CdbParam::editMac:
         if( _tmpp == 0 ) {
           _tmpp=11;
         } else {
@@ -394,6 +420,18 @@ int CmenuDbParamList::down(Clcd *lcd) {
           _tmpi[ _tmpp/3 ]=255;
         }
         break;
+      case CdbParam::editMac:
+        //_tmpp/2 == which number is edited
+        //_tmpp%2 == which digit  is edited
+        if( _tmpp%2 == 0 ) {
+          _tmpi[ _tmpp/2 ]-=16;
+        } else {
+          _tmpi[ _tmpp/2 ]-=1;
+        }
+        if( _tmpi[ _tmpp/2 ] < 0 ) {//overflow 
+          _tmpi[ _tmpp/2 ]=255;
+        }
+        break;
       case CdbParam::editText:
         if( _typingText ) {
           _typeText.down( lcd );
@@ -441,6 +479,13 @@ int CmenuDbParamList::right(Clcd *lcd) {
           ++_tmpp;
         }
         break;
+      case CdbParam::editMac:
+        if( _tmpp == 11 ) {
+          _tmpp=0;
+        } else {
+          ++_tmpp;
+        }
+        break;
       case CdbParam::editText:
         if( _typingText ) {
           _typeText.right( lcd );
@@ -481,7 +526,7 @@ int CmenuDbParamList::enter(Clcd *lcd) {
         }
         _typingText=false;
       } else {
-        char c[16];
+        char c[32];
         switch( _list[_active]._editMode ) {
           case CdbParam::editBool:
             if( _tmpi[0]==1 ) {
@@ -496,6 +541,11 @@ int CmenuDbParamList::enter(Clcd *lcd) {
             break;
           case CdbParam::editIp:
             sprintf(c,"%i.%i.%i.%i", _tmpi[0],  _tmpi[1], _tmpi[2], _tmpi[3] );
+            globalConfig->set_entry( _list[_active]._sect, _list[_active]._key, c );
+            break;
+          case CdbParam::editMac:
+            sprintf(c,"%02X:%02X:%02X:%02X:%02X:%02X",
+                _tmpi[0],  _tmpi[1], _tmpi[2], _tmpi[3], _tmpi[4], _tmpi[5] );
             globalConfig->set_entry( _list[_active]._sect, _list[_active]._key, c );
             break;
           case CdbParam::editText:
@@ -528,6 +578,18 @@ int CmenuDbParamList::enter(Clcd *lcd) {
                   _list[_active]._key) ).c_str(), "%i.%i.%i.%i", 
               _tmpi, _tmpi+1, _tmpi+2, _tmpi+3 );
           _tmpp=0; //string from db is parsed to 4 integers, editpos=0;
+          break;
+        case CdbParam::editMac:
+          _tmpi[0]=0;
+          _tmpi[1]=0;
+          _tmpi[2]=0;
+          _tmpi[3]=0;
+          _tmpi[4]=0;
+          _tmpi[5]=0;
+          sscanf( ( globalConfig->entry( _list[_active]._sect, 
+                  _list[_active]._key) ).c_str(), "%X:%X:%X:%X:%X:%X", 
+              _tmpi, _tmpi+1, _tmpi+2, _tmpi+3, _tmpi+4, _tmpi+5 );
+          _tmpp=0; //string from db is parsed to 6 hexs, editpos=0;
           break;
         case CdbParam::editText:
           _tmps=globalConfig->entry( _list[_active]._sect, _list[_active]._key);
