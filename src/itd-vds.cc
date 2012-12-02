@@ -46,6 +46,30 @@ namespace icd
       << "," << queue_empty_ << ")";
   }
 
+  itd_test test_event::result(const std::string& device) const
+  {
+    std::map<std::string,itd_test>::const_iterator it;
+    it = results_.find(device);
+    if (it == results_.end())
+      throw std::runtime_error("test_event::result device not found");
+    return it->second;
+  } 
+
+  void test_event::dbg_print(std::ostream& os) const
+  {
+    std::ostringstream oss;
+    std::map<std::string,itd_test>::const_iterator it;
+    for (it = results_.begin(); it != results_.end(); it++)
+    {
+      std::string device = it->first;
+      itd_test result = it->second;
+      oss << "," << device << "=" << result;
+    }
+
+    os << "filter_event(" << publisher() << "," << dtm() << "," << priority()
+      << oss.str() << ")";
+  }
+
   itd_vd::itd_vd(const std::string& name, const std::string& dev_path)
     : virtual_device(name)
   {
@@ -496,11 +520,56 @@ namespace icd
     blocked_time_ = time(0,0);
   }
 
+  void test_vd::set_timer_vd(virtual_device& timer_vd)
+  {
+    event_publisher& publisher = dynamic_cast<event_publisher&>(timer_vd);
+    publisher.attach_subscriber(*this);
+    timer_vd_name_ = timer_vd.name();
+  }
+
+  void test_vd::handle_event(const event& e)
+  {
+    switch(e.id())
+    {
+      case timer_event::ID:
+      {
+        const timer_event& te = static_cast<const timer_event&>(e);
+        if (te.publisher() == timer_vd_name_)
+          handle_timer_event(te);
+        else
+          syslog() << warning << "test_vd: unknown event publisher, "
+            << e << std::endl;
+        break;
+      }
+      default:
+        syslog() << debug << "test_vd: unknown event id, "
+          << e << std::endl;
+    }
+  }
+
+  void test_vd::handle_timer_event(const timer_event& te)
+  {
+    std::map<std::string,itd_test> results;
+    results = icd::itd_device::test_all();
+    test_event e(name(), te.dtm(), 30);
+    e.set_results(results);
+    syslog() << debug << "test_vd::handle_timer_event: " << e << std::endl;
+    notify_subscribers(e);
+  }
+
   void aggr_vd::set_filter_vd(virtual_device& filter)
   {
     event_publisher& publisher = dynamic_cast<event_publisher&>(filter);
     publisher.attach_subscriber(*this);
     filter_vd_name_ = filter.name();
+  }
+
+  void aggr_vd::set_test_vd(virtual_device& test, const std::string& device)
+  {
+    event_publisher& publisher = dynamic_cast<event_publisher&>(test);
+    publisher.attach_subscriber(*this);
+    test_vd_name_ = test.name();
+    device_ = device;
   }
 
   void aggr_vd::initialize()
@@ -509,13 +578,13 @@ namespace icd
     db_.busy_timeout(db_timeout_);
 
     const char *insert_sql = 
-      "INSERT INTO flow (counter_id, dtm, cnt, dark_time, work_time, flags)"
-      " VALUES (?1, ?2, ?3, ?4, ?5, ?6)";
+      "INSERT INTO flow (counter_id, dtm, cnt, dark_time, work_time, test, flags)"
+      " VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)";
     insert_stmt_.prepare(insert_sql);
 
     const char *update_sql = 
       "UPDATE flow SET cnt = ?3, dark_time = ?4,"
-      " work_time = ?5, flags = ?6 WHERE counter_id = ?1 AND dtm = ?2";
+      " work_time = ?5, test = ?6, flags = ?7 WHERE counter_id = ?1 AND dtm = ?2";
     update_stmt_.prepare(update_sql);
 
     dtm_ = time::now();
@@ -551,6 +620,16 @@ namespace icd
         const stats_event& se = static_cast<const stats_event&>(e);
         if (e.publisher() == filter_vd_name_)
           handle_stats_event(se);
+        else
+          syslog() << warning << "aggr_vd: unknown event publisher, "
+            << e << std::endl;
+        break;
+      }
+      case test_event::ID:
+      {
+        const test_event& te = static_cast<const test_event&>(e);
+        if (e.publisher() == test_vd_name_)
+          handle_test_event(te);
         else
           syslog() << warning << "aggr_vd: unknown event publisher, "
             << e << std::endl;
@@ -601,6 +680,13 @@ namespace icd
     }
   }
 
+  void aggr_vd::handle_test_event(const test_event& e)
+  {
+    test_result_ = e.result(device_);
+    syslog() << debug << "aggr_vd::handle_test_event: device_=" << device_
+      << ",test_result_=" << test_result_ << std::endl;
+  }
+
   void aggr_vd::update_flow(const flow_flag& flag)
   {
     update_stmt_.reset();
@@ -610,7 +696,8 @@ namespace icd
     update_stmt_.bind_int(3, cnt_);
     update_stmt_.bind_int64(4, blocked_time_.to_msec());
     update_stmt_.bind_int64(5, (clear_time_ + blocked_time_).to_msec());
-    update_stmt_.bind_int(6, flag);
+    update_stmt_.bind_int(6, test_result_);
+    update_stmt_.bind_int(7, flag);
     update_stmt_.step();
   }
 
@@ -625,7 +712,8 @@ namespace icd
       insert_stmt_.bind_int(3, cnt_);
       insert_stmt_.bind_int64(4, blocked_time_.to_msec());
       insert_stmt_.bind_int64(5, (clear_time_ + blocked_time_).to_msec());
-      insert_stmt_.bind_int(6, FLOW_FLAG_OPEN);
+      insert_stmt_.bind_int(6, test_result_);
+      insert_stmt_.bind_int(7, FLOW_FLAG_OPEN);
       insert_stmt_.step();
     }
     catch(std::exception& e)
@@ -688,6 +776,11 @@ namespace icd
     aggr_timer->set_aggr_period(time::from_mins(aggr_period_mins));
     add(aggr_timer);
 
+    test_vd* test = new test_vd("test0");
+    test->set_delay(time::from_msec(0));
+    test->set_timer_vd(*aggr_timer);
+    add(test);
+
     event_logger_vd* event_logger = NULL;
 
     for (int i = 0; i < 4; i++)
@@ -733,7 +826,7 @@ namespace icd
       aggr_vd* aggr = new aggr_vd("aggr" + to_string(i), data_db_name_, db_timeout_);
       aggr->set_delay(time::from_msec(500));
       aggr->set_filter_vd(*filter);
-      aggr->set_aggr_period(time::from_mins(aggr_period_mins));
+      aggr->set_test_vd(*test, dev_name);
       aggr->set_counter_id(counter_id);
       add(aggr);
 

@@ -3,17 +3,18 @@
 
 #include "sqlite3cc.h"
 #include "virtual-device.h"
+#include "itd-device.h"
 #include <fstream>
 
 namespace icd
 {
-  enum itd_state
+/*  enum itd_state
   {
     ITD_STATE_UNKNOWN = -1,
     ITD_STATE_CLEAR = 0,
     ITD_STATE_BLOCKED = 1,
   };
-
+*/
   class itd_event : public event
   {
   public:
@@ -84,6 +85,27 @@ namespace icd
 
   private:
     bool queue_empty_;
+
+    virtual void dbg_print(std::ostream& os) const;
+  };
+
+  class test_event : public event
+  {
+  public:
+    enum { ID = 104 };
+
+    test_event(const std::string& publisher, const time& dtm, int priority = 0)
+      : event(publisher, dtm, ID, priority) {}
+    virtual ~test_event() {}
+
+    virtual event *clone() const { return new test_event(*this); }
+
+    void set_results(const std::map<std::string,itd_test>& results) { results_ = results; }
+    std::map<std::string,itd_test> results() const { return results_; }
+    itd_test result(const std::string& device) const;
+
+  private:
+    std::map<std::string,itd_test> results_;
 
     virtual void dbg_print(std::ostream& os) const;
   };
@@ -227,19 +249,33 @@ namespace icd
     void set_led_state(bool on);
   };
 
+  class test_vd : public event_subscriber, public event_publisher
+  {
+  public:
+    test_vd(const std::string& name)
+      : event_subscriber(name) {}
+    virtual ~test_vd() {}
+
+    void set_timer_vd(virtual_device& timer_vd);
+
+  private:
+    std::string timer_vd_name_;
+
+    virtual void handle_event(const event& e);
+
+    void handle_timer_event(const timer_event& e);
+  };
+
   class aggr_vd : public event_subscriber
   {
   public:
     aggr_vd(const std::string& name, const std::string& db_name, int db_timeout)
       : event_subscriber(name), db_name_(db_name), db_timeout_(db_timeout),
-        aggr_period_(15,0), counter_id_(0),  insert_stmt_(db_), update_stmt_(db_), 
-        cnt_(0) {}
+        insert_stmt_(db_), update_stmt_(db_), counter_id_(0), cnt_(0) {}
     virtual ~aggr_vd() {}
 
-    time aggr_period() const { return aggr_period_; }
-
     void set_filter_vd(virtual_device& filter_vd);
-    void set_aggr_period(const time& aggr_period) { aggr_period_ = aggr_period; }
+    void set_test_vd(virtual_device& test_vd, const std::string& device);
     void set_counter_id(long counter_id) { counter_id_ = counter_id; }
 
   private:
@@ -249,18 +285,22 @@ namespace icd
       FLOW_FLAG_COMPLETE = 2
     };
 
+    std::string filter_vd_name_;
+    std::string test_vd_name_;
+    std::string device_;
+
     std::string db_name_;
     int db_timeout_;
-    time aggr_period_;
-    long counter_id_;
-    std::string filter_vd_name_;
     sqlite3cc::conn db_;
     sqlite3cc::stmt insert_stmt_;
     sqlite3cc::stmt update_stmt_;
+
+    long counter_id_;
     time dtm_;
     int cnt_;
     time clear_time_;
     time blocked_time_;
+    itd_test test_result_;
 
     virtual void handle_event(const event& e);
     virtual void initialize();
@@ -268,6 +308,7 @@ namespace icd
 
     void handle_itd_event(const itd_event& e);
     void handle_stats_event(const stats_event& e);
+    void handle_test_event(const test_event& e);
     void insert_flow();
     void update_flow(const flow_flag& flag);
   };

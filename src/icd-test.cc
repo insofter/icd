@@ -143,29 +143,25 @@ int main(int argc, char *argv[])
 
     if (!exit)
     {
-      std::vector<icd::itd_test> tests;
-      tests = icd::itd_device::test_all();
+      std::map<std::string,icd::itd_test> results;
+      results = icd::itd_device::test_all();
 
+      std::map<std::string,icd::itd_test>::const_iterator it;
       if (format == "raw")
       {
-        std::vector<icd::itd_test>::const_iterator it;
-        for (it = tests.begin(); it != tests.end(); it++)
-          std::cout << (*it) << " ";
-        std::cout << std::endl;
+        for (it = results.begin(); it != results.end(); it++)
+           std::cout << it->second << " ";
+         std::cout << std::endl;
       }
       else if (format == "short")
       {
-        int dev_id = 0;
-        std::vector<icd::itd_test>::const_iterator it;
-        for (it = tests.begin(); it != tests.end(); dev_id++, it++)
-          std::cout << "itd" << dev_id << ":" << (*it) << std::endl;
+        for (it = results.begin(); it != results.end(); it++)
+          std::cout << it->first << ":" << it->second << std::endl;
       }
       else // if (format == "long")
       {
-        int dev_id = 0;
-        std::vector<icd::itd_test>::const_iterator it;
-        for (it = tests.begin(); it != tests.end(); dev_id++, it++)
-          std::cout << "itd" << dev_id << ":" << it->to_string() << std::endl;
+        for (it = results.begin(); it != results.end(); it++)
+          std::cout << it->first << ":" << it->second.to_string() << std::endl;
       }
     }
   }

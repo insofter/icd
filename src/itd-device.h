@@ -2,7 +2,7 @@
 #define __ITD_DEVICE_H__
 
 #include <string>
-#include <vector>
+#include <map>
 #include <fstream>
 
 namespace icd
@@ -75,7 +75,7 @@ namespace icd
       int queue_len();
       itd_test test();
 
-      static std::vector<itd_test> test_all();
+      static std::map<std::string,itd_test> test_all();
 
     private:
       template<class T>

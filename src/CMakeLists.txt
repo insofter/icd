@@ -49,7 +49,7 @@ add_executable(icd-sql icd-sql.cc)
 target_link_libraries(icd-sql sqlite3 version)
 
 add_executable(icd-itd-daemon icd-itd-daemon.cc)
-target_link_libraries(icd-itd-daemon itd-vds virtual-device threads
+target_link_libraries(icd-itd-daemon itd-vds virtual-device threads itd-device
   db-config daemonizer syslogstream sqlite3 version pthread)
 
 add_executable(icd-test icd-test.cc)

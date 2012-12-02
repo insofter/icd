@@ -166,9 +166,9 @@ namespace icd
     return itd_test(value);
   }
 
-  std::vector<itd_test> itd_device::test_all()
+  std::map<std::string,itd_test> itd_device::test_all()
   {
-    std::vector<itd_test> tests;
+    std::map<std::string,itd_test> results;
     std::string path = sysfs_drv_path_ + "/test";
     std::ifstream is;
 
@@ -180,19 +180,25 @@ namespace icd
     if (!getline(is, line))
       throw_ios_reading_failure(path);
 
+    int dev_id = 0;
     std::istringstream iss(line);
     iss >> std::ws;
     while (!iss.eof())
     {
+      std::ostringstream oss;
+      oss << "itd" << dev_id;
+      std::string key = oss.str();
+
       int value;
       iss >> value >> std::ws;
       if (!iss)
          throw_ios_reading_failure(path);
 
-      tests.push_back(value);
+      results.insert(std::pair<std::string,itd_test>(key, value));
+      ++dev_id;
     }
 
-    return tests;
+    return results;
   }
 
   void itd_device::throw_ios_reading_failure(const std::string& file)
