@@ -181,6 +181,8 @@ namespace icd
     aggr_timer_vd(const std::string& name) : timer_vd(name)
     {
       set_periodic(true);
+      set_fire_at_startup(true);
+      set_startup_delay(time::from_msec(500));
       set_aligned(true);
       set_priority(10);
     }
@@ -259,8 +261,11 @@ namespace icd
     void set_timer_vd(virtual_device& timer_vd);
 
   private:
+    enum { TEST_TIME_USEC = 100000 };
+
     std::string timer_vd_name_;
 
+    virtual void initialize();
     virtual void handle_event(const event& e);
 
     void handle_timer_event(const timer_event& e);
@@ -271,7 +276,8 @@ namespace icd
   public:
     aggr_vd(const std::string& name, const std::string& db_name, int db_timeout)
       : event_subscriber(name), db_name_(db_name), db_timeout_(db_timeout),
-        insert_stmt_(db_), update_stmt_(db_), counter_id_(0), cnt_(0) {}
+        insert_stmt_(db_), update_stmt_(db_), initialized_(false), 
+        counter_id_(0), cnt_(0) {}
     virtual ~aggr_vd() {}
 
     void set_filter_vd(virtual_device& filter_vd);
@@ -295,6 +301,7 @@ namespace icd
     sqlite3cc::stmt insert_stmt_;
     sqlite3cc::stmt update_stmt_;
 
+    bool initialized_;
     long counter_id_;
     time dtm_;
     int cnt_;

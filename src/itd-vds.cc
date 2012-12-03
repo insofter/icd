@@ -251,6 +251,7 @@ namespace icd
     event_publisher& publisher = dynamic_cast<event_publisher&>(itd_vd);
     publisher.attach_subscriber(*this);
     itd_vd_name_ = itd_vd.name();
+    device_ = itd_vd.name();
   }
 
   void filter_vd::set_aggr_timer_vd(virtual_device& aggr_timer_vd)
@@ -364,7 +365,6 @@ namespace icd
       switch(fsm_state_)
       {
         case FILTER_FSM_UNINITIALIZED:
-          device_ = e.device();
           if (e.state() == ITD_STATE_CLEAR)
             update_fsm(FILTER_FSM_CLEAR);
           else if (e.state() == ITD_STATE_BLOCKED)
@@ -443,7 +443,6 @@ namespace icd
 
   void filter_vd::handle_aggr_event(const timer_event& e)
   {
-
     if (fsm_state_ != FILTER_FSM_UNINITIALIZED)
     {
       syslog() << debug << "filter_vd::handle_aggr_event: processing event, "
@@ -452,8 +451,10 @@ namespace icd
       send_stats_event(true);
     }
     else
+    {
       syslog() << debug << "filter_vd::handle_aggr_event: event discarded, "
         << e << std::endl;
+    }
   }
 
   std::string filter_vd::fsm_state_str(const fsm_state& state)
@@ -494,7 +495,7 @@ namespace icd
     blocked_time_ += (state_ == ITD_STATE_BLOCKED) ? (dtm - dtm_) : time(0,0);
     dtm_ = dtm;
     syslog() << debug << "filter_vd::update_stats: "
-      << ",clear_time_=" << clear_time_.to_float()
+      << "clear_time_=" << clear_time_.to_float()
       << ",blocked_time_=" << blocked_time_.to_float() << std::endl;
   }
 
@@ -527,6 +528,11 @@ namespace icd
     timer_vd_name_ = timer_vd.name();
   }
 
+  void test_vd::initialize()
+  {
+    itd_device::set_test_time_usec(TEST_TIME_USEC);
+  }
+
   void test_vd::handle_event(const event& e)
   {
     switch(e.id())
@@ -550,7 +556,7 @@ namespace icd
   void test_vd::handle_timer_event(const timer_event& te)
   {
     std::map<std::string,itd_test> results;
-    results = icd::itd_device::test_all();
+    results = itd_device::test_all();
     test_event e(name(), te.dtm(), 30);
     e.set_results(results);
     syslog() << debug << "test_vd::handle_timer_event: " << e << std::endl;
@@ -591,7 +597,7 @@ namespace icd
     cnt_ = 0;
     clear_time_ = time(0,0);
     blocked_time_ = time(0,0);
-    insert_flow();
+    initialized_ = false;
   }
 
   void aggr_vd::destroy()
@@ -652,21 +658,26 @@ namespace icd
         << ",blocked_time_=" << blocked_time_.to_float() << std::endl;
     }
     else
+    {
       syslog() << debug << "aggr_vd::handle_itd_event: transition 0->1"
         << ",dtm_=" << dtm_ << ",cnt_=" << cnt_
         << ",clear_time_=" << clear_time_.to_float()
         << ",blocked_time_=" << blocked_time_.to_float() << std::endl;
+    }
   }
 
   void aggr_vd::handle_stats_event(const stats_event& e)
   {
-    clear_time_ += e.clear_time();
-    blocked_time_ += e.blocked_time();
-    update_flow(e.aggr_period() ? FLOW_FLAG_COMPLETE : FLOW_FLAG_OPEN);
-    syslog() << debug << "aggr_vd::handle_stats_event: updating"
-      << ",dtm_=" << dtm_ << ",cnt_=" << cnt_
-      << ",clear_time_=" << clear_time_.to_float()
-      << ",blocked_time_=" << blocked_time_.to_float() << std::endl;
+    if (initialized_)
+    {
+      clear_time_ += e.clear_time();
+      blocked_time_ += e.blocked_time();
+      update_flow(e.aggr_period() ? FLOW_FLAG_COMPLETE : FLOW_FLAG_OPEN);
+      syslog() << debug << "aggr_vd::handle_stats_event: updating"
+        << ",dtm_=" << dtm_ << ",cnt_=" << cnt_
+        << ",clear_time_=" << clear_time_.to_float()
+        << ",blocked_time_=" << blocked_time_.to_float() << std::endl;
+    }
 
     if (e.aggr_period())
     {
@@ -677,13 +688,16 @@ namespace icd
       insert_flow();
       syslog() << debug << "aggr_vd::handle_stats_event: new aggregation period"
         << ",dtm_=" << dtm_ << std::endl;
+      initialized_ = true;
     }
   }
 
   void aggr_vd::handle_test_event(const test_event& e)
   {
     test_result_ = e.result(device_);
-    syslog() << debug << "aggr_vd::handle_test_event: device_=" << device_
+    syslog() << debug << "aggr_vd::handle_test_event:"
+      << "dtm=" << e.dtm()
+      << ",device_=" << device_
       << ",test_result_=" << test_result_ << std::endl;
   }
 

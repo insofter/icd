@@ -166,6 +166,41 @@ namespace icd
     return itd_test(value);
   }
 
+  void itd_device::set_test_time_usec(long test_time_usec)
+  {
+    std::string path = sysfs_drv_path_ + "/test_time_usec";
+    std::ofstream os;
+
+    os.open(path.c_str());
+    if (!os)
+      throw_ios_writing_failure(path);
+
+    os << test_time_usec << std::endl;
+    if (!os)
+      throw_ios_writing_failure(path);
+
+    os.close();
+  }
+
+  long itd_device::test_time_usec()
+  {
+    std::string path = sysfs_drv_path_ + "/test_time_usec";
+    std::ifstream is;
+
+    is.open(path.c_str());
+    if (!is)
+      throw_ios_reading_failure(path);
+
+    long test_time_usec;
+    is >> test_time_usec  >> std::ws;
+    if (!is)
+      throw_ios_reading_failure(path);
+
+    is.close();
+
+    return test_time_usec;
+  }
+
   std::map<std::string,itd_test> itd_device::test_all()
   {
     std::map<std::string,itd_test> results;

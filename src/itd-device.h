@@ -75,6 +75,8 @@ namespace icd
       int queue_len();
       itd_test test();
 
+      static void set_test_time_usec(long test_time_usec);
+      static long test_time_usec();
       static std::map<std::string,itd_test> test_all();
 
     private:

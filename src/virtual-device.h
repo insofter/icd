@@ -136,15 +136,20 @@ namespace icd
   {
   public:
     timer_vd(const std::string& name) : virtual_device(name),
-      periodic_(true), aligned_(false), priority_(0), terminate_(false)  {}
+      fire_at_startup_(false), periodic_(true), aligned_(false),
+      priority_(0), terminate_(false)  {}
     virtual ~timer_vd() {}
 
+    bool fire_at_startup() { mutex_locker ml(lock_); return fire_at_startup_; }
+    time startup_delay() { mutex_locker ml(lock_); return startup_delay_; } 
     bool periodic() { mutex_locker ml(lock_); return periodic_; }
     bool aligned() { mutex_locker ml(lock_); return aligned_; }
     time interval() { mutex_locker ml(lock_); return interval_; }
     int priority() { mutex_locker ml(lock_); return priority_; }
 
     void set_periodic(bool periodic) { mutex_locker ml(lock_); periodic_ = periodic; }
+    void set_fire_at_startup(bool fire_at_startup) { mutex_locker ml(lock_); fire_at_startup_ = fire_at_startup; }
+    void set_startup_delay(time startup_delay) { mutex_locker ml(lock_); startup_delay_ = startup_delay; }
     void set_aligned(bool aligned) { mutex_locker ml(lock_); aligned_ = aligned; }
     void set_interval(const time& interval) { mutex_locker ml(lock_); interval_ = interval; }
     void set_priority(int priority) { mutex_locker ml(lock_); priority_ = priority; }
@@ -152,6 +157,8 @@ namespace icd
     virtual void stop();
 
   private:
+    bool fire_at_startup_;
+    time startup_delay_;
     bool periodic_;
     bool aligned_;
     time interval_;

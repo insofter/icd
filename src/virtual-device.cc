@@ -141,21 +141,38 @@ namespace icd
   {
     mutex_locker ml(lock_);
 
-    while(periodic_ && !terminate_)
+    time dtm = time::now() + startup_delay_;
+
+    while (time::now() < dtm && !terminate_)
+      cond_.timedwait(lock_, dtm);
+
+    if (fire_at_startup_ && !terminate_)
     {
-      time dtm = time::now();
+      dtm = time::now();
+      syslog() << debug << "timer_vd::run_vd: timer fired (at startup), " << dtm << std::endl;
+      timer_event e(name(), dtm, priority_);
+      notify_subscribers(e);
+    }
+
+    while(!terminate_)
+    {
+      dtm = time::now();
       if (aligned_)
         dtm = time::align(dtm, interval_);
       dtm = dtm + interval_;
 
-      cond_.timedwait(lock_, dtm);
+      while (time::now() < dtm && !terminate_)
+        cond_.timedwait(lock_, dtm);
 
-      if (time::now() >= dtm && !terminate_)
+      if (!terminate_)
       {
         syslog() << debug << "timer_vd::run_vd: timer fired, " << dtm << std::endl;
         timer_event e(name(), dtm, priority_);
         notify_subscribers(e);
       }
+
+      if (!periodic_)
+        break;
     }
   }
 
