@@ -55,10 +55,11 @@ foreach($info['liczniki'] as $licznik) {
 
 $tresc.='</table>
   <form action="./" method="POST">
-  <input type="button" value="Test wysyłania" onclick="window.open('."'".'popup.php?typ=transfer'."'".')">
-  <input type="button" value="Test fotokomórek" onclick="window.open('."'".'popup.php?typ=test'."'".')">
-  </form>
   <p id="adres">
+  <input type="button" value="Test fotokomórek" onclick="window.open('."'".'popup.php?typ=test'."'".')">
+  <input type="button" value="Test wysyłania" onclick="window.open('."'".'popup.php?typ=transfer'."'".')">
+  <br><br>
+  <br><br>
   Insofter<br>
   ul. Skłodowskiej-Curie 55/61<br>
   50-950 Wrocław<br>
@@ -69,6 +70,7 @@ $tresc.='</table>
   <br>
   <br>
   Wygenerowano '.date('d.m.Y').'r. o godzinie '.date('G:i:s').'</p>
+  </form>
   ';
 
 $tresc.='</div>';
