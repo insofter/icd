@@ -284,7 +284,11 @@ class c_icdtcp {
 }*/
   function test_wysylania()
   {
-    return shell_exec( "source /etc/profile.d/icd.sh && icd-transfer-data --log=www" ); 
+    exec( "source /etc/profile.d/icd.sh && icd-transfer-data --log=www > transfer-out &" ); 
+  }
+  function test_fotokomorek()
+  {
+    return shell_exec( "source /etc/profile.d/icd.sh && icd-test --format=long" ); 
   }
 
   function raport_biezacy() {

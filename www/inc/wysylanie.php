@@ -103,7 +103,8 @@ foreach( $icdtcp->czas_dni as $wart=>$opis ) {
 $tresc.='</select></td></tr>
   <tr><th><input type="submit" value="Ustaw">
   <input type="reset" value="Anuluj">
-  <input type="button" value="Test wysyłania" onclick="location.href='."'./?strona=test_wysylania'".'"></th><td>&nbsp;
+
+  <input type="button" value="Test wysyłania" onclick="window.open('."'".'popup.php?typ=transfer'."'".')"></th><td>&nbsp;
 
 </td></tr>
   </table></form></div>';
