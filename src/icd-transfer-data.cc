@@ -37,7 +37,7 @@ int createData( std::string & data ) {
   std::ostringstream ss;
   stmt.prepare( "SELECT id, counter_id, "
       "datetime(dtm, 'unixepoch', 'localtime'), cnt, dark_time, "
-      "work_time FROM flow WHERE flags > 0 ORDER BY dtm ASC LIMIT " TRANSFER_PACKAGE_CNT );//ilosc rekordow
+      "work_time ,test FROM flow WHERE flags > 0 ORDER BY dtm ASC LIMIT " TRANSFER_PACKAGE_CNT );//ilosc rekordow
   while( stmt.step() == SQLITE_ROW ) {
     ss << stmt.column_int(0) << ';' //id
       << stmt.column_text(1) << ';' //itd
@@ -45,7 +45,8 @@ int createData( std::string & data ) {
       << stmt.column_int(3) << ';' //cnt
       << stmt.column_int(4) << ';' //drk
       << stmt.column_int(5) << ';' //wrk
-      << "0" << std::endl;
+      << stmt.column_int(6)  //test
+      << std::endl;
   }
   stmt.finalize();
   data = ss.str();

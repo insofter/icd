@@ -45,13 +45,13 @@ int main( int argc, char *argv[] ) {
   dataDbSqlSelect.prepare( "SELECT id FROM flow WHERE counter_id == ?1 AND dtm == ?2 LIMIT 1" );
 
   sqlite3cc::stmt dataDbSqlUpdate( *globalDataDb );
-  dataDbSqlUpdate.prepare( "UPDATE flow SET cnt = ?3, dark_time = ?4, work_time = ?5, flags = ?6 WHERE counter_id == ?1 AND dtm ==?2" );
+  dataDbSqlUpdate.prepare( "UPDATE flow SET cnt = ?3, dark_time = ?4, work_time = ?5, test = ?6, flags = ?7 WHERE counter_id == ?1 AND dtm ==?2" );
 
   sqlite3cc::stmt dataDbSqlInsert( *globalDataDb );
-  dataDbSqlInsert.prepare( "INSERT INTO flow (counter_id, dtm, cnt, dark_time, work_time, flags) VALUES( ?1, ?2, ?3, ?4, ?5, ?6 )" );
+  dataDbSqlInsert.prepare( "INSERT INTO flow (counter_id, dtm, cnt, dark_time, work_time, test, flags) VALUES( ?1, ?2, ?3, ?4, ?5, ?6, ?7 )" );
 
   sqlite3cc::stmt liveDbSqlSelect( *globalLiveDb );
-  liveDbSqlSelect.prepare( "SELECT counter_id, dtm, cnt, dark_time, work_time, flags FROM flow" );
+  liveDbSqlSelect.prepare( "SELECT counter_id, dtm, cnt, dark_time, work_time, test, flags FROM flow" );
 
   while( liveDbSqlSelect.step() == SQLITE_ROW ) {
     // "SELECT id FROM flow WHERE counter_id == ?1 AND dtm ==?2"
@@ -64,7 +64,8 @@ int main( int argc, char *argv[] ) {
       dataDbSqlUpdate.bind_int( 3, liveDbSqlSelect.column_int(2) );//cnt
       dataDbSqlUpdate.bind_int( 4, liveDbSqlSelect.column_int(3) );//dark_time
       dataDbSqlUpdate.bind_int( 5, liveDbSqlSelect.column_int(4) );//work_time
-      dataDbSqlUpdate.bind_int( 6, liveDbSqlSelect.column_int(5) );//flags
+      dataDbSqlUpdate.bind_int( 6, liveDbSqlSelect.column_int(5) );//test
+      dataDbSqlUpdate.bind_int( 7, liveDbSqlSelect.column_int(6) );//flags
       dataDbSqlUpdate.step();
       dataDbSqlUpdate.reset();
     } else {
@@ -74,7 +75,8 @@ int main( int argc, char *argv[] ) {
       dataDbSqlInsert.bind_int( 3, liveDbSqlSelect.column_int(2) );//cnt
       dataDbSqlInsert.bind_int( 4, liveDbSqlSelect.column_int(3) );//dark_time
       dataDbSqlInsert.bind_int( 5, liveDbSqlSelect.column_int(4) );//work_time
-      dataDbSqlInsert.bind_int( 6, liveDbSqlSelect.column_int(5) );//flags
+      dataDbSqlInsert.bind_int( 6, liveDbSqlSelect.column_int(5) );//test
+      dataDbSqlInsert.bind_int( 7, liveDbSqlSelect.column_int(6) );//flags
       dataDbSqlInsert.step();
       dataDbSqlInsert.reset();
     }

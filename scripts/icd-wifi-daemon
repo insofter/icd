@@ -16,7 +16,8 @@ do
 
 
   #check if wpa_suppl is running or run it
-  pidof wpa_supplicant || wpa_supplicant -Dwext -iwlan0 -d -c/tmp/wpa_suppl.conf > /tmp/log/wpa_supplicant.log &
+  pidof wpa_supplicant || wpa_supplicant -Dwext -iwlan0 -d -c/tmp/wpa_suppl.conf > /dev/null &  #log jest za duzy
+  #pidof wpa_supplicant || wpa_supplicant -Dwext -iwlan0 -d -c/tmp/wpa_suppl.conf > /tmp/log/wpa_supplicant.log &
 
   sleep 5
 
