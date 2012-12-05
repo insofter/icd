@@ -32,11 +32,11 @@ do
 
   if [ "$wifiip" != "$newip" ]
   then 
-    icd-config --db=$ICD_CONFIG_DB set wifi ip $newip
+    icd-config --db=$ICD_CONFIG_DB set wifi ip "$newip"
   fi
   if [ "$wifissid" != "$newssid" ]
   then
-    icd-config --db=$ICD_CONFIG_DB set wifi ssid $newssid
+    icd-config --db=$ICD_CONFIG_DB set wifi ssid "$newssid"
   fi
 
 

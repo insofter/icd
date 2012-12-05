@@ -284,7 +284,7 @@ class c_icdtcp {
 }*/
   function test_wysylania()
   {
-    exec( "source /etc/profile.d/icd.sh && icd-transfer-data --log=www > transfer-out &" ); 
+    exec( "source /etc/profile.d/icd.sh && icd-transfer-data --log=www > /tmp/transfer-out &" ); 
   }
   function test_fotokomorek()
   {
@@ -409,7 +409,7 @@ class c_icdtcp {
 
 
     $sql="SELECT dtm, counter_id, id, cnt, dark_time, work_time, "
-      ."flags FROM flow WHERE dtm >= ".$od." AND dtm < ".$do." ORDER BY dtm, counter_id ASC";
+      ."test, flags FROM flow WHERE dtm >= ".$od." AND dtm < ".$do." ORDER BY dtm, counter_id ASC";
 
     $ans=$this->dataDb->query($sql);
     $ans->setFetchMode(PDO::FETCH_ASSOC);

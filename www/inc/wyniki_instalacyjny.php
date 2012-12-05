@@ -41,6 +41,7 @@ if( isset( $wyniki['data'] ) ) {
     $tresc.='<td>wartość</td>';
     $tresc.='<td>dark</td>';
     $tresc.='<td>work</td>';
+    $tresc.='<td>test</td>';
     $tresc.='<td>flagi</td>';
 
     $tresc.='</tr>';
@@ -60,6 +61,7 @@ if( isset( $wyniki['data'] ) ) {
       $tresc.='<td>'.number_format( $row[ 'cnt' ], 0, '', ',' ).'</td>';
       $tresc.='<td>'.number_format( $row[ 'dark_time' ], 0, '', ',' ).'</td>';
       $tresc.='<td>'.number_format( $row[ 'work_time' ], 0, '', ',' ).'</td>';
+      $tresc.='<td>'.number_format( $row[ 'test' ], 0, '', ',' ).'</td>';
       $tresc.='<td>'.number_format( $row[ 'flags' ], 0, '', ',' ).'</td>';
 
       $tresc.='</tr>';
@@ -71,6 +73,7 @@ if( isset( $wyniki['data'] ) ) {
         $tresc.='<td>wartość</td>';
         $tresc.='<td>dark</td>';
         $tresc.='<td>work</td>';
+        $tresc.='<td>test</td>';
         $tresc.='<td>flagi</td>';
         $tresc.='</tr>';
         $i=0;
@@ -90,6 +93,7 @@ if( isset( $wyniki['data'] ) ) {
     $tresc.='<td>wartość</td>';
     $tresc.='<td>dark</td>';
     $tresc.='<td>work</td>';
+    $tresc.='<td>test</td>';
     $tresc.='<td>flagi</td>';
 
     $tresc.='</tr>';
@@ -109,6 +113,7 @@ if( isset( $wyniki['data'] ) ) {
       $tresc.='<td>'.number_format( $row[ 'cnt' ], 0, '', ',' ).'</td>';
       $tresc.='<td>'.number_format( $row[ 'dark_time' ], 0, '', ',' ).'</td>';
       $tresc.='<td>'.number_format( $row[ 'work_time' ], 0, '', ',' ).'</td>';
+      $tresc.='<td>'.number_format( $row[ 'test' ], 0, '', ',' ).'</td>';
       $tresc.='<td>'.number_format( $row[ 'flags' ], 0, '', ',' ).'</td>';
 
       $tresc.='</tr>';
@@ -120,6 +125,7 @@ if( isset( $wyniki['data'] ) ) {
         $tresc.='<td>wartość</td>';
         $tresc.='<td>dark</td>';
         $tresc.='<td>work</td>';
+        $tresc.='<td>test</td>';
         $tresc.='<td>flagi</td>';
         $tresc.='</tr>';
         $i=0;

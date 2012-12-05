@@ -253,6 +253,7 @@ void Clog::done( int warn ) {
       } else {
         std::cout << "Ilość ostrzeżeń: " << warn << std::endl;
       }
+      std::cout << "\n\n<!--EOF-->" << std::endl;
       break;
 
     case LONG:

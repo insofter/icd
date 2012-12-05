@@ -8,14 +8,34 @@ require_once('inc/c_icdtcp.php');
 if( isset( $_GET['typ'] ) && $_GET['typ']=='transfer' )
 {
   if( isset( $_GET['out'] ) ) {
+    $out=file_get_contents( '/tmp/transfer-out' );
+
+    if( false===strpos( $out, '<!--EOF-->' ) ) {
+      $wait=true;
+    } else {
+      $wait=false;
+    }
+
+
     echo '<!DOCTYPE html><html lang="pl">
       <head>
       <meta http-equiv="content-type" content="text/html; charset=utf-8">
-      <title>Test wysyłania</title>
-      <meta http-equiv="refresh" content="5"></head>
-      <body>
-      <body><h3>Test połączenia</h3>
-      <pre>'.file_get_contents( '/tmp/transfer-out' ).'</pre>
+      <title>Test wysyłania</title>';
+    if( $wait ) {
+      echo '<meta http-equiv="refresh" content="5">
+        <style>
+        html {
+          background-image: url(img/wait.gif); 
+          background-repeat: no-repeat;
+          background-position: right top;
+        }
+    </style>
+        
+        ';
+    }
+    echo '</head>
+      <body><h3>Test połączenia</h3>';
+    echo '<pre>'.$out.'</pre>
       </body>
       </html>';
   } else {
