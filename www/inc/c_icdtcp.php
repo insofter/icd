@@ -284,7 +284,7 @@ class c_icdtcp {
 }*/
   function test_wysylania()
   {
-    exec( "source /etc/profile.d/icd.sh && icd-transfer-data --log=www > /tmp/transfer-out &" ); 
+    exec( "icd-run-www-transfer > /dev/null 2>&1 &" ); 
   }
   function test_fotokomorek()
   {

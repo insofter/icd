@@ -1,0 +1,5 @@
+#!/bin/sh
+
+source /etc/profile.d/icd.sh
+icd-transfer-data --log=www > /tmp/transfer-out  2>&1
+echo "<!--EOF-->" >> /tmp/transfer-out
