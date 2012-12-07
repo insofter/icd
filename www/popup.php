@@ -49,7 +49,10 @@ if( isset( $_GET['typ'] ) ) {
       <title>Test fotokomórek</title>
       </head>
       <body><h3>Test fotokomórek</h3>';
-    echo $icdtcp->test_fotokomorek();
+    $out =  $icdtcp->test_fotokomorek();
+    foreach( $out as $i=>$f ) {
+      echo $i.':'.$f.'<br>';
+    }
     echo '</body>
       </html>';
   } else if( $_GET['typ']=='reboot') {

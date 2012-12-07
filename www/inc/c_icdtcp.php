@@ -288,7 +288,9 @@ class c_icdtcp {
   }
   function test_fotokomorek()
   {
-    return shell_exec( "source /etc/profile.d/icd.sh && icd-test --format=long" ); 
+    $out = explode(' ',shell_exec( "source /etc/profile.d/icd.sh && icd-test --format=raw" ), 5 );
+    unset( $out[4] );
+    return $out;
   }
 
   function raport_biezacy() {
