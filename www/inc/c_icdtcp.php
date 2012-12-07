@@ -453,6 +453,9 @@ class c_icdtcp {
     }
     return $wyniki;
   }
+  function reset() {
+    exec( "icd-shutdown --reboot > /dev/null 2>&1 &" );
+  }
 }
 
 ?>

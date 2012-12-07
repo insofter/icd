@@ -98,6 +98,7 @@ foreach( $menuglowne as $key=>$val )
       }
     }
     $menu.='
+      <li><a onclick="return confirm('."'Czy na pewno chcesz uruchomić ponownie rejestrator?'".');" href="popup.php?typ=reboot">Uruchom ponownie</a></li>
       </ul></li>';
   } else if( isset($_GET['strona']) && $_GET['strona']==$key ) {
     $menu.='
