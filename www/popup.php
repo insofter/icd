@@ -50,10 +50,17 @@ if( isset( $_GET['typ'] ) ) {
       </head>
       <body><h3>Test fotokomórek</h3>';
     $out =  $icdtcp->test_fotokomorek();
+    $info= $icdtcp->info();
+
+    echo '<table border=1>';
+    echo '<tr><th>Nazwa wejścia</th><th>Fotokomórka</th><th>Wynik testu</th></tr>';
     foreach( $out as $i=>$f ) {
-      echo $i.':'.$f.'<br>';
+      echo '<tr>';
+      echo '<td>'.$info['liczniki'][$i]['name'].'</td>';
+      echo '<td>'.str_replace(':','</td><td>',$f).'</td>';
+      echo '</tr>'."\n";
     }
-    echo '</body>
+    echo '</table></body>
       </html>';
   } else if( $_GET['typ']=='reboot') {
 

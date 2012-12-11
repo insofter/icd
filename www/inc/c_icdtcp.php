@@ -288,7 +288,7 @@ class c_icdtcp {
   }
   function test_fotokomorek()
   {
-    $out = explode(' ',shell_exec( "source /etc/profile.d/icd.sh && icd-test --format=raw" ), 5 );
+    $out = explode("\n",shell_exec( "source /etc/profile.d/icd.sh && icd-test --format=long" ), 5 );
     unset( $out[4] );
     return $out;
   }
