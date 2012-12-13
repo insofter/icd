@@ -50,7 +50,6 @@ class CwifiCfgToDb {
       cfgFile >> s; //ctrl_interface_group=wheel
       cfgFile >> s; //update_config=1
 
-      //  std::cout << "~~" << s << std::endl;
       cfgFile >> s;
       while( ! cfgFile.eof() ) {
         if( !inNetwork ) {
@@ -68,7 +67,20 @@ class CwifiCfgToDb {
             net.ssid.clear();
           } else {//in network
             int div=s.find( '=' ); //search of '='
-            //todo space in "" name
+            if( s[div+1] == '"' ) {
+              std::string x;
+              char c;
+              while( s[ s.size()-1 ] != '"' && ( ! cfgFile.eof() ) ) {//spaces in quoted string
+                cfgFile >> std::noskipws;
+                while( cfgFile.peek()==' ' ) { //ex: >>"My network"<<
+                  cfgFile >> c;
+                  s+=' ';
+                }
+                cfgFile >> std::skipws;
+                cfgFile >> x;
+                s+=x;
+              }
+            }
             if( (s.substr( 0, div )).compare( "ssid" )==0 ) { //ssid
               net.ssid=s.substr( div+1 );
             } else { //keyval
@@ -81,18 +93,18 @@ class CwifiCfgToDb {
         }
         cfgFile >> s;
       }
-/*      for( int i=0; i<networks.size(); ++i ) {
-        std::cout << "net: " << networks[i].ssid << std::endl;
-        for( int j=0; j<networks[i].values.size(); ++j ) {
-          std::cout << "  " << networks[i].values[j].key << " : "
-            << networks[i].values[j].val << std::endl;
-        }
-      }*/
 
     }
     void readDbConfig() {
     }
     void Update() {
+      for( int i=0; i<networks.size(); ++i ) {
+        std::cout << "net: " << networks[i].ssid << std::endl;
+        for( int j=0; j<networks[i].values.size(); ++j ) {
+          std::cout << "  " << networks[i].values[j].key << " : "
+            << networks[i].values[j].val << std::endl;
+        }
+      }
     }
 
 };
