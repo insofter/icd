@@ -88,7 +88,10 @@ for( $i=0; $i<4; ++$i ) {
   $tresc.='</select>
     </td>';
 }
-$tresc.='</tr>';/*
+$tresc.='</tr>';
+
+/* TODO USUN TA LINIE, ABY AKTYWOWAC WIECEJ OPCJI
+
 $tresc.='<tr><th>Wyłącznik czasowy</th>';
 for( $i=0; $i<4; ++$i ) {
         $tresc.='<td><select name="enab['.$i.']" id="enab'.$i.'">';
@@ -173,7 +176,10 @@ for( $i=0; $i<4; ++$i ) {
   $tresc.='</select>
     </td>';
 }
-$tresc.='</tr>';*/
+$tresc.='</tr>';
+
+ */ // TODO USUN TA LINIE, ABY AKTYWOWAC WIECEJ OPCJI
+
 $tresc.='</table><br><br>';
 
 $tresc.='
@@ -181,7 +187,9 @@ $tresc.='
   <br>
   <input type="submit" value="Ustaw">
   <input type="reset" value="Anuluj">
-  <input type="button" value="Test fotokomórek">
+
+  <input type="button" value="Test fotokomórek" onclick="window.open('."'".'popup.php?typ=test'."'".')">
+
   </form></div>';
 
 
