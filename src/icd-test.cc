@@ -42,6 +42,7 @@ void print_usage(char *argv0)
     "                            raw, e.g: 0 0 0 0\n"
     "                            short, e.g: itd0:0 itd1:0 ...\n"
     "                            long (default) e.g. itd0:OK ...\n"
+    "                            lcd e.g. ++OK A0 B0 C0 D0\n"
     "  -h|--help\n"
     "  -v|--version\n"
     << std::endl;
@@ -117,10 +118,10 @@ int main(int argc, char *argv[])
         break;
     }
 
-    if (!exit && format != "long" && format != "short" && format != "raw")
+    if (!exit && format != "long" && format != "short" && format != "raw" && format != "lcd" )
     {
       throw std::runtime_error("Invalid '--format' parameter."
-        " Expected 'long', 'short' or 'raw'");
+        " Expected 'long', 'short', 'lcd'  or 'raw'");
     }
 
     if (!exit && config_db_name.empty())
@@ -157,6 +158,29 @@ int main(int argc, char *argv[])
       {
         for (it = results.begin(); it != results.end(); it++)
           std::cout << it->first << ":" << it->second << std::endl;
+      }
+      else if( format == "lcd" )
+      {
+        bool ok=true;
+        for (it = results.begin(); it != results.end(); it++) {
+          if( it->second != 0 ) {
+            ok=false;
+            break;
+          }
+        }
+        if( ok ) {
+          std::cout << "++OK";
+        } else {
+          std::cout << "--ER";
+        }
+        char i='A';
+        for (it = results.begin(); it != results.end(); it++) {
+           std::cout << " " << i << it->second;
+           ++i;
+        }
+        std::cout << std::endl;
+        //0123456789012345
+        //++OK A0 B0 C0 D0
       }
       else // if (format == "long")
       {

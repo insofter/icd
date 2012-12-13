@@ -249,7 +249,7 @@ MIN:
         new CmenuItemRunTestApp( "Test połączenia", "> Uruchomić?",
           cmd, "Test połączenia*", "Test połączenia" ) );
 
-    cmd="icd-test --log=short";
+    cmd="icd-test --format=lcd";
     int fototestid=mainMenu->fastAdd( 
         new CmenuItemRunTestApp( "Test fotokomórek","> Testuj",
           cmd, "Test fotokomórek", "", true ) );
