@@ -1,6 +1,6 @@
 #!/bin/sh
 
-icd-wifi-cfg from
+icd-wifi-cfg-from
 
 touch /tmp/log/wpa_supplicant.log
 chmod 644 /tmp/log/wpa_supplicant.log

@@ -1,0 +1,22 @@
+#!/bin/sh
+
+
+#FROM database
+#header
+cat << WPA_HEAD > /tmp/wpa_suppl.conf
+ctrl_interface=/var/run/wpa_supplicant
+ctrl_interface_group=wheel
+update_config=1
+
+WPA_HEAD
+
+for x in `icd-config --db=$ICD_CONFIG_DB list-like wifinet | sed -e 's/ /~/g'` #get all networks `space' to `~'
+do
+  y=`echo $x | sed -e 's/~/ /g'`
+  echo "network={" >> /tmp/wpa_suppl.conf #begin of network record
+  echo -n "  ssid=" >> /tmp/wpa_suppl.conf #ssid
+  echo $y | sed -e 's/wifinet-//g' >> /tmp/wpa_suppl.conf
+  icd-config --separator='=' --db=$ICD_CONFIG_DB list "$y" | sed -e "s/$y=/  /g" >> /tmp/wpa_suppl.conf #get all parameters for network y
+  echo -e "}\n" >> /tmp/wpa_suppl.conf #end of network record
+done
+

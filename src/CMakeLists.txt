@@ -88,7 +88,10 @@ add_executable(icd-fc-daemon icd-fc-daemon.cc)
 target_link_libraries(icd-fc-daemon db-config daemonizer
   syslogstream sqlite3 version lcd-driver lcd-menu lcd-menu-front-item)
 
+#wifi cfg
+add_executable(icd-wifi-cfg-to icd-wifi-cfg-to.cpp)
+target_link_libraries(icd-wifi-cfg-to db-config sqlite3 version)
 
 
 install (TARGETS icd-config icd-sql icd-itd-daemon icd-fc-daemon
-  icd-transfer-data icd-cron icd-flush-db icd-test DESTINATION bin)
+  icd-transfer-data icd-cron icd-flush-db icd-test icd-wifi-cfg-to DESTINATION bin)
