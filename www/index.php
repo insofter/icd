@@ -47,7 +47,8 @@ $menurozwijane=array(
   'licznik'=>'Licznik',
   'wysylanie'=>'Wysyłanie',
   'log'=>'Logi',
-  'plik_konf'=>'Plik konf.'
+  'administracja'=>'Administracja',
+//  'plik_konf'=>'Plik konf.'
 );
 
 $menuglowne=array(
@@ -98,7 +99,6 @@ foreach( $menuglowne as $key=>$val )
       }
     }
     $menu.='
-      <li><a onclick="return confirm('."'Czy na pewno chcesz uruchomić ponownie rejestrator?'".');" href="popup.php?typ=reboot">Uruchom ponownie</a></li>
       </ul></li>';
   } else if( isset($_GET['strona']) && $_GET['strona']==$key ) {
     $menu.='
@@ -170,6 +170,9 @@ if( isset($_GET['strona']) ) {
     break;
   case 'wifi':
     include('inc/wifi.php');
+    break;
+  case 'administracja':
+    include('inc/administracja.php');
     break;
   default:
     $tresc='<div id="tresc">taka strona nie istnieje</div>';

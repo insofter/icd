@@ -57,7 +57,11 @@ if( isset( $_GET['typ'] ) ) {
     foreach( $out as $i=>$f ) {
       echo '<tr>';
       echo '<td>'.$info['liczniki'][$i]['name'].'</td>';
-      echo '<td>'.str_replace(':','</td><td>',$f).'</td>';
+      if( $info['liczniki'][$i]['enabled'] == 'no' ) {
+        echo '<td>'.str_replace(':FAILED','</td><td>DISABLED',$f).'</td>';
+      } else {
+        echo '<td>'.str_replace(':','</td><td>',$f).'</td>';
+      }
       echo '</tr>'."\n";
     }
     echo '</table></body>
