@@ -1,6 +1,8 @@
 <?php
 defined('INSOFTER') or die('<h1>Your Kung-Fu is too weak.</h1>');
 
+$icdtcp = new c_icdtcp();
+
 if( isset($_GET['todo']) ) {
   switch( $_GET['todo'] ) {
   case 'tar':
@@ -10,17 +12,21 @@ if( isset($_GET['todo']) ) {
     header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
     header("Content-Type: application/x-tar");
     header('Content-Disposition: attachment; filename="'.date('Y.m.d_H.i').'__data.tar"');
-
     passthru('cd /home && tar cf - data/');
     exit();
+    break;
+  case 'set_send':
+
+    $icdtcp->set_send_flag();
+
+    $info='<h4>Ustawiono wszystkie rekordy jako wysłane</h4>';
 
     break;
   }
 
-} else {
+} 
 
 
-$icdtcp = new c_icdtcp();
 
 $tresc='<div id="tresc">';
 
@@ -28,6 +34,9 @@ $tresc.='<form action="./?strona=tcpip" method="POST">';
 
 $tresc.='
   <h3>Administracja</h3>';
+if( isset( $info ) ) {
+  $tresc.=$info;
+}
 
 $tresc.='
   <ul>
@@ -41,7 +50,7 @@ $tresc.='
   <li><a href="./?strona=administracja&amp;todo=tar">Zrzut plików bazy (archiwum *.tar)</a>
 
   <li><a onclick="return confirm('."'Czy na pewno oznaczyć rekordy jako wysłane?'".');"
-    href="./?strona=plik_konf">Oznacz wszystkie rekordy jako wysłane //TODO</a>
+    href="./?strona=administracja&amp;todo=set_send">Oznacz wszystkie rekordy jako wysłane</a>
 
   <li><a onclick="return confirm('."'Czy na pewno usunąć konfigurację rejestratora?'".');"
     href="./?strona=plik_konf">Usuń konfigurację rejestratora //TODO</a>
@@ -51,5 +60,4 @@ $tresc.='
 
 $tresc.='</div>';
 
-}
 ?>

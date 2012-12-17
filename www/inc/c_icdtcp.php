@@ -458,6 +458,10 @@ class c_icdtcp {
   function reset() {
     exec( "icd-shutdown --reboot > /dev/null 2>&1 &" );
   }
+  function set_send_flag() {
+    $sql='UPDATE flow SET flags = -2 WHERE flags > 0';
+    $this->dataDb->query($sql);
+  }
 }
 
 ?>
