@@ -1,0 +1,50 @@
+#!/bin/sh
+
+PROGRAM_NAME=`basename "$0"`
+
+check_error()
+{
+  if [ $? != 0 ] ; then
+    echo "Error! ${PROGRAM_NAME} halted."
+    exit 1
+  fi
+}
+
+if [ -e $ICD_DATA_DIR/recreate_databases ]
+then
+  mac=`icd-config --db="${ICD_CONFIG_DB}" sget tcpip mac`
+  idd=`icd-config --db="${ICD_CONFIG_DB}" sget device idd`
+  dump=`date +%y.%m.%d-%H:%M:%S`
+  mkdir $dump
+  mv * $dump
+  mv .* $dump
+
+  icd-sql --db="${ICD_CONFIG_DB}" "${ICD_SHARE_DIR}/create-schema-config.sql"  "${ICD_SHARE_DIR}/init-default-config.sql"
+
+  icd-sql --db="${ICD_DATA_DB}" "${ICD_SHARE_DIR}/create-schema-flow.sql"
+
+  icd-config --db="${ICD_CONFIG_DB}" set tcpip mac "$mac"
+  icd-config --db="${ICD_CONFIG_DB}" set device idd "$idd"
+
+  chown -R icdtcp3:icdtcp3 $ICD_DATA_DIR
+
+else #normal start
+
+  if [ -f "${ICD_CONFIG_DB}" ]
+  then
+
+    icd-sql --db="${ICD_CONFIG_DB}" "${ICD_SHARE_DIR}/clear-old-current.sql"
+
+  else #new databases
+
+    icd-sql --db="${ICD_CONFIG_DB}" "${ICD_SHARE_DIR}/create-schema-config.sql" "${ICD_SHARE_DIR}/init-default-config.sql"
+    chown -R icdtcp3:icdtcp3 $ICD_DATA_DIR
+
+  fi
+
+  if [ ! -f "${ICD_DATA_DB}" ]
+  then
+    icd-sql --db="${ICD_DATA_DB}" "${ICD_SHARE_DIR}/create-schema-flow.sql"
+    chown -R icdtcp3:icdtcp3 $ICD_DATA_DIR
+  fi
+fi
