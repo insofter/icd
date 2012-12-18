@@ -15,9 +15,9 @@ then
   mac=`icd-config --db="${ICD_CONFIG_DB}" sget tcpip mac`
   idd=`icd-config --db="${ICD_CONFIG_DB}" sget device idd`
   dump=`date +%y.%m.%d-%H:%M:%S`
-  mkdir $dump
-  mv * $dump
-  mv .* $dump
+  mkdir "${ICD_DATA_DIR}"/${dump}
+  mv "${ICD_DATA_DIR}"/* "${ICD_DATA_DIR}"/${dump}/
+  mv "${ICD_DATA_DIR}"/.* "${ICD_DATA_DIR}"/${dump}/
 
   icd-sql --db="${ICD_CONFIG_DB}" "${ICD_SHARE_DIR}/create-schema-config.sql"  "${ICD_SHARE_DIR}/init-default-config.sql"
 
@@ -26,7 +26,7 @@ then
   icd-config --db="${ICD_CONFIG_DB}" set tcpip mac "$mac"
   icd-config --db="${ICD_CONFIG_DB}" set device idd "$idd"
 
-  chown -R icdtcp3:icdtcp3 $ICD_DATA_DIR
+  chown -R icdtcp3:icdtcp3 "${ICD_DATA_DIR}"
 
 else #normal start
 
@@ -38,13 +38,13 @@ else #normal start
   else #new databases
 
     icd-sql --db="${ICD_CONFIG_DB}" "${ICD_SHARE_DIR}/create-schema-config.sql" "${ICD_SHARE_DIR}/init-default-config.sql"
-    chown -R icdtcp3:icdtcp3 $ICD_DATA_DIR
+    chown -R icdtcp3:icdtcp3 ${ICD_DATA_DIR}
 
   fi
 
   if [ ! -f "${ICD_DATA_DB}" ]
   then
     icd-sql --db="${ICD_DATA_DB}" "${ICD_SHARE_DIR}/create-schema-flow.sql"
-    chown -R icdtcp3:icdtcp3 $ICD_DATA_DIR
+    chown -R icdtcp3:icdtcp3 "${ICD_DATA_DIR}"
   fi
 fi
