@@ -72,6 +72,7 @@ class c_icdtcp {
     } catch (PDOException $e) {
       print $e->getMessage();
     }
+    $this->ICD_DATA_DIR=$ICD_DATA_DIR;
   }
 
   function info() {
@@ -455,12 +456,33 @@ class c_icdtcp {
     }
     return $wyniki;
   }
+  function csv_export() {
+    $wysylanie=$this->wysylanie_pobierz();
+    foreach( $wysylanie as $key=>$val ) {
+      echo( $key."\t".$val."\r\n" );
+    }
+    $licznik=$this->liczniki_pobierz();
+    echo( "\r\n" );
+    echo( "Id licznika\tNazwa licznika\r\n" );
+    for( $i=0; $i<4; ++$i ) {
+      echo( $licznik['counter_id'][$i]."\t".$licznik['name'][$i]."\r\n" );
+    }
+    //TODO here
+
+
+
+  }
   function reset() {
     exec( "icd-shutdown --reboot > /dev/null 2>&1 &" );
   }
   function set_send_flag() {
     $sql='UPDATE flow SET flags = -2 WHERE flags > 0';
     $this->dataDb->query($sql);
+  }
+  function recreate_databases() {
+    $fp = fopen($this->ICD_DATA_DIR.'/recreate_databases', 'w');
+    fwrite($fp, date(DATE_RFC822) );
+    fclose($fp);
   }
 }
 

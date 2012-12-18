@@ -15,11 +15,30 @@ if( isset($_GET['todo']) ) {
     passthru('cd /home && tar cf - data/');
     exit();
     break;
+  case 'csv':
+    if( ! isset($_GET['czas'] ) ) {
+      //TODO here
+    }
+    header('Content-Type: application/octet-stream');
+    header("Pragma: public");
+    header("Expires: 0");
+    header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+    header("Content-Type: text/csv");
+    header('Content-Disposition: attachment; filename="'.date('Y.m.d_H.i').'__data.csv"');
+    $icdtcp->csv_export();
+    exit();
+    break;
   case 'set_send':
 
     $icdtcp->set_send_flag();
 
     $info='<h4>Ustawiono wszystkie rekordy jako wysłane</h4>';
+
+  case 'recreate_databases':
+
+    $icdtcp->recreate_databases();
+
+    $info='<h4>Konfigruracja zostanie usunięta po restarcie</h4>';
 
     break;
   }
@@ -45,7 +64,7 @@ $tresc.='
 
   <li><a href="./?strona=plik_konf">Plik konf.</a>
 
-  <li><a href="./?strona=plik_konf">Zrzut bazy do CSV //TODO</a>
+  <li><a href="./?strona=administracja&amp;todo=csv">Zrzut bazy do CSV //TODO</a>
 
   <li><a href="./?strona=administracja&amp;todo=tar">Zrzut plików bazy (archiwum *.tar)</a>
 
@@ -53,7 +72,7 @@ $tresc.='
     href="./?strona=administracja&amp;todo=set_send">Oznacz wszystkie rekordy jako wysłane</a>
 
   <li><a onclick="return confirm('."'Czy na pewno usunąć konfigurację rejestratora?'".');"
-    href="./?strona=plik_konf">Usuń konfigurację rejestratora //TODO</a>
+    href="./?strona=administracja&amp;todo=recreate_databases">Usuń konfigurację rejestratora</a>
 
   </ul>
   ';
