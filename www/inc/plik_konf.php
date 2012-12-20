@@ -8,7 +8,7 @@ $wpa = new c_wifi();
 
 if( isset( $_POST['nazwa_pliku'] ) )
 {
-  $wpa->cfg_to_db();
+//  $wpa->cfg_to_db();
   $cfg=$icdtcp->konfiguracja_pobierz();
 
   $eksport['data']=date(DATE_RFC822);
@@ -140,11 +140,11 @@ if( isset( $_POST['nazwa_pliku'] ) )
     }
   }
 
-  $wpa->cfg_to_db();
+//  $wpa->cfg_to_db();
 
   $icdtcp->konfiguracja_ustaw($cfg);
 
-  $wpa->cfg_from_db();
+//  $wpa->cfg_from_db();
 
   $tresc='<h3>Import konfiguracji</h3><h4>Zaimportowano nową konfigurację</h4>';
   //print_r($cfg);
