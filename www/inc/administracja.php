@@ -18,7 +18,7 @@ if( isset($_GET['todo']) ) {
     exit();
     break;
   case 'csv':
-    if( ! isset($_GET['czas'] ) ) {
+    if( ! isset($_GET['send'] ) ) {
       $tresc.='<h3>Eksport do pliku CSV</h3>';
       $tresc.='<form action="./" method="GET">
         <input type="hidden" name="strona" value="administracja">
@@ -27,23 +27,22 @@ if( isset($_GET['todo']) ) {
 <tr>
 <td><label for="type_year">Raport roczny</label></td>
 <td><input type="radio" name="type" value="year" checked="checked" id="type_year"></td>
-</tr>
-<tr>
+<td><label for="year">rok:</label><input type="text" name="year" value="'.date('Y').'" id="year"></td>
+</tr><tr>
 <td><label for="type_month">Raport miesięczny</label></td>
 <td><input type="radio" name="type" value="month" id="type_month"></td>
-</tr>
-<tr>
+<td><label for="month">miesiąc:</label><input type="text" name="month" value="'.date('Y.m').'" id="month"></td>
+</tr><tr>
 <td><label for="type_period">Raport od - do</label></td>
 <td><input type="radio" name="type" value="period" id="type_period"></td>
-</tr>
-<tr>
+<td><label for="from">od:</label><input type="text" name="from" value="'.date('Y.m.d').'" id="from" size="10">
+<label for="to">do:</label><input type="text" name="to" value="'.date('Y.m.d',time()+24*3600).'" id="to" size="10"></td>
+</tr><tr>
 <td><label for="header">Dołącz nagłówek</label></td>
-<td><input type="checkbox" name="header" checked="checked" id="header"></td>
-</tr>
-
-<tr>
+<td colspan="2"><input type="checkbox" name="header" checked="checked" id="header"></td>
+</tr><tr>
 <td><label for="aggr">Agregacja pomiarów</label></td>
-<td>
+<td colspan="2">
 <select name="aggr" id="aggr">
 <option selected="selected" value="no">Brak</option>
 <option value="day">Dzień</option>
@@ -52,26 +51,65 @@ if( isset($_GET['todo']) ) {
 </select>
 </td>
 </tr>
-
-        </table>
-
-        <input type="submit" name="send" value="Ustaw">
-        <input type="submit" name="send" value="Oznacz">
-        <input type="reset" value="Anuluj">
-
+</table>
+<input type="submit" name="send" value="Ustaw">
+<input type="submit" name="send" value="Oznacz">
+<input type="reset" value="Anuluj">
         ';
       $tresc.='</form>';
 
-      //TODO here
-    } else {
+    } else {//obsluz wysłany formularz
+      echo '<pre>';
+      print_r( $_GET );
+      echo '</pre>';
+      switch( $_GET['type'] ) {
+      case 'year':
+        $od=mktime( 0,0,0, 1, 1, $_GET['year']     );
+        $do=mktime( 0,0,0, 1, 1, ($_GET['year']+1) );
+        break;
+      case 'month':
+        sscanf( $_GET['month'], '%i.%i', $year, $month );
+        $od=mktime( 0,0,0,  $month,     1, $year );
+        $do=mktime( 0,0,0,  ($month+1), 1, $year );
+        break;
+      case 'period':
+        sscanf( $_GET['from'], '%i.%i.%i', $year, $month, $day );
+        $od=mktime( 0,0,0, $month, $day, $year );
+        sscanf( $_GET['to'], '%i.%i.%i', $year, $month, $day );
+        $do=mktime( 0,0,0, $month, $day, $year );
+        break;
+      }
+      if( isset( $_GET['header'] ) ) {
+        $header=true;
+      } else {
+        $header=false;
+      }
+      switch( $_GET['aggr'] ) {
+      case 'day': 
+        $aggr=24*3600;
+        break;
+      case 'hour':
+        $aggr=3600;
+        break;
+      case 'quarter':
+        $aggr=15*60;
+        break;
+      default:
+        $aggr=1;
+      }
+      if( $_GET['send']=='Ustaw' ) {
+      /*
       header('Content-Type: application/octet-stream');
       header("Pragma: public");
       header("Expires: 0");
       header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
       header("Content-Type: text/csv");
       header('Content-Disposition: attachment; filename="'.date('Y.m.d_H.i').'__data.csv"');
-      $icdtcp->csv_export();
-      exit();
+      $icdtcp->csv_export($od, $do, $header, $aggr);
+      exit();*/
+      } else {
+        $info='<h4>'.$icdtcp->csv_export_done($od, $do, $header, $aggr).'</h4>';
+      }
     }
     break;
   case 'set_send':
