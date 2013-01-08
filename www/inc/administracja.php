@@ -59,9 +59,6 @@ if( isset($_GET['todo']) ) {
       $tresc.='</form>';
 
     } else {//obsluz wysłany formularz
-      echo '<pre>';
-      print_r( $_GET );
-      echo '</pre>';
       switch( $_GET['type'] ) {
       case 'year':
         $od=mktime( 0,0,0, 1, 1, $_GET['year']     );
@@ -105,7 +102,11 @@ if( isset($_GET['todo']) ) {
       header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
       header("Content-Type: text/csv");
       header('Content-Disposition: attachment; filename="'.date('Y.m.d_H.i').'__data.csv"');
+       */
+      echo '<pre>';
       $icdtcp->csv_export($od, $do, $header, $aggr);
+      echo '</pre>';
+      /*
       exit();*/
       } else {
         $info='<h4>'.$icdtcp->csv_export_done($od, $do, $header, $aggr).'</h4>';

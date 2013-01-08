@@ -468,21 +468,49 @@ class c_icdtcp {
     fwrite($fp, date(DATE_RFC822) );
     fclose($fp);
   }
-  function csv_export() {
-    $wysylanie=$this->wysylanie_pobierz();
-    foreach( $wysylanie as $key=>$val ) {
-      echo( $key."\t".$val."\r\n" );
+  function csv_export($od, $do, $header, $aggr) {
+    //    echo date(DATE_RFC822, $od);
+    //    echo date(DATE_RFC822, $do);
+    if( $header ) {    
+      $wysylanie=$this->wysylanie_pobierz();
+      foreach( $wysylanie as $key=>$val ) {
+        echo( $key."\t".$val."\r\n" );
+      }
+      $licznik=$this->liczniki_pobierz();
+      echo( "\r\n" );
+      echo( "Id licznika\tNazwa licznika\r\n" );
+      for( $i=0; $i<4; ++$i ) {
+        echo( $licznik['counter_id'][$i]."\t".$licznik['name'][$i]."\r\n" );
+      }
     }
-    $licznik=$this->liczniki_pobierz();
-    echo( "\r\n" );
-    echo( "Id licznika\tNazwa licznika\r\n" );
-    for( $i=0; $i<4; ++$i ) {
-      echo( $licznik['counter_id'][$i]."\t".$licznik['name'][$i]."\r\n" );
-    }
+
     //TODO here
+  
+    $sql="SELECT * FROM flow WHERE dtm >= ".$od." AND dtm < ".$do." ORDER BY dtm, counter_id ASC";
+
+    echo $sql;
+    $ans=$this->dataDb->query($sql);
+    $ans->setFetchMode(PDO::FETCH_ASSOC);
+    if( $row=$ans->fetch() ) {
+      foreach( $row as $key=>$val ) {
+        echo( $key."\t" );
+      }      
+      print_r( $row );
+
+      foreach( $ans as $row ) {
+        print_r( $row );
+   
+
+      }
+    }
+    
+    
+    
   }
-  function csv_export_done() {
+  function csv_export_done($od, $do, $header, $aggr) {
     return 'aaa';
+    echo date(DATE_RFC822, $od);
+    echo date(DATE_RFC822, $do);
   }
 }
 
