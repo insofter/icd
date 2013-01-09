@@ -468,7 +468,7 @@ class c_icdtcp {
     fwrite($fp, date(DATE_RFC822) );
     fclose($fp);
   }
-  function csv_export($od, $do, $header, $aggr) {
+  function csv_export($od, $do, $header) {
     //    echo date(DATE_RFC822, $od);
     //    echo date(DATE_RFC822, $do);
     if( $header ) {    
@@ -489,7 +489,7 @@ class c_icdtcp {
   
     $sql="SELECT " 
       ."id, counter_id, datetime(dtm, 'unixepoch', 'localtime'), cnt, dark_time, work_time, test, flags "
-      ." FROM flow WHERE dtm >= ".$od." AND dtm < ".$do." ORDER BY dtm, counter_id ASC";
+      ." FROM flow WHERE flags > 0 AND dtm >= ".$od." AND dtm < ".$do." ORDER BY dtm, counter_id ASC";
 
 
     $ans=$this->dataDb->query($sql);
@@ -504,7 +504,7 @@ class c_icdtcp {
       echo( "\n\r__EOF__\n\r" );
     }
   }
-  function csv_export_done($od, $do, $header, $aggr) {
+  function csv_export_done($od, $do) {
 
     $sql='UPDATE flow SET flags = -2 WHERE flags > 0 AND dtm >= '.$od.' AND dtm < '.$do;
     $this->dataDb->query($sql);

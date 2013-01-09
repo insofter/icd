@@ -5,8 +5,8 @@ define( 'INSOFTER', 1 );
 
 $o_mnie=array('nazwa'=>'ICDTCP3',
   'opis'=>'Interfejs konfiguracyjny rejestratora ICDTCP3',
-  'wersja_rok'=>'2012',
-  'wersja_miesiac'=>'11',
+  'wersja_rok'=>'2013',
+  'wersja_miesiac'=>'01',
   'autor'=>'insofter',
   'strona'=>'www.insofter.pl');
 

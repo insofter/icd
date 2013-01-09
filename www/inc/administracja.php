@@ -41,16 +41,6 @@ if( isset($_GET['todo']) ) {
 <td><label for="header">Dołącz nagłówki</label></td>
 <td colspan="2"><input type="checkbox" name="header" checked="checked" id="header"></td>
 </tr><tr>
-<td><label for="aggr">Agregacja pomiarów</label></td>
-<td colspan="2">
-<select name="aggr" id="aggr">
-<option selected="selected" value="no">Brak</option>
-<option value="day">Dzień</option>
-<option value="hour">Godzinowa</option>
-<option value="quarter">15 minut</option>
-</select>
-</td>
-</tr><tr>
 <td colspan="3">
 
 <input type="submit" name="send" value="Pobierz">
@@ -81,23 +71,10 @@ if( isset($_GET['todo']) ) {
         $do=mktime( 0,0,0, $month, $day, $year );
         break;
       }
-      if( isset( $_GET['header'] ) ) {
+      if( isset( $_GET['header'] ) && $_GET['header'] == 'on' ) {
         $header=true;
       } else {
         $header=false;
-      }
-      switch( $_GET['aggr'] ) {
-      case 'day': 
-        $aggr=24*3600;
-        break;
-      case 'hour':
-        $aggr=3600;
-        break;
-      case 'quarter':
-        $aggr=15*60;
-        break;
-      default:
-        $aggr=1;
       }
       if( $_GET['send']=='Pobierz' ) {
       header('Content-Type: application/octet-stream');
@@ -106,10 +83,10 @@ if( isset($_GET['todo']) ) {
       header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
       header("Content-Type: text/csv");
       header('Content-Disposition: attachment; filename="'.date('Y.m.d_H.i').'__data.csv"');
-      $icdtcp->csv_export($od, $do, $header, $aggr);
+      $icdtcp->csv_export($od, $do, $header);
       exit();
       } else if( $_GET['send']=='Oznacz' ) {
-        $info='<h4>'.$icdtcp->csv_export_done($od, $do, $header, $aggr).'</h4>';
+        $info='<h4>'.$icdtcp->csv_export_done($od, $do).'</h4>';
       } else {
         $uri = str_replace( '&', '&amp;', 'http://'. $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
         $info='<h4>'.$uri.'</h4>';
