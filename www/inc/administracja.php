@@ -38,7 +38,7 @@ if( isset($_GET['todo']) ) {
 <td><label for="from">od:</label><input type="text" name="from" value="'.date('Y.m.d').'" id="from" size="10">
 <label for="to">do:</label><input type="text" name="to" value="'.date('Y.m.d',time()+24*3600).'" id="to" size="10"></td>
 </tr><tr>
-<td><label for="header">Dołącz nagłówek</label></td>
+<td><label for="header">Dołącz nagłówki</label></td>
 <td colspan="2"><input type="checkbox" name="header" checked="checked" id="header"></td>
 </tr><tr>
 <td><label for="aggr">Agregacja pomiarów</label></td>
@@ -50,11 +50,16 @@ if( isset($_GET['todo']) ) {
 <option value="quarter">15 minut</option>
 </select>
 </td>
-</tr>
-</table>
-<input type="submit" name="send" value="Ustaw">
+</tr><tr>
+<td colspan="3">
+
+<input type="submit" name="send" value="Pobierz">
 <input type="submit" name="send" value="Oznacz">
 <input type="reset" value="Anuluj">
+<input type="submit" name="send" value="URI">
+</td>
+</tr>
+</table>
         ';
       $tresc.='</form>';
 
@@ -94,22 +99,20 @@ if( isset($_GET['todo']) ) {
       default:
         $aggr=1;
       }
-      if( $_GET['send']=='Ustaw' ) {
-      /*
+      if( $_GET['send']=='Pobierz' ) {
       header('Content-Type: application/octet-stream');
       header("Pragma: public");
       header("Expires: 0");
       header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
       header("Content-Type: text/csv");
       header('Content-Disposition: attachment; filename="'.date('Y.m.d_H.i').'__data.csv"');
-       */
-      echo '<pre>';
       $icdtcp->csv_export($od, $do, $header, $aggr);
-      echo '</pre>';
-      /*
-      exit();*/
-      } else {
+      exit();
+      } else if( $_GET['send']=='Oznacz' ) {
         $info='<h4>'.$icdtcp->csv_export_done($od, $do, $header, $aggr).'</h4>';
+      } else {
+        $uri = str_replace( '&', '&amp;', 'http://'. $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
+        $info='<h4>'.$uri.'</h4>';
       }
     }
     break;
@@ -118,6 +121,7 @@ if( isset($_GET['todo']) ) {
     $icdtcp->set_send_flag();
 
     $info='<h4>Ustawiono wszystkie rekordy jako wysłane</h4>';
+    break;
 
   case 'recreate_databases':
 
@@ -147,7 +151,7 @@ $tresc.='
 
   <li><a href="./?strona=plik_konf">Plik konf.</a>
 
-  <li><a href="./?strona=administracja&amp;todo=csv">Zrzut bazy do CSV //TODO</a>
+  <li><a href="./?strona=administracja&amp;todo=csv">Zrzut bazy do CSV</a>
 
   <li><a href="./?strona=administracja&amp;todo=tar">Zrzut plików bazy (archiwum *.tar)</a>
 

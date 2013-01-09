@@ -482,35 +482,34 @@ class c_icdtcp {
       for( $i=0; $i<4; ++$i ) {
         echo( $licznik['counter_id'][$i]."\t".$licznik['name'][$i]."\r\n" );
       }
+      echo("id\tcounter_id\tdatetime\tcnt\tdark_time\twork_time\ttest\tflags\r\n" );
     }
 
     //TODO here
   
-    $sql="SELECT * FROM flow WHERE dtm >= ".$od." AND dtm < ".$do." ORDER BY dtm, counter_id ASC";
+    $sql="SELECT " 
+      ."id, counter_id, datetime(dtm, 'unixepoch', 'localtime'), cnt, dark_time, work_time, test, flags "
+      ." FROM flow WHERE dtm >= ".$od." AND dtm < ".$do." ORDER BY dtm, counter_id ASC";
 
-    echo $sql;
+
     $ans=$this->dataDb->query($sql);
-    $ans->setFetchMode(PDO::FETCH_ASSOC);
-    if( $row=$ans->fetch() ) {
-      foreach( $row as $key=>$val ) {
-        echo( $key."\t" );
-      }      
-      print_r( $row );
-
-      foreach( $ans as $row ) {
-        print_r( $row );
-   
-
+    $ans->setFetchMode(PDO::FETCH_NUM);
+    foreach( $ans as $row ) {
+      for( $i=0; $i<7; ++$i ) {
+        echo( $row[$i]."\t" );
       }
+      echo( $row[$i]."\r\n" );
     }
-    
-    
-    
+    if( $header ) { 
+      echo( "\n\r__EOF__\n\r" );
+    }
   }
   function csv_export_done($od, $do, $header, $aggr) {
-    return 'aaa';
-    echo date(DATE_RFC822, $od);
-    echo date(DATE_RFC822, $do);
+
+    $sql='UPDATE flow SET flags = -2 WHERE flags > 0 AND dtm >= '.$od.' AND dtm < '.$do;
+    $this->dataDb->query($sql);
+    
+    return 'Oznaczono dane z przedziału od '.date( 'Y-m-d H:i:s', $od ).' do '.date( 'Y-m-d H:i:s', ($do-1) );
   }
 }
 
