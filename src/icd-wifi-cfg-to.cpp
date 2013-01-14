@@ -96,13 +96,64 @@ class CwifiCfgToDb {
 
     }
     void readDbConfig() {
+
+      int i;
+      int j;
+      int k;
+      int l;
+      bool exists;
+      CkeyVal keyval;
+      Cwifinet net;
+      std::string ssid;                                             //012345678
+      std::vector<std::string> dbNetworks = globalConfig->list_like( "wifinet" );
+
+      for( i=0; i<dbNetworks.size(); ++i ) {
+        ssid=dbNetworks[i].substr( 8 );
+        exists=false;
+        for( j=0; j<networks.size(); ++j ) {
+          if( ssid.compare( networks[j].ssid )==0 ) {//network exists: update or nothing
+            networks[j].job=NONE;
+            std::vector<icd::config_entry> entries = globalConfig->list_entries( dbNetworks[i] );
+
+            for( k=0; k<networks[j].values.size(); ++k ) {//for every value
+              for( l=0; l<entries.size(); ++l ) {//find connected value from db
+                if( networks[j].values[k].key.compare( entries[l].key )==0 ) {
+                  if( networks[j].values[k].val.compare( entries[l].value )==0 ) {//items equal
+                    networks[j].values[k].job=NONE;
+                  } else {//update db value
+                    networks[j].values[k].job=UPDATE;
+                    networks[j].job=UPDATE;
+                  }
+                  entries[l]=entries[ entries.size()-1 ];//remove used value
+                  entries.pop_back();
+                  break;
+                }
+              }
+            }
+            for( l=0; l<entries.size(); ++l ) {
+              keyval.key=entries[l].key;
+              keyval.job=REMOVE;//items only in db should be removed
+              networks[j].values.push_back( keyval );
+            }
+            exists=true;
+            break;
+          }
+        }
+        if( exists!=true ) {//remove from db 
+          net.ssid=ssid;
+          net.job=REMOVE;
+          networks.push_back( net );
+        }
+      }
     }
     void Update() {
       for( int i=0; i<networks.size(); ++i ) {
-        std::cout << "net: " << networks[i].ssid << std::endl;
+        std::cout << "net: " << networks[i].ssid << "  job: " <<  networks[i].job 
+          <<std::endl;
         for( int j=0; j<networks[i].values.size(); ++j ) {
           std::cout << "  " << networks[i].values[j].key << " : "
-            << networks[i].values[j].val << std::endl;
+            << networks[i].values[j].val << "  job: " 
+            << networks[i].values[j].job << std::endl;
         }
       }
     }
