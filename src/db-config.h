@@ -17,8 +17,12 @@ namespace icd
   {
     public:
 
-      config(sqlite3cc::conn& db) : db(db) {}
-      ~config() {}
+      config(sqlite3cc::conn& db); 
+      ~config();
+
+      void begin_transaction();
+      void commit_transaction();
+      void rollback_transaction();
 
       std::string entry(const std::string& section, const std::string& key);
       bool entry_bool(const std::string& section, const std::string& key,

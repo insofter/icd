@@ -155,11 +155,8 @@ class CwifiCfgToDb {
       std::string s;
       int i;
       int j;
-      sqlite3cc::stmt configDbSql( *globalConfigDb );
-      configDbSql.prepare( "BEGIN TRANSACTION" );
-      configDbSql.step();
-      configDbSql.finalize();
 
+      globalConfig->begin_transaction();
 
       for(i=0; i<networks.size(); ++i ) {
         s="wifinet-";
@@ -199,9 +196,7 @@ class CwifiCfgToDb {
         }
       }
 
-      configDbSql.prepare( "COMMIT TRANSACTION" );
-      configDbSql.step();
-      configDbSql.finalize();
+      globalConfig->commit_transaction();
     }
 
 };

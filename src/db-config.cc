@@ -2,6 +2,33 @@
 
 namespace icd
 {
+  config::config(sqlite3cc::conn& db) : db(db) {
+  }
+  config::~config() {
+  }
+
+  void config::begin_transaction() {
+    sqlite3cc::stmt stmt(db);
+    stmt.prepare( "BEGIN TRANSACTION" );
+    stmt.step();
+    stmt.finalize();
+  }
+
+  void config::commit_transaction() {
+    sqlite3cc::stmt stmt(db);
+    stmt.prepare( "COMMIT TRANSACTION" );
+    stmt.step();
+    stmt.finalize();
+  }
+
+  void config::rollback_transaction() {
+    sqlite3cc::stmt stmt(db);
+    stmt.prepare( "ROLLBACK TRANSACTION" );
+    stmt.step();
+    stmt.finalize();
+  }
+
+
 	std::string config::entry(const std::string& section, const std::string& key)
 	{
 		std::string value;
