@@ -39,5 +39,7 @@ do
     icd-config --db=$ICD_CONFIG_DB set wifi ssid "$newssid"
   fi
 
+  icd-wifi-cfg-to
+
 
 done

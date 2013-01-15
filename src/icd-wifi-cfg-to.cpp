@@ -185,15 +185,14 @@ class CwifiCfgToDb {
             globalConfig->remove_section( s );
             break;
         }
-
-
+/*
         std::cout << "net: " << networks[i].ssid << "  job: " <<  networks[i].job 
           <<std::endl;
         for( int j=0; j<networks[i].values.size(); ++j ) {
           std::cout << "  " << networks[i].values[j].key << " : "
             << networks[i].values[j].val << "  job: " 
             << networks[i].values[j].job << std::endl;
-        }
+        }*/
       }
 
       globalConfig->commit_transaction();
