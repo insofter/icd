@@ -93,7 +93,7 @@ namespace icd
 		stmt.step();
 		if (stmt.column_type(0) != SQLITE_NULL) {
 			dbvalue = stmt.column_text(0);
-			if( dbvalue==value )
+			if( dbvalue.compare( value )==0 )
 			{
 				stmt.finalize();
 				return;

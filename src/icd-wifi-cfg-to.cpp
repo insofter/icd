@@ -122,7 +122,6 @@ class CwifiCfgToDb {
                     networks[j].values[k].job=NONE;
                   } else {//update db value
                     networks[j].values[k].job=UPDATE;
-                    networks[j].job=UPDATE;
                   }
                   entries[l]=entries[ entries.size()-1 ];//remove used value
                   entries.pop_back();
@@ -136,6 +135,12 @@ class CwifiCfgToDb {
               networks[j].values.push_back( keyval );
             }
             exists=true;
+            for( k=0; k<networks[j].values.size(); ++k ) {//check if update is needed
+              if( networks[j].values[k].job!=NONE ) {
+                networks[j].job=UPDATE;
+                break;
+              }
+            }
             break;
           }
         }
@@ -147,7 +152,44 @@ class CwifiCfgToDb {
       }
     }
     void Update() {
-      for( int i=0; i<networks.size(); ++i ) {
+      std::string s;
+      int i;
+      int j;
+      sqlite3cc::stmt configDbSql( *globalConfigDb );
+      configDbSql.prepare( "BEGIN TRANSACTION" );
+      configDbSql.step();
+      configDbSql.finalize();
+
+
+      for(i=0; i<networks.size(); ++i ) {
+        s="wifinet-";
+        s+=networks[i].ssid;
+        switch( networks[i].job ) {
+          case ADD:
+            globalConfig->add_section( s );
+            for( j=0; j<networks[i].values.size(); ++j ) {
+              globalConfig->set_entry( s, networks[i].values[j].key, networks[i].values[j].val );
+            }
+            break;
+          case UPDATE:
+            for( j=0; j<networks[i].values.size(); ++j ) {
+              switch( networks[i].values[j].job ) {
+                case ADD:
+                case UPDATE:
+                  globalConfig->set_entry( s, networks[i].values[j].key, networks[i].values[j].val );
+                  break;
+                case REMOVE:
+                  globalConfig->remove_entry( s, networks[i].values[j].key );
+                  break;
+              }
+            }
+            break;
+          case REMOVE:
+            globalConfig->remove_section( s );
+            break;
+        }
+
+
         std::cout << "net: " << networks[i].ssid << "  job: " <<  networks[i].job 
           <<std::endl;
         for( int j=0; j<networks[i].values.size(); ++j ) {
@@ -156,6 +198,10 @@ class CwifiCfgToDb {
             << networks[i].values[j].job << std::endl;
         }
       }
+
+      configDbSql.prepare( "COMMIT TRANSACTION" );
+      configDbSql.step();
+      configDbSql.finalize();
     }
 
 };
