@@ -192,6 +192,14 @@ em {
   font-weight: bold;
   font-style: normal;
 }
+p#wifi {
+  text-align: center;
+  text-indent: 0;
+}
+#wifi input {
+  margin: 0;
+  width: 200px;
+}
 /*koniec tresc*/
 /*stopka*/
 #stopka {

@@ -40,7 +40,7 @@ if( isset( $_GET['dodaj'] ) ) {
 
     foreach($scan as $s) {
       $tresc.='<tr><th>
-        <a href="./?strona=wifi&amp;dodaj='.$s[4].'">'.$s[4].'</a></th><td>Moc: '.$s[2].'%</td><td>'.$s[3].'</td></tr>';
+        <a href="./?strona=wifi&amp;dodaj='.$s[4].'">'.$s[4].'</a></th><td>Moc: '.$s[2].'</td><td>'.$s[3].'</td></tr>';
     }
     $tresc.='</table></div>';
   } else {
@@ -70,6 +70,26 @@ if( isset( $_GET['dodaj'] ) ) {
     $wifi->addn( $_POST['ssid'], $_POST['psk'] );
     $tresc.='<h4>Dodano sieć: '.$_POST['ssid'].'</h4>';
   }
+  if( isset( $_POST['wifi_toggle'] ) ) {
+    $wifi->toggle($_POST['wifi_toggle']);
+  }
+
+
+
+  $tresc.='<form action="./?strona=wifi" method="POST">
+    <p id="wifi">';
+
+  if( $wifi->enabled()=='yes' ) {
+    $tresc.='<input type="submit" value="Wyłącz WiFi">
+      <input type="hidden" name="wifi_toggle" value="no">';
+  } else {
+    $tresc.='<input type="submit" value="Włącz WiFi">
+      <input type="hidden" name="wifi_toggle" value="yes">';
+  }
+  $tresc.='</form>';
+
+
+
 
   $tresc.='<table><tr><th colspan="2">Stan</th></tr>';
   $stat=$wifi->stat();

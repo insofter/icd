@@ -1,45 +1,80 @@
 #!/bin/sh
 
+cfg_from() {
 icd-wifi-cfg-from
-
 touch /tmp/log/wpa_supplicant.log
 chmod 644 /tmp/log/wpa_supplicant.log
-
 touch /tmp/log/udhcpc.log
 chmod 644 /tmp/log/udhcpc.log
+}
+
+run_wpa() {
+#check if wpa_suppl is running or run it
+pidof wpa_supplicant > /dev/null \
+  || wpa_supplicant -Dwext -iwlan0 -d -c/tmp/wpa_suppl.conf > /dev/null &  #log jest za duzy
+sleep 5
+#check if wpa_suppl is running and check if udhcpc -i wlan0 is running or run it
+pidof wpa_supplicant > /dev/null \
+  && ps | grep "udhcpc -i wlan0" | grep -q -v grep \
+  || udhcpc -i wlan0 > /tmp/log/udhcpc.log 2>&1 &
+}
+
+ip_to() {
+wifiip=`icd-config --db=$ICD_CONFIG_DB sget wifi ip`
+wifissid=`icd-config --db=$ICD_CONFIG_DB sget wifi ssid`
+newip=`wpa_cli -i wlan0 status | awk -F "=" ''/'ip_address'/' {print $2}'`
+newssid=`wpa_cli -i wlan0 status | grep -v bssid | awk -F "=" ''/'ssid'/' {print $2}'`
+if [ "$wifiip" != "$newip" ]
+then 
+  icd-config --db=$ICD_CONFIG_DB set wifi ip "$newip"
+fi
+if [ "$wifissid" != "$newssid" ]
+then
+  icd-config --db=$ICD_CONFIG_DB set wifi ssid "$newssid"
+fi
+}
+
+cfg_to() {
+icd-wifi-cfg-to
+}
+off_wpa() {
+killall wpa_supplicant
+kill `ps | grep "udhcpc -i wlan0" | grep -v grep | awk '{print $1}'`
+}
+
+#MAIN
+
+
+enab=`icd-config --db=$ICD_CONFIG_DB sget wifi enabled`
+
+if [ "$enab" = "yes" ]
+then
+  cfg_from
+fi
+old_enab=$enab
 
 while [ 1 = 1 ]
 do
   sleep 30
 
-  #TODO: chceck wifi enabled from db
+  enab=`icd-config --db=$ICD_CONFIG_DB sget wifi enabled`
 
 
-  #check if wpa_suppl is running or run it
-  pidof wpa_supplicant || wpa_supplicant -Dwext -iwlan0 -d -c/tmp/wpa_suppl.conf > /dev/null &  #log jest za duzy
-  #pidof wpa_supplicant || wpa_supplicant -Dwext -iwlan0 -d -c/tmp/wpa_suppl.conf > /tmp/log/wpa_supplicant.log &
-
-  sleep 5
-
-  #check if wpa_suppl is running and check if udhcpc -i wlan0 is running or run it
-  pidof wpa_supplicant && ps | grep "udhcpc -i wlan0" | grep -q -v grep || udhcpc -i wlan0 > /tmp/log/udhcpc.log 2>&1 &
-
-
-  wifiip=`icd-config --db=$ICD_CONFIG_DB sget wifi ip`
-  wifissid=`icd-config --db=$ICD_CONFIG_DB sget wifi ssid`
-  newip=`wpa_cli -i wlan0 status | awk -F "=" ''/'ip_address'/' {print $2}'`
-  newssid=`wpa_cli -i wlan0 status | grep -v bssid | awk -F "=" ''/'ssid'/' {print $2}'`
-
-  if [ "$wifiip" != "$newip" ]
-  then 
-    icd-config --db=$ICD_CONFIG_DB set wifi ip "$newip"
-  fi
-  if [ "$wifissid" != "$newssid" ]
+  if [ "$enab" = "yes" ] && [ "$old" = "no" ]
   then
-    icd-config --db=$ICD_CONFIG_DB set wifi ssid "$newssid"
+    cfg_from
+    run_wpa
+  else
+    if [ "$enab" = "yes" ] && [ "$old" = "yes" ]
+    then
+      ip_to
+      cfg_to
+    else
+      if [ "$enab" = "no" ] && [ "$old" = "yes" ]
+        then
+        off_wpa
+      fi
+    fi
   fi
-
-  icd-wifi-cfg-to
-
-
+  old_enab=$enab
 done

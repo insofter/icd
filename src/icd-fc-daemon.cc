@@ -154,6 +154,9 @@ MIN:
      *    |  |  +--DNS 2 ( edit: ip )
      *    |  |
      *    |  +--WiFi
+     *    |  |  +--Włącz wifi ( edit: bool )
+     *    |  |  +--Adres IP
+     *    |  |  +--ssid
      *    |  |
      *    |  +--GSM
      *    |
@@ -211,6 +214,7 @@ MIN:
     item->itemAdd( pl );
 
     pl=new CmenuDbParamList( "WiFi" );
+    pl->itemAdd( "Włącz wifi", "wifi", "enabled", CdbParam::editBool );
     pl->itemAdd( "Adres IP (WiFi)", "wifi", "ip" );
     pl->itemAdd( "Sieć bezprzewod.", "wifi", "ssid" );
     item->itemAdd( pl );

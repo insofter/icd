@@ -3,6 +3,51 @@ defined('INSOFTER') or die('<h1>Your Kung-Fu is too weak.</h1>');
 
 class c_wifi {
 
+  var $configDb;
+  function __construct() {
+    $this->configDb=NULL;
+  }
+
+  function get_config() {
+    if( $this->configDb==NULL ) {
+      foreach( file("/etc/profile.d/icd.sh", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $tmp ) {
+        $tmp=explode( '=', strtr( $tmp, array('export '=>'', '$'=>'', '('=>'', ';'=>'', ) ) );
+        eval( '$'.$tmp[ 0 ].'="'.$tmp[ 1 ].'";' );
+      }
+      try {
+        $this->configDb = new PDO('sqlite:'.$ICD_CONFIG_DB);
+      } catch (PDOException $e) {
+        print $e->getMessage();
+      }
+    }
+    return $this->configDb;
+  }
+
+  function enabled() {
+
+    $sql="SELECT `key`, `value` FROM config_section cs LEFT JOIN config c ON cs.id=c.section_id
+      WHERE cs.name='wifi' AND c.key='enabled' ";
+    $ans=$this->get_config()->query($sql);
+    foreach( $ans as $row ) {
+      return $row['value'];
+    }
+  }
+
+  function toggle($co) {
+    if( $co!='no' ) {
+      $co='yes';
+    }
+    $sql="UPDATE config SET `value`='$co' WHERE section_id".
+      "=(SELECT `id` FROM config_section WHERE name='wifi') AND `key`='enabled'";
+    $ans=$this->get_config()->query($sql);
+  }
+
+
+
+
+
+
+
   function stat() {
     //exec( $this->polecenie.' stat', $out );
     exec( 'sudo wpa_cli -i wlan0 status', $out );
@@ -24,11 +69,11 @@ class c_wifi {
     return($arr);
   }
   function scan() {
-//    exec( $this->polecenie.' scan', $out );
+    //    exec( $this->polecenie.' scan', $out );
     exec( 'sudo wpa_cli -i wlan0 scan', $out );
   }
   function rscn() {
-//    exec( $this->polecenie.' rscn', $out );
+    //    exec( $this->polecenie.' rscn', $out );
     exec( 'sudo wpa_cli -i wlan0 scan_results | tail -n +2', $out );
     $arr=array();
     foreach( $out as $x) {
@@ -39,7 +84,7 @@ class c_wifi {
   function addn($net, $pas) {
     $net=preg_replace('#[^a-zA-Z0-9-_]+#', '', $net);
     $pas=preg_replace('#[^a-zA-Z0-9-_]+#', '', $pas);
-//    exec( $this->polecenie.' addn '.$net.' '.$pas, $out );
+    //    exec( $this->polecenie.' addn '.$net.' '.$pas, $out );
 
     $num=exec( 'sudo wpa_cli -i wlan0 add_network', $out );
     if( $pas == '' ) {
