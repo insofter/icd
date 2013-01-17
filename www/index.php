@@ -4,8 +4,11 @@ session_start();
 define( 'INSOFTER', 1 );
 require_once('inc/c_icdtcp.php');
 
-if( isset( $_POST['password'] ) ) {
+if( isset( $_POST['logout'] ) ) {
+  unset( $_SESSION['zalogowany'] );
+}
 
+if( isset( $_POST['password'] ) ) {
   $icdtcp = new c_icdtcp();
   $_SESSION['zalogowany']=$icdtcp->zaloguj( $_POST['password'] );
   unset( $icdtcp );
@@ -13,9 +16,8 @@ if( isset( $_POST['password'] ) ) {
   $icdtcp = new c_icdtcp();
   $_SESSION['zalogowany']=$icdtcp->zaloguj( NULL );
   unset( $icdtcp );
-} else if( isset( $_POST['logout'] ) ) {
-  $_SESSION['zalogowany']=0;
-}
+} 
+  
 
 
 
