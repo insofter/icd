@@ -74,6 +74,60 @@ class c_icdtcp {
     }
     $this->ICD_DATA_DIR=$ICD_DATA_DIR;
   }
+  function zaloguj( $pass ) {
+    $sql="SELECT `key`, `value` FROM config_section cs LEFT JOIN config c on cs.id=c.section_id
+      WHERE cs.name='login' AND (c.key='enabled' OR c.key='pass')";
+    $ans=$this->configDb->query($sql);
+
+    foreach( $ans as $row ) {
+      $login[$row['key']]=$row['value'];
+    }
+    if( $login['enabled']=='no' ) {
+      return 1;
+    }
+    if( $login['pass']==$pass ) {
+      return 2;
+    }
+    return 0;
+  }
+  function ustaw_logowanie( $npass, $pass, $enab ) {
+    $sql="SELECT `key`, `value` FROM config_section cs LEFT JOIN config c on cs.id=c.section_id
+      WHERE cs.name='login' AND (c.key='pass')";
+    $ans=$this->configDb->query($sql);
+    $row=$ans->fetch();
+
+    if( $pass==$row['value'] ) {
+
+      $sql="UPDATE config SET `value`=".$this->configDb->quote($npass)."
+        WHERE section_id=(SELECT `id` FROM config_section WHERE name='login')
+        AND `key`='pass'";
+      $ans=$this->configDb->query($sql);
+
+      if( $enab!='no' ) {
+        $enab='yes';
+      }
+      $sql="UPDATE config SET `value`='$enab' WHERE section_id".
+        "=(SELECT `id` FROM config_section WHERE name='login') AND `key`='enabled'";
+      $ans=$this->configDb->query($sql);
+      return true;
+    }
+    return false;
+  }
+
+  function pob_logowanie() {
+    $sql="SELECT `key`, `value` FROM config_section cs LEFT JOIN config c on cs.id=c.section_id
+      WHERE cs.name='login' AND (c.key='enabled')";
+    $ans=$this->configDb->query($sql);
+
+    foreach( $ans as $row ) {
+      $login[$row['key']]=$row['value'];
+    }
+    if( $login['enabled']=='no' ) {
+      return false;
+    } else {
+      return true;
+    }
+  }
 
   function info() {
     $sql="SELECT `key`, `value` FROM config_section cs LEFT JOIN config c on cs.id=c.section_id

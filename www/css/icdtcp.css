@@ -7,8 +7,12 @@ body {
 }
 /*logo*/
 h1 {
-  text-align: center;
-  margin-top: 3px;
+  text-align: right;
+  margin: auto;
+  margin-top: 10px;
+  width: 716px;
+  height: 96px;
+  background-image: url('../img/insofter.jpg'); 
 }
 /*koniec logo*/
 

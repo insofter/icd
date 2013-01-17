@@ -2,6 +2,22 @@
 session_start();
 
 define( 'INSOFTER', 1 );
+require_once('inc/c_icdtcp.php');
+
+if( isset( $_POST['password'] ) ) {
+
+  $icdtcp = new c_icdtcp();
+  $_SESSION['zalogowany']=$icdtcp->zaloguj( $_POST['password'] );
+  unset( $icdtcp );
+} else if( ! isset( $_SESSION['zalogowany']) ) {
+  $icdtcp = new c_icdtcp();
+  $_SESSION['zalogowany']=$icdtcp->zaloguj( NULL );
+  unset( $icdtcp );
+} else if( isset( $_POST['logout'] ) ) {
+  $_SESSION['zalogowany']=0;
+}
+
+
 
 $o_mnie=array('nazwa'=>'ICDTCP3',
   'opis'=>'Interfejs konfiguracyjny rejestratora ICDTCP3',
@@ -10,7 +26,6 @@ $o_mnie=array('nazwa'=>'ICDTCP3',
   'autor'=>'insofter',
   'strona'=>'www.insofter.pl');
 
-require_once('inc/c_icdtcp.php');
 
 $naglowek='<!DOCTYPE html><html lang="pl"><head>
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
@@ -29,10 +44,17 @@ $naglowekcd='</title>
   </script>
   ';
 
-
-$logo='<h1>
-  <img src="img/insofter.jpg" width="716" height="96" alt="Insofter Komputerowe Systemy Automatyki">
-  </h1>';
+if( $_SESSION['zalogowany']==2 ) {
+  $logo='<form action="./" method="POST">
+    <h1>
+    <input type="submit" value="Wyloguj się">
+    <input type="hidden" name="logout" value="bye">
+    </h1>
+    </form>';
+} else {
+  $logo='<h1>
+    </h1>';
+}
 
 $stopka='
   <p id="stopka">
@@ -48,6 +70,7 @@ $menurozwijane=array(
   'wysylanie'=>'Wysyłanie',
   'log'=>'Logi',
   'administracja'=>'Administracja',
+  'logowanie'=>'Logowanie',
 //  'plik_konf'=>'Plik konf.'
 );
 
@@ -111,45 +134,11 @@ foreach( $menuglowne as $key=>$val )
 $menu.='
   </ul>
   ';
-/*
-if( isset($_GET['strona']) && $_GET['strona']=='wyniki' ) {
-  $menu.='<ul class="menu menuwyniki">
-    ';
-  if( ! isset($_GET['typ']) ) {
-    $_GET['typ']='dobowy';
-  }
-
-  foreach( $menuwyniki as $key=>$val )
-  {
-    if( $_GET['typ']==$key )
-    {
-      $menu.='
-        <li><a class="klikniete" href="./?strona=wyniki&amp;typ='.$key.'">'.$val.'</a></li>';
-    } else {
-      $menu.='
-        <li><a href="./?strona=wyniki&amp;typ='.$key.'">'.$val.'</a></li>';
-    }
-  }
-  $menu.='</ul>
-    ';
-
-
-}
- */
 
 
 
 if( isset($_GET['strona']) ) {
   switch( $_GET['strona'] ) {
-  case 'tcpip':
-    include('inc/tcpip.php');
-    break;
-  case 'licznik':
-    include('inc/licznik.php');
-    break;
-  case 'wysylanie':
-    include('inc/wysylanie.php');
-    break;
   case 'dobowy':
     include('inc/wyniki_dobowy.php');
     break;
@@ -162,18 +151,63 @@ if( isset($_GET['strona']) ) {
   case 'log':
     include('inc/log.php');
     break;
+  case 'logowanie':
+    include('inc/logowanie.php');
+    break;
+
+
+  case 'tcpip':
+    if( $_SESSION['zalogowany']!=0 ) {
+      include('inc/tcpip.php');
+    } else {
+      include('inc/logowanie.php');
+    }
+    break;
+  case 'licznik':
+    if( $_SESSION['zalogowany']!=0 ) {
+      include('inc/licznik.php');
+    } else {
+      include('inc/logowanie.php');
+    }
+    break;
+  case 'wysylanie':
+    if( $_SESSION['zalogowany']!=0 ) {
+      include('inc/wysylanie.php');
+    } else {
+      include('inc/logowanie.php');
+    }
+    break;
   case 'plik_konf':
-    include('inc/plik_konf.php');
+    if( $_SESSION['zalogowany']!=0 ) {
+      include('inc/plik_konf.php');
+    } else {
+      include('inc/logowanie.php');
+    }
     break;
   case 'test_wysylania':
-    include('inc/test_wysylania.php');
+    if( $_SESSION['zalogowany']!=0 ) {
+      include('inc/test_wysylania.php');
+    } else {
+      include('inc/logowanie.php');
+    }
     break;
   case 'wifi':
-    include('inc/wifi.php');
+    if( $_SESSION['zalogowany']!=0 ) {
+      include('inc/wifi.php');
+    } else {
+      include('inc/logowanie.php');
+    }
     break;
   case 'administracja':
-    include('inc/administracja.php');
+    if( $_SESSION['zalogowany']!=0 ) {
+      include('inc/administracja.php');
+    } else {
+      include('inc/logowanie.php');
+    }
     break;
+
+
+
   default:
     $tresc='<div id="tresc">taka strona nie istnieje</div>';
     break;
