@@ -1,5 +1,50 @@
 #!/bin/sh
 
+
+
+#####################################################################
+exit 1
+
+#####################################################################
+
+wifi check
+icd-config --db=$ICD_CONFIG_DB sget wifi enabled
+
+
+log files
+touch /tmp/log/wpa_supplicant.log
+chmod 644 /tmp/log/wpa_supplicant.log
+touch /tmp/log/udhcpc.log
+chmod 644 /tmp/log/udhcpc.log
+
+
+log size
+du /tmp/log/wpa_supplicant.log
+
+
+start wpa_supplicant
+icd-wifi-cfg-from
+wpa_supplicant -Dwext -iwlan0 -d -c/tmp/wpa_suppl.conf > /dev/null & 
+
+check wpa_supplicant
+pidof wpa_supplicant > /dev/null && echo yes || echo no
+
+stop wpa_supplicant
+killall wpa_supplicant
+icd-wifi-cfg-to
+rm /tmp/wpa_suppl.conf 
+
+
+start dhcp
+udhcpc -i wlan0 > /tmp/log/udhcpc.log 2>&1 &
+
+check dhcp
+ps | grep -q "[u]dhcpc -i wlan0" && echo yes || echo no
+
+stop dhcp
+kill `ps | awk ''/'[u]dhcpc -i wlan0'/' { print $1}'`
+
+#####################################################################
 cfg_from() {
 icd-wifi-cfg-from
 touch /tmp/log/wpa_supplicant.log
