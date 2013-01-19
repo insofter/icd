@@ -1,125 +1,64 @@
 #!/bin/sh
 
-
-
-#####################################################################
-exit 1
-
-#####################################################################
-
-wifi check
-icd-config --db=$ICD_CONFIG_DB sget wifi enabled
-
-
-log files
-touch /tmp/log/wpa_supplicant.log
-chmod 644 /tmp/log/wpa_supplicant.log
-touch /tmp/log/udhcpc.log
-chmod 644 /tmp/log/udhcpc.log
-
-
-log size
-du /tmp/log/wpa_supplicant.log
-
-
-start wpa_supplicant
-icd-wifi-cfg-from
-wpa_supplicant -Dwext -iwlan0 -d -c/tmp/wpa_suppl.conf > /dev/null & 
-
-check wpa_supplicant
-pidof wpa_supplicant > /dev/null && echo yes || echo no
-
-stop wpa_supplicant
-killall wpa_supplicant
-icd-wifi-cfg-to
-rm /tmp/wpa_suppl.conf 
-
-
-start dhcp
-udhcpc -i wlan0 > /tmp/log/udhcpc.log 2>&1 &
-
-check dhcp
-ps | grep -q "[u]dhcpc -i wlan0" && echo yes || echo no
-
-stop dhcp
-kill `ps | awk ''/'[u]dhcpc -i wlan0'/' { print $1}'`
-
-#####################################################################
-cfg_from() {
-icd-wifi-cfg-from
-touch /tmp/log/wpa_supplicant.log
-chmod 644 /tmp/log/wpa_supplicant.log
-touch /tmp/log/udhcpc.log
-chmod 644 /tmp/log/udhcpc.log
-}
-
-run_wpa() {
-#check if wpa_suppl is running or run it
-pidof wpa_supplicant > /dev/null \
-  || wpa_supplicant -Dwext -iwlan0 -d -c/tmp/wpa_suppl.conf > /dev/null &  #log jest za duzy
-sleep 5
-#check if wpa_suppl is running and check if udhcpc -i wlan0 is running or run it
-pidof wpa_supplicant > /dev/null \
-  && ps | grep "udhcpc -i wlan0" | grep -q -v grep \
-  || udhcpc -i wlan0 > /tmp/log/udhcpc.log 2>&1 &
-}
-
-ip_to() {
-wifiip=`icd-config --db=$ICD_CONFIG_DB sget wifi ip`
-wifissid=`icd-config --db=$ICD_CONFIG_DB sget wifi ssid`
-newip=`wpa_cli -i wlan0 status | awk -F "=" ''/'ip_address'/' {print $2}'`
-newssid=`wpa_cli -i wlan0 status | grep -v bssid | awk -F "=" ''/'ssid'/' {print $2}'`
-if [ "$wifiip" != "$newip" ]
-then 
-  icd-config --db=$ICD_CONFIG_DB set wifi ip "$newip"
-fi
-if [ "$wifissid" != "$newssid" ]
-then
-  icd-config --db=$ICD_CONFIG_DB set wifi ssid "$newssid"
-fi
-}
-
-cfg_to() {
-icd-wifi-cfg-to
-}
-off_wpa() {
-killall wpa_supplicant
-kill `ps | grep "udhcpc -i wlan0" | grep -v grep | awk '{print $1}'`
-}
-
-#MAIN
-
-
-enab=`icd-config --db=$ICD_CONFIG_DB sget wifi enabled`
-
-if [ "$enab" = "yes" ]
-then
-  cfg_from
-fi
-old_enab=$enab
-
 while [ 1 = 1 ]
 do
   sleep 30
 
-  enab=`icd-config --db=$ICD_CONFIG_DB sget wifi enabled`
+  if [ "`icd-config --db=$ICD_CONFIG_DB sget wifi enabled`" = "yes" ]
+  then #wifi should be running
 
-
-  if [ "$enab" = "yes" ] && [ "$old" = "no" ]
-  then
-    cfg_from
-    run_wpa
-  else
-    if [ "$enab" = "yes" ] && [ "$old" = "yes" ]
+    if ! [ -e /tmp/wpa_suppl.conf ]
     then
-      ip_to
-      cfg_to
-    else
-      if [ "$enab" = "no" ] && [ "$old" = "yes" ]
-        then
-        off_wpa
+      icd-wifi-cfg-from
+    fi
+
+    if [ "`pidof wpa_supplicant > /dev/null && echo yes || echo no`" = "no" ]
+    then
+      wpa_supplicant -Dwext -iwlan0 -d -c/tmp/wpa_suppl.conf > /dev/null &
+      sleep 3
+    fi
+
+
+    if [ "`ps | grep -q "[u]dhcpc -i wlan0" && echo yes || echo no`" = "no" ] 
+    then
+      if [ "`pidof wpa_supplicant > /dev/null && echo yes || echo no`" = "yes" ]
+      then
+        udhcpc -i wlan0 > /dev/null 2>&1 &
       fi
     fi
+
+    icd-wifi-cfg-to
+
+  else #wifi should not be running
+
+    if [ "`ps | grep -q "[u]dhcpc -i wlan0" && echo yes || echo no`" = "yes" ]
+    then
+      kill `ps | awk ''/'[u]dhcpc -i wlan0'/' { print $1}'`
+    fi
+
+    if [ "`pidof wpa_supplicant > /dev/null && echo yes || echo no`" = "yes" ]
+    then
+      killall wpa_supplicant
+      sleep 3
+      icd-wifi-cfg-to
+    fi
+
+    if [ -e /tmp/wpa_suppl.conf ]
+    then
+      rm -f /tmp/wpa_suppl.conf
+    fi
+
   fi
-  old_enab=$enab
 done
+
+
+#TODO
+#cfg_from() {
+#touch /tmp/log/wpa_supplicant.log
+#chmod 644 /tmp/log/wpa_supplicant.log
+#touch /tmp/log/udhcpc.log
+#chmod 644 /tmp/log/udhcpc.log
+#log size
+#du /tmp/log/wpa_supplicant.log
+#}
+

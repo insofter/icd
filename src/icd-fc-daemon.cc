@@ -155,8 +155,7 @@ MIN:
      *    |  |
      *    |  +--WiFi
      *    |  |  +--Włącz wifi ( edit: bool )
-     *    |  |  +--Adres IP
-     *    |  |  +--ssid
+     *    |  |  +--Adres IP && SSID
      *    |  |
      *    |  +--GSM
      *    |
@@ -215,8 +214,7 @@ MIN:
 
     pl=new CmenuDbParamList( "WiFi" );
     pl->itemAdd( "Włącz wifi", "wifi", "enabled", CdbParam::editBool );
-    pl->itemAdd( "Adres IP (WiFi)", "wifi", "ip" );
-    pl->itemAdd( "Sieć bezprzewod.", "wifi", "ssid" );
+    pl->itemAdd( "Adres IP (WiFi)", "wifi", "ip-ssid" );
     item->itemAdd( pl );
 
     pl=new CmenuDbParamList( "GSM" );
@@ -244,8 +242,8 @@ MIN:
     mainMenu->itemAdd( new CmenuItemTimeFoto( 3, 4 ) );
     mainMenu->itemAdd( new CmenuItemIdds );
     mainMenu->itemAdd( new CmenuItemDbParam( "Adres IP (Eth)", "current", "ip" ) );
-    mainMenu->itemAdd( new CmenuItemDbParam( "Adres IP (WiFi)", "wifi", "ip" ) );
-    mainMenu->itemAdd( new CmenuItemDbParam( "Sieć bezprzewod.", "wifi", "ssid" ) );
+                                            //0123456789012345
+    mainMenu->itemAdd( new CmenuItemDbParam( "IP (WiFi) i SSID", "wifi", "ip-ssid" ) );
     mainMenu->itemAdd( new CmenuItemFileParam( "Status wysyłania", "/tmp/last-send-status" ) );
     std::string cmd;
     cmd="icd-flush-db && icd-transfer-data --log=short";
