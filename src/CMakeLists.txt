@@ -92,6 +92,11 @@ target_link_libraries(icd-fc-daemon db-config daemonizer
 add_executable(icd-wifi-cfg-to icd-wifi-cfg-to.cpp)
 target_link_libraries(icd-wifi-cfg-to db-config sqlite3 version)
 
+add_executable(icd-logrotate icd-logrotate.cpp)
+target_link_libraries(icd-logrotate version)
+
 
 install (TARGETS icd-config icd-sql icd-itd-daemon icd-fc-daemon
-  icd-transfer-data icd-cron icd-flush-db icd-test icd-wifi-cfg-to DESTINATION bin)
+  icd-transfer-data icd-cron icd-flush-db icd-test icd-wifi-cfg-to 
+  icd-logrotate
+  DESTINATION bin)

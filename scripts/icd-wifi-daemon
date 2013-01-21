@@ -10,12 +10,14 @@ do
     if ! [ -e /tmp/wpa_suppl.conf ]
     then
       icd-wifi-cfg-from
+      echo `date` ":: Config from db"
     fi
 
     if [ "`pidof wpa_supplicant > /dev/null && echo yes || echo no`" = "no" ]
     then
-      wpa_supplicant -Dwext -iwlan0 -d -c/tmp/wpa_suppl.conf > /dev/null &
+      wpa_supplicant -Dwext -iwlan0 -d -c/tmp/wpa_suppl.conf 2>&1 | icd-logrotate /tmp/log/wifi_wpa_suppl.log &
       sleep 3
+      echo `date` ":: Start wpa_supplicant"
     fi
 
 
@@ -23,17 +25,20 @@ do
     then
       if [ "`pidof wpa_supplicant > /dev/null && echo yes || echo no`" = "yes" ]
       then
-        udhcpc -i wlan0 > /dev/null 2>&1 &
+        udhcpc -i wlan0 2>&1 | icd-logrotate /tmp/log/wifi_udhcpc.log &
+        echo `date` ":: Start udhcpc"
       fi
     fi
 
     icd-wifi-cfg-to
+
 
   else #wifi should not be running
 
     if [ "`ps | grep -q "[u]dhcpc -i wlan0" && echo yes || echo no`" = "yes" ]
     then
       kill `ps | awk ''/'[u]dhcpc -i wlan0'/' { print $1}'`
+      echo `date` ":: Stop udhcpc"
     fi
 
     if [ "`pidof wpa_supplicant > /dev/null && echo yes || echo no`" = "yes" ]
@@ -41,11 +46,13 @@ do
       killall wpa_supplicant
       sleep 3
       icd-wifi-cfg-to
+      echo `date` ":: Stop wpa_supplicant"
     fi
 
     if [ -e /tmp/wpa_suppl.conf ]
     then
       rm -f /tmp/wpa_suppl.conf
+      echo `date` ":: Remove from db"
     fi
 
   fi
