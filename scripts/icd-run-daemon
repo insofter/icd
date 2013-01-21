@@ -1,0 +1,68 @@
+#!/bin/sh
+print_usage()
+{
+>&2 cat <<EOF
+
+Usage: ${program_name} [-v|-version] [-h|--help] [-p|--pidfile=PIDFILE]
+       [-l|--logfile=LOGFILE] [-n|--nolog] -- daemon --daemon params
+
+The tool runs program as a daemon.
+
+EOF
+}
+print_version()
+{
+>&2 cat <<EOF
+
+${program_name} ${version}
+Copyright (c) 2011-2012 Tomasz Rozensztrauch
+
+EOF
+}
+# MAIN MAIN MAIN MAIN MAIN 
+
+program_name=`basename "$0"`
+options=`getopt -o p::l::hvn --long pidfile::,logfile::,help,version,nolog -- "$@"`
+eval set -- "$options"
+while true 
+do
+  case "$1" in
+    -h|--help) print_usage; exit 0 ;;
+    -v|--version) print_version; exit 0 ;;
+    -p|--pidfile) pidfile=$2 ; shift 2 ;;
+    -l|--logfile) logfile=$2 ; shift 2 ;;
+    -n|--nolog) nolog="no" ; shift 1 ;;
+    --) shift; break ;;
+    *) error "Parsing parameters failed at '$1'" ;;
+  esac
+done
+
+if [ -z $pidfile ]
+then
+  pidfile="/tmp/${1}.pid"
+fi
+
+if [ -z $logfile ]
+then
+  logfile="/tmp/log/${1}.log"
+fi
+
+
+#echo "run: $@" 
+if [ -z $nolog ]
+then
+  $@ 2>&1 | icd-logrotate $logfile &
+else
+  $@ > /dev/null 2>&1 &
+fi
+
+pidof $1 > $pidfile
+
+#echo "pidfile: $pidfile"
+#echo "logfile: $logfile"
+
+
+
+
+
+

@@ -1,7 +1,6 @@
 #include "version.h"
 #include "sqlite3cc.h"
 #include "db-config.h"
-#include "daemonizer.h"
 #include <getopt.h>
 #include <time.h>
 #include <getopt.h>
@@ -33,14 +32,6 @@ void print_usage(char *argv0) {
     "This program runs sening data to server periodically.\n"
     "\n"
     "Options:\n"
-    "  -d|--db=DB_NAME          Database file path;\n"
-    "                               Mandatory option\n"
-    "\n"
-    "  -t|--timeout=TIMEOUT     Timeout for access to\n"
-    "                               the database in ms\n"
-    "\n"
-    "  -b|--daemon                  Run as a daemon\n"
-    "  -p|--pidfile=FILE            Create pid file (if a daemon)\n"
     "\n"
     "  -h|--help\n"
     "  -v|--version\n"
@@ -73,17 +64,11 @@ int main( int argc, char *argv[] ) {
 
   int db_timeout = 60000; 
   bool end = false;
-  char * mem;
   int ans;
-  daemonizer daemon;
-  bool run_as_daemon = false;
 
 
   //parametry uruchomienia
   struct option long_options[] = {
-    { "timeout", required_argument, 0, 't' },
-    { "daemon", no_argument, 0, 'b' },
-    { "pidfile", required_argument, 0, 'p' },
     { "help", no_argument, 0, 'h' },
     { "version", no_argument, 0, 'v' },
     { 0, 0, 0, 0 }
@@ -91,19 +76,10 @@ int main( int argc, char *argv[] ) {
 
   while( end==false ) {
     int option_index = 0;
-    int ch=getopt_long(argc, argv, "d:t:bphv", long_options, &option_index);
+    int ch=getopt_long(argc, argv, "hv", long_options, &option_index);
     if (ch == -1)
       break;
     switch(ch) {
-      case 't':
-        db_timeout = strtol(optarg, NULL, 0);
-        break;
-      case 'b':
-        run_as_daemon = true;
-        break;
-      case 'p':
-        daemon.pid_file(optarg);
-        break;
       case 'h':
         print_usage(argv[0]);
         end = true;
@@ -117,10 +93,6 @@ MIN:
         exit(1);
         break;
     }
-  }
-  if (run_as_daemon && daemon.fork() ) {
-    std::cerr << "Forking to background..." << std::endl;
-    exit(0);
   }
   //parametry uruchomienia -- koniec
 
@@ -144,9 +116,6 @@ MIN:
 
 
   while( 1==1 ) {
-    //printf("   flush=%i\n",timeOfNextFlush);
-    //printf("wh) time=%i\n",timeNow);
-    //printf("transfer=%i\n\n",timeOfNextTransfer);
 
     sleep( 30 );//sleep to avoid running loop twice in one second
     timeNow=time(NULL);
@@ -166,9 +135,6 @@ MIN:
       timeOfNextTransfer+=10;
     }
 
-   // printf("   flush=%i\n",timeOfNextFlush);
-    //printf("if) time=%i\n",timeNow);
-    //printf("transfer=%i\n\n",timeOfNextTransfer);
     if( timeOfNextTransfer<=timeOfNextFlush ) {//transfer will be faster than flush
       if( timeOfNextTransfer-timeNow > 0 ) {
         sleep( timeOfNextTransfer-timeNow );

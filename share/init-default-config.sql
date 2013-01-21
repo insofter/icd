@@ -138,7 +138,7 @@ INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_sect
 
 
 INSERT INTO config_section (id, name) VALUES ( 12, 'wifi' );
-INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'wifi'), 'enabled', 'yes' );
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'wifi'), 'enabled', 'no' );
 
 
 INSERT INTO config_section (id, name) VALUES ( 13, 'wifinet-"insofter"' );
