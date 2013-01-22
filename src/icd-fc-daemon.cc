@@ -12,7 +12,6 @@
 #include "version.h"
 #include "sqlite3cc.h"
 #include "db-config.h"
-#include "daemonizer.h"
 #include "syslogstream.h"
 
 #include <poll.h>
@@ -32,8 +31,6 @@ void print_usage( char *argv0 ) {
     "Options:\n"
 //    "  -d|--db=DB_NAME              Database file path; Mandatory option\n"
     "  -t|--timeout=TIMEOUT_MS      Timeout for access to the database in ms\n"
-    "  -b|--daemon                  Run as a daemon\n"
-    "  -p|--pidfile=FILE            Create pid file ( if a daemon )\n"
     "  -h|--help\n"
     "  -v|--version\n"
     << std::endl;
@@ -51,18 +48,12 @@ int main( int argc, char *argv[] ) {
   icd::syslogstream syslog;
 
   try {
-    daemonizer daemon;
-//    std::string db_name;
     int db_timeout = 60000; // MIN timeout is 60 seconds
-    bool run_as_daemon = false;
     bool exit = false;
 
     //parametry uruchomienia
     struct option long_options[] = {
-//      { "db", required_argument, 0, 'd' },
       { "timeout", required_argument, 0, 't' },
-      { "daemon", no_argument, 0, 'b' },
-      { "pidfile", required_argument, 0, 'p' },
       { "help", no_argument, 0, 'h' },
       { "version", no_argument, 0, 'v' },
       { 0, 0, 0, 0 }
@@ -70,22 +61,12 @@ int main( int argc, char *argv[] ) {
 
     while( 1==1 ) {
       int option_index = 0;
-      int ch = getopt_long( argc, argv, "t:bphv", long_options, &option_index );
-//      int ch = getopt_long( argc, argv, "d:t:bphv", long_options, &option_index );
+      int ch = getopt_long( argc, argv, "t:hv", long_options, &option_index );
       if ( ch == -1 )
         break;
       switch( ch ) {
-//        case 'd':
-//          db_name = optarg;
-//          break;
         case 't':
           db_timeout = strtol( optarg, NULL, 0 );
-          break;
-        case 'b':
-          run_as_daemon = true;
-          break;
-        case 'p':
-          daemon.pid_file( optarg );
           break;
         case 'h':
           print_usage( argv[0] );
@@ -105,13 +86,7 @@ MIN:
         break;
       }
     }
-//    if( !exit && db_name.empty() ) {
-//      throw std::runtime_error( "Missing '--db' parameter" );
-//    }
 
-    if ( !exit && run_as_daemon ) {
-      exit = daemon.fork();
-    }
     //parametry uruchomienia -- koniec
 
     //menu

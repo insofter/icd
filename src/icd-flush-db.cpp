@@ -4,7 +4,7 @@
 #include <cstdlib>
 #include <string.h>
 #include <cstdio>
-
+#include <time.h>
 
 icd::config *globalConfig;
 sqlite3cc::conn *globalConfigDb;
@@ -85,6 +85,21 @@ int main( int argc, char *argv[] ) {
   liveDbSqlSelect.finalize();
   dataDbSqlUpdate.finalize();
   dataDbSqlInsert.finalize();
+
+  //remove leftover records
+  int oldestRecord=0;
+  int cutTime=time(NULL)-(globalConfig->entry_long( "device", "flow-entry-retention-period-days" )*24*3600);
+  dataDbSql.prepare( "SELECT min(dtm) FROM flow" );
+  if( dataDbSql.step() == SQLITE_ROW ) {
+    oldestRecord=dataDbSql.column_int(0);
+    if( cutTime-oldestRecord > 24*3600 ) {
+      dataDbSql.finalize();
+      dataDbSql.prepare( "DELETE FROM flow WHERE dtm < ?1" );
+      dataDbSql.bind_int( 1, cutTime );
+      dataDbSql.step();
+    }
+  }
+  dataDbSql.finalize();
 
   dataDbSql.prepare( "COMMIT" );
   dataDbSql.step();

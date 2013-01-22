@@ -40,7 +40,7 @@ void print_usage(char *argv0) {
 
 #define NUMBER_OF_FILES 3
 #define BUFSIZE 512
-#define LOGSIZE 49995
+#define LOGSIZE (50000-BUFSIZE-1)
 
 void rotate( char * name ) {
   char newname[BUFSIZE];

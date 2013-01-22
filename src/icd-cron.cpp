@@ -105,7 +105,6 @@ MIN:
 #define FLUSH_DELAY 180
 
   sleep( randVal()*20.0+10 );
-  system( "echo && date" ); 
   system( "icd-transfer-data" );//first sync
 
 
@@ -139,7 +138,6 @@ MIN:
       if( timeOfNextTransfer-timeNow > 0 ) {
         sleep( timeOfNextTransfer-timeNow );
       }
-      system( "echo && date" ); 
       system( "icd-flush-db" );
       system( "icd-transfer-data" );
       delayNow=0;//force get delay and calculate new time
@@ -148,7 +146,6 @@ MIN:
       if( timeOfNextFlush-timeNow > 0 ) {
         sleep( timeOfNextFlush-timeNow );
       }
-      system( "echo && date" ); 
       system( "icd-flush-db" );
 
     }

@@ -37,32 +37,27 @@ do
   esac
 done
 
-if [ -z $pidfile ]
+name=`basename ${1}`
+
+
+if [ -z "$pidfile" ]
 then
-  pidfile="/tmp/${1}.pid"
+  pidfile="/tmp/${name}.pid"
 fi
 
-if [ -z $logfile ]
+if [ -z "$logfile" ]
 then
-  logfile="/tmp/log/${1}.log"
+  logfile="/tmp/log/${name}.log"
 fi
 
 
-#echo "run: $@" 
-if [ -z $nolog ]
+if [ -z "$nolog" ]
 then
-  $@ 2>&1 | icd-logrotate $logfile &
+  $@ 2>&1 | icd-logrotate "$logfile" &
 else
   $@ > /dev/null 2>&1 &
 fi
 
-pidof $1 > $pidfile
-
-#echo "pidfile: $pidfile"
-#echo "logfile: $logfile"
-
-
-
-
+pidof "$1" > "$pidfile"
 
 
