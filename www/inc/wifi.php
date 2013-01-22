@@ -133,7 +133,7 @@ if( isset( $_GET['dodaj'] ) ) {
   $tresc.='<tr><th colspan="3"><a href="./?strona=wifi&amp;dodaj">Dodaj sieć</a></th><td></td></tr>';
   $tresc.='</table>
     <h4 id="err">Uwaga!
-    Odłączenie karty wifi podczas pracy spowoduje bład rejestratora oraz konieczność ponownego uruchomienia.
+    Odłączenie karty wifi podczas pracy spowoduje błąd rejestratora oraz konieczność ponownego uruchomienia.
     </h4>
     </div>';
 }

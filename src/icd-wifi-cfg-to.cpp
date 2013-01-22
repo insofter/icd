@@ -52,9 +52,18 @@ class CwifiCfgToDb {
       int i;
 
       std::fstream cfgFile( cfgFileName.c_str(), std::ios_base::in );
-      cfgFile >> s; //ctrl_interface=/var/run/wpa_supplicant
-      cfgFile >> s; //ctrl_interface_group=wheel
-      cfgFile >> s; //update_config=1
+      cfgFile >> s;
+      if( s.compare( "ctrl_interface=/var/run/wpa_supplicant" )!=0 ) {
+        exit(1);
+      }
+      cfgFile >> s;
+      if( s.compare( "ctrl_interface_group=wheel" )!=0 ) {
+        exit(2);
+      }
+      cfgFile >> s;
+      if( s.compare( "update_config=1" )!=0 ) {
+        exit(3);
+      }
 
       cfgFile >> s;
       while( ! cfgFile.eof() ) {
@@ -62,7 +71,7 @@ class CwifiCfgToDb {
           if( s.compare( "network={" )==0 ) {
             inNetwork=true;
           } else {
-            exit(1);
+            exit(4);
           }  
         } else {
           if( s.compare( "}" )==0 ) {//end of network
