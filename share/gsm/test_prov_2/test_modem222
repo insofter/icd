@@ -1,0 +1,46 @@
+#!/bin/sh
+
+
+case "$1" in
+  --help|help)
+    cat <<HELP
+
+    Usage: $0 start|stop|--help
+    
+    If run with 'start' script should check if any of steps 
+    is needed and make it to connect with internet.
+
+    Steps   
+
+    * init -- initialize modem (usb_modeswitch etc.)
+
+    * connect -- connect first time (with pin etc.)
+        or
+      reconnect -- connect without pin because modem knows it
+                   from first connection
+
+    Stop should disconnect (modem can remember pin until
+    disconnected from usb of reboot of icd)
+
+HELP
+
+    ;;
+
+  --start|start)
+    echo Start: `date` >> /tmp/log/gsm
+
+
+    ;;
+
+  --stop|stop)
+    echo Stop: `date` >> /tmp/log/gsm
+
+    ;;
+    *)
+    echo "Wrong usage:"
+    echo "  '$0 $@'"
+
+    exit 1
+    ;;
+
+esac

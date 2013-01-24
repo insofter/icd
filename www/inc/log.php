@@ -28,7 +28,7 @@ if( isset($_GET['log']) ) {
 
 
 } else {
-  $tresc='<div id="tresc"><h3>Logi systemowe</h3>
+  $tresc='<div id="tresc"><h3>Pliki dziennika - Logi systemowe</h3>
     <ul class="log">';
   $lista=$logi->lista();
   foreach( $lista as $log ) {

@@ -66,14 +66,14 @@ $stopka='
   </body></html>';
 
 $menurozwijane=array(
-  'tcpip'=>'TCPIP',
-  'wifi'=>'WiFi',
   'licznik'=>'Licznik',
   'wysylanie'=>'Wysyłanie',
-  'log'=>'Logi',
+  'tcpip'=>'TCPIP',
+  'wifi'=>'WiFi',
+  'gsm'=>'GSM',
   'administracja'=>'Administracja',
-  'logowanie'=>'Logowanie',
-//  'plik_konf'=>'Plik konf.'
+  'log'=>'Pliki dziennika',
+  'logowanie'=>'Konf. dostępu',
 );
 
 $menuglowne=array(
@@ -196,6 +196,13 @@ if( isset($_GET['strona']) ) {
   case 'wifi':
     if( $_SESSION['zalogowany']!=0 ) {
       include('inc/wifi.php');
+    } else {
+      include('inc/logowanie.php');
+    }
+    break;
+  case 'gsm':
+    if( $_SESSION['zalogowany']!=0 ) {
+      include('inc/gsm.php');
     } else {
       include('inc/logowanie.php');
     }
