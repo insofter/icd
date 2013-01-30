@@ -42,7 +42,7 @@ name=`basename ${1}`
 
 if [ -z "$pidfile" ]
 then
-  pidfile="/tmp/${name}.pid"
+  pidfile="/var/run/${name}.pid"
 fi
 
 if [ -z "$logfile" ]
