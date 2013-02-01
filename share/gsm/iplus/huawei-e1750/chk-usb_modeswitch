@@ -1,0 +1,9 @@
+#!/bin/sh
+
+if [ -c /dev/ttyUSB0 ] && [ -c /dev/ttyUSB1 ] \
+  && [ -c /dev/ttyUSB2 ] && [ -c /dev/ttyUSB3 ]
+then 
+  echo yes
+else
+  echo no
+fi

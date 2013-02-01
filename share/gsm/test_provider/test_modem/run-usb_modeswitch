@@ -1,0 +1,15 @@
+#!/bin/sh
+
+mkdir -p /tmp/ppp
+
+cat << USB_MODESWITCH_CFG > /tmp/ppp/usb_modeswitch-cfg
+# Huawei E1692
+DefaultVendor=  0x12d1
+DefaultProduct= 0x1446
+TargetVendor=   0x12d1
+TargetProduct=  0x140c
+MessageContent="55534243000000000000000000000011060000000000000000000000000000"
+CheckSuccess=5
+USB_MODESWITCH_CFG
+
+usb_modeswitch -c /tmp/ppp/usb_modeswitch-cfg

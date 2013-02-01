@@ -1,0 +1,18 @@
+#!/bin/sh
+
+mkdir -p /tmp/ppp/peers
+
+cat << PPPD_CFG | sed -e 's/__PIN_PIN__/'${1}'/g' > /tmp/ppp/peers/iplus
+debug
+show-password
+connect "/usr/bin/chat '' AT '' ATZ '' AT+CPIN=__PIN_PIN__ OK 'AT+CGDCONT=1,\"IP\",\"internet\",\"\",0,0' OK ATDT*99# CONNECT ''"
+/dev/ttyUSB0
+115200
+defaultroute
+noipdefault
+user "ppp"
+remotename plus
+ipparam plus
+usepeerdns
+PPPD_CFG
+

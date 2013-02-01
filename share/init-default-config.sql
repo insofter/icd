@@ -137,11 +137,15 @@ INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_sect
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter3'), 'thick-active-low', 'yes' );
 
 
-INSERT INTO config_section (id, name) VALUES ( 12, 'wifi' );
+INSERT INTO config_section (id, name) VALUES ( 12, 'login' );
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'login'), 'enabled', 'no' );
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'login'), 'pass', 'admin' );
+
+
+INSERT INTO config_section (id, name) VALUES ( 13, 'wifi' );
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'wifi'), 'enabled', 'no' );
 
-
-INSERT INTO config_section (id, name) VALUES ( 13, 'wifinet-"insofter"' );
+INSERT INTO config_section (id, name) VALUES ( 14, 'wifinet-"insofter"' );
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'wifinet-"insofter"'), 'psk', '"insofter"' );
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'wifinet-"insofter"'), 'key_mgmt', 'WPA-PSK' );
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'wifinet-"insofter"'), 'auth_alg', 'OPEN' );
@@ -151,8 +155,11 @@ INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_sect
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'wifinet-"IFirma"'), 'key_mgmt', 'WPA-PSK' );
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'wifinet-"IFirma"'), 'auth_alg', 'OPEN' );
 
-INSERT INTO config_section (id, name) VALUES ( 14, 'login' );
-INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'login'), 'enabled', 'no' );
-INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'login'), 'pass', 'admin' );
 
+INSERT INTO config_section (id, name) VALUES ( 16, 'gsm' );
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'gsm'), 'enabled', 'no' );
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'gsm'), 'pin-enabled', 'no' );
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'gsm'), 'pin', '0000' );
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'gsm'), 'provider', 'test' );
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'gsm'), 'modem', 'test' );
 

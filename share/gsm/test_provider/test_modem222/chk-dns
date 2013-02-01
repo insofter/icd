@@ -1,0 +1,14 @@
+#!/bin/sh
+
+resolv=`cat /etc/resolv.conf | awk '/''nameserver''/'' { print "aa"$2"aa" } '`
+
+for x in `cat /etc/ppp/resolv.conf | awk '/''nameserver''/'' { print "aa"$2"aa" } '`
+do
+  if ! echo $resolv | grep -q $x 
+  then
+    echo no
+    exit 1
+  fi
+done
+
+echo yes

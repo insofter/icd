@@ -1,0 +1,3 @@
+#!/bin/sh
+
+pidof pppd > /dev/null && echo yes || echo no

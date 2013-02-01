@@ -1,0 +1,3 @@
+#!/bin/sh
+
+cat /etc/ppp/resolv.conf >> /etc/resolv.conf
