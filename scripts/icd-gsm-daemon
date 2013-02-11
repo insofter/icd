@@ -1,0 +1,68 @@
+#!/bin/sh
+
+while [ 1 = 1 ]
+do
+  sleep 3 #0
+
+  if [ "`icd-config --db=$ICD_CONFIG_DB sget gsm enabled`" = "yes" ]
+  then #gsm should be running
+
+    if [ "$PROVIDER" = "" ] # avoid changing cfg during work
+    then
+      PROVIDER=`icd-config --db=$ICD_CONFIG_DB sget gsm provider`
+      PIN_ENABLED=`icd-config --db=$ICD_CONFIG_DB sget gsm pin-enabled`
+      PIN=`icd-config --db=$ICD_CONFIG_DB sget gsm pin`
+      MODEM=`icd-config --db=$ICD_CONFIG_DB sget gsm modem`
+      CMDS=${ICD_SHARE_DIR}"/gsm/"${PROVIDER}"/"${MODEM}
+      echo `date` ":: Get variables"
+    fi
+
+
+    if [ "`${CMDS}/chk-usb_modeswitch`" = "no" ]
+    then
+      ${CMDS}/run-usb_modeswitch
+      echo `date` ":: Run modeswitch"
+      sleep 2 #0
+    fi
+
+    if [ "`${CMDS}/chk-pppd-cfg`" = "no" ]
+    then
+      ${CMDS}/run-pppd-cfg
+      echo `date` ":: Run pppd cfg"
+      sleep 2 #0
+    fi
+
+    if [ "`${CMDS}/chk-pppd-call`" = "no" ]
+    then
+      ${CMDS}/run-pppd-call
+      echo `date` ":: Run pppd call"
+      sleep 2 #0
+    fi
+
+    if [ "`${CMDS}/chk-dns`" = "no" ]
+    then
+      ${CMDS}/run-dns
+      echo `date` ":: Run dns"
+    fi
+
+  else #gsm should not be running
+
+    PROVIDER=""
+    echo `date` ":: No variables"
+
+    if [ "`${CMDS}/chk-pppd-call`" = "yes" ]
+    then
+      killall pppd
+      echo `date` ":: Stop pppd call"
+    fi
+
+    if [ -e "/tmp/ppp/peers" ]
+    then
+      rm -rf /tmp/ppp/peers
+      echo `date` ":: Rm pppd cfg"
+      sleep 2 #0
+    fi
+
+  fi
+done
+

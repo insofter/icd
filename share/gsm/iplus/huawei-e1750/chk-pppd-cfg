@@ -1,0 +1,8 @@
+#!/bin/sh
+
+if [ -e /tmp/ppp/peers/iplus ]
+then 
+  echo "yes"
+else
+  echo "no"
+fi
