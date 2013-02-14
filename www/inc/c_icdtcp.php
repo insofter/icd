@@ -8,7 +8,11 @@ class c_icdtcp {
   public $ilosc;
   public $o_mnie;
 
-  var $baza;
+  private $dataDb;
+  private $configDb;
+  private $liveDb;
+  private $ICD_DATA_DIR;
+
   public $il_fotokomorek;
 
   function __construct() {
@@ -33,6 +37,7 @@ class c_icdtcp {
       1440=>'24 godziny');
     $this->czas_dni=array( 1=>'1 dzień',
       2=>'2 dni',
+      3=>'3 dni',
       7=>'7 dni',
       14=>'14 dni',
       30=>'30 dni',
@@ -64,11 +69,9 @@ class c_icdtcp {
 
 
     try {
-      /*	$this->dataDb = new PDO( 'mysql:host=localhost;dbname=icdtcp3db','root','');*/
       $this->dataDb = new PDO('sqlite:'.$ICD_DATA_DB);
       $this->configDb = new PDO('sqlite:'.$ICD_CONFIG_DB);
       $this->liveDb = new PDO('sqlite:'.$ICD_LIVE_DB);
-
     } catch (PDOException $e) {
       print $e->getMessage();
     }
@@ -97,6 +100,8 @@ class c_icdtcp {
     $row=$ans->fetch();
 
     if( $pass==$row['value'] ) {
+      $sql="BEGIN TRANSACTION";
+      $ans=$this->configDb->query($sql);
 
       $sql="UPDATE config SET `value`=".$this->configDb->quote($npass)."
         WHERE section_id=(SELECT `id` FROM config_section WHERE name='login')
@@ -109,6 +114,10 @@ class c_icdtcp {
       $sql="UPDATE config SET `value`='$enab' WHERE section_id".
         "=(SELECT `id` FROM config_section WHERE name='login') AND `key`='enabled'";
       $ans=$this->configDb->query($sql);
+
+      $sql="COMMIT TRANSACTION";
+      $ans=$this->configDb->query($sql);
+
       return true;
     }
     return false;
@@ -137,7 +146,7 @@ class c_icdtcp {
       $info[$row['key']]=$row['value'];
     }
 
-    for( $i=0; $i<$this->il_foto; ++$i ) {//TODO:
+    for( $i=0; $i<$this->il_foto; ++$i ) {
 
       $sql="SELECT `key`, `value` FROM config_section cs LEFT JOIN config c on cs.id=c.section_id
         WHERE cs.name='counter$i' AND (c.key='name' OR c.key='enabled' ) ";
@@ -158,7 +167,7 @@ class c_icdtcp {
       }
       $sql="SELECT sum(cnt) AS sum FROM flow WHERE counter_id='".($i+1)."'
         AND `dtm` < ".(time())." AND `dtm` > ".( ((int)(time()/(24*3600)))*24*3600 );
-      $ans=$this->dataDb->query($sql);//TODO:
+      $ans=$this->dataDb->query($sql);
       $licznik['cnt_sum']=0;
       if( $ans!=NULL ) {
         while( $row=$ans->fetch() ) {
@@ -172,7 +181,7 @@ class c_icdtcp {
         while( $row=$ans->fetch() ) {
           $licznik['state']=$row['state'];
         }
-      }//TODO:
+      }
 
       $liczniki[]=$licznik;
     }
@@ -214,15 +223,22 @@ class c_icdtcp {
   }
 
   function tcpip_ustaw($nowe) {
+
+    $sql="BEGIN TRANSACTION";
+    $ans=$this->configDb->query($sql);
+
     foreach( $nowe as $pole=>$wart ) {
       $sql="UPDATE config SET `value`=".$this->dataDb->quote($wart)."
         WHERE section_id=(SELECT `id` FROM config_section WHERE name='tcpip')
         AND `key`=".$this->configDb->quote($pole);
       $this->configDb->query($sql);
     }
+
+    $sql="COMMIT TRANSACTION";
+    $ans=$this->configDb->query($sql);
   }
 
-  function liczniki_pobierz() {//TODO:
+  function liczniki_pobierz() {
     for( $i=0; $i<$this->il_foto; ++$i ) {
       $sql="SELECT `key`, `value` FROM config_section cs LEFT JOIN config c ON cs.id=c.section_id
         WHERE cs.name='counter$i' ";
@@ -230,14 +246,15 @@ class c_icdtcp {
       foreach( $ans as $row ) {
         $liczniki[$row['key']][$i]=$row['value'];
       }
-//      $licznik['nr']=$i;
-//      $liczniki[]=$licznik;
     }
-//    print_r( $liczniki );
     return $liczniki;
   }
 
-  function liczniki_ustaw($nowe) {//TODO:
+  function liczniki_ustaw($nowe) {
+
+    $sql="BEGIN TRANSACTION";
+    $ans=$this->configDb->query($sql);
+
     for( $i=0; $i<$this->il_foto; ++$i ) {
       foreach( $nowe[$i] as $pole=>$wart ) {
         $sql="UPDATE config SET `value`=".$this->configDb->quote($wart)."
@@ -246,6 +263,8 @@ class c_icdtcp {
         $this->configDb->query($sql);
       }
     }
+    $sql="COMMIT TRANSACTION";
+    $ans=$this->configDb->query($sql);
   }
 
   function wysylanie_pobierz()
@@ -261,17 +280,20 @@ class c_icdtcp {
     }
     return $tcp;
   }
-  function wysylanie_ustaw($nowe)
-  {
+  function wysylanie_ustaw($nowe) {
+    $sql="BEGIN TRANSACTION";
+    $ans=$this->configDb->query($sql);
+
     foreach( $nowe as $pole=>$wart ) {
       $sql="UPDATE config SET `value`=".$this->configDb->quote($wart)."
         WHERE section_id=(SELECT `id` FROM config_section WHERE name='device')
         AND `key`=".$this->configDb->quote($pole);
       $this->configDb->query($sql);
     }
+    $sql="COMMIT TRANSACTION";
+    $ans=$this->configDb->query($sql);
   }
-  function konfiguracja_pobierz()
-  {
+  function konfiguracja_pobierz() {
     $cfg['__dane_eksportu']['eksport']='';
     $cfg['__dane_eksportu']['skrypt']='';
     $cfg['__dane_eksportu']['klasa']=$this->o_mnie;
@@ -283,8 +305,10 @@ class c_icdtcp {
     }
     return $cfg;
   }
-  function konfiguracja_ustaw($nowe)
-  {
+  function konfiguracja_ustaw($nowe) {
+    $sql="BEGIN TRANSACTION";
+    $ans=$this->configDb->query($sql);
+
     foreach($nowe as $sect=>$tab) {
       $sql="SELECT `id` FROM config_section WHERE name=".$this->configDb->quote($sect);
       $ans=$this->configDb->query($sql);
@@ -313,36 +337,13 @@ class c_icdtcp {
         $ans=$this->configDb->query($sql);
       }
     }
+    $sql="COMMIT TRANSACTION";
+    $ans=$this->configDb->query($sql);
   }
-/*  function wyniki11($czas=0, $itd=-1)
-  {
-    if( $czas==0 ) {
-      $czas=mktime( 0, 0, 1, date('n'), date('j'), date('Y') );
-    }
-    $konc=$czas+24*3600;
-    if( $itd!=-1 ) {
-      $sql="SELECT `itd`, `dtm`, `cnt`, `dark_time`, `work_time`, `flags`
-        FROM flow WHERE itd='".((int)$itd)."' AND dtm > $czas AND dtm < $konc ORDER BY itd ASC, dtm ASC";
-    } else {
-      $sql="SELECT `itd`, `dtm`, `cnt`, `dark_time`, `work_time`, `flags`
-        FROM flow WHERE dtm > $czas AND dtm < $konc ORDER BY dtm ASC";
-    }
-    $ans=$this->dataDb->query($sql);
-    $ans->setFetchMode(PDO::FETCH_ASSOC);
-    foreach( $ans as $row ) {
-      $wyniki[] = $row;
-    }
-    if( !isset( $wyniki ) ) {
-      $wyniki=array();
-    }
-    return $wyniki;
-}*/
-  function test_wysylania()
-  {
+  function test_wysylania() {
     exec( "icd-run-www-transfer > /dev/null 2>&1 &" ); 
   }
-  function test_fotokomorek()
-  {
+  function test_fotokomorek() {
     $out = explode("\n",shell_exec( "source /etc/profile.d/icd.sh && icd-test --format=long" ), 5 );
     unset( $out[4] );
     return $out;
@@ -354,12 +355,9 @@ class c_icdtcp {
     $data*=3600;
 
     $sql="SELECT `cnt`, `counter_id` FROM flow WHERE dtm >= ".$data." AND dtm < ".($data+3600);
-
     $ans=$this->dataDb->query($sql);
-
     $ans->setFetchMode(PDO::FETCH_ASSOC);
     foreach( $ans as $row ) {
-
       if( isset( $wyniki[ $row['counter_id'] ]['cnt'] ) ) {
         $wyniki[ $row['counter_id'] ]['cnt'] += $row['cnt'];
       } else {
@@ -376,17 +374,12 @@ class c_icdtcp {
     unset( $wart );
     return $wyniki;
   }
-
   function raport_dobowy($od, $do, $del) {
     if( $do - $od > 3600*24*31 ) {
       $od=$do - 3600*24*31;
     }
-
     $sql="SELECT `cnt`, `counter_id`, `dtm` FROM flow WHERE dtm >= ".$od." AND dtm < ".$do." ORDER BY dtm ASC";
-
     $ans=$this->dataDb->query($sql);
-
-
     $ans->setFetchMode(PDO::FETCH_ASSOC);
     foreach( $ans as $row ) {
       $t=(int)($row['dtm']/$del);
@@ -408,9 +401,7 @@ class c_icdtcp {
         $name = $row[ 'value' ];
       }
       unset( $name );
-
       natcasesort( $wyniki[ 'counters' ] );
-
       return $wyniki;
     }
   }
@@ -419,16 +410,10 @@ class c_icdtcp {
     $do=mktime( 0, 0, 0, date( 'n', $od )+1, 1, date( 'Y', $od ) );
     $od=mktime( 0, 0, 0, date( 'n', $od ), 1, date( 'Y', $od ) );
 
-//    echo date(DATE_RFC822, $od);
-//    echo date(DATE_RFC822, $do);
-
     $sql="SELECT `cnt`, `counter_id`, `dtm` FROM flow WHERE dtm >= ".$od." AND dtm < ".$do." ORDER BY dtm ASC";
-
     $ans=$this->dataDb->query($sql);
-
     $ans->setFetchMode(PDO::FETCH_ASSOC);
     foreach( $ans as $row ) {
-
       $t=mktime( 0, 0, 0, date( 'n', $row['dtm'] ), date( 'j', $row['dtm'] ), date( 'Y', $row['dtm'] ) );
 
       if( isset( $wyniki[ 'values' ][ $t ][ $row['counter_id'] ]) ) {
@@ -452,18 +437,10 @@ class c_icdtcp {
 
       return $wyniki;
     }
-/*    foreach( $wyniki as $pom=>&$wart ) {
-      $sql="SELECT value FROM config WHERE key = 'name' AND section_id = ( SELECT section_id FROM config WHERE key = 'counter_id' AND value = $pom )";
-      $ans=$this->configDb->query($sql);
-      $ans->setFetchMode(PDO::FETCH_ASSOC);
-      $row=$ans->fetch();
-      $wart['name'] = $row[ 'value' ];
-}*/
   }
   function raport_instalacyjny($od) {
     $do=mktime( 0, 0, 0, date( 'n', $od ), date( 'j', $od)+1 , date( 'Y', $od ) );
     $od=mktime( 0, 0, 0, date( 'n', $od ), date( 'j', $od) , date( 'Y', $od ) );
-
 
     $sql="SELECT dtm, counter_id, id, cnt, dark_time, work_time, "
       ."test, flags FROM flow WHERE dtm >= ".$od." AND dtm < ".$do." ORDER BY dtm, counter_id ASC";
@@ -487,7 +464,6 @@ class c_icdtcp {
 
       $wyniki['data']=$datawyniki;
     }
-
 
     $ans=$this->liveDb->query($sql);
     $ans->setFetchMode(PDO::FETCH_ASSOC);
@@ -523,8 +499,6 @@ class c_icdtcp {
     fclose($fp);
   }
   function csv_export($od, $do, $header) {
-    //    echo date(DATE_RFC822, $od);
-    //    echo date(DATE_RFC822, $do);
     if( $header ) {    
       $wysylanie=$this->wysylanie_pobierz();
       foreach( $wysylanie as $key=>$val ) {
@@ -539,12 +513,9 @@ class c_icdtcp {
       echo("id\tcounter_id\tdatetime\tcnt\tdark_time\twork_time\ttest\tflags\r\n" );
     }
 
-    //TODO here
-  
     $sql="SELECT " 
       ."id, counter_id, datetime(dtm, 'unixepoch', 'localtime'), cnt, dark_time, work_time, test, flags "
       ." FROM flow WHERE flags > 0 AND dtm >= ".$od." AND dtm < ".$do." ORDER BY dtm, counter_id ASC";
-
 
     $ans=$this->dataDb->query($sql);
     $ans->setFetchMode(PDO::FETCH_NUM);

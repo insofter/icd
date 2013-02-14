@@ -206,10 +206,10 @@ MIN:
     menu->itemAdd( pl );
 
     pl=new CmenuDbParamList( "Fotokomórki" );
-    pl->itemAdd( "Nazwa", "itd0", "name" );
-    pl->itemAdd( "Nazwa", "itd1", "name" );
-    pl->itemAdd( "Nazwa", "itd2", "name" );
-    pl->itemAdd( "Nazwa", "itd3", "name" );
+    pl->itemAdd( "Nazwa", "counter0", "name" );
+    pl->itemAdd( "Nazwa", "counter1", "name" );
+    pl->itemAdd( "Nazwa", "counter2", "name" );
+    pl->itemAdd( "Nazwa", "counter3", "name" );
 
     menu->itemAdd( pl );
 
@@ -217,7 +217,6 @@ MIN:
     mainMenu->itemAdd( new CmenuItemTimeFoto( 3, 4 ) );
     mainMenu->itemAdd( new CmenuItemIdds );
     mainMenu->itemAdd( new CmenuItemDbParam( "Adres IP (Eth)", "current", "ip" ) );
-                                            //0123456789012345
     mainMenu->itemAdd( new CmenuItemDbParam( "IP (WiFi) i SSID", "wifi", "ip-ssid" ) );
     mainMenu->itemAdd( new CmenuItemFileParam( "Status wysyłania", "/tmp/last-send-status" ) );
     std::string cmd;
@@ -281,7 +280,6 @@ MIN:
           read( kbd, ( char* )&ev, sizeof( ev ) );
           if( ev.code!=0 ) {//rzucany pusty event niewiadomo czemu
             toReturn=0;
-            //printf("key code: %i\n",  ev.code );
             //TODO: włącz podswietlenia ( po kliknieciu )
             if( ev.value==1 && ev.code==KBD_ESC ) {//wciśniecie esc
               esc=1;

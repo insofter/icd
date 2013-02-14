@@ -1,8 +1,6 @@
 <?php
 defined('INSOFTER') or die('<h1>Your Kung-Fu is too weak.</h1>');
 
-//print_r( $_POST );
-
 $icdtcp = new c_icdtcp();
 
 if( isset( $_POST['name'] ) ) {
@@ -17,16 +15,20 @@ if( isset( $_POST['name'] ) ) {
     $licznik['dev-engage']=$_POST['dev-engage'][$i];
     $licznik['dev-release']=$_POST['dev-release'][$i];
     $licznik['dev-active-low']=$_POST['dev-active-low'][$i];
+
+/* TODO USUN TA LINIE, ABY AKTYWOWAC WIECEJ OPCJI ( A ) 
+ 
     $licznik['thick']=$_POST['thick'][$i];
     $licznik['thick-active-low']=$_POST['thick-active-low'][$i];
     $licznik['thick-detect-direction']=$_POST['thick-detect-direction'][$i];
     $licznik['enab']=$_POST['enab'][$i];
     $licznik['enab-time']=$_POST['enab-time'][$i];
     $licznik['enab-active-low']=$_POST['enab-active-low'][$i];
+
+ */ // TODO USUN TA LINIE, ABY AKTYWOWAC WIECEJ OPCJI ( B )
+
     $liczniki[$i]=$licznik;
-    //todo kierunek, drzwi
   }
-//  print_r( $liczniki);
   $icdtcp->liczniki_ustaw($liczniki);
   $info='<h4>Zmodyfikowano konfigurację</h4>';
 } else {
@@ -39,7 +41,6 @@ $tresc='<div id="tresc">
   '.$info.'
   <form action="./?strona=licznik" method="POST">';
 
-//foreach( $liczniki as $licznik ) {
 $tresc.='<table class="liczniki">
   <tr><th>Licznik</th>';
 for( $i=0; $i<4; ++$i ) {
@@ -90,7 +91,7 @@ for( $i=0; $i<4; ++$i ) {
 }
 $tresc.='</tr>';
 
-/* TODO USUN TA LINIE, ABY AKTYWOWAC WIECEJ OPCJI
+/* TODO USUN TA LINIE, ABY AKTYWOWAC WIECEJ OPCJI ( C )
 
 $tresc.='<tr><th>Wyłącznik czasowy</th>';
 for( $i=0; $i<4; ++$i ) {
@@ -178,7 +179,7 @@ for( $i=0; $i<4; ++$i ) {
 }
 $tresc.='</tr>';
 
- */ // TODO USUN TA LINIE, ABY AKTYWOWAC WIECEJ OPCJI
+ */ // TODO USUN TA LINIE, ABY AKTYWOWAC WIECEJ OPCJI ( D )
 
 $tresc.='</table><br><br>';
 
