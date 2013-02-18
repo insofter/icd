@@ -19,6 +19,7 @@
 
 icd::config *globalConfig;
 sqlite3cc::conn *globalConfigDb;
+sqlite3cc::conn *globalDataDb;
 sqlite3cc::conn *globalLiveDb;
 
 void print_usage( char *argv0 ) {
@@ -96,10 +97,13 @@ MIN:
      *
      * mainMenu
      * |
-     * +--CmenuItemTimeFoto AB
-     * +--CmenuItemTimeFoto CD
+     * +--CmenuItemTimeFoto A
+     * +--CmenuItemTimeFoto B
+     * +--CmenuItemTimeFoto C
+     * +--CmenuItemTimeFoto D
      * +--CmenuItemIdds
      * +--CmenuItemDbParam: Adres IP 
+     * +--CmenuItemDbParam: IP (WiFi) i SSID
      * +--CmenuItemDbParam: Status wysyłania
      * |
      * F--Test połączenia
@@ -159,6 +163,9 @@ MIN:
     globalLiveDb->open( std::getenv("ICD_LIVE_DB") );
     globalLiveDb->busy_timeout( db_timeout );
 
+    globalDataDb=new sqlite3cc::conn();
+    globalDataDb->open( std::getenv("ICD_DATA_DB") );
+    globalDataDb->busy_timeout( db_timeout );
 
     ClcdDriver lcdDrv;
     Clcd lcd;
@@ -213,8 +220,10 @@ MIN:
 
     menu->itemAdd( pl );
 
-    CmenuContainerNoRoot *mainMenu = new CmenuContainerNoRoot( menu, new CmenuItemTimeFoto( 1, 2 ) );
-    mainMenu->itemAdd( new CmenuItemTimeFoto( 3, 4 ) );
+    CmenuContainerNoRoot *mainMenu = new CmenuContainerNoRoot( menu, new CmenuItemTimeFoto( 1 ) );
+    mainMenu->itemAdd( new CmenuItemTimeFoto( 2 ) );
+    mainMenu->itemAdd( new CmenuItemTimeFoto( 3 ) );
+    mainMenu->itemAdd( new CmenuItemTimeFoto( 4 ) );
     mainMenu->itemAdd( new CmenuItemIdds );
     mainMenu->itemAdd( new CmenuItemDbParam( "Adres IP (Eth)", "current", "ip" ) );
     mainMenu->itemAdd( new CmenuItemDbParam( "IP (WiFi) i SSID", "wifi", "ip-ssid" ) );

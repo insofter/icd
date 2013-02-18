@@ -209,6 +209,16 @@ ClcdDriver::ClcdDriver(const char * cmd_path, const char * data_path) {
                                   0b00101,
                                   0b00101,
                                   0b00101 ));
+  _letters.push_back( new Cletter("Σ","$",
+                                  0b11111,
+                                  0b10001,
+                                  0b01000,
+                                  0b00100,
+                                  0b01000,
+                                  0b10001,
+                                  0b11111,
+                                  0b00000 ));
+
   char tmp[3];
   tmp[0]=Cletter::byte1;
   tmp[2]=0;

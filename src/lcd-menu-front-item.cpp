@@ -30,19 +30,83 @@ int CmenuItemFrontMenu::esc(Clcd *lcd) {
 void CmenuItemFrontMenu::fullEsc() {
 }
 
+CmenuItemTimeFoto::CmenuItemTimeFoto(int a): _a(a) {
+  hour = new sqlite3cc::stmt( *globalLiveDb );
+  hour->prepare( "SELECT `cnt` FROM flow WHERE counter_id = ?1 ORDER BY `dtm` DESC LIMIT 1" );
 
-CmenuItemTimeFoto::CmenuItemTimeFoto(int a, int b): _a(a), _b(b) {
+  sum = new sqlite3cc::stmt( *globalDataDb );
+  sum->prepare( "SELECT sum(cnt) AS sum FROM flow WHERE counter_id = ?1 "
+      "AND `dtm` < ?2 AND `dtm` > ?3" );
+}
+
+CmenuItemTimeFoto::~CmenuItemTimeFoto() {
+  hour->finalize();
+  delete hour;
+  sum->finalize();
+  delete sum;
+}
+
+void CmenuItemTimeFoto::screen(Clcd *lcd) {
+  /*TODO pobranie danych z bazy*/
+//  int i;
+  char buf[18];
+  char timebuf[9];
+  time_t rawtime;
+  time_t daystart;
+  struct tm * timeinfo;
+  char sql[8];
+
+  time( &rawtime );
+  timeinfo = localtime ( &rawtime );
+
+  strftime(timebuf,8,"%y.%m.%d",timeinfo);
+  timebuf[8]=0;
+
+
+  hour->bind_int( 1, _a );
+  if( hour->step() == SQLITE_ROW ) {
+    sprintf(buf, "%s %c:%5i", timebuf, 'A'-1+_a, hour->column_int(0));
+  } else {
+    sprintf(buf, "%s Σ: xxx ", timebuf);
+  }
+  hour->reset();
+
+  lcd->_lcd[0]=buf;
+
+  strftime(timebuf,8,"%H:%M:%S",timeinfo);
+  timebuf[8]=0;
+
+  daystart=rawtime/24/3600;
+  daystart*=(24*3600);
+  sum->bind_int( 1, _a );
+  sum->bind_int( 2, rawtime );
+  sum->bind_int( 3, daystart );
+  if( sum->step() == SQLITE_ROW ) {
+    sprintf(buf, "%s Σ:%5i", timebuf, sum->column_int(0));
+  } else {
+    sprintf(buf, "%s Σ: xxx ", timebuf );
+  }
+  sum->reset();
+
+  lcd->_lcd[1]=buf;
+
+  lcd->_refresh=300;
+  lcd->_cur._car=Ccur::none;
+  //sprintf(buf, "%s%c%c%c:%5i", timebuf, Cletter::byte1, Cletter::byte2Eth, 'A'+_a, i);
+}
+
+CmenuItemDoubleTimeFoto::CmenuItemDoubleTimeFoto(int a, int b): _a(a), _b(b) {
   stmt = new sqlite3cc::stmt( *globalLiveDb );
   stmt->prepare( "SELECT `cnt` FROM flow WHERE counter_id = ?1 ORDER BY `dtm` DESC LIMIT 1" );
 
 }
 
-CmenuItemTimeFoto::~CmenuItemTimeFoto() {
+CmenuItemDoubleTimeFoto::~CmenuItemDoubleTimeFoto() {
   stmt->finalize();
   delete stmt;
 }
 
-void CmenuItemTimeFoto::screen(Clcd *lcd) {
+void CmenuItemDoubleTimeFoto::screen(Clcd *lcd) {
   /*TODO pobranie danych z bazy*/
 //  int i;
   char buf[17];

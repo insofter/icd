@@ -20,6 +20,7 @@
 
 
 extern sqlite3cc::conn *globalLiveDb;
+extern sqlite3cc::conn *globalDataDb;
 
 
 /**
@@ -41,9 +42,30 @@ public:
 };
 
 /**
- * Default screen with date, time and two counters.
+ * Default screen with date, time and counter and daily Σ.
  */
 class CmenuItemTimeFoto: public CmenuItemFrontMenu {
+protected:
+  int _a;
+  sqlite3cc::stmt *hour;
+  sqlite3cc::stmt *sum;
+
+public:
+  /**
+   * Constructor
+   * @param a Id of first detector
+   * @param b Id of second detector
+   */
+  CmenuItemTimeFoto(int a);
+  virtual ~CmenuItemTimeFoto();
+
+  virtual void screen(Clcd *lcd);
+};
+
+/**
+ * Default screen with date, time and two counters.
+ */
+class CmenuItemDoubleTimeFoto: public CmenuItemFrontMenu {
 protected:
   int _a;
   int _b;
@@ -55,8 +77,8 @@ public:
    * @param a Id of first detector
    * @param b Id of second detector
    */
-  CmenuItemTimeFoto(int a, int b);
-  virtual ~CmenuItemTimeFoto();
+  CmenuItemDoubleTimeFoto(int a, int b);
+  virtual ~CmenuItemDoubleTimeFoto();
 
   virtual void screen(Clcd *lcd);
 };
