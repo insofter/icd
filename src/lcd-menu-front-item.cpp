@@ -32,7 +32,7 @@ void CmenuItemFrontMenu::fullEsc() {
 
 CmenuItemTimeFoto::CmenuItemTimeFoto(int a): _a(a) {
   hour = new sqlite3cc::stmt( *globalLiveDb );
-  hour->prepare( "SELECT `cnt` FROM flow WHERE counter_id = ?1 ORDER BY `dtm` DESC LIMIT 1" );
+  hour->prepare( "SELECT `cnt`, `dtm` FROM flow WHERE counter_id = ?1 ORDER BY `dtm` DESC LIMIT 1" );
 
   sum = new sqlite3cc::stmt( *globalDataDb );
   sum->prepare( "SELECT sum(cnt) AS sum FROM flow WHERE counter_id = ?1 "
@@ -69,7 +69,6 @@ void CmenuItemTimeFoto::screen(Clcd *lcd) {
   } else {
     sprintf(buf, "%s Σ: xxx ", timebuf);
   }
-  hour->reset();
 
   lcd->_lcd[0]=buf;
 
@@ -79,14 +78,15 @@ void CmenuItemTimeFoto::screen(Clcd *lcd) {
   daystart=rawtime/24/3600;
   daystart*=(24*3600);
   sum->bind_int( 1, _a );
-  sum->bind_int( 2, rawtime );
+  sum->bind_int( 2, hour->column_int(1) );
   sum->bind_int( 3, daystart );
   if( sum->step() == SQLITE_ROW ) {
-    sprintf(buf, "%s Σ:%5i", timebuf, sum->column_int(0));
+    sprintf(buf, "%s Σ:%5i", timebuf, sum->column_int(0)+hour->column_int(0) );
   } else {
     sprintf(buf, "%s Σ: xxx ", timebuf );
   }
   sum->reset();
+  hour->reset();
 
   lcd->_lcd[1]=buf;
 

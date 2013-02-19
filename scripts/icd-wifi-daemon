@@ -31,23 +31,21 @@ do
       fi
     fi
 
-    if [ "`wpa_cli -i wlan0 status 2>/dev/null | grep -v bssid | awk -F '=' ''/'ssid'/' {print $2}' | wc -c`" -lt 2 ] 
+    if [ "`wpa_cli -i wlan0 status 2>/dev/null | grep -v bssid | awk -F '=' ''/'ssid'/' {print $2}' | wc -c`" -lt 2 ] || [ "`wpa_cli -i wlan0 status 2>/dev/null | awk -F '=' ''/'ip_address'/' {print $2}' | wc -c`" -lt 2 ]
     then #30*30s = 15min without connection, try reset everything
-      if [ "`wpa_cli -i wlan0 status 2>/dev/null | awk -F '=' ''/'ip_address'/' {print $2}' | wc -c`" -lt 2 ]
+      let i++
+      if [ "$i" -gt 30 ]
       then
-        i=$(( $i+1 ))
-        if [ "$i" -gt 30 ]
-        then
-          i=0
-          kill `ps | awk ''/'[u]dhcpc -i wlan0'/' { print $1}'`
-          echo `date` ":: Stop udhcpc"
-          killall wpa_supplicant
-          sleep 3
-          icd-wifi-cfg-to
-          echo `date` ":: Stop wpa_supplicant"
-          rm -f /tmp/wpa_suppl.conf
-          echo `date` ":: Remove from db"
-        fi
+        echo `date` ":: Reset"
+        i=0
+        kill `ps | awk ''/'[u]dhcpc -i wlan0'/' { print $1}'`
+        echo `date` ":: Stop udhcpc"
+        killall wpa_supplicant
+        sleep 3
+        icd-wifi-cfg-to
+        echo `date` ":: Stop wpa_supplicant"
+        rm -f /tmp/wpa_suppl.conf
+        echo `date` ":: Remove from db"
       fi
     fi
 

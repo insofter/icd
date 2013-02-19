@@ -157,22 +157,24 @@ class c_icdtcp {
       }
       $licznik['nr']=$i;
 
-      $sql="SELECT `cnt` FROM flow WHERE counter_id='".($i+1)."' ORDER BY `dtm` DESC LIMIT 1";
+      $sql="SELECT `cnt`, `dtm` FROM flow WHERE counter_id='".($i+1)."' ORDER BY `dtm` DESC LIMIT 1";
       $ans=$this->liveDb->query($sql);
       $licznik['cnt_last']=0;
-      if( $ans!=NULL ) {
-        while( $row=$ans->fetch() ) {
-          $licznik['cnt_last']=$row['cnt'];
-        }
+      if( $ans!=NULL && $row=$ans->fetch() ) {
+        $licznik['cnt_last']=$row['cnt'];
+        $start=$row['dtm'];
+      } else {
+        $licznik['cnt_last']=0;
+        $start=time();
       }
       $sql="SELECT sum(cnt) AS sum FROM flow WHERE counter_id='".($i+1)."'
-        AND `dtm` < ".(time())." AND `dtm` > ".( ((int)(time()/(24*3600)))*24*3600 );
+        AND `dtm` < ".$start." AND `dtm` > ".( ((int)(time()/(24*3600)))*24*3600 );
       $ans=$this->dataDb->query($sql);
       $licznik['cnt_sum']=0;
-      if( $ans!=NULL ) {
-        while( $row=$ans->fetch() ) {
-          $licznik['cnt_sum']=(int)$row['sum'];
-        }
+      if( $ans!=NULL && $row=$ans->fetch() ) {
+        $licznik['cnt_sum']=(int)$row['sum']+$licznik['cnt_last'];
+      } else {
+        $licznik['cnt_sum']=$licznik['cnt_last'];
       }
       $sql="SELECT `state` FROM events WHERE itd='itd$i' ORDER BY `dtmms` DESC LIMIT 1";
       $ans=$this->dataDb->query($sql);
