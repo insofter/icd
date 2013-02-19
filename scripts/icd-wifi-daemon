@@ -47,6 +47,8 @@ do
         rm -f /tmp/wpa_suppl.conf
         echo `date` ":: Remove from db"
       fi
+    else
+      i=0
     fi
 
     icd-wifi-cfg-to
