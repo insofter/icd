@@ -2,7 +2,7 @@
 
 while [ 1 = 1 ]
 do
-  sleep 3 #0
+  sleep 30
 
   if [ "`icd-config --db=$ICD_CONFIG_DB sget gsm enabled`" = "yes" ]
   then #gsm should be running
@@ -22,21 +22,21 @@ do
     then
       ${CMDS}/run-usb_modeswitch
       echo `date` ":: Run modeswitch"
-      sleep 2 #0
+      sleep 20
     fi
 
     if [ "`${CMDS}/chk-pppd-cfg`" = "no" ]
     then
       ${CMDS}/run-pppd-cfg
       echo `date` ":: Run pppd cfg"
-      sleep 2 #0
+      sleep 20
     fi
 
     if [ "`${CMDS}/chk-pppd-call`" = "no" ]
     then
       ${CMDS}/run-pppd-call
       echo `date` ":: Run pppd call"
-      sleep 2 #0
+      sleep 20
     fi
 
     if [ "`${CMDS}/chk-dns`" = "no" ]
@@ -50,7 +50,7 @@ do
     PROVIDER=""
     echo `date` ":: No variables"
 
-    if [ "`${CMDS}/chk-pppd-call`" = "yes" ]
+    if [ "`pidof pppd > /dev/null && echo yes || echo no`" = "yes" ]
     then
       killall pppd
       echo `date` ":: Stop pppd call"
@@ -60,7 +60,7 @@ do
     then
       rm -rf /tmp/ppp/peers
       echo `date` ":: Rm pppd cfg"
-      sleep 2 #0
+      sleep 20
     fi
 
   fi
