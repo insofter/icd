@@ -67,7 +67,7 @@ void CmenuItemTimeFoto::screen(Clcd *lcd) {
   if( hour->step() == SQLITE_ROW ) {
     sprintf(buf, "%s %c:%5i", timebuf, 'A'-1+_a, hour->column_int(0));
   } else {
-    sprintf(buf, "%s Σ: xxx ", timebuf);
+    sprintf(buf, "%s %c: xxx ", timebuf, 'A'-1+_a);
   }
 
   lcd->_lcd[0]=buf;
