@@ -16,6 +16,9 @@ if( isset($_POST['dhcp_toggle']) ) {
     'mac'=>$_POST['mac']);
   $icdtcp->tcpip_ustaw($nowe);
   $info='<h4>Zmodyfikowano konfigurację</h4>';
+} else if( isset($_POST['dnsmasq_toggle']) ) {
+  $icdtcp->dnsmasq_ustaw($_POST['dnsmasq_toggle']);
+  $info='<h4>Zmodyfikowano konfigurację</h4>';
 } else {
   $info='';
 }
@@ -27,6 +30,7 @@ $tcpip=$icdtcp->tcpip_pobierz('tcpip');
 
 $dhcp=$icdtcp->dhcp_pobierz();
 
+$dnsmasq=$icdtcp->dnsmasq_pobierz();
 
 
 $tresc='<div id="tresc">
@@ -43,6 +47,7 @@ if( $dhcp['dhcp']=='yes' ) {
     <input type="hidden" name="dhcp_toggle" value="yes">';
 }
 $tresc.='</td></tr></table></form><br><br>';
+
 
 $tresc.='<div id="prawy"><form action="./?strona=tcpip" method="POST"';
 
@@ -91,8 +96,27 @@ $tresc.='<table>
 
 
 
-$tresc.='</form></div></div>';
+$tresc.='</form>';
+  
 
 
+$tresc.='<form action="./?strona=tcpip" method="POST">
+  <table><tr><th>Dnsmasq : ';
+if( $dnsmasq['dnsmasq']=='yes' ) {
+  $tresc.='włączone
+    </th><td><input type="submit" value="Wyłącz">
+    <input type="hidden" name="dnsmasq_toggle" value="no">';
+} else {
+  $tresc.='wyłączone
+    </th><td><input type="submit" value="Włącz">
+    <input type="hidden" name="dnsmasq_toggle" value="yes">';
+}
+$tresc.='</td></tr><tr><td colspan="2">
+  Dnsmasq uruchomi się tylko przy wyłączonym DHCP.<br> 
+  Rejestrator będzie udostępniał swoje połączenie bezprzewodowe
+  oraz przydzielał adresy IP z przedziału w którym nie znajduje się jego adres.
+  </td></tr>
+  </table></form><br><br>';
 
+$tresc.='</div></div>';
 ?>

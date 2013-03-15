@@ -224,6 +224,24 @@ class c_icdtcp {
     $ans=$this->configDb->query($sql);
   }
 
+  function dnsmasq_pobierz() {
+    $sql="SELECT `key`, `value` FROM config_section cs LEFT JOIN config c ON cs.id=c.section_id
+      WHERE cs.name='tcpip' AND c.key='dnsmasq' ";
+    $ans=$this->configDb->query($sql);
+    foreach( $ans as $row ) {
+      $tcp[$row['key']]=$row['value'];
+    }
+    return $tcp;
+  }
+  function dnsmasq_ustaw($co) {
+    if( $co!='no' ) {
+      $co='yes';
+    }
+    $sql="UPDATE config SET `value`='$co' WHERE section_id".
+      "=(SELECT `id` FROM config_section WHERE name='tcpip') AND `key`='dnsmasq'";
+    $ans=$this->configDb->query($sql);
+  }
+
   function tcpip_ustaw($nowe) {
 
     $sql="BEGIN TRANSACTION";
