@@ -16,7 +16,7 @@ then
   echo "Subnet mask: $mask"
 
   echo 1 > /proc/sys/net/ipv4/ip_forward
-  echo "Activate ip forwarding."
+  echo "Activate ip forwarding:"
   echo "    echo 1 > /proc/sys/net/ipv4/ip_forward"
 
 
@@ -26,12 +26,13 @@ then
 
   echo "interface=eth0" > /tmp/dnsmasq.conf
   echo "cache-size=0" >> /tmp/dnsmasq.conf
+  echo "dhcp-leasefile=/tmp/log/icd-dnsmasq-leases.log" >> /tmp/dnsmasq.conf
 
   if [ "$ipend" -ge 100 ]
   then
     echo "dhcp-range=${ipbeg}.20,${ipbeg}.99,${mask},1h" >> /tmp/dnsmasq.conf
   else
-    echo "dhcp-range=${ipbeg}.100,${ipbeg}.199,${mask},1h" >> /tmp/dnsmasq.conf
+    echo "dhcp-range=${ipbeg}.120,${ipbeg}.199,${mask},1h" >> /tmp/dnsmasq.conf
   fi
 
   echo "Create dnsmasq config: (/tmp/dnsmasq.conf)"
