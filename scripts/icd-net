@@ -1,0 +1,209 @@
+#!/bin/sh
+
+eth_get_params()
+{
+  local tmp
+  eth_changed="no"
+
+  tmp=`icd-config --db="${ICD_CONFIG_DB}" sget tcpip dhcp`
+  if [ "$eth_dhcp" != "$tmp" ]; then
+    eth_dhcp="$tmp"
+    eth_changed="yes"
+  fi
+
+  if [ "$eth_dhcp" = "no" ]; then
+    tmp=`icd-config --db="${ICD_CONFIG_DB}" sget tcpip ip`
+    if [ "$eth_ip" != "$tmp" ]; then
+      eth_ip="$tmp"
+      eth_changed="yes"
+    fi
+
+    tmp=`icd-config --db="${ICD_CONFIG_DB}" sget tcpip mask`
+    if [ "$eth_mask" != "$tmp" ]; then
+      eth_mask="$tmp"
+      eth_changed="yes"
+    fi
+
+    tmp=`icd-config --db="${ICD_CONFIG_DB}" sget tcpip gate`
+    if [ "$eth_gate" != "$tmp" ]; then
+      eth_gate="$tmp"
+      eth_changed="yes"
+    fi
+
+    tmp=`icd-config --db="${ICD_CONFIG_DB}" sget tcpip dns1`
+    if [ "$eth_dns1" != "$tmp" ]; then
+      eth_dns1="$tmp"
+      eth_changed="yes"
+    fi
+
+    tmp=`icd-config --db="${ICD_CONFIG_DB}" sget tcpip dnsi2`
+    if [ "$eth_dns2" != "$tmp" ]; then
+      eth_dns2="$tmp"
+      eth_changed="yes"
+    fi
+
+    tmp=`icd-config --db="${ICD_CONFIG_DB}" sget tcpip dnsmasq`
+    if [ "$eth_dnsmasq" != "$tmp" ]; then
+      eth_dnsmasq="$tmp"
+      eth_changed="yes"
+    fi
+  fi # end if $eth_dhcp
+
+  tmp=`icd-config --db="${ICD_CONFIG_DB}" sget tcpip mac`
+  if [ "$eth_mac" != "$tmp" ]; then
+    eth_mac="$tmp"
+    eth_changed="yes"
+  fi
+}
+eth_yes() 
+{
+  if [ "$eth_running" != "yes" ]; then
+    ifconfig eth0 hw ether $eth_mac
+    echo `date` ":: Eth set MAC"
+    ifconfig eth0 up
+    if [ "$eth_dhcp" = "no" ]; then
+      ifconfig eth0 up $eth_ip netmask $eth_mask
+      echo `date` ":: Eth set IP=$eth_ip mask=$eth_mask"
+      # TODO route
+      # TODO start dnsmasq
+    fi
+    eth_running="yes"
+  fi
+
+  if [ "$eth_dhcp" = "yes" ]; then # start dhcp
+    if [ "`ps | grep -q "[u]dhcpc -i eth0" && echo yes || echo no`" = "no" ] 
+    then # check if udhcpc crashed
+      udhcpc -i eth0 -R 2>&1 | icd-logrotate /tmp/log/net_eth_udhcpc.log &
+      echo `date` ":: Eth start udhcpc"
+    fi
+  fi
+}
+eth_no()
+{
+  if [ "$eth_running" != "no" ]; then
+    kill `ps | awk ''/'[u]dhcpc -i eth0'/' { print $1}'`
+    ifconfig eth0 0.0.0.0 down
+    echo `date` ":: Eth down"
+    killall dnsmasq
+    eth_running="no"
+  fi
+}
+
+wifi_get_params()
+{
+  local tmp
+  wifi_changed="no"
+  tmp=`icd-config --db=$ICD_CONFIG_DB sget wifi enabled`
+  if [ "$wifi_enabled" != "$tmp" ]; then
+    wifi_enabled="$tmp"
+    wifi_changed="yes"
+  fi
+}
+
+wifi_yes()
+{
+  if [ "$wifi_cnt" = "" ]; then
+    wifi_cnt=0
+  fi
+  if ! [ -e /tmp/wpa_suppl.conf ]; then
+    icd-wifi-cfg-from
+    echo `date` ":: Wifi config from db"
+  fi
+
+  if [ "`pidof wpa_supplicant > /dev/null && echo yes || echo no`" = "no" ]; then
+    wpa_supplicant -Dwext -iwlan0 -d -c/tmp/wpa_suppl.conf 2>&1 | icd-logrotate /tmp/log/wifi_wpa_suppl.log &
+    sleep 3
+    echo `date` ":: Wifi start wpa_supplicant"
+  fi
+
+  if [ "`ps | grep -q "[u]dhcpc -i wlan0" && echo yes || echo no`" = "no" ]; then
+    if [ "`pidof wpa_supplicant > /dev/null && echo yes || echo no`" = "yes" ]; then
+      udhcpc -i wlan0 2>&1 | icd-logrotate /tmp/log/wifi_udhcpc.log &
+      echo `date` ":: Wifi start udhcpc"
+    fi
+  fi
+
+  if [ "`wpa_cli -i wlan0 status 2>/dev/null | grep -v bssid | awk -F '=' ''/'ssid'/' {print $2}' | wc -c`" -lt 2 ] || [ "`wpa_cli -i wlan0 status 2>/dev/null | awk -F '=' ''/'ip_address'/' {print $2}' | wc -c`" -lt 2 ]; then #30*30s = 15min without connection, try reset everything
+    let wifi_cnt++
+    if [ "$wifi_cnt" -gt 30 ]; then
+      echo `date` ":: Wifi reset"
+      wifi_cnt=0
+      wifi_no
+    fi
+  else
+    wifi_cnt=0
+  fi
+
+  if [ -e /tmp/wpa_suppl.conf ]; then
+    icd-wifi-cfg-to
+  fi
+}
+wifi_no()
+{
+  if [ "`ps | grep -q "[u]dhcpc -i wlan0" && echo yes || echo no`" = "yes" ]
+  then
+    kill `ps | awk ''/'[u]dhcpc -i wlan0'/' { print $1}'`
+    echo `date` ":: Wifi stop udhcpc"
+  fi
+
+  if [ "`pidof wpa_supplicant > /dev/null && echo yes || echo no`" = "yes" ]
+  then
+    killall wpa_supplicant
+    sleep 3
+    icd-wifi-cfg-to
+    echo `date` ":: Wifi stop wpa_supplicant"
+  fi
+
+  if [ -e /tmp/wpa_suppl.conf ]
+  then
+    rm -f /tmp/wpa_suppl.conf
+    echo `date` ":: Wifi remove cfg file"
+  fi
+}
+
+
+#####################################################################################
+
+touch /tmp/last_configdb_check
+eth_get_params
+eth_yes
+wifi_get_params
+
+
+while [ 1 = 1 ]
+do
+  sleep 30
+
+  if [ "$ICD_CONFIG_DB" -nt /tmp/last_configdb_check ]; then #db edited after last check
+    new_cfg="yes"
+  else
+    new_cfg="no"
+  fi
+
+  if [ $new_cfg = "yes" ]; then
+    touch /tmp/last_configdb_check
+    eth_get_params
+    wifi_get_params
+  fi
+
+  if [ $new_cfg = "yes" ] && [ "$eth_changed" = "yes" ]
+  then #changed eth params == full reset
+    eth_no
+    sleep 15 
+    eth_yes
+  fi
+
+  if [ $new_cfg = "yes" ] && [ "$wifi_changed" = "yes" ]; then #new wifi params
+    if [ "$wifi_enabled" = "no" ]; then #change to off
+      wifi_no
+    else #chango to yes or no change
+      wifi_yes
+    fi
+  else #no wifi change
+    if [ "$wifi_enabled" = "yes" ]; then #if running then monitor it
+      wifi_yes
+    fi
+  fi
+
+
+done
