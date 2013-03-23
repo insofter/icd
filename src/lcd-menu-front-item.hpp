@@ -103,6 +103,21 @@ public:
 };
 
 /**
+ * Show one-line output from command
+ */
+class CmenuItemAppParam: public CmenuItemFrontMenu {
+private:
+  CappParam _param;
+  std::string _val;
+  int _lastPos;
+  int _lastSize;
+  int _check;
+
+public:
+  CmenuItemAppParam(std::string name, std::string cmd);
+  virtual void screen(Clcd *lcd);
+};
+/**
  * Show first line from file
  */
 class CmenuItemFileParam: public CmenuItemFrontMenu {

@@ -92,6 +92,8 @@ $tresc.='<table>
   <input type="text" name="dns1a" id="dns1a" readonly="readonly" value="'.$current['dns1'].'"></td></tr>
   <tr><th><label for="dns2a">DNS 2</label> :</th><td>
   <input type="text" name="dns2a" id="dns2a" readonly="readonly" value="'.$current['dns2'].'">
+  <tr><th><label for="dns2a">MAC</label> :</th><td>
+  <input type="text" name="maca" id="maca" readonly="readonly" value="'.$current['mac'].'">
   </td></tr></table>';
 
 

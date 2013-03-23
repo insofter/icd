@@ -171,63 +171,63 @@ MIN:
     Clcd lcd;
     CmenuList *menu = new CmenuList( "Menu" );
     CmenuList *item;
-    CmenuDbParamList *pl;
+    CmenuDbParamList *dbpl;
+    CmenuAppParamList *appl;
 
     item = new CmenuList( "TCPIP" );
 
-    pl=new CmenuDbParamList( "Aktualna" );
-    pl->itemAdd( "DHCP", "current", "dhcp" );
-    pl->itemAdd( "Adres IP (Eth)", "current", "ip" );
-    pl->itemAdd( "Maska", "current", "mask" );
-    pl->itemAdd( "Brama", "current", "gate" );
-    pl->itemAdd( "DNS 1", "current", "dns1" );
-    pl->itemAdd( "DNS 2", "current", "dns2" );
-    item->itemAdd( pl );
+    appl=new CmenuAppParamList( "Aktualna" );
+    appl->itemAdd( "Adres IP (Eth)", "icd-current eth ip" );
+    appl->itemAdd( "Maska", "icd-current eth mask" );
+    appl->itemAdd( "Brama", "icd-current eth gate" );
+    appl->itemAdd( "DNS 1", "icd-current eth dns1" );
+    appl->itemAdd( "DNS 2", "icd-current eth dns2" );
+    item->itemAdd( appl );
 
-    pl=new CmenuDbParamList( "Statyczna" );
-    pl->itemAdd( "DHCP", "tcpip", "dhcp", CdbParam::editBool );
-    pl->itemAdd( "Adres IP (Eth)", "tcpip", "ip", CdbParam::editIp );
-    pl->itemAdd( "Maska", "tcpip", "mask", CdbParam::editIp );
-    pl->itemAdd( "Brama", "tcpip", "gate", CdbParam::editIp );
-    pl->itemAdd( "DNS 1", "tcpip", "dns1", CdbParam::editIp );
-    pl->itemAdd( "DNS 2", "tcpip", "dns2", CdbParam::editIp );
-    pl->itemAdd( "MAC", "tcpip", "mac", CdbParam::editMac );
-    pl->itemAdd( "Dnsmasq", "tcpip", "dnsmasq", CdbParam::editBool );
-    item->itemAdd( pl );
+    dbpl=new CmenuDbParamList( "Statyczna" );
+    dbpl->itemAdd( "DHCP", "tcpip", "dhcp", CdbParam::editBool );
+    dbpl->itemAdd( "Adres IP (Eth)", "tcpip", "ip", CdbParam::editIp );
+    dbpl->itemAdd( "Maska", "tcpip", "mask", CdbParam::editIp );
+    dbpl->itemAdd( "Brama", "tcpip", "gate", CdbParam::editIp );
+    dbpl->itemAdd( "DNS 1", "tcpip", "dns1", CdbParam::editIp );
+    dbpl->itemAdd( "DNS 2", "tcpip", "dns2", CdbParam::editIp );
+    dbpl->itemAdd( "MAC", "tcpip", "mac", CdbParam::editMac );
+    dbpl->itemAdd( "Dnsmasq", "tcpip", "dnsmasq", CdbParam::editBool );
+    item->itemAdd( dbpl );
 
-    pl=new CmenuDbParamList( "WiFi" );
-    pl->itemAdd( "Włącz wifi", "wifi", "enabled", CdbParam::editBool );
-    pl->itemAdd( "Adres IP (WiFi)", "wifi", "ip-ssid" );
-    item->itemAdd( pl );
+    dbpl=new CmenuDbParamList( "WiFi" );
+    dbpl->itemAdd( "Włącz wifi", "wifi", "enabled", CdbParam::editBool );
+    dbpl->itemAdd( "Adres IP (WiFi)", "wifi", "ip-ssid" );
+    item->itemAdd( dbpl );
 
-    pl=new CmenuDbParamList( "GSM" );
-    item->itemAdd( pl );
+    dbpl=new CmenuDbParamList( "GSM" );
+    item->itemAdd( dbpl );
 
     menu->itemAdd( item );
 
-    pl=new CmenuDbParamList( "Wysyłanie" );
-    pl->itemAdd( "IDS - id salonu", "device", "ids", CdbParam::editText );
-    pl->itemAdd( "IDD - id urządz.", "device", "idd", CdbParam::editInt );
-    pl->itemAdd( "Adres wysyłania", "device", "address", CdbParam::editText );
-    pl->itemAdd( "Użytkownik", "device", "user", CdbParam::editText );
+    dbpl=new CmenuDbParamList( "Wysyłanie" );
+    dbpl->itemAdd( "IDS - id salonu", "device", "ids", CdbParam::editText );
+    dbpl->itemAdd( "IDD - id urządz.", "device", "idd", CdbParam::editInt );
+    dbpl->itemAdd( "Adres wysyłania", "device", "address", CdbParam::editText );
+    dbpl->itemAdd( "Użytkownik", "device", "user", CdbParam::editText );
 
-    menu->itemAdd( pl );
+    menu->itemAdd( dbpl );
 
-    pl=new CmenuDbParamList( "Fotokomórki" );
-    pl->itemAdd( "Nazwa", "counter0", "name" );
-    pl->itemAdd( "Nazwa", "counter1", "name" );
-    pl->itemAdd( "Nazwa", "counter2", "name" );
-    pl->itemAdd( "Nazwa", "counter3", "name" );
+    dbpl=new CmenuDbParamList( "Fotokomórki" );
+    dbpl->itemAdd( "Nazwa", "counter0", "name" );
+    dbpl->itemAdd( "Nazwa", "counter1", "name" );
+    dbpl->itemAdd( "Nazwa", "counter2", "name" );
+    dbpl->itemAdd( "Nazwa", "counter3", "name" );
 
-    menu->itemAdd( pl );
+    menu->itemAdd( dbpl );
 
     CmenuContainerNoRoot *mainMenu = new CmenuContainerNoRoot( menu, new CmenuItemTimeFoto( 1 ) );
     mainMenu->itemAdd( new CmenuItemTimeFoto( 2 ) );
     mainMenu->itemAdd( new CmenuItemTimeFoto( 3 ) );
     mainMenu->itemAdd( new CmenuItemTimeFoto( 4 ) );
     mainMenu->itemAdd( new CmenuItemIdds );
-    mainMenu->itemAdd( new CmenuItemDbParam( "Adres IP (Eth)", "current", "ip" ) );
-    mainMenu->itemAdd( new CmenuItemDbParam( "IP (WiFi) i SSID", "wifi", "ip-ssid" ) );
+    mainMenu->itemAdd( new CmenuItemAppParam( "Adres IP (Eth)", "icd-current eth ip" ) );
+    mainMenu->itemAdd( new CmenuItemAppParam( "IP (WiFi) i SSID", "icd-current wifi ip-ssid" ) );
     mainMenu->itemAdd( new CmenuItemFileParam( "Status wysyłania", "/tmp/last-send-status" ) );
     std::string cmd;
     cmd="icd-flush-db && icd-transfer-data --log=short";

@@ -67,6 +67,15 @@ struct CdbParam {
   CdbParam();
 };
 
+/**
+ * Struct of app parameters.
+ * Struct describes values which can be get from app.
+ */
+struct CappParam {
+  std::string _name;
+  std::string _cmd;
+}; 
+
 
 /**
  * Interface class. It describes virtual menu item. 
@@ -263,6 +272,40 @@ public:
   virtual void fullEsc();
 };
 
+/**
+ * List of values from applications. One-line output.
+ */
+class CmenuAppParamList: public CmenuItem {
+protected:
+  std::vector<CappParam> _list;
+  int _active;
+  int _check;
+  int _lastPos;
+  int _lastSize;
+
+  std::string val;
+
+public:
+  CmenuAppParamList(std::string newname);
+  virtual ~CmenuAppParamList();
+
+  /**
+   * Adds new item to list.
+   * @param name Name of parameter, for screen's first line.
+   * @param sect Database section for config_section table.
+   * @param key Database parameter key for config table.
+   * @return Number of item in list.
+   */
+  int itemAdd(std::string name, std::string cmd);
+  virtual void screen(Clcd *lcd);
+  virtual int up(Clcd *lcd);
+  virtual int left(Clcd *lcd);
+  virtual int down(Clcd *lcd);
+  virtual int right(Clcd *lcd);
+  virtual int enter(Clcd *lcd);
+  virtual int esc(Clcd *lcd);
+  virtual void fullEsc();
+};
 /**
  * Class implements list of menu items. It always run item->screen(). It is used
  * for main menu so it has no "root" item and can't be empty. It also has list of 

@@ -217,6 +217,59 @@ void CmenuItemDbParam::screen(Clcd *lcd) {
 }
 
 
+CmenuItemAppParam::CmenuItemAppParam(std::string name, std::string cmd) {
+  _param._cmd=cmd;
+  _param._name=name;
+  _check=0;
+}
+
+void CmenuItemAppParam::screen(Clcd *lcd) {
+  char buf[128];
+  if( _check <= 0 || _val.size() == 0 ) {
+    FILE * cmd_out=popen( _param._cmd.c_str() , "r" );
+
+    if( cmd_out && fgets( buf, 128, cmd_out ) ) {
+      int i=0;
+      while( buf[i]!=0 && buf[i]!='\n' ) {//find end and remove \n
+        ++i;
+      }
+      buf[i]=0;
+      _val=buf;
+    } else {
+      _val="--Err";
+    }
+    pclose( cmd_out );
+    _check=5;
+  } else {
+    --_check;
+  }
+
+  lcd->_lcd[0]=_param._name;
+  if( _val.size()>16 ) {
+    if( _val.size()!=_lastSize || _lastPos>=_val.size() ) {
+      _lastPos=0;
+      _lastSize=_val.size();
+    }
+    lcd->_lcd[1]=_val.substr(_lastPos, 16);
+
+    int ilCzesci=std::ceil( ((float)_lastSize)/16 );
+    int ktora=std::floor( _lastPos/16 )+1;
+
+    lcd->_cur._x=(( ktora*16 ) / ilCzesci)-1;
+
+    lcd->_cur._y=1;
+    lcd->_cur._car=Ccur::line;
+
+    _lastPos+=16;
+
+  } else {
+    lcd->_lcd[1]=_val;
+    lcd->_cur._car=Ccur::none;
+  }
+  lcd->_refresh=2000;
+}
+
+
 
 
 CmenuItemFileParam::CmenuItemFileParam(std::string fpname, 

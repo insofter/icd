@@ -248,7 +248,6 @@ void CmenuDbParamList::screen(Clcd *lcd) {
       lcd->_lcd[0]=_list[_active]._name;
       val=globalConfig->entry(_list[_active]._sect, _list[_active]._key);
       if( val.size()>16 ) {
-        lcd->_refresh=2000;
         if( val.size()!=_list[_active]._lastSize || _list[_active]._lastPos>=val.size() ) {
           _list[_active]._lastPos=0;
           _list[_active]._lastSize=val.size();
@@ -266,10 +265,10 @@ void CmenuDbParamList::screen(Clcd *lcd) {
         _list[_active]._lastPos+=16;
 
       } else {
-        lcd->_refresh=0;
         lcd->_lcd[1]=val;
         lcd->_cur._car=Ccur::none;
       }
+      lcd->_refresh=2000;
     }
   }
 }
@@ -635,6 +634,129 @@ void CmenuDbParamList::fullEsc() {
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
+CmenuAppParamList::CmenuAppParamList(std::string newname): CmenuItem(newname) {
+  _active=-1;
+}
+
+CmenuAppParamList::~CmenuAppParamList() {
+}
+
+int CmenuAppParamList::itemAdd(std::string name, std::string cmd) {
+  CappParam item;
+  item._name=name;
+  item._cmd=cmd;
+  _list.push_back(item);
+  return _list.size()-1;
+}
+
+void CmenuAppParamList::screen(Clcd *lcd) {
+  if( _active==-1 ) {
+    lcd->_lcd[0]=name;
+    lcd->_lcd[1]="..";
+  } else {
+    char buf[128];
+    if( _check <= 0 || val.size() == 0 ) {
+      FILE * cmd_out=popen( _list[_active]._cmd.c_str() , "r" );
+
+      if( cmd_out && fgets( buf, 128, cmd_out ) ) {
+        int i=0;
+        while( buf[i]!=0 && buf[i]!='\n' ) {//find end and remove \n
+          ++i;
+        }
+        buf[i]=0;
+        val=buf;
+      } else {
+        val="--Err";
+      }
+      pclose( cmd_out );
+      _check=5;
+    } else {
+       --_check;
+    }
+
+    lcd->_lcd[0]=_list[_active]._name;
+    if( val.size()>16 ) {
+      if( val.size()!=_lastSize || _lastPos>=val.size() ) {
+        _lastPos=0;
+        _lastSize=val.size();
+      }
+      lcd->_lcd[1]=val.substr(_lastPos, 16);
+
+      int ilCzesci=std::ceil( ((float)_lastSize)/16 );
+      int ktora=std::floor( _lastPos/16 )+1;
+
+      lcd->_cur._x=(( ktora*16 ) / ilCzesci)-1;
+        
+      lcd->_cur._y=1;
+      lcd->_cur._car=Ccur::line;
+
+      _lastPos+=16;
+
+    } else {
+      lcd->_lcd[1]=val;
+      lcd->_cur._car=Ccur::none;
+    }
+    lcd->_refresh=2000;
+  }
+}
+
+int CmenuAppParamList::up(Clcd *lcd) {
+  if( _active==-1) {
+    _active=_list.size()-1;
+  } else {
+    --_active;
+  }
+  if( _active!=-1 ) {
+    _lastSize=0;
+    _check=0;
+  }
+  this->screen(lcd);
+  return 0;
+}
+
+int CmenuAppParamList::left(Clcd *lcd) {
+  return this->up(lcd);
+}
+
+int CmenuAppParamList::down(Clcd *lcd) {
+  if( _active==((int)_list.size())-1 ) {
+    _active=-1;
+  } else {
+    ++_active;
+  }
+  if( _active!=-1 ) {
+    _lastSize=0;
+    _check=0;
+  }
+  this->screen(lcd);
+  return 0;
+}
+
+int CmenuAppParamList::right(Clcd *lcd) {
+  return this->down(lcd);
+}
+
+int CmenuAppParamList::enter(Clcd *lcd) {
+  if( _active==-1 ) {
+    return 1;
+  } else {
+    this->screen(lcd);
+    return 0;
+  }
+}
+
+int CmenuAppParamList::esc(Clcd *lcd) {
+  return 1;
+}
+
+void CmenuAppParamList::fullEsc() {
+  _active=-1;
+}
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
 CmenuContainerNoRoot::CmenuContainerNoRoot(CmenuItem* menu, CmenuItem* item, std::string newname):
   CmenuList(newname), _menu(menu) {
     ++(_menu->refCnt);

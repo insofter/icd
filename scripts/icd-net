@@ -64,8 +64,12 @@ eth_yes()
     if [ "$eth_dhcp" = "no" ]; then
       ifconfig eth0 up $eth_ip netmask $eth_mask
       echo `date` ":: Eth set IP=$eth_ip mask=$eth_mask"
-      # TODO route
-      # TODO start dnsmasq
+      if [ "$wifi_enabled" = "no" ]; then # eth0 is slave
+        route add default gw $eth_gate # TODO route management
+      fi  
+      if [ "$eth_dnsmasq" = "yes" ]; then
+        dnsmasq_yes
+      fi
     fi
     eth_running="yes"
   fi
@@ -80,13 +84,44 @@ eth_yes()
 }
 eth_no()
 {
-  if [ "$eth_running" != "no" ]; then
+  if [ "$eth_running" = "yes" ]; then
     kill `ps | awk ''/'[u]dhcpc -i eth0'/' { print $1}'`
     ifconfig eth0 0.0.0.0 down
     echo `date` ":: Eth down"
-    killall dnsmasq
+    dnsmasq_no
     eth_running="no"
   fi
+}
+dnsmasq_yes()
+{
+  local eth_net eth_ipend eth_ipbeg
+
+  net=`echo ${eth_ip}"."${eth_mask} | awk -F '.' '{ print and($1 ,$5) "." and($2 ,$6) "." and($3 ,$7) "." and($4, $8 ) }'`
+  eth_ipend=`echo ${eth_ip} | awk -F '.' '{ print $4 }'` #calculate network address
+  eth_ipbeg=`echo ${eth_ip} | awk -F '.' '{ print $1 "." $2 "." $3 }'`
+
+  echo 1 > /proc/sys/net/ipv4/ip_forward #transfer backets by kernel
+  iptables -t nat -A POSTROUTING -s $eth_net/$eth_mask -d 0.0.0.0/0 -j MASQUERADE # trnsfet fom ip to ip
+
+  echo "interface=eth0" > /tmp/dnsmasq.conf #dnsmasq config
+  echo "cache-size=0" >> /tmp/dnsmasq.conf
+  echo "dhcp-leasefile=/tmp/log/net-dnsmasq-leases.log" >> /tmp/dnsmasq.conf
+  if [ "$eth_ipend" -ge 100 ]
+  then
+    echo "dhcp-range=${eth_ipbeg}.20,${eth_ipbeg}.99,${eth_mask},1h" >> /tmp/dnsmasq.conf
+  else
+    echo "dhcp-range=${eth_ipbeg}.120,${eth_ipbeg}.199,${eth_mask},1h" >> /tmp/dnsmasq.conf
+  fi
+
+  dnsmasq -C /tmp/dnsmasq.conf #start dhcp & dns server
+}
+dnsmasq_no()
+{
+  killall dnsmasq
+  rm /tmp/log/net-dnsmasq-leases.log
+  rm /tmp/dnsmasq.conf
+  iptables -t nat -F POSTROUTING
+  echo 0 > /proc/sys/net/ipv4/ip_forward
 }
 
 wifi_get_params()
@@ -180,7 +215,7 @@ do
     new_cfg="no"
   fi
 
-  if [ $new_cfg = "yes" ]; then
+  if [ $new_cfg = "yes" ]; then #newdb, get params
     touch /tmp/last_configdb_check
     eth_get_params
     wifi_get_params
@@ -190,8 +225,8 @@ do
   then #changed eth params == full reset
     eth_no
     sleep 15 
-    eth_yes
   fi
+  eth_yes #eth needed all the time, monitoring
 
   if [ $new_cfg = "yes" ] && [ "$wifi_changed" = "yes" ]; then #new wifi params
     if [ "$wifi_enabled" = "no" ]; then #change to off

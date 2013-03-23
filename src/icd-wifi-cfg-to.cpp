@@ -36,8 +36,6 @@ struct Cwifinet {//one network item from config
 class CwifiCfgToDb {
   private:
     std::vector< Cwifinet > networks;
-    std::string currentIpSsid;
-    job_t ipSsidJob;
 
 
   public:
@@ -47,8 +45,6 @@ class CwifiCfgToDb {
       std::string s;
       bool inNetwork=false;
       bool inName=false;
-      FILE * ipSsid;
-      char buf[64];
       int i;
 
       std::fstream cfgFile( cfgFileName.c_str(), std::ios_base::in );
@@ -109,31 +105,6 @@ class CwifiCfgToDb {
         cfgFile >> s;
       }
 
-      ipSsidJob=UPDATE;
-      ipSsid=popen( "wpa_cli -i wlan0 status 2>/dev/null | awk -F '=' ''/'ip_address'/' {print $2}'" , "r" );
-      if( ipSsid && fgets( buf, 128, ipSsid ) ) {
-        i=0;
-        while( buf[i]!=0 && buf[i]!='\n' ) {//find end and remove \n
-          ++i;
-        }
-        buf[i]=0;
-        currentIpSsid=buf;
-      }
-      pclose( ipSsid );
-
-      currentIpSsid+=" -- ";
-
-      ipSsid=popen( "wpa_cli -i wlan0 status 2>/dev/null | grep -v bssid | awk -F '=' ''/'ssid'/' {print $2}'" , "r" );
-      if( ipSsid && fgets( buf, 128, ipSsid ) ) {
-        i=0;
-        while( buf[i]!=0 && buf[i]!='\n' ) {//find end and remove \n
-          ++i;
-        }
-        buf[i]=0;
-        currentIpSsid+=buf;
-      }
-      pclose( ipSsid );
-
     }
     void readDbConfig() {
 
@@ -190,9 +161,6 @@ class CwifiCfgToDb {
           networks.push_back( net );
         }
       }
-      if( currentIpSsid.compare( globalConfig->entry( "wifi", "ip-ssid" ) )==0 ) {
-        ipSsidJob=NONE;
-      }
     }
     void Update() {
       std::string s;
@@ -228,10 +196,6 @@ class CwifiCfgToDb {
             globalConfig->remove_section( s );
             break;
         }
-      }
-
-      if( ipSsidJob==UPDATE ) {
-        globalConfig->set_entry( "wifi", "ip-ssid", currentIpSsid );
       }
 
       globalConfig->commit_transaction();

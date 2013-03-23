@@ -194,14 +194,21 @@ class c_icdtcp {
 
   function tcpip_pobierz($typ) {
     if( $typ!='current' ) {
+
       $typ='tcpip';
-    }
-    $sql="SELECT `key`, `value` FROM config_section cs LEFT JOIN config c ON cs.id=c.section_id
-      WHERE cs.name='$typ' AND (c.key='dns1' OR c.key='dns2' OR c.key='gate' OR
-      c.key='ip' OR c.key='mask' OR c.key='net-name' OR c.key='mac')";
-    $ans=$this->configDb->query($sql);
-    foreach( $ans as $row ) {
-      $tcp[$row['key']]=$row['value'];
+      $sql="SELECT `key`, `value` FROM config_section cs LEFT JOIN config c ON cs.id=c.section_id
+        WHERE cs.name='$typ' AND (c.key='dns1' OR c.key='dns2' OR c.key='gate' OR
+        c.key='ip' OR c.key='mask' OR c.key='net-name' OR c.key='mac')";
+      $ans=$this->configDb->query($sql);
+      foreach( $ans as $row ) {
+        $tcp[$row['key']]=$row['value'];
+      }
+    } else {
+      $list=array('ip', 'mask', 'gate', 'dns1', 'dns2', 'mac');
+      foreach( $list as $item ) {
+        $tcp[$item]=shell_exec('icd-current eth '.$item);
+      }
+
     }
     return $tcp;
 
