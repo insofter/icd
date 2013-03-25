@@ -96,12 +96,14 @@ dnsmasq_yes()
 {
   local eth_net eth_ipend eth_ipbeg
 
-  net=`echo ${eth_ip}"."${eth_mask} | awk -F '.' '{ print and($1 ,$5) "." and($2 ,$6) "." and($3 ,$7) "." and($4, $8 ) }'`
+  eth_net=`echo ${eth_ip}"."${eth_mask} | awk -F '.' '{ print and($1 ,$5) "." and($2 ,$6) "." and($3 ,$7) "." and($4, $8 ) }'`
   eth_ipend=`echo ${eth_ip} | awk -F '.' '{ print $4 }'` #calculate network address
   eth_ipbeg=`echo ${eth_ip} | awk -F '.' '{ print $1 "." $2 "." $3 }'`
 
   echo 1 > /proc/sys/net/ipv4/ip_forward #transfer backets by kernel
+  echo "Dnsmasq transfer packets ON"
   iptables -t nat -A POSTROUTING -s $eth_net/$eth_mask -d 0.0.0.0/0 -j MASQUERADE # trnsfet fom ip to ip
+  echo "Dnsmasq iptables: POSTROUTING -s $eth_net/$eth_mask -d 0.0.0.0/0 -j MASQUERADE"
 
   echo "interface=eth0" > /tmp/dnsmasq.conf #dnsmasq config
   echo "cache-size=0" >> /tmp/dnsmasq.conf
@@ -109,17 +111,21 @@ dnsmasq_yes()
   if [ "$eth_ipend" -ge 100 ]
   then
     echo "dhcp-range=${eth_ipbeg}.20,${eth_ipbeg}.99,${eth_mask},1h" >> /tmp/dnsmasq.conf
+    echo echo "Dnsmasq DHCP range: ${eth_ipbeg}.20 - ${eth_ipbeg}.99"
   else
     echo "dhcp-range=${eth_ipbeg}.120,${eth_ipbeg}.199,${eth_mask},1h" >> /tmp/dnsmasq.conf
+    echo echo "Dnsmasq DHCP range: ${eth_ipbeg}.120 - ${eth_ipbeg}.199"
   fi
 
   dnsmasq -C /tmp/dnsmasq.conf #start dhcp & dns server
+  echo echo "Dnsmasq start."
+
 }
 dnsmasq_no()
 {
-  killall dnsmasq
-  rm /tmp/log/net-dnsmasq-leases.log
-  rm /tmp/dnsmasq.conf
+  killall dnsmasq > /dev/null 2>&1
+  rm /tmp/log/net-dnsmasq-leases.log > /dev/null 2>&1
+  rm /tmp/dnsmasq.conf > /dev/null 2>&1
   iptables -t nat -F POSTROUTING
   echo 0 > /proc/sys/net/ipv4/ip_forward
 }

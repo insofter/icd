@@ -5,13 +5,13 @@ case "$1" in
   eth)
     case "$2" in
       ip)
-        ifconfig ${interface} | sed -n 's/^[^i]*inet addr:\([0-9.][0-9.]*\).*$/\1/p'
+        ifconfig eth0 | sed -n 's/^[^i]*inet addr:\([0-9.][0-9.]*\).*$/\1/p'
         ;;
       mask)
-        ifconfig ${interface} | sed -n 's/^[^M]*Mask:\([0-9.][0-9.]*\).*$/\1/p'
+        ifconfig eth0 | sed -n 's/^[^M]*Mask:\([0-9.][0-9.]*\).*$/\1/p'
         ;;
       gate)
-        route | sed -n 's/^default[[:space:]]*\([0-9.][0-9.]*\).*$/\1/p'
+        route | sed -n 's/^default[[:space:]]*\([0-9.][0-9.]*\).*$/\1/p' | head -1
         ;;
       dns1)
         echo dns1

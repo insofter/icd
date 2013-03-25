@@ -12,7 +12,6 @@ if( isset($_POST['dhcp_toggle']) ) {
     'gate'=>$_POST['gate'],
     'dns1'=>$_POST['dns1'],
     'dns2'=>$_POST['dns2'],
-    'net-name'=>$_POST['net-name'],
     'mac'=>$_POST['mac']);
   $icdtcp->tcpip_ustaw($nowe);
   $info='<h4>Zmodyfikowano konfigurację</h4>';
@@ -68,8 +67,6 @@ $tresc.='<table>
   <input type="text" name="dns1" id="dns1" value="'.$tcpip['dns1'].'"></td></tr>
   <tr><th><label for="dns2">DNS 2</label> :<br><br></th><td>
   <input type="text" name="dns2" id="dns2" value="'.$tcpip['dns2'].'"><br><br></td></tr>
-  <tr><th><label for="net-name">Nazwa</label> :</th><td>
-  <input type="text" name="net-name" id="net-name" value="'.$tcpip['net-name'].'"></td></tr>
   <tr><th><label for="mac">MAC</label> :<br><br></th><td>
   <input type="text" name="mac" id="mac" value="'.$tcpip['mac'].'"><br><br></td></tr>
   <tr><th colspan="2"><input type="submit" value="Zmień konfigurację"></th></tr></table>';
