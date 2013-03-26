@@ -10,6 +10,8 @@
 case "$1" in
   deconfig)
     /sbin/ifconfig $interface 0.0.0.0
+    > /tmp/route_$interface
+    > resolv_$interface
     ;;
 
   renew|bound)
@@ -30,7 +32,7 @@ case "$1" in
         echo nameserver $i >> /tmp/resolv_$interface
       done
     fi
-    icd-route-resolv
+    icd-net-route-resolv
     ;;
 esac
 

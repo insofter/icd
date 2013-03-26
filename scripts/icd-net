@@ -36,7 +36,7 @@ eth_get_params()
       eth_changed="yes"
     fi
 
-    tmp=`icd-config --db="${ICD_CONFIG_DB}" sget tcpip dnsi2`
+    tmp=`icd-config --db="${ICD_CONFIG_DB}" sget tcpip dns2`
     if [ "$eth_dns2" != "$tmp" ]; then
       eth_dns2="$tmp"
       eth_changed="yes"
@@ -62,22 +62,33 @@ eth_yes()
     echo `date` ":: Eth set MAC"
     ifconfig eth0 up
     if [ "$eth_dhcp" = "no" ]; then
-      ifconfig eth0 up $eth_ip netmask $eth_mask
+      ifconfig eth0 $eth_ip netmask $eth_mask
       echo `date` ":: Eth set IP=$eth_ip mask=$eth_mask"
-      if [ "$wifi_enabled" = "no" ]; then # eth0 is slave
-        route add default gw $eth_gate # TODO route management
-      fi  
-      if [ "$eth_dnsmasq" = "yes" ]; then
+
+      if [ "$eth_gate" != "" ]; then
+        echo $eth_gate > /tmp/route_eth0
+      fi
+
+      > /tmp/resolv_eth0
+      if [ "$eth_dns1" != "" ]; then
+        echo "nameserver $eth_dns1" >> /tmp/resolv_eth0
+      fi
+      if [ "$eth_dns2" != "" ]; then
+        echo "nameserver $eth_dns2" >> /tmp/resolv_eth0
+      fi
+
+      if [ "$eth_dnsmasq" = "yes" ]; then #dnsmasq only for static eth0
         dnsmasq_yes
       fi
     fi
+    icd-net-route-resolv
     eth_running="yes"
   fi
 
   if [ "$eth_dhcp" = "yes" ]; then # start dhcp
     if [ "`ps | grep -q "[u]dhcpc -i eth0" && echo yes || echo no`" = "no" ] 
     then # check if udhcpc crashed
-      udhcpc -i eth0 -R 2>&1 | icd-logrotate /tmp/log/net_eth_udhcpc.log &
+      udhcpc -i eth0 -R -s "${ICD_SHARE_DIR}/udhcpc.script" 2>&1 | icd-logrotate /tmp/log/net_eth_udhcpc.log &
       echo `date` ":: Eth start udhcpc"
     fi
   fi
@@ -107,7 +118,7 @@ dnsmasq_yes()
 
   echo "interface=eth0" > /tmp/dnsmasq.conf #dnsmasq config
   echo "cache-size=0" >> /tmp/dnsmasq.conf
-  echo "dhcp-leasefile=/tmp/log/net-dnsmasq-leases.log" >> /tmp/dnsmasq.conf
+  echo "dhcp-leasefile=/tmp/log/net_dnsmasq_leases.log" >> /tmp/dnsmasq.conf
   if [ "$eth_ipend" -ge 100 ]
   then
     echo "dhcp-range=${eth_ipbeg}.20,${eth_ipbeg}.99,${eth_mask},1h" >> /tmp/dnsmasq.conf
@@ -124,7 +135,7 @@ dnsmasq_yes()
 dnsmasq_no()
 {
   killall dnsmasq > /dev/null 2>&1
-  rm /tmp/log/net-dnsmasq-leases.log > /dev/null 2>&1
+  rm /tmp/log/net_dnsmasq_leases.log > /dev/null 2>&1
   rm /tmp/dnsmasq.conf > /dev/null 2>&1
   iptables -t nat -F POSTROUTING
   echo 0 > /proc/sys/net/ipv4/ip_forward
@@ -152,14 +163,14 @@ wifi_yes()
   fi
 
   if [ "`pidof wpa_supplicant > /dev/null && echo yes || echo no`" = "no" ]; then
-    wpa_supplicant -Dwext -iwlan0 -d -c/tmp/wpa_suppl.conf 2>&1 | icd-logrotate /tmp/log/wifi_wpa_suppl.log &
+    wpa_supplicant -Dwext -iwlan0 -d -c/tmp/wpa_suppl.conf 2>&1 | icd-logrotate /tmp/log/net_wifi_wpa_suppl.log &
     sleep 3
     echo `date` ":: Wifi start wpa_supplicant"
   fi
 
   if [ "`ps | grep -q "[u]dhcpc -i wlan0" && echo yes || echo no`" = "no" ]; then
     if [ "`pidof wpa_supplicant > /dev/null && echo yes || echo no`" = "yes" ]; then
-      udhcpc -i wlan0 2>&1 | icd-logrotate /tmp/log/wifi_udhcpc.log &
+      udhcpc -i wlan0 -R -s "${ICD_SHARE_DIR}/udhcpc.script" 2>&1 | icd-logrotate /tmp/log/net_wifi_udhcpc.log &
       echo `date` ":: Wifi start udhcpc"
     fi
   fi
@@ -245,6 +256,7 @@ do
       wifi_yes
     fi
   fi
+  icd-net-route-resolv
 
 
 done
