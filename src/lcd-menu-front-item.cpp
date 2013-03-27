@@ -239,7 +239,7 @@ void CmenuItemAppParam::screen(Clcd *lcd) {
       _val="--Err";
     }
     pclose( cmd_out );
-    _check=5;
+    _check=2;
   } else {
     --_check;
   }

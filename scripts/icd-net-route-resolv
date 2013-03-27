@@ -1,50 +1,61 @@
 #!/bin/sh
 
-echo fff
+wifi_enab=`icd-config --db=$ICD_CONFIG_DB sget wifi enabled`
+#gsm_enab=`icd-config --db=$ICD_CONFIG_DB sget gsm enabled`
+gsm_enab="no"
 
 #route
-if [ "`icd-config --db=$ICD_CONFIG_DB sget wifi enabled`" = "yes" ] && [ `cat /tmp/route_wlan0 2> /dev/null | wc -l` -gt 0 ]; then #route by wlan0
-  echo aaa
-  if route | grep -q -v "`cat /tmp/route_wlan0`" ; then
-    echo bbb
-    while ip route del default; do :; done
+if [ "$wifi_enab" = "yes" ] && [ -e /tmp/route_wlan0 ] && [ `cat /tmp/route_wlan0 | wc -l` -eq 1 ] 
+then #route by wlan0 ( wifi==yes, file exists and have 1 or more lines )
+  if ! route -n | grep -q "`cat /tmp/route_wlan0`" ; then # check if routing is correct
+    echo `date` ":: Route clear all"
+    while ip route del default; do :; done > /dev/null 2>&1
+    echo `date` ":: Route set default (by WiFi): `cat /tmp/route_wlan0`"
     route add default gw `cat /tmp/route_wlan0`
   fi
 
 else 
-  echo ccc
-  #  if [ `icd-config --db=$ICD_CONFIG_DB sget gsm enabled` ] && [ -s /tmp/route_ppp0 ]; then #route by gsm
-  #  else # route by eth
-    if [ `cat /tmp/route_eth0 2> /dev/null | wc -l` -gt 0 ]; then
-      echo eee
-      if route | grep -q -v "`cat /tmp/route_eth0`" ; then
-        echo ddd
-        while ip route del default; do :; done
+
+  if [ "$gsm_enab" = "yes" ] && [ -s /tmp/route_ppp0 ]; then #route by gsm
+    echo route by gsm
+    #route gsm
+  else # route by eth
+
+    if [ -e /tmp/route_eth0 ] && [ `cat /tmp/route_eth0 | wc -l` -eq 1 ]
+    then # route by eth, file exists and have one line
+      if ! route | grep -q "`cat /tmp/route_eth0`" ; then
+        echo `date` ":: Route clear all"
+        while ip route del default; do :; done > /dev/null 2>&1
+        echo `date` ":: Route set default (by Eth): `cat /tmp/route_eth0`"
         route add default gw `cat /tmp/route_eth0`
       fi
     fi
-  #  fi
+
+  fi
+
 fi
 
 
 #dns
-if [ "`icd-config --db=$ICD_CONFIG_DB sget wifi enabled`" = "yes" ] && [ -s /tmp/resolv_wlan0 ]; then #resolv by wlan0
+if [ "$wifi_enab" = "yes" ] && [ -e /tmp/resolv_wlan0 ] && [ `cat /tmp/resolv_wlan0 | wc -l` -gt 0 ]; then #resolv by wlan0
+
   if ! cmp -s /tmp/resolv_wlan0 /etc/resolv.conf ; then
     cat /tmp/resolv_wlan0 > /etc/resolv.conf
   fi
 
 else 
-  #  if [ `icd-config --db=$ICD_CONFIG_DB sget gsm enabled` ] && [ -s /tmp/resolv_ppp0 ]; then #resolv by gsm
-  #  else # resolv by eth
-    if ! cmp -s /tmp/resolv_eth0 /etc/resolv.conf ; then
-      cat /tmp/resolv_eth0 > /etc/resolv.conf
+
+  if [ "$gsm_enab" = "yes" ] && [ -s /tmp/resolv_ppp0 ]; then #resolv by gsm
+    echo resolv by gsm
+  else # resolv by eth
+
+    if [ -e /tmp/resolv_eth0 ] && [ `cat /tmp/resolv_eth0 | wc -l` -gt 0 ]; then
+      if ! cmp -s /tmp/resolv_eth0 /etc/resolv.conf ; then
+        echo `date` ":: DNS set from Eth"
+        cat /tmp/resolv_eth0 > /etc/resolv.conf
+      fi
     fi
-  #  fi
+
+  fi
 fi
-
-
-
-
-
-
 

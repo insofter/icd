@@ -65,11 +65,16 @@ eth_yes()
       ifconfig eth0 $eth_ip netmask $eth_mask
       echo `date` ":: Eth set IP=$eth_ip mask=$eth_mask"
 
+      if [ -e /tmp/route_eth0 ]; then
+        rm /tmp/route_eth0
+      fi
       if [ "$eth_gate" != "" ]; then
         echo $eth_gate > /tmp/route_eth0
       fi
 
-      > /tmp/resolv_eth0
+      if [ -e /tmp/resolv_eth0 ]; then
+        rm /tmp/resolv_eth0
+      fi
       if [ "$eth_dns1" != "" ]; then
         echo "nameserver $eth_dns1" >> /tmp/resolv_eth0
       fi

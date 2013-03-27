@@ -10,15 +10,21 @@
 case "$1" in
   deconfig)
     /sbin/ifconfig $interface 0.0.0.0
-    > /tmp/route_$interface
-    > resolv_$interface
+    if [ -e /tmp/route_$interface ]; then
+      rm /tmp/route_$interface
+    fi
+    if [ -e resolv_$interface ]; then
+      rm resolv_$interface
+    fi
     ;;
 
   renew|bound)
     /sbin/ifconfig $interface $ip $BROADCAST $NETMASK
 
     if [ -n "$router" ] ; then
-      rm /tmp/route_$interface > /dev/null 2>&1
+      if [ -e /tmp/route_$interface ]; then
+        rm /tmp/route_$interface
+      fi
 
       for i in $router ; do
         echo $i >> /tmp/route_$interface
@@ -26,7 +32,9 @@ case "$1" in
     fi
 
     if [ -n "$dns" ] ; then
-      rm /tmp/resolv_$interface > /dev/null 2>&1
+      if [ -e resolv_$interface ]; then
+        rm resolv_$interface
+      fi
 
       for i in $dns ; do
         echo nameserver $i >> /tmp/resolv_$interface
