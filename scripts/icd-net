@@ -139,9 +139,15 @@ dnsmasq_yes()
 }
 dnsmasq_no()
 {
-  killall dnsmasq > /dev/null 2>&1
-  rm /tmp/log/net_dnsmasq_leases.log > /dev/null 2>&1
-  rm /tmp/dnsmasq.conf > /dev/null 2>&1
+  if [ "`ps | grep -q "[d]nsmasq" && echo yes || echo no`" = "yes" ]; then
+    killall dnsmasq
+  fi
+  if [ -e /tmp/log/net_dnsmasq_leases.log ]; then
+    rm /tmp/log/net_dnsmasq_leases.log
+  fi
+  if [ -e /tmp/dnsmasq.conf ]; then
+    rm /tmp/dnsmasq.conf
+  fi
   iptables -t nat -F POSTROUTING
   echo 0 > /proc/sys/net/ipv4/ip_forward
 }
