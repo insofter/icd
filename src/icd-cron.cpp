@@ -130,8 +130,12 @@ MIN:
       timeOfNextTransfer/=delayNow;
       timeOfNextTransfer+=1;
       timeOfNextTransfer*=delayNow;
-      timeOfNextTransfer+=(int)((double)randVal()*(double)0.1*(double)delayNow);
-      timeOfNextTransfer+=10;
+      if( delayNow > 300 ) {//rand of no more than 5 minutes
+        timeOfNextTransfer+=(int)((double)randVal()*(double)0.1*300.0);
+      } else {
+        timeOfNextTransfer+=(int)((double)randVal()*(double)0.1*(double)delayNow);
+      }
+      timeOfNextTransfer+=30;
     }
 
     if( timeOfNextTransfer<=timeOfNextFlush ) {//transfer will be faster than flush

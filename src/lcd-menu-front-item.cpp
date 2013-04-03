@@ -59,7 +59,7 @@ void CmenuItemTimeFoto::screen(Clcd *lcd) {
   time( &rawtime );
   timeinfo = localtime ( &rawtime );
 
-  strftime(timebuf,8,"%y.%m.%d",timeinfo);
+  strftime(timebuf,8,"%y-%m-%d",timeinfo);
   timebuf[8]=0;
 
 
@@ -118,7 +118,7 @@ void CmenuItemDoubleTimeFoto::screen(Clcd *lcd) {
   time( &rawtime );
   timeinfo = localtime ( &rawtime );
 
-  strftime(timebuf,8,"%y.%m.%d",timeinfo);
+  strftime(timebuf,8,"%y-%m-%d",timeinfo);
   timebuf[8]=0;
 
 
