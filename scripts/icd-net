@@ -174,7 +174,7 @@ wifi_yes()
   fi
 
   if [ "`pidof wpa_supplicant > /dev/null && echo yes || echo no`" = "no" ]; then
-    wpa_supplicant -Dwext -iwlan0 -d -c/tmp/wpa_suppl.conf 2>&1 | icd-logrotate /tmp/log/net_wifi_wpa_suppl.log &
+    wpa_supplicant -Dwext -iwlan0 -c/tmp/wpa_suppl.conf 2>&1 | icd-logrotate /tmp/log/net_wifi_wpa_suppl.log &
     sleep 3
     echo `date` ":: Wifi start wpa_supplicant"
   fi
@@ -224,6 +224,59 @@ wifi_no()
   fi
 }
 
+gsm_set_time()
+{
+  local utime
+  utime=`date +%s`
+
+  let "gsm_time_start=$utime/($gsm_conn*60)"
+  let "++gsm_time_start"
+  let "gsm_time_start=$gsm_time_start*$gsm_conn*60"
+  let "gsm_time_start=$gsm_time_start-120"
+  let "gsm_time_stop=$gsm_time_start+3440"
+}
+
+gsm_get_params()
+{
+  local tmp
+  gsm_changed="no"
+  tmp=`icd-config --db=$ICD_CONFIG_DB sget gsm enabled`
+  tmp="yes" #TODO: REMOVE THAT
+  if [ "$gsm_enabled" != "$tmp" ]; then
+    gsm_enabled="$tmp"
+    gsm_changed="yes"
+  fi
+  tmp=`icd-config --db=$ICD_CONFIG_DB sget device server-sync-period-mins`
+  if [ "$gsm_conn" != "$tmp" ]; then
+    gsm_conn="$tmp"
+    gsm_changed="yes"
+  fi
+  #calculate begin values
+  gsm_set_time
+}
+gsm_yes()
+{
+  local utime
+  utime=`date +%s`
+
+  if [ "$gsm_working" != "yes" ]; then
+    if [ "$gsm_time_start" -lt "$utime" ]; then #time for start
+      echo "::::" `date` ":: Gsm start" #calculate new time
+      gsm_working="yes"
+      gsm_set_time
+    fi
+  else
+    if [ "$gsm_time_stop" -lt "$utime" ]; then
+      echo "::::" `date` ":: Gsm stop"
+      gsm_working="no"
+      gsm_set_time
+    fi
+  fi
+}
+gsm_no()
+{
+  echo "::::" `date` ":: Gsm no"
+}
 
 #####################################################################################
 
@@ -231,6 +284,7 @@ touch /tmp/last_configdb_check
 eth_get_params
 eth_yes
 wifi_get_params
+gsm_get_params
 
 
 while [ 1 = 1 ]
@@ -247,6 +301,7 @@ do
     touch /tmp/last_configdb_check
     eth_get_params
     wifi_get_params
+    gsm_get_params
   fi
 
   if [ $new_cfg = "yes" ] && [ "$eth_changed" = "yes" ]
@@ -267,6 +322,19 @@ do
       wifi_yes
     fi
   fi
+
+  if [ $new_cfg = "yes" ] && [ "$gsm_changed" = "yes" ]; then #new gsm params
+    if [ "$gsm_enabled" = "no" ]; then #change to off
+      gsm_no
+    else #chango to yes or no change
+      gsm_yes
+    fi
+  else #no gsm change
+    if [ "$gsm_enabled" = "yes" ]; then #if running then monitor it
+      gsm_yes
+    fi
+  fi
+
   icd-net-route-resolv
 
 
