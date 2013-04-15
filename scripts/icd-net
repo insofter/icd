@@ -247,9 +247,9 @@ gsm_get_params()
     gsm_enabled="$tmp"
     gsm_changed="yes"
   fi
-  tmp=`icd-config --db=$ICD_CONFIG_DB sget gsm connect-for-transfer`
-  if [ "$gsm_connect_for_transfer" != "$tmp" ]; then
-    gsm_connect_for_transfer="$tmp"
+  tmp=`icd-config --db=$ICD_CONFIG_DB sget gsm connect-with-transfer`
+  if [ "$gsm_connect_with_transfer" != "$tmp" ]; then
+    gsm_connect_with_transfer="$tmp"
     gsm_changed="yes"
   fi
   tmp=`icd-config --db=$ICD_CONFIG_DB sget device server-sync-period-mins`
@@ -265,7 +265,7 @@ gsm_yes()
   local utime
   utime=`date +%s`
 
-  if [ "$gsm_connect_for_transfer" != "yes" ]; then
+  if [ "$gsm_connect_with_transfer" = "yes" ]; then
 
     if [ "$gsm_working" != "yes" ]; then
       if [ "$gsm_time_start" -lt "$utime" ]; then #time for start

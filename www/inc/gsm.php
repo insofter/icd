@@ -9,7 +9,7 @@ $gsm=new c_gsm();
 
 if( isset( $_POST['send'] ) ) {
   if( $_POST['send']=='Włącz' ) {
-    if( isset( $_POST['pin-enabled'] ) && $_POST['pin']!=$_POST['pin2'] ) {
+/*    if( isset( $_POST['pin-enabled'] ) && $_POST['pin']!=$_POST['pin2'] ) {
       $info='<h4 id="err">Kody PIN nie są zgodne</h4>';
     } else {
       $t=explode( '*', $_POST['modem'] );
@@ -20,7 +20,7 @@ if( isset( $_POST['send'] ) ) {
         $ustawienia['pin-enabled']='yes';
       } else {
         $ustawienia['pin-enabled']='no';
-      }
+      }*/
       $ustawienia['enabled']='yes';
 
       $gsm->ustaw( $ustawienia );
