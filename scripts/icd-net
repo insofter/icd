@@ -232,7 +232,7 @@ gsm_set_time()
   let "gsm_time_start=$utime/($gsm_conn*60)"
   let "++gsm_time_start"
   let "gsm_time_start=$gsm_time_start*$gsm_conn*60"
-  let "gsm_time_start=$gsm_time_start-120"
+  let "gsm_time_start=$gsm_time_start-360"
   let "gsm_time_stop=$gsm_time_start+3440"
   echo Expected GSM start `echo $gsm_time_start | awk '{print strftime("%c",$1)}'`
   echo Expected GSM stop `echo $gsm_time_stop | awk '{print strftime("%c",$1)}'`
@@ -260,6 +260,47 @@ gsm_get_params()
   #calculate begin values
   gsm_set_time
 }
+gsm_configure_wvdial()
+{
+  mkdir -p /tmp/ppp/peers
+  cat << WVDIAL_CONF > /tmp/ppp/wvdial.conf
+  [Dialer orange]
+  Modem = /dev/ttyUSB0
+  Baud = 57600
+  Init1 = ATH
+  Init2 = ATE1
+  Init3 = AT+CGDCONT=1,"IP","internet"
+  Dial Command = ATD
+  Phone = *99#
+  Stupid mode = yes
+  Username = "internet"
+  Password = "internet"
+
+  [Dialer opin]
+  Modem = /dev/ttyUSB0
+  Init1 = AT+CPIN=2508
+WVDIAL_CONF
+  echo name wvdial > /tmp/ppp/peers/wvdial
+}
+gsm_configure_modeswitch() 
+{
+  mkdir -p /tmp/ppp/peers
+  sleep 22 # wait for modem initializing on first start (kernel needs time)
+
+  if ! [ -c /dev/ttyUSB0 ]; then
+    cat << USB_MODESWITCH_CFG > /tmp/ppp/modeswitch.conf
+    # Huawei E1752
+    DefaultVendor=  0x12d1
+    DefaultProduct= 0x1446
+    TargetVendor=   0x12d1
+    TargetProdct=   0x1001
+    MessageEndpoint=0x01
+    MessageContent="55534243000000000000000000000011060000000000000000000000000000"
+USB_MODESWITCH_CFG
+    usb_modeswitch -c /tmp/ppp/modeswitch.conf
+    sleep 22 # wait for second initializing after modeswitch (kernel needs time)
+  fi
+}
 gsm_yes()
 {
   local utime
@@ -271,46 +312,16 @@ gsm_yes()
       if [ "$gsm_time_start" -lt "$utime" ]; then #time for start
         echo "::::" `date` ":: Gsm start" #calculate new time
 
-        if ! [ -c /dev/ttyUSB0 ]; then
-          mkdir -p /tmp/ppp/peers
-          cat << USB_MODESWITCH_CFG > /tmp/ppp/usb_modeswitch-cfg
-          # Huawei E1752
-          DefaultVendor=  0x12d1
-          DefaultProduct= 0x1446
-          TargetVendor=   0x12d1
-          TargetProdct=   0x1001
-          MessageEndpoint=0x01
-          MessageContent="55534243000000000000000000000011060000000000000000000000000000"
-USB_MODESWITCH_CFG
-          usb_modeswitch -c /tmp/ppp/usb_modeswitch-cfg
-        fi
+        gsm_configure_modeswitch
 
-        cat << WVDIAL_CONF > /tmp/ppp/wvdial.conf
-        [Dialer orange]
-        Modem = /dev/ttyUSB0
-        Baud = 57600
-        Init1 = ATH
-        Init2 = ATE1
-        Init3 = AT+CGDCONT=1,"IP","internet"
-        Dial Command = ATD
-        Phone = *99#
-        Stupid mode = yes
-        Username = "internet"
-        Password = "internet"
-
-        [Dialer opin]
-        Modem = /dev/ttyUSB0
-        Init1 = AT+CPIN=2508
-WVDIAL_CONF
-
-        echo name wvdial > /tmp/ppp/peers/wvdial
+        gsm_configure_wvdial
         wvdial opin -C /tmp/ppp/wvdial.conf 
         icd-run-daemon -- wvdial orange -C /tmp/ppp/wvdial.conf
         echo 10.64.64.64 > /tmp/route_ppp0
 
+        export gsm_working="yes"
         icd-net-route-resolv
 
-        export gsm_working="yes"
         gsm_set_time
       fi
     else
@@ -319,6 +330,7 @@ WVDIAL_CONF
         killall wvdial
         rm /tmp/route_ppp0
         export gsm_working="no"
+        icd-net-route-resolv
         gsm_set_time
       fi
     fi
