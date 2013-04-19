@@ -226,14 +226,14 @@ wifi_no()
 
 gsm_set_time()
 {
-  local utime
+  local utime gsm_conn
   utime=`date +%s`
 
   let "gsm_time_start=$utime/($gsm_conn*60)"
   let "++gsm_time_start"
   let "gsm_time_start=$gsm_time_start*$gsm_conn*60"
-  let "gsm_time_start=$gsm_time_start-360"
-  let "gsm_time_stop=$gsm_time_start+3440"
+  let "gsm_time_start=$gsm_time_start-480"
+  let "gsm_time_stop=$gsm_time_start+2280"
   echo Expected GSM start `echo $gsm_time_start | awk '{print strftime("%c",$1)}'`
   echo Expected GSM stop `echo $gsm_time_stop | awk '{print strftime("%c",$1)}'`
 }
@@ -257,48 +257,99 @@ gsm_get_params()
     gsm_conn="$tmp"
     gsm_changed="yes"
   fi
+
+  tmp=`icd-config --db=$ICD_CONFIG_DB sget gsm pin-enabled`
+  if [ "$gsm_pin_enabled" != "$tmp" ]; then
+    gsm_pin_enabled="$tmp"
+    gsm_changed="yes"
+  fi
+  tmp=`icd-config --db=$ICD_CONFIG_DB sget gsm pin`
+  if [ "$gsm_pin" != "$tmp" ]; then
+    gsm_pin="$tmp"
+    gsm_changed="yes"
+  fi
+  tmp=`icd-config --db=$ICD_CONFIG_DB sget gsm conf_dir`
+  if [ "$gsm_conf_dir" != "$tmp" ]; then
+    gsm_conf_dir="$tmp"
+    gsm_modem_file=`cat $ICD_SHARE_DIR/gsm/$gsm_conf_dir/wvdial.conf | grep Modem -m 1 | sed 's/ //g' | awk -F '=' '{print $2}'`
+    if [ -e $ICD_SHARE_DIR/gsm/$gsm_conf_dir/pin.conf ]; then
+      gsm_pin_management=`cat $ICD_SHARE_DIR/gsm/$gsm_conf_dir/pin.conf`
+    else
+      gsm_pin_management="none"
+    fi
+    gsm_changed="yes"
+  fi
+  
   #calculate begin values
   gsm_set_time
 }
 gsm_configure_wvdial()
 {
-  mkdir -p /tmp/ppp/peers
-  cat << WVDIAL_CONF > /tmp/ppp/wvdial.conf
-  [Dialer orange]
-  Modem = /dev/ttyUSB0
-  Baud = 57600
-  Init1 = ATH
-  Init2 = ATE1
-  Init3 = AT+CGDCONT=1,"IP","internet"
-  Dial Command = ATD
-  Phone = *99#
-  Stupid mode = yes
-  Username = "internet"
-  Password = "internet"
-
-  [Dialer opin]
-  Modem = /dev/ttyUSB0
-  Init1 = AT+CPIN=2508
-WVDIAL_CONF
-  echo name wvdial > /tmp/ppp/peers/wvdial
+  if ! [ -e /tmp/ppp/wvdial.conf ]; then
+    mkdir -p /tmp/ppp/peers
+    if [ "$gsm_pin_enabled" = "yes" ]; then
+    	cat  | sed 's/__GSM__PIN__/'$gsm_pin'/g' > /tmp/ppp/wvdial.conf
+    else
+  	  cat $ICD_SHARE_DIR/gsm/$gsm_conf_dir/wvdial.conf > /tmp/ppp/wvdial.conf
+    fi
+    echo name wvdial > /tmp/ppp/peers/wvdial
+  fi
 }
 gsm_configure_modeswitch() 
 {
-  mkdir -p /tmp/ppp/peers
-  sleep 22 # wait for modem initializing on first start (kernel needs time)
-
-  if ! [ -c /dev/ttyUSB0 ]; then
-    cat << USB_MODESWITCH_CFG > /tmp/ppp/modeswitch.conf
-    # Huawei E1752
-    DefaultVendor=  0x12d1
-    DefaultProduct= 0x1446
-    TargetVendor=   0x12d1
-    TargetProdct=   0x1001
-    MessageEndpoint=0x01
-    MessageContent="55534243000000000000000000000011060000000000000000000000000000"
-USB_MODESWITCH_CFG
-    usb_modeswitch -c /tmp/ppp/modeswitch.conf
+  if ! [ -c "$gsm_modem_file" ]; then
+    sleep 22 # wait for modem initializing on first start (kernel needs time)
+    usb_modeswitch -c $ICD_SHARE_DIR/gsm/$gsm_conf_dir/modeswitch.conf
     sleep 22 # wait for second initializing after modeswitch (kernel needs time)
+    gsm_pin_setted="no" # new modem with initialized pin is impossible
+  fi
+}
+gsm_no()
+{
+  echo "::::" `date` ":: Gsm stop"
+  killall wvdial
+  rm /tmp/route_ppp0
+  export gsm_working="no"
+  icd-net-route-resolv
+}
+gsm_start()
+{
+  if [ "$1" = "check" ]; then #check if there is internet and restart wvdial if needed
+    #ping
+    #while ! ping -W 1 -c 1 8.8.8.8 >&/dev/null; do sleep 600; done
+    #ping -W 1 -c 4 www.google.com >& /dev/null && ping -W 1 -c 4 www.yahoo.com >& /dev/null || sleep 600
+    echo aa > /dev/null
+  fi
+  
+  if [ "`pidof wvdial > /dev/null && echo yes || echo no`" = "no" ]; then #no wvdial, start it
+    if [ "$gsm_pin_enabled" = "yes" ] && [ "$gsm_pin_management" != "none" ]; then
+      
+      if [ "$gsm_pin_management" = "sequence" ]; then
+        
+        if ! [ "$gsm_pin_setted" = "yes" ]; then
+          wvdial setpin -C /tmp/ppp/wvdial.conf #if that is unnecessary there is no problem
+          gsm_pin_setted="yes"
+        fi
+        icd-run-daemon -- wvdial startgsm -C /tmp/ppp/wvdial.conf
+        
+      else #pin.conf == together
+
+        if ! [ "$gsm_pin_setted" = "yes" ]; then #TODO: check if it's correct, if wrong wvdial (with unnecessary pin) breaks
+          icd-run-daemon -- wvdial setpin startgsm -C /tmp/ppp/wvdial.conf
+          gsm_pin_setted="yes"
+        else
+          icd-run-daemon -- wvdial startgsm -C /tmp/ppp/wvdial.conf
+        fi
+        
+      fi
+      
+    else #no pin management
+      icd-run-daemon -- wvdial startgsm -C /tmp/ppp/wvdial.conf
+    fi
+    
+    echo 10.64.64.64 > /tmp/route_ppp0
+    export gsm_working="yes"
+    icd-net-route-resolv
   fi
 }
 gsm_yes()
@@ -306,40 +357,28 @@ gsm_yes()
   local utime
   utime=`date +%s`
 
-  if [ "$gsm_connect_with_transfer" = "yes" ]; then
+  gsm_configure_modeswitch
+  gsm_configure_wvdial 
 
-    if [ "$gsm_working" != "yes" ]; then
+  if [ "$gsm_connect_with_transfer" = "yes" ] && [ "$gsm_conn" -gt 59 ]; then
+
+    if [ "$gsm_working" != "yes" ] ; then
       if [ "$gsm_time_start" -lt "$utime" ]; then #time for start
         echo "::::" `date` ":: Gsm start" #calculate new time
-
-        gsm_configure_modeswitch
-
-        gsm_configure_wvdial
-        wvdial opin -C /tmp/ppp/wvdial.conf 
-        icd-run-daemon -- wvdial orange -C /tmp/ppp/wvdial.conf
-        echo 10.64.64.64 > /tmp/route_ppp0
-
-        export gsm_working="yes"
-        icd-net-route-resolv
-
+				gsm_start
         gsm_set_time
       fi
     else
       if [ "$gsm_time_stop" -lt "$utime" ]; then
-        echo "::::" `date` ":: Gsm stop"
-        killall wvdial
-        rm /tmp/route_ppp0
-        export gsm_working="no"
-        icd-net-route-resolv
+        gsm_no
         gsm_set_time
       fi
     fi
+  else #continous connection
+    gsm_start check  
   fi
 }
-gsm_no()
-{
-  echo "::::" `date` ":: Gsm no"
-}
+
 
 #####################################################################################
 
