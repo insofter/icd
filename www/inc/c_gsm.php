@@ -28,11 +28,7 @@ class c_gsm {
   function pob_modemy() {
     foreach( scandir( $this->ICD_SHARE_DIR.'/gsm' ) as $provider ) {
       if( $provider[0]!='.' ) {
-        foreach( scandir( $this->ICD_SHARE_DIR.'/gsm/'.$provider ) as $modem ) {
-          if( $modem[0]!='.' ) {
-            $modemy[$provider][]=$modem;
-          }
-        }
+        $modemy[]=$provider;
       }
     }
     return $modemy;
@@ -41,7 +37,7 @@ class c_gsm {
   function pob_ustawienia() {
     $sql="SELECT `key`, `value` FROM config_section cs LEFT JOIN config c ON cs.id=c.section_id
       WHERE cs.name='gsm' AND ( c.key='enabled' OR c.key='pin-enabled' 
-      OR c.key='pin' OR c.key='provider' OR c.key='modem' )";
+      OR c.key='pin' OR c.key='conf-dir' )";
     $ans=$this->configDb->query($sql);
     foreach( $ans as $row ) {
       $ustawienia[$row['key']]=$row['value'];

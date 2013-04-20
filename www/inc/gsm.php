@@ -21,11 +21,12 @@ if( isset( $_POST['send'] ) ) {
       } else {
         $ustawienia['pin-enabled']='no';
       }*/
-      $ustawienia['enabled']='yes';
-
-      $gsm->ustaw( $ustawienia );
-      $info='<h4>Włączono moduł GSM</h4>';
-    }
+  
+    $ustawienia['enabled']='yes';
+    $gsm->ustaw( $ustawienia );
+    $info='<h4>Włączono moduł GSM</h4>';
+  
+    //  }
   } else {
     $gsm->disable();
     $info='<h4>Wyłączono moduł GSM</h4>';
@@ -52,16 +53,12 @@ if( $ustawienia['enabled']=='yes' ) {
 
 $tresc.='</th></tr><tr><th><label for="modem">Wybierz modem i dostawcę</label> :</th><td>
   <select name="modem" id="modem">';
-foreach( $modemy as $provider=>$modem ) {
-  $tresc.='<optgroup label="'.$provider.'">';
-  foreach( $modem as $typ ) {
-    if( $provider==$ustawienia['provider'] && $typ==$ustawienia['modem'] ) {
-      $tresc.='<option value="'.$provider.'*'.$typ.'" selected="selected">'.$typ.' ('.$provider.')</option>';
-    } else {
-      $tresc.='<option value="'.$provider.'*'.$typ.'">'.$typ.' ('.$provider.')</option>';
-    }
+foreach( $modemy as $modem ) {
+  if( $modem == $ustawienia['conf-dir'] ) {
+    $tresc.='<option value="'.$modem.'" selected="selected">'.$modem.'</option>';
+  } else  {
+    $tresc.='<option value="'.$modem.'">'.$modem.'</option>';
   }
-  $tresc.='</optgroup>';
 }
 $tresc.='</select></td></tr>
   <tr><th><label for="pin-enabled">Włącz PIN</label> :</th><td>

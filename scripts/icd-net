@@ -268,7 +268,7 @@ gsm_get_params()
     gsm_pin="$tmp"
     gsm_changed="yes"
   fi
-  tmp=`icd-config --db=$ICD_CONFIG_DB sget gsm conf_dir`
+  tmp=`icd-config --db=$ICD_CONFIG_DB sget gsm conf-dir`
   if [ "$gsm_conf_dir" != "$tmp" ]; then
     gsm_conf_dir="$tmp"
     gsm_modem_file=`cat $ICD_SHARE_DIR/gsm/$gsm_conf_dir/wvdial.conf | grep Modem -m 1 | sed 's/ //g' | awk -F '=' '{print $2}'`
@@ -309,16 +309,16 @@ gsm_no()
   echo "::::" `date` ":: Gsm stop"
   killall wvdial
   rm /tmp/route_ppp0
+  sleep 5
   export gsm_working="no"
   icd-net-route-resolv
 }
 gsm_start()
 {
   if [ "$1" = "check" ]; then #check if there is internet and restart wvdial if needed
-    #ping
-    #while ! ping -W 1 -c 1 8.8.8.8 >&/dev/null; do sleep 600; done
-    #ping -W 1 -c 4 www.google.com >& /dev/null && ping -W 1 -c 4 www.yahoo.com >& /dev/null || sleep 600
-    echo aa > /dev/null
+    if ! icd-check-internet ; then
+      gsm_no
+    fi
   fi
   
   if [ "`pidof wvdial > /dev/null && echo yes || echo no`" = "no" ]; then #no wvdial, start it
