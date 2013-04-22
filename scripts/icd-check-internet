@@ -1,11 +1,11 @@
 #!/bin/sh
 
-hosts=( 8.8.8.8  www.google.com www.yahoo.com www.onet.pl www.wp.pl )
+hosts="8.8.8.8 www.google.com www.yahoo.com www.onet.pl www.wp.pl insofter.pl"
 wait_time=3 #seconds of timeout
 packages=1
 
 
-for h in ${hosts[@]}
+for h in $hosts
 do
   if ping -W $wait_time -c $packages $h >&/dev/null ; then
     exit 0

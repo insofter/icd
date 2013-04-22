@@ -288,7 +288,7 @@ gsm_configure_wvdial()
   if ! [ -e /tmp/ppp/wvdial.conf ]; then
     mkdir -p /tmp/ppp/peers
     if [ "$gsm_pin_enabled" = "yes" ]; then
-    	cat  | sed 's/__GSM__PIN__/'$gsm_pin'/g' > /tmp/ppp/wvdial.conf
+    	cat $ICD_SHARE_DIR/gsm/$gsm_conf_dir/wvdial.conf | sed 's/__GSM__PIN__/'$gsm_pin'/g' > /tmp/ppp/wvdial.conf
     else
   	  cat $ICD_SHARE_DIR/gsm/$gsm_conf_dir/wvdial.conf > /tmp/ppp/wvdial.conf
     fi
