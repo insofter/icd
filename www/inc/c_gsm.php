@@ -37,7 +37,7 @@ class c_gsm {
   function pob_ustawienia() {
     $sql="SELECT `key`, `value` FROM config_section cs LEFT JOIN config c ON cs.id=c.section_id
       WHERE cs.name='gsm' AND ( c.key='enabled' OR c.key='pin-enabled' 
-      OR c.key='pin' OR c.key='conf-dir' )";
+      OR c.key='pin' OR c.key='conf-dir' OR c.key='connect-with-transfer' )";
     $ans=$this->configDb->query($sql);
     foreach( $ans as $row ) {
       $ustawienia[$row['key']]=$row['value'];

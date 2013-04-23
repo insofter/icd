@@ -32,7 +32,7 @@ $tresc='<div id="tresc">
 if( isset( $wyniki['data'] ) ) {
   if( isset( $wyniki['data']['counters'] ) ) {
     $tresc.='<table border=1>
-      <tr><td colspan="7">Data.db</td></tr>
+      <tr><td colspan="8">Data.db</td></tr>
       <tr>
       ';
     $tresc.='<td>id</td>';
@@ -84,7 +84,7 @@ if( isset( $wyniki['data'] ) ) {
 
   if( isset( $wyniki['live']['counters'] ) ) {
     $tresc.='<table border=1>
-      <tr><td colspan="7">Live.db</td></tr>
+      <tr><td colspan="8">Live.db</td></tr>
       <tr>
       ';
     $tresc.='<td>id</td>';
