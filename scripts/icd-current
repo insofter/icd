@@ -40,4 +40,24 @@ case "$1" in
         ;;
     esac
     ;;
+  gsm)
+    case "$2" in
+      pin_enabled)
+        if [ "`wvdial $2 -C $ICD_SHARE_DIR/gsm/common_wvdial.conf 2>&1 | grep '^+CLCK:' | awk '{print $2}'`" = "1" ]; then
+          echo "yes"
+        else
+          echo "no"
+        fi
+        ;;
+      pin_status)
+        wvdial $2 -C $ICD_SHARE_DIR/gsm/common_wvdial.conf 2>&1 | grep "^+CPIN:" | awk '{print $2}'
+        ;;
+      logged)
+        if [ "`wvdial $2 -C $ICD_SHARE_DIR/gsm/common_wvdial.conf 2>&1 | grep '^+CREG:' | awk '{print $2}'`" = "0,1" ]; then
+          echo "yes"
+        else
+          echo "no"
+        fi
+    esac
+    ;;
 esac

@@ -311,13 +311,22 @@ gsm_no()
   rm /tmp/route_ppp0
   sleep 5
   export gsm_working="no"
-  icd-net-route-resolv
+  if [ "$1" != "reset" ]; then
+    icd-net-route-resolv
+  fi
 }
 gsm_start()
 {
   if [ "$1" = "check" ]; then #check if there is internet and restart wvdial if needed
-    if ! icd-check-internet ; then
-      gsm_no
+    if [ "$gsm_cnt" = "" ]; then
+      gsm_cnt=0
+    fi
+    let gsm_cnt++
+    if [ "$gsm_cnt" -gt 6 ]; then #check for 3 minutes
+      if ! icd-check-internet ; then
+        gsm_no reset
+        gsm_cnt=0
+      fi
     fi
   fi
   
