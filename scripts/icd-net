@@ -301,7 +301,6 @@ gsm_configure_modeswitch()
     sleep 22 # wait for modem initializing on first start (kernel needs time)
     usb_modeswitch -c $ICD_SHARE_DIR/gsm/$gsm_conf_dir/modeswitch.conf
     sleep 22 # wait for second initializing after modeswitch (kernel needs time)
-    gsm_pin_setted="no" # new modem with initialized pin is impossible
   fi
 }
 gsm_no()
@@ -317,6 +316,7 @@ gsm_no()
 }
 gsm_start()
 {
+  local gsm_pin_status
   if [ "$1" = "check" ]; then #check if there is internet and restart wvdial if needed
     if [ "$gsm_cnt" = "" ]; then
       gsm_cnt=0
@@ -331,23 +331,32 @@ gsm_start()
   fi
   
   if [ "`pidof wvdial > /dev/null && echo yes || echo no`" = "no" ]; then #no wvdial, start it
-    if [ "$gsm_pin_enabled" = "yes" ] && [ "$gsm_pin_management" != "none" ]; then
+    if [ "$gsm_pin_enabled" = "yes" ] && [ "$gsm_pin_management" != "none" ] && [ "`icd-current gsm pin_enabled`" = "yes" ]; then
       
+      gsm_pin_status=`icd-current gsm pin_status`
       if [ "$gsm_pin_management" = "sequence" ]; then
         
-        if ! [ "$gsm_pin_setted" = "yes" ]; then
-          wvdial setpin -C /tmp/ppp/wvdial.conf #if that is unnecessary there is no problem
-          gsm_pin_setted="yes"
+        if [ "$gsm_pin_status" = "SIMPUK" ]; then
+          #info about puk
+          echo PUK NEEDED
+        else
+          if [ "$gsm_pin_status" = "SIMPIN" ]; then
+            wvdial setpin -C /tmp/ppp/wvdial.conf
+          fi
+          icd-run-daemon -- wvdial startgsm -C /tmp/ppp/wvdial.conf
         fi
-        icd-run-daemon -- wvdial startgsm -C /tmp/ppp/wvdial.conf
         
       else #pin.conf == together
 
-        if ! [ "$gsm_pin_setted" = "yes" ]; then #TODO: check if it's correct, if wrong wvdial (with unnecessary pin) breaks
-          icd-run-daemon -- wvdial setpin startgsm -C /tmp/ppp/wvdial.conf
-          gsm_pin_setted="yes"
-        else
-          icd-run-daemon -- wvdial startgsm -C /tmp/ppp/wvdial.conf
+        if [ "$gsm_pin_status" = "SIMPUK" ]; then
+          #info about puk
+          echo PUK NEEDED
+        else #no PUK needed
+          if [ "$gsm_pin_status" = "SIMPIN" ]; then
+            icd-run-daemon -- wvdial setpin startgsm -C /tmp/ppp/wvdial.conf
+          else
+            icd-run-daemon -- wvdial startgsm -C /tmp/ppp/wvdial.conf
+          fi
         fi
         
       fi

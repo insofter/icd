@@ -1,0 +1,13 @@
+wvdial.conf - config for wvdial with one or two dialers:
+    - startgsm for connecting
+    - setpin for initializing with pin number (only for config with pin)
+      __GSM__PIN__ should be replaced with pin number
+
+modeswitch.conf - config for changingm modem from mass storage to modem
+    - Checking if modem is initialized: check if exists file from 
+      'Modem = /dev/ttyUSBX' line in wvdial.conf
+
+pin.conf - defines pin management during start:
+    - none or no file: do not initialize with pin, pin disabled in this config
+    - sequence: wvdial setpin ; wvdial startgsm
+    - together: wvdial setpin startgsm
