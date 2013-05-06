@@ -43,10 +43,15 @@ case "$1" in
   gsm)
     case "$2" in
       pin_enabled)
-        if [ "`wvdial $2 -C $ICD_SHARE_DIR/common_wvdial.conf 2>&1 | grep '^+CLCK:' | awk '{print $2}'`" = "1" ]; then
+        out=`wvdial $2 -C $ICD_SHARE_DIR/common_wvdial.conf 2>&1`
+        if [ "`echo "$out" | grep '^+CLCK:' | awk '{print $2}'`" = "1" ]; then
           echo "yes"
         else
-          echo "no"
+          if echo "$out" | grep -q '+CME ERROR: SIM PIN required'; then
+            echo "yes"
+          else
+            echo "no"
+          fi
         fi
         ;;
       pin_status)
@@ -60,4 +65,9 @@ case "$1" in
         fi
     esac
     ;;
+  *)
+    echo Usage: $0 section param
+    cat `readlink -f $0` | grep ')$' | grep -v '*)' | sed 's/)//g; s/^      /   * /g; s/  / /g'
+    ;;
+
 esac
