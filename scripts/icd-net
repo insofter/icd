@@ -127,14 +127,14 @@ dnsmasq_yes()
   if [ "$eth_ipend" -ge 100 ]
   then
     echo "dhcp-range=${eth_ipbeg}.20,${eth_ipbeg}.99,${eth_mask},1h" >> /tmp/dnsmasq.conf
-    echo echo "Dnsmasq DHCP range: ${eth_ipbeg}.20 - ${eth_ipbeg}.99"
+    echo "Dnsmasq DHCP range: ${eth_ipbeg}.20 - ${eth_ipbeg}.99"
   else
     echo "dhcp-range=${eth_ipbeg}.120,${eth_ipbeg}.199,${eth_mask},1h" >> /tmp/dnsmasq.conf
-    echo echo "Dnsmasq DHCP range: ${eth_ipbeg}.120 - ${eth_ipbeg}.199"
+    echo "Dnsmasq DHCP range: ${eth_ipbeg}.120 - ${eth_ipbeg}.199"
   fi
 
   dnsmasq -C /tmp/dnsmasq.conf #start dhcp & dns server
-  echo echo "Dnsmasq start."
+  echo "Dnsmasq start."
 
 }
 dnsmasq_no()
@@ -314,6 +314,27 @@ gsm_no()
     icd-net-route-resolv
   fi
 }
+gsm_puk()
+{
+  local puk_status
+  puk_status=`icd-config --db=$ICD_CONFIG_DB sget gsm puk_status`
+
+  if [ "$puk_status" != "needed" ]; then #restore pin with puk
+
+    if [ "$puk_status" = "" ]; then #set info about needed puk
+      echo `date` ":: Gsm PUK needed"
+      icd-config --db=$ICD_CONFIG_DB set gsm puk_status "needed"
+    else
+
+      echo `date` ":: Gsm restore PIN"
+      mkdir -p /tmp/ppp/peers
+      cat $ICD_SHARE_DIR/gsm/$gsm_conf_dir/wvdial.conf | sed 's/__GSM__PIN__/'$puk_status'/g' > /tmp/ppp/wvdial_puk.conf
+      wvdial setpin -C /tmp/ppp/wvdial_puk.conf #TODO: check for modems with 'together' initialisation
+      icd-config --db=$ICD_CONFIG_DB rm gsm puk_status
+
+    fi
+  fi
+}
 gsm_start()
 {
   local gsm_pin_status
@@ -337,8 +358,7 @@ gsm_start()
       if [ "$gsm_pin_management" = "sequence" ]; then
         
         if [ "$gsm_pin_status" = "SIMPUK" ]; then
-          #info about puk
-          echo PUK NEEDED
+          gsm_puk
         else
           if [ "$gsm_pin_status" = "SIMPIN" ]; then
             wvdial setpin -C /tmp/ppp/wvdial.conf
@@ -349,8 +369,7 @@ gsm_start()
       else #pin.conf == together
 
         if [ "$gsm_pin_status" = "SIMPUK" ]; then
-          #info about puk
-          echo PUK NEEDED
+          gsm_puk
         else #no PUK needed
           if [ "$gsm_pin_status" = "SIMPIN" ]; then
             icd-run-daemon -- wvdial setpin startgsm -C /tmp/ppp/wvdial.conf
@@ -362,7 +381,12 @@ gsm_start()
       fi
       
     else #no pin management
-      icd-run-daemon -- wvdial startgsm -C /tmp/ppp/wvdial.conf
+      gsm_pin_status=`icd-current gsm pin_status`
+      if [ "$gsm_pin_status" = "SIMPUK" ]; then
+        gsm_puk
+      else
+        icd-run-daemon -- wvdial startgsm -C /tmp/ppp/wvdial.conf
+      fi
     fi
     
     echo 10.64.64.64 > /tmp/route_ppp0
