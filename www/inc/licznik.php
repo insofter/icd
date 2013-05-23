@@ -16,7 +16,6 @@ if( isset( $_POST['name'] ) ) {
     $licznik['dev-release']=$_POST['dev-release'][$i];
     $licznik['dev-active-low']=$_POST['dev-active-low'][$i];
 
-/* TODO USUN TA LINIE, ABY AKTYWOWAC WIECEJ OPCJI ( A ) 
  
     $licznik['thick']=$_POST['thick'][$i];
     $licznik['thick-active-low']=$_POST['thick-active-low'][$i];
@@ -25,7 +24,6 @@ if( isset( $_POST['name'] ) ) {
     $licznik['enab-time']=$_POST['enab-time'][$i];
     $licznik['enab-active-low']=$_POST['enab-active-low'][$i];
 
- */ // TODO USUN TA LINIE, ABY AKTYWOWAC WIECEJ OPCJI ( B )
 
     $liczniki[$i]=$licznik;
   }
@@ -91,7 +89,6 @@ for( $i=0; $i<4; ++$i ) {
 }
 $tresc.='</tr>';
 
-/* TODO USUN TA LINIE, ABY AKTYWOWAC WIECEJ OPCJI ( C )
 
 $tresc.='<tr><th>Wyłącznik czasowy</th>';
 for( $i=0; $i<4; ++$i ) {
@@ -179,7 +176,6 @@ for( $i=0; $i<4; ++$i ) {
 }
 $tresc.='</tr>';
 
- */ // TODO USUN TA LINIE, ABY AKTYWOWAC WIECEJ OPCJI ( D )
 
 $tresc.='</table><br><br>';
 
