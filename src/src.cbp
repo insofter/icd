@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="src" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Release">
+				<Option output="bin/Release/src" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+		</Compiler>
+		<Unit filename="daemonizer.cc" />
+		<Unit filename="daemonizer.h" />
+		<Unit filename="db-config.cc" />
+		<Unit filename="db-config.h" />
+		<Unit filename="icd-itd-daemon.cc" />
+		<Unit filename="itd-device.cc" />
+		<Unit filename="itd-device.h" />
+		<Unit filename="itd-vds.cc" />
+		<Unit filename="itd-vds.h" />
+		<Unit filename="threads.cc" />
+		<Unit filename="threads.h" />
+		<Unit filename="virtual-device.cc" />
+		<Unit filename="virtual-device.h" />
+		<Extensions>
+			<envvars />
+			<code_completion />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

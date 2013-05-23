@@ -19,7 +19,7 @@ namespace icd
       case ITD_STATE_UNKNOWN:
         return "ITD_STATE_UNKNOWN";
       case ITD_STATE_CLEAR:
-        return "ITD_STATE_CLEAR"; 
+        return "ITD_STATE_CLEAR";
       case ITD_STATE_BLOCKED:
         return "ITD_STATE_BLOCKED";
       default :
@@ -36,7 +36,7 @@ namespace icd
   void stats_event::dbg_print(std::ostream& os) const
   {
     os << "stats_event(" << publisher() << "," << dtm() << "," << priority()
-      << "," << clear_time_.to_float() << "," << blocked_time_.to_float() 
+      << "," << clear_time_.to_float() << "," << blocked_time_.to_float()
       << "," << aggr_period_ << ")";
   }
 
@@ -53,7 +53,7 @@ namespace icd
     if (it == results_.end())
       throw std::runtime_error("test_event::result device not found");
     return it->second;
-  } 
+  }
 
   void test_event::dbg_print(std::ostream& os) const
   {
@@ -193,7 +193,7 @@ namespace icd
       time dtm = dtm_start_ + time(sec, usec) - dtm_file_;
       while(time::now() < dtm)
         cond_.timedwait(lock_, dtm);
-      
+
       itd_event e(name(), dtm);
       e.set_device(name());
       e.set_state(static_cast<itd_state>(state));
@@ -384,7 +384,7 @@ namespace icd
           if (e.state() == ITD_STATE_CLEAR)
             update_fsm(FILTER_FSM_CLEAR);
           break;
-        
+
         case FILTER_FSM_BLOCKED:
           if (e.state() == ITD_STATE_CLEAR)
           {
@@ -403,7 +403,7 @@ namespace icd
       update_stats(e.dtm());
       state_ = e.state();
     }
-    else 
+    else
       syslog() << debug << "filter_vd::handle_itd_event: event discarded, "
         << e << std::endl;
   }
@@ -419,8 +419,8 @@ namespace icd
     {
       case FILTER_FSM_ENGAGING:
         if (e.dtm() >= fsm_event_.dtm() + engage_delay_)
-        { 
-          send_stats_event(); 
+        {
+          send_stats_event();
           send_fsm_event();
           update_fsm(FILTER_FSM_BLOCKED);
         }
@@ -485,7 +485,7 @@ namespace icd
 
     if (fsm_state_ ==  FILTER_FSM_CLEAR || fsm_state_ == FILTER_FSM_ENGAGING)
       set_led_state(false);
-    else 
+    else
       set_led_state(true);
   }
 
@@ -583,12 +583,12 @@ namespace icd
     db_.open(db_name_.c_str());
     db_.busy_timeout(db_timeout_);
 
-    const char *insert_sql = 
+    const char *insert_sql =
       "INSERT INTO flow (counter_id, dtm, cnt, dark_time, work_time, test, flags)"
       " VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)";
     insert_stmt_.prepare(insert_sql);
 
-    const char *update_sql = 
+    const char *update_sql =
       "UPDATE flow SET cnt = ?3, dark_time = ?4,"
       " work_time = ?5, test = ?6, flags = ?7 WHERE counter_id = ?1 AND dtm = ?2";
     update_stmt_.prepare(update_sql);
@@ -797,7 +797,7 @@ namespace icd
 
     event_logger_vd* event_logger = NULL;
 
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 4; i++)// TODO: ILO¦Æ FOTOKOMÓREK
     {
       std::string counter_name = "counter" + to_string(i);
 
@@ -827,7 +827,7 @@ namespace icd
         itd = new itd_vd(dev_name);
         static_cast<itd_vd*>(itd)->set_active_low(active_low);
       }
-      add(itd);
+      add(itd);//dodanie obiektu czytajacego z urzadzenia
 
       filter_vd* filter = new filter_vd("filter" + to_string(i));
       filter->set_delay(time::from_msec(0));
@@ -835,14 +835,14 @@ namespace icd
       filter->set_aggr_timer_vd(*aggr_timer);
       filter->set_engage_delay(time::from_msec(engage_delay_ms));
       filter->set_release_delay(time::from_msec(release_delay_ms));
-      add(filter);
+      add(filter);//dodanie filtra
 
       aggr_vd* aggr = new aggr_vd("aggr" + to_string(i), data_db_name_, db_timeout_);
       aggr->set_delay(time::from_msec(500));
       aggr->set_filter_vd(*filter);
       aggr->set_test_vd(*test, dev_name);
       aggr->set_counter_id(counter_id);
-      add(aggr);
+      add(aggr);//dodanie agregatora do bazy
 
       if (log_events == "raw" || log_events == "filered" )
       {
