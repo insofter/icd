@@ -18,15 +18,20 @@ Cletter::Cletter(std::string utf, std::string ascii, // !! strings with ""
   _bytes[7]=h;
 }
 
-ClcdDriver::ClcdDriver(const char * cmd_path, const char * data_path) {
+ClcdDriver::ClcdDriver(const char * cmd_path, 
+    const char * data_path, const char * backlight_path) {
+
   _cmds.open(cmd_path);
   _data.open(data_path);
+  _backlight.open(backlight_path);
+
   if( !_cmds.is_open() || !_data.is_open() ) {
     std::cerr << "Unable to open device" << std::endl;
     exit(-1);
   }
   _cmds << std::unitbuf;
   _data << std::unitbuf;
+  _backlight << std::unitbuf;
   
   _cmd(15); //00001111 start
   _cmd(1); //reset + cur na 0,0
@@ -260,10 +265,14 @@ ClcdDriver::~ClcdDriver() {
   unsigned int i;
   _cmds.close();
   _data.close();
+  _backlight.close();
   for( i=0; i<_letters.size(); ++i ) {
     delete _letters[i];
   }
 
+}
+void ClcdDriver::backlight( int newState ) {
+  _backlight << newState;
 }
 
 void ClcdDriver::_cmd(int cmd) {

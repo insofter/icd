@@ -128,6 +128,7 @@ class ClcdDriver {
 protected:
   std::ofstream _cmds;
   std::ofstream _data;
+  std::ofstream _backlight;
   void _cmd(int cmd);
   std::vector< Cletter* > _letters;
 
@@ -138,7 +139,8 @@ public:
    * @param data_pathPath to data device.
    */
   ClcdDriver(const char * cmd_path="/sys/devices/platform/gpio-hd44780/cmd",
-             const char * data_path="/dev/lcd0");
+      const char * data_path="/dev/lcd0",
+      const char * backlight_path="/sys/devices/platform/gpio-hd44780/backlight");
   virtual ~ClcdDriver();
 
   /**
@@ -153,6 +155,11 @@ public:
    * @param lcd Screen data.
    */
   void print(const Clcd & lcd);
+  /**
+   * Turns on or off LcdBacklight
+   * @param newState 1 for on, 0 for off
+   */
+  void backlight( int newState );
 };
 
 #endif // LCD_DRIVER_HPP

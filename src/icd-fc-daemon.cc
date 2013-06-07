@@ -279,7 +279,7 @@ MIN:
         if( toReturn >= RETURN_TIME ) {
           mainMenu->fullEsc();
           mainMenu->screen( &lcd );
-          //TODO: wyłącz podswietlenie
+          lcdDrv.backlight(0); //wyłącz podswietlenie
           toReturn=0;
         }
         poll( fds, 1, wait );
@@ -290,7 +290,7 @@ MIN:
           read( kbd, ( char* )&ev, sizeof( ev ) );
           if( ev.code!=0 ) {//rzucany pusty event niewiadomo czemu
             toReturn=0;
-            //TODO: włącz podswietlenia ( po kliknieciu )
+            lcdDrv.backlight(1); //włącz podswietlenia ( po kliknieciu )
             if( ev.value==1 && ev.code==KBD_ESC ) {//wciśniecie esc
               esc=1;
             } else if( ev.value==0 && ev.code==KBD_ESC  ) {//puszczenie esc
