@@ -10,8 +10,15 @@
 #include <string>
 #include <sys/time.h>
 #include <limits.h>
+#ifdef DESKTOP//different headers on arm and desktop,
+//use -DDESKTOP durng compilation on desktop 
+#include <unistd.h>
+#endif
+#include <fcntl.h>
+#include <poll.h>
 #include "db-config.h"
 #include "sqlite3cc.h"
+#include <map>
 
 extern icd::config *globalConfig;
 extern sqlite3cc::conn *globalConfigDb;
@@ -21,6 +28,7 @@ enum Ereset {
   NO_RESET,
   RESET,
 };
+
 
 struct Ctime {
   enum constants {
@@ -37,18 +45,22 @@ struct Ctime {
 
   void setCurrentTime();
   void tidy();
+  int msec();
 
   Ctime operator-( const Ctime & b ) const;
   Ctime operator+( const Ctime & b ) const;
   bool operator<( const Ctime & b ) const;
+  bool operator==( const Ctime & b ) const;
+
 };
 
 struct Cevent {
   Ctime time;
   int value;
-  int dev;
-  Cevent( int sec_, int usec_, int value_, int dev_=-1);
-  Cevent( Ctime time_, int value_, int dev_=-1);
+  Cevent( int sec_=INT_MIN, int usec_=INT_MIN, int value_=INT_MIN );
+  Cevent( Ctime time_, int value_ );
+  bool operator==( const Cevent & b ) const;
+  static Cevent EMPTY();
 };
 
 /**
@@ -74,29 +86,33 @@ class CdbWriter {
 /**
  * Class for reading device and filtering events.
  */
-class Cdevice {
+class CdevicesReader {
   public:
+    CdevicesReader();
+    ~CdevicesReader();
     /**
-     * Constructor.
-     * @param dev Path to file.
-     * @param id Id.
-     * @param engage Engage time.
-     * @param engage Release time.
+     * Returns -1 for error.
+     * @param dev iPath to file to be readed.
+     * @param id Unique id of device.
      */
-    Cdevice( std::string dev, int id, Ctime engage, Ctime release );
+    int addDevice( std::string dev, int id );
     /**
-     * Returns value of darktime.
-     * @param reset If reset is RESET then atomically get value and set time to 0.
+     * Poll for events.
+     * @param wait Waiting time.
+     * @return Number of readed events.
      */
-    Ctime getDarktime( Ereset reset=NO_RESET );
+    int pollEvents( Ctime wait );
     /**
-     * Returns file descriptor connected with device, to check it with poll().
+     * @param devId Id of device.
+     * Returns event. 
      */
-    int getFd();
-    /**
-     * Returns event. It's BLOCKING.
-     */
-    Cevent getEvent();
+    const Cevent getEvent( int devId );
+
+  private:
+    struct pollfd * pollfd_;
+    std::map< /*id*/int, Cevent > events_;
+    std::map< /*fd*/int, /*id*/int > devices_;
+
 };
 
 #endif // COUNTERS_UTILS_HPP
