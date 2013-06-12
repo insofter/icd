@@ -2,7 +2,7 @@
 #include "version.h"
 //#include "sqlite3cc.h"
 //#include "db-config.h"
-#include "syslogstream.h"
+//#include "syslogstream.h"
 
 #include <getopt.h>
 
@@ -56,8 +56,8 @@ void print_version(char *argv0)
 
 int main(int argc, char *argv[])
 {
-  icd::syslogstream::initialize(basename(argv[0]), LOG_PERROR);
-  icd::syslogstream syslog;
+ // icd::syslogstream::initialize(basename(argv[0]), LOG_PERROR);
+ // icd::syslogstream syslog;
 
   try
   {
@@ -191,7 +191,7 @@ int main(int argc, char *argv[])
   }
   catch(std::exception& e)
   {
-    syslog << icd::err << basename(argv[0]) << " error: " << e.what()  << std::endl;
+    std::cerr << basename(argv[0]) << " error: " << e.what()  << std::endl;
     return 1;
   }
 

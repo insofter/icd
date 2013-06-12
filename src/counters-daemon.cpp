@@ -7,19 +7,19 @@
 #include <string>
 #include <cstdio>
 
-#include "lcd-menu.hpp"
-#include "lcd-menu-front-item.hpp"
+#include "counters-utils.hpp"
+#include "counters-counters.hpp"
+#include "counters-farm.hpp"
 #include "version.h"
 #include "sqlite3cc.h"
 #include "db-config.h"
-#include "syslogstream.h"
 
 #include <poll.h>
 #include <fcntl.h>
 
 icd::config *globalConfig;
 sqlite3cc::conn *globalConfigDb;
-//sqlite3cc::conn *globalDataDb;
+sqlite3cc::conn *globalDataDb;
 sqlite3cc::conn *globalLiveDb;
 
 void print_usage( char *argv0 ) {
@@ -45,10 +45,9 @@ void print_version( char *argv0 ) {
 
 
 int main( int argc, char *argv[] ) {
-  icd::syslogstream::initialize( basename( argv[0] ), LOG_PERROR );
-  icd::syslogstream syslog;
+  CcountersFarm xxx;
 
-  try {
+/*  try {
     int db_timeout = 60000; // MIN timeout is 60 seconds
     bool exit = false;
 
@@ -106,7 +105,7 @@ MIN:
   farm.addDevice( "/dev/itd0", 0 );
 
   return farm.run();
-
+*/
 }
 /*
 #define MIN_WAIT 333

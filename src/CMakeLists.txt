@@ -29,11 +29,13 @@ add_library(version ${CMAKE_CURRENT_BINARY_DIR}/version.cc)
 add_dependencies(version update-version)
 
 add_library(db-config db-config.cc)
-add_library(daemonizer daemonizer.cc)
-add_library(syslogstream syslogstream.cc)
-add_library(threads threads.cc)
-add_library(virtual-device virtual-device.cc)
-add_library(itd-vds itd-vds.cc)
+#add_library(daemonizer daemonizer.cc)
+#add_library(syslogstream syslogstream.cc)
+#add_library(threads threads.cc)
+add_library(counters-counters counters-counters.cpp)
+add_library(counters-utils counters-utils.cpp)
+add_library(counters-farm counters-farm.cpp)
+#add_library(itd-vds itd-vds.cc)
 add_library(itd-device itd-device.cc)
 #add_library(transfer-agent transfer-agent.cc)
 #nowe lcd
@@ -48,45 +50,45 @@ target_link_libraries(icd-config db-config sqlite3 version)
 add_executable(icd-sql icd-sql.cc)
 target_link_libraries(icd-sql sqlite3 version)
 
-add_executable(icd-itd-daemon icd-itd-daemon.cc)
-target_link_libraries(icd-itd-daemon itd-vds virtual-device threads itd-device
-  db-config daemonizer syslogstream sqlite3 version pthread)
+add_executable(icd-counters-daemon counters-daemon.cpp)
+target_link_libraries(icd-counters-daemon db-config sqlite3 version 
+  counters-counters counters-utils counters-farm)
 
-add_executable(icd-test icd-test.cc)
-target_link_libraries(icd-test itd-device db-config sqlite3 version syslogstream)
+add_executable(icd-test itd-test.cc)
+target_link_libraries(icd-test itd-device db-config sqlite3 version )
 
 
 
 #gsoap
-add_library(gsoap_C gsoap/C.cpp)
-add_library(gsoap_icdtcp3SoapProxy gsoap/icdtcp3SoapProxy.cpp)
-add_library(gsoap_stdsoap2 gsoap/stdsoap2.cpp)
+add_library(gsoap_C transfer-gsoap/C.cpp)
+add_library(gsoap_icdtcp3SoapProxy transfer-gsoap/icdtcp3SoapProxy.cpp)
+add_library(gsoap_stdsoap2 transfer-gsoap/stdsoap2.cpp)
 
-add_library(logger logger.cpp)
+add_library(transfer-logger transfer-logger.cpp)
 
-add_executable(icd-transfer-data icd-transfer-data.cc)
+add_executable(icd-transfer-data transfer-data.cpp)
 target_link_libraries(icd-transfer-data 
-  sqlite3 curl version gsoap_C gsoap_icdtcp3SoapProxy
-  gsoap_stdsoap2 logger db-config)
+  sqlite3 version gsoap_C gsoap_icdtcp3SoapProxy
+  gsoap_stdsoap2 transfer-logger db-config)
 #roxml
 
 add_executable(icd-cron icd-cron.cpp)
 target_link_libraries(icd-cron
-  sqlite3 version db-config daemonizer)
+  sqlite3 version db-config )
 
 
 add_executable(icd-flush-db icd-flush-db.cpp)
 target_link_libraries(icd-flush-db
-  sqlite3 version db-config daemonizer)
+  sqlite3 version db-config )
 
 #add_executable(icd-fc-daemon icd-fc-daemon.cc)
 #target_link_libraries(icd-fc-daemon db-config daemonizer
 #  syslogstream sqlite3 version)
 
 #nowe lcd
-add_executable(icd-fc-daemon icd-fc-daemon.cc)
-target_link_libraries(icd-fc-daemon db-config daemonizer
-  syslogstream sqlite3 version lcd-driver lcd-menu lcd-menu-front-item)
+add_executable(icd-fc-daemon lcd-fc-daemon.cpp)
+target_link_libraries(icd-fc-daemon db-config 
+  sqlite3 version lcd-driver lcd-menu lcd-menu-front-item)
 
 #wifi cfg
 add_executable(icd-wifi-cfg-to icd-wifi-cfg-to.cpp)
@@ -96,7 +98,7 @@ add_executable(icd-logrotate icd-logrotate.cpp)
 target_link_libraries(icd-logrotate version)
 
 
-install (TARGETS icd-config icd-sql icd-itd-daemon icd-fc-daemon
+install (TARGETS icd-config icd-sql icd-fc-daemon
   icd-transfer-data icd-cron icd-flush-db icd-test icd-wifi-cfg-to 
   icd-logrotate
   DESTINATION bin)

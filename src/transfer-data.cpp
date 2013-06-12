@@ -1,16 +1,15 @@
 #include "version.h"
 #include "sqlite3cc.h"
 #include "db-config.h"
-#include "daemonizer.h"
-#include "logger.hpp"
+#include "transfer-logger.hpp"
 #include <getopt.h>
 #include <cstdlib>
 #include <sstream>
 #include <cmath>
 #include <fstream>
 
-#include "gsoap/icdtcp3SoapProxy.h"
-#include "gsoap/icdtcp3Soap.nsmap"
+#include "transfer-gsoap/icdtcp3SoapProxy.h"
+#include "transfer-gsoap/icdtcp3Soap.nsmap"
 
 //gsoap/_Stub.h -- klasy parametrów
 //gsoap/_Service1SoapProxy.h -- funkcje serwera

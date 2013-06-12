@@ -5,6 +5,6 @@ soap
 src/*
 !src/*.c*
 !src/*.h*
-!src/gsoap
+!src/transfer-gsoap
 CMakeFiles
 /Makefile

@@ -1,4 +1,4 @@
-#include "logger.hpp"
+#include "transfer-logger.hpp"
 
 int print_percent(int perc) {
   struct pollfd fds[1];
