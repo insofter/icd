@@ -1,5 +1,6 @@
 #include "counters-utils.hpp"
 #include <iostream>
+#include <stdio.h>
 
 Ctime::Ctime() {
   this->setCurrentTime();
@@ -68,6 +69,14 @@ Cevent::Cevent( int sec_, int usec_, int value_ ): time( sec_, usec_ ), value(va
 
 Cevent::Cevent( Ctime time_, int value_ ): time(time_), value(value_) {
 }
+Cevent::Cevent( const char * buf ): time(0,0) {
+  if( sscanf( buf, "%d %d %d", &time.sec, &time.usec, &value )!=3 ) {
+    //wrong event, set EMPTY
+    time.sec=INT_MIN;
+    time.usec=0;
+    value=INT_MIN;
+  }
+}
 
 bool Cevent::operator==( const Cevent & b ) const {
   if( time==b.time && value==b.value ) {
@@ -78,7 +87,7 @@ bool Cevent::operator==( const Cevent & b ) const {
 }
 
 Cevent Cevent::EMPTY() {
-  Cevent empty(INT_MIN, INT_MIN, INT_MIN);
+  Cevent empty(INT_MIN, 0, INT_MIN);
   return empty;
 }
 
@@ -110,7 +119,8 @@ CdevicesReader::~CdevicesReader() {
 }
 
 int CdevicesReader::addDevice( std::string dev, int id ) {
-  int fd = open( dev.c_str(), O_RDONLY );
+  int fd = open( dev.c_str(), O_RDONLY | O_NONBLOCK );
+  std::cerr << "Opened '" << dev << "' as number " << id << std::endl;
   if( fd!=-1 ) {
     devices_[fd]=id;
     if( pollfd_!=NULL ) {
@@ -126,15 +136,53 @@ int CdevicesReader::addDevice( std::string dev, int id ) {
 
 int CdevicesReader::pollEvents( Ctime wait ) {
 
-    int j=0; std::map< int, int >::iterator i=devices_.begin();
-    for( /*init above*/; i!=devices_.end(); ++i, ++j ) {
-      pollfd_[j].fd=i->first;
-      pollfd_[j].events=POLLIN;
+  int i=0; std::map< int, int >::iterator J=devices_.begin();
+  for( /*init above*/; J!=devices_.end(); ++J, ++i ) {
+    pollfd_[i].fd=J->first;
+    pollfd_[i].events=POLLIN;
+  }
+  int ret=poll( pollfd_, devices_.size(), wait.msec() );
+  if( ret > 0 ) {//haz events
+    int size=devices_.size();
+    for( i=0; i<size; ++i ) {
+      if( pollfd_[i].revents & POLLIN ) {
+        int j=0;
+        while( 1==1 ) {
+          if( read( pollfd_[i].fd, buf_+j, 1 )==0 ) {// EOF
+            break;
+          } else if( buf_[j]=='\n' ) {// end of event, create object
+            buf_[j]=0;
+            Cevent ev( buf_ );
+            events_[ devices_[ pollfd_[i].fd ] ]=ev;
+
+            /*debug*/std::cout << "event inserted: " << ev.time.sec << " " << ev.time.usec
+              << " " << ev.value << std::endl;
+
+            break;
+          }
+          ++j;
+        }
+      } else if( pollfd_[i].revents & (POLLNVAL | POLLERR | POLLHUP) ) {
+        //broken fd,  fallback==rtemove
+        std::cerr << "Err: counter=" << devices_[ pollfd_[i].fd ]
+          << ", fd=" << pollfd_[i].fd << ", poll() revents=";
+        if( pollfd_[i].revents & POLLNVAL ) {
+          std::cerr << "POLLNVAL, ";
+        }
+        if( pollfd_[i].revents & POLLERR ) {
+          std::cerr << "POLLERR, ";
+        }
+        if( pollfd_[i].revents & POLLHUP ) {
+          std::cerr << "POLLHUP, ";
+        }
+        std::cerr << std::endl;
+
+        events_.erase( devices_[ pollfd_[i].fd ] );
+        devices_.erase( pollfd_[i].fd );
+      }
     }
-    poll( pollfd_, devices_.size(), 00000000 );
-
-
-
+  }
+  return ret;
 }
 
 const Cevent CdevicesReader::getEvent( int devId ) {

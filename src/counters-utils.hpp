@@ -57,8 +57,9 @@ struct Ctime {
 struct Cevent {
   Ctime time;
   int value;
-  Cevent( int sec_=INT_MIN, int usec_=INT_MIN, int value_=INT_MIN );
+  Cevent( int sec_=INT_MIN, int usec_=0, int value_=INT_MIN );
   Cevent( Ctime time_, int value_ );
+  Cevent( const char * buf );
   bool operator==( const Cevent & b ) const;
   static Cevent EMPTY();
 };
@@ -109,6 +110,7 @@ class CdevicesReader {
     const Cevent getEvent( int devId );
 
   private:
+    char buf_[32];//10=unixtime + 1=space + 7usecs + 1=space + 1=event + 1=\n ( + 3=multiplexer )
     struct pollfd * pollfd_;
     std::map< /*id*/int, Cevent > events_;
     std::map< /*fd*/int, /*id*/int > devices_;

@@ -30,13 +30,17 @@ class CcountersFarm {
      * @param dev Device.
      * @return 1 for correct, 0 for error, ex. Non-unique identifier.
      */
-//    int addDevice( Cdevice * dev );
+    int addDevice( std::string dev, int id );
     /**
      * Add counter to farm.
      * @param counter Valid pointer to counter.
      */
     void addCounter( Ccounter * counter );
     int run();
+
+  private:
+    CdevicesReader reader_;
+
 
 };
 
