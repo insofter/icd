@@ -34,6 +34,12 @@ void Ctime::setCurrentTime() {
   usec= tv.tv_usec;
 }
 
+void Ctime::setZero() {
+  sec=0;
+  usec=0;
+}
+
+
 Ctime Ctime::operator-( const Ctime& b ) const {
   Ctime out( sec-b.sec, usec-b.usec );
   return out;
@@ -85,6 +91,9 @@ bool Cevent::operator==( const Cevent & b ) const {
     return false;
   }
 }
+bool Cevent::operator!=( const Cevent & b ) const {
+  return ( ! ( *this==b ) );
+}
 
 Cevent Cevent::EMPTY() {
   Cevent empty(INT_MIN, 0, INT_MIN);
@@ -108,7 +117,7 @@ void CdbWriter::newAggr() {
 
 
 CdevicesReader::CdevicesReader(): pollfd_(NULL) {
-
+  0; //NOOP
 }
 CdevicesReader::~CdevicesReader() {
   delete [] pollfd_;

@@ -102,10 +102,8 @@ MIN:
   farm.addDevice( "/dev/itd2", 2 );
   farm.addDevice( "/dev/itd3", 3 );*/
 
-  farm.addDevice( "/tmp/1", 0 );
-  farm.addDevice( "/tmp/2", 1 );
-  farm.addDevice( "/tmp/3", 2 );
-  farm.addDevice( "/tmp/aa4", 3 );
+  farm.addDevice( "/tmp/itd", 0 );
+  farm.addCounter( new CcounterMono( 0, Ctime(), Ctime( 2, 0 ), Ctime( 2, 0 ) ) );
 
   farm.run();
 

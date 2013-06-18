@@ -44,6 +44,7 @@ struct Ctime {
   Ctime(int sec_, int usec_=0);
 
   void setCurrentTime();
+  void setZero();
   void tidy();
   int msec();
 
@@ -61,6 +62,7 @@ struct Cevent {
   Cevent( Ctime time_, int value_ );
   Cevent( const char * buf );
   bool operator==( const Cevent & b ) const;
+  bool operator!=( const Cevent & b ) const;
   static Cevent EMPTY();
 };
 

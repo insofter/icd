@@ -25,6 +25,8 @@ extern sqlite3cc::conn *globalLiveDb;
  */
 class CcountersFarm {
   public:
+    CcountersFarm();
+    ~CcountersFarm();
     /**
      * Add device to be readed.
      * @param dev Device.
@@ -40,6 +42,7 @@ class CcountersFarm {
 
   private:
     CdevicesReader reader_;
+    std::vector< Ccounter * > counters_;
 
 
 };
