@@ -24,9 +24,11 @@ extern icd::config *globalConfig;
 extern sqlite3cc::conn *globalConfigDb;
 extern sqlite3cc::conn *globalLiveDb;
 
-enum Ereset {
+enum Econstants {
   NO_RESET,
   RESET,
+  NORMAL,
+  REVERSE,
 };
 
 
@@ -64,6 +66,13 @@ struct Cevent {
   bool operator==( const Cevent & b ) const;
   bool operator!=( const Cevent & b ) const;
   static Cevent EMPTY();
+};
+
+class Cled {
+
+  public:
+    void on();
+    void off();
 };
 
 /**
@@ -109,7 +118,7 @@ class CdevicesReader {
      * @param devId Id of device.
      * Returns event. 
      */
-    const Cevent getEvent( int devId );
+    const Cevent getEvent( int devId, Econstants reverse=NORMAL );
 
   private:
     char buf_[32];//10=unixtime + 1=space + 7usecs + 1=space + 1=event + 1=\n ( + 3=multiplexer )

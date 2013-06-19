@@ -56,13 +56,20 @@ class Ccounter {
      * Will be runned for every 200ms.
      * @param reset If reset is RESET then atomically get value and set counter to 0.
      */
-    virtual CcounterVal getCount( const Ctime time, Ereset reset=NO_RESET )=0;
+    virtual CcounterVal getCount( const Ctime time, Econstants reset=NO_RESET )=0;
+    /**
+     * Sets led for turning it on and off.
+     */
+    void setLed(Cled * led);
 
   protected:
     CdevicesReader * reader_;
+    Cled * led_;
     int id_;
     int masterId_;
     int counter_;
+    void ledOn_();
+    void ledOff_();
 };
 
 class CcounterMono: public Ccounter {
@@ -74,14 +81,14 @@ class CcounterMono: public Ccounter {
      * @param engage Time of engage filter.
      * @param release Time of release filter.
      */
-    CcounterMono( int id, int master, const Ctime beginTime, const Ctime engage, const Ctime release );
+    CcounterMono( int id, int master, const Ctime beginTime, const Ctime engage, const Ctime release, Econstants reverse=NORMAL );
     virtual ~CcounterMono();
     /**
      * Returns counter value.
      * Will be runned for every 200ms.
      * @param reset If reset is RESET then atomically get value and set counter to 0.
      */
-    virtual CcounterVal getCount( const Ctime time, Ereset reset=NO_RESET );
+    virtual CcounterVal getCount( const Ctime time, Econstants reset=NO_RESET );
   protected:
     Ctime engage_;
     Ctime release_;
@@ -89,6 +96,8 @@ class CcounterMono: public Ccounter {
     Cevent last_;
     Ctime dark_;
     Ctime work_;
+    Econstants reverse_;
+
 
 };
 

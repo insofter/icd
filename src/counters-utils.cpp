@@ -100,6 +100,14 @@ Cevent Cevent::EMPTY() {
   return empty;
 }
 
+void Cled::on(){
+//TODO:
+}
+void Cled::off(){
+//TODO:
+}
+
+
 
 CdbWriter::CdbWriter() {
   //TODO:
@@ -194,9 +202,17 @@ int CdevicesReader::pollEvents( Ctime wait ) {
   return ret;
 }
 
-const Cevent CdevicesReader::getEvent( int devId ) {
+const Cevent CdevicesReader::getEvent( int devId, Econstants reverse ) {
   if( events_.count( devId ) > 0 ) {
-    return events_[devId];
+    Cevent ev=events_[devId];
+    if( reverse==REVERSE ) {
+      if( ev.value==1 ) {
+        ev.value=0;
+      } else {
+        ev.value=1;
+      }
+    }
+    return ev;
   } else {
     return Cevent::EMPTY();
   }
