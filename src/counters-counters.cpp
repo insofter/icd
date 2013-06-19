@@ -10,8 +10,8 @@ CcounterVal::CcounterVal( int val_, Ctime dark_, Ctime work_ ) :val(val_), dark(
 }
 
 
-Ccounter::Ccounter( int master, Ctime beginTime ): 
-  reader_(NULL), counter_(0), masterId_(master)
+Ccounter::Ccounter( int id, int master, Ctime beginTime ): 
+  reader_(NULL), id_(id), counter_(0), masterId_(master)
 { 0; //NOOP
 }
 
@@ -24,13 +24,14 @@ void Ccounter::setReader( CdevicesReader* reader ) {
 }
 
 
-CcounterMono::CcounterMono( int master, const Ctime beginTime, const Ctime engage, const Ctime release ): 
-  Ccounter( master, beginTime ), engage_(engage), release_(release), state_(LOW), 
+CcounterMono::CcounterMono( int id, int master, const Ctime beginTime, const Ctime engage, const Ctime release ): 
+  Ccounter( id, master, beginTime ), engage_(engage), release_(release), state_(LOW), 
   last_( beginTime, 0 ), dark_(0, 0), work_(0, 0)
 { 0; //NOOP
 }
 
 CcounterMono::~CcounterMono() {
+  0; //NOOP
 }
 
 CcounterVal CcounterMono::getCount( const Ctime time, Ereset reset ) {
@@ -85,6 +86,7 @@ CcounterVal CcounterMono::getCount( const Ctime time, Ereset reset ) {
     }
   }
 
+  ret.id=id_;
   ret.val=counter_;
   ret.work=work_ + time - ev.time;
   if( state_==CONDHIGH || state_==HIGH ) {// darktime is ticking

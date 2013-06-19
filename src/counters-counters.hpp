@@ -20,6 +20,7 @@ extern sqlite3cc::conn *globalLiveDb;
 
 struct CcounterVal {
   int val;
+  int id;
   Ctime dark;
   Ctime work;
   CcounterVal();
@@ -40,7 +41,7 @@ class Ccounter {
      * @param master Id of master device.
      * @param beginTime Event with current time.
      */
-    Ccounter( int master, Ctime beginTime );
+    Ccounter( int id, int master, Ctime beginTime );
     /**
      * Destructor.
      * Kills object to death.
@@ -59,6 +60,7 @@ class Ccounter {
 
   protected:
     CdevicesReader * reader_;
+    int id_;
     int masterId_;
     int counter_;
 };
@@ -72,7 +74,7 @@ class CcounterMono: public Ccounter {
      * @param engage Time of engage filter.
      * @param release Time of release filter.
      */
-    CcounterMono( int master, const Ctime beginTime, const Ctime engage, const Ctime release );
+    CcounterMono( int id, int master, const Ctime beginTime, const Ctime engage, const Ctime release );
     virtual ~CcounterMono();
     /**
      * Returns counter value.

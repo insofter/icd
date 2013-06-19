@@ -9,7 +9,8 @@ include (CheckLibraryExists)
 
 check_library_exists(sqlite3 sqlite3_open '' HAVE_SQLITE3_LIB)
 if (NOT (${HAVE_SQLITE3_LIB}))
-  message(FATAL_ERROR "Missing sqlite3 library")
+  #  message(FATAL_ERROR "Missing sqlite3 library")
+  #checking is invalid - cannot find proprly instaled sqlite
 endif ()
 
 check_include_files(sqlite3.h HAVE_SQLITE3_H)
