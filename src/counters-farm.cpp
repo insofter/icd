@@ -23,6 +23,8 @@ void CcountersFarm::addCounter( Ccounter* counter ) {
 }
 
 int CcountersFarm::run() {
+  CdbWriter writer;
+
   Ctime wait( 5, 0 );
   int r;
   while( 1==1 ) {
@@ -30,12 +32,16 @@ int CcountersFarm::run() {
     std::cout << "LOOP: " << reader_.pollEvents( wait ) << std::endl;
 
     for( int i=0; i< counters_.size(); ++i ) {
-      std::cout << "for" << std::endl;
-
       CcounterVal cv=counters_[i]->getCount( Ctime() );
       /*debug*/std::cout << "CV: v=" << cv.val << " d="
         << cv.dark.sec << "." << cv.dark.usec << " w="
         << cv.work.sec << "." << cv.work.usec << std::endl;
+
+      Ctime per;
+      per.sec/=3600;
+      per.sec*=3600;
+
+      writer.write( cv.id, per.sec, cv.val, cv.dark, cv.work, 888 );
     }
 
     /*debug*/
@@ -48,5 +54,7 @@ int CcountersFarm::run() {
       }
     }*/
 
+
+    //TODO: check if db is modified and return
   }// while( 1==1 )
 }

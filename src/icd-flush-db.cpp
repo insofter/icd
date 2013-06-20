@@ -125,7 +125,6 @@ int main( int argc, char *argv[] ) {
   liveDbSqlDelete.finalize();
 
 
-//TODO rm old records from live
 
   /*
    * begin transaction datadb
@@ -142,8 +141,6 @@ int main( int argc, char *argv[] ) {
    *    ifexist
    *      delete from livedb
    *
-   *
-   * http://www.sqlite.org/lang_transaction.html
 */
 
   return 0;

@@ -33,14 +33,18 @@ $tresc.='
 $tresc.='</form><table>
   <caption>Stan czujników</caption>
   <tr>
-  <th>Numer</th><th>Nazwa</th><th>Ostatni pomiar</th><th>Pomiar dzienny</th><th>Stan</th></tr>';
+  <th>Numer</th><th>Nazwa</th><th>Ostatni pomiar</th><th>Pomiar dzienny</th>';
+/*$tresc.='<th>Stan</th>';*/
+$tresc.='</tr>';
 foreach($info['liczniki'] as $licznik) {
   $tresc.='<tr ';
   if( $licznik['enabled']!='yes' ) {
     $tresc.='class="nieaktywne"';
   }
-  $tresc.='><td>'.chr(ord('A')+$licznik['nr']).'</td><td>'.$licznik['name'].'</td>
-    <td>'.$licznik['cnt_last'].'</td><td>'.$licznik['cnt_sum'].'</td><td><img src="img/';
+  $tresc.='><td>'.$licznik['counter_id'].'</td><td>'.$licznik['name'].'</td>
+    <td>'.$licznik['cnt_last'].'</td><td>'.$licznik['cnt_sum'].'</td>';
+    
+/*    $tresc.='<td><img src="img/';
   if( $licznik['enabled']!='yes' ) {
     $tresc.='black';
   } else if( $licznik['state']==1 ) {
@@ -49,7 +53,9 @@ foreach($info['liczniki'] as $licznik) {
     $tresc.='red';
   }
 
-  $tresc.='.gif" alt="'.$licznik['state'].'"></td></tr>';
+  $tresc.='.gif" alt="'.$licznik['state'].'"></td>';*/
+    
+  $tresc.='</tr>';
 }
 
 

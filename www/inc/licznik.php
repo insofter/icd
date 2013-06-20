@@ -34,6 +34,9 @@ if( isset( $_POST['name'] ) ) {
 }
 $licznik=$icdtcp->liczniki_pobierz();
 
+print_r($licznik);
+
+
 $tresc='<div id="tresc">
   <h3>Ustawienia licznika</h3>
   '.$info.'

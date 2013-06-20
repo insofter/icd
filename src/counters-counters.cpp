@@ -51,7 +51,7 @@ CcounterMono::~CcounterMono() {
 CcounterVal CcounterMono::getCount( const Ctime time, Econstants reset ) {
   CcounterVal ret;
 
-  Cevent ev=reader_->getEvent( masterId_ );
+  Cevent ev=reader_->getEvent( masterId_, reverse_ );
   if( ev == Cevent::EMPTY() ) {
     ev=last_;
   }

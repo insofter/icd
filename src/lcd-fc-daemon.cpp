@@ -250,7 +250,7 @@ MIN:
 
 #define KBD_UP 260
 #define KBD_DOWN 261
-#define KBD_LEFT 259 //TODO: poprawne kody klawiszy
+#define KBD_LEFT 259
 #define KBD_RIGHT 258
 #define KBD_ENTER 256
 #define KBD_ESC 257

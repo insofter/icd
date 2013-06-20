@@ -13,14 +13,11 @@ class c_icdtcp {
   private $liveDb;
   private $ICD_DATA_DIR;
 
-  public $il_fotokomorek;
-
   function __construct() {
     $this->o_mnie=array('nazwa'=>'c_icdtcp',
       'plik'=>'inc/c_icdtcp.php',
       'wersja_rok'=>'2012',
       'wersja_miesiac'=>'07');
-    $this->il_foto=4;
     $this->czas=array( 1=>'1 minuta',
       2=>'2 minuty',
       5=>'5 minut',
@@ -55,11 +52,11 @@ class c_icdtcp {
       250000=>'250 000',
       500000=>'500 000',
       1000000=>'1 000 000');
-    $this->urzadzenia=array( 'itd0'=>'A',
-      'itd1'=>'B',
-      'itd2'=>'C',
-      'itd3'=>'D',
-      '-'=>'Brak' );
+    $this->urzadzenia=array( '/dev/itd0'=>'A',
+      '/dev/itd1'=>'B',
+      '/dev/itd2'=>'C',
+      '/dev/itd3'=>'D',
+      ''=>'Brak' );
 
 
     foreach( file("/etc/profile.d/icd.sh", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $tmp ) {
@@ -146,45 +143,45 @@ class c_icdtcp {
       $info[$row['key']]=$row['value'];
     }
 
-    for( $i=0; $i<$this->il_foto; ++$i ) {
 
-      $sql="SELECT `key`, `value` FROM config_section cs LEFT JOIN config c on cs.id=c.section_id
-        WHERE cs.name='counter$i' AND (c.key='name' OR c.key='enabled' ) ";
-      $ans=$this->configDb->query($sql);
+    $sql="SELECT name FROM config_section WHERE name LIKE 'counter%'";
+    $ans=$this->configDb->query($sql);
+    $ans->setFetchMode(PDO::FETCH_ASSOC);
 
-      foreach( $ans as $row ) {
-        $licznik[$row['key']]=$row['value'];
+    foreach( $ans as $row ) {
+      $sql2="SELECT `key`, `value` FROM config_section cs LEFT JOIN config c on cs.id=c.section_id
+        WHERE cs.name='".$row['name']."' AND (c.key='name' OR c.key='counter_id' OR c.key='enabled' ) ";
+      $ans2=$this->configDb->query($sql2);
+      $ans2->setFetchMode(PDO::FETCH_ASSOC);
+      foreach( $ans2 as $row2 ) {
+        $licznik[$row2['key']]=$row2['value'];
       }
-      $licznik['nr']=$i;
 
-      $sql="SELECT `cnt`, `dtm` FROM flow WHERE counter_id='".($i+1)."' ORDER BY `dtm` DESC LIMIT 1";
-      $ans=$this->liveDb->query($sql);
+      $sql2="SELECT `cnt`, `dtm` FROM flow WHERE counter_id='".$licznik['counter_id']."' ORDER BY `dtm` DESC LIMIT 1";
+
+
+      $ans2=$this->liveDb->query($sql2);
+      $ans2->setFetchMode(PDO::FETCH_ASSOC);
+
       $licznik['cnt_last']=0;
-      if( $ans!=NULL && $row=$ans->fetch() ) {
-        $licznik['cnt_last']=$row['cnt'];
-        $start=$row['dtm'];
+      if( $ans2!=NULL && $row2=$ans2->fetch() ) {
+        $licznik['cnt_last']=$row2['cnt'];
+        $start=$row2['dtm'];
       } else {
         $licznik['cnt_last']=0;
         $start=time();
       }
-      $sql="SELECT sum(cnt) AS sum FROM flow WHERE counter_id='".($i+1)."'
+      $sql2="SELECT sum(cnt) AS sum FROM flow WHERE counter_id='".$licznik['counter_id']."'
         AND `dtm` < ".$start." AND `dtm` > ".( ((int)(time()/(24*3600)))*24*3600 );
-      $ans=$this->dataDb->query($sql);
+      $ans2=$this->dataDb->query($sql2);
+      $ans2->setFetchMode(PDO::FETCH_ASSOC);
+
       $licznik['cnt_sum']=0;
-      if( $ans!=NULL && $row=$ans->fetch() ) {
-        $licznik['cnt_sum']=(int)$row['sum']+$licznik['cnt_last'];
+      if( $ans2!=NULL && $row2=$ans2->fetch() ) {
+        $licznik['cnt_sum']=(int)$row2['sum']+$licznik['cnt_last'];
       } else {
         $licznik['cnt_sum']=$licznik['cnt_last'];
       }
-      $sql="SELECT `state` FROM events WHERE itd='itd$i' ORDER BY `dtmms` DESC LIMIT 1";
-      $ans=$this->dataDb->query($sql);
-      $licznik['state']=1;
-      if( $ans!=NULL ) {
-        while( $row=$ans->fetch() ) {
-          $licznik['state']=$row['state'];
-        }
-      }
-
       $liczniki[]=$licznik;
     }
 
@@ -266,13 +263,15 @@ class c_icdtcp {
   }
 
   function liczniki_pobierz() {
-    for( $i=0; $i<$this->il_foto; ++$i ) {
-      $sql="SELECT `key`, `value` FROM config_section cs LEFT JOIN config c ON cs.id=c.section_id
-        WHERE cs.name='counter$i' ";
-      $ans=$this->configDb->query($sql);
-      foreach( $ans as $row ) {
-        $liczniki[$row['key']][$i]=$row['value'];
-      }
+
+    $sql="SELECT `name`, `key`, `value` FROM config_section cs LEFT JOIN config c on cs.id=c.section_id
+      WHERE cs.name LIKE 'counter%' ";
+
+    $ans=$this->configDb->query($sql);
+    $ans->setFetchMode(PDO::FETCH_ASSOC);
+
+    foreach( $ans as $row ) {
+      $liczniki[$row['name']][$row['key']]=$row['value'];
     }
     return $liczniki;
   }

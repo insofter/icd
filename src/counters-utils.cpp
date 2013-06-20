@@ -101,24 +101,74 @@ Cevent Cevent::EMPTY() {
 }
 
 void Cled::on(){
-//TODO:
+//TODO: led
 }
 void Cled::off(){
-//TODO:
+//TODO: led
 }
 
 
 
 CdbWriter::CdbWriter() {
-  //TODO:
+
+
+  insert_ = new sqlite3cc::stmt( *globalLiveDb );
+  update_ = new sqlite3cc::stmt( *globalLiveDb );
+  select_ = new sqlite3cc::stmt( *globalLiveDb );
+  close_ = new sqlite3cc::stmt( *globalLiveDb );
+
+  insert_->prepare( "INSERT INTO flow (counter_id, dtm, cnt, dark_time, work_time, test, flags)"
+            " VALUES (?1, ?2, ?3, ?4, ?5, ?6, 3)" );
+
+  update_->prepare( "UPDATE flow SET cnt = ?3, dark_time = ?4,"
+      " work_time = ?5, test = ?6 WHERE counter_id = ?1 AND dtm = ?2" );
+
+  close_->prepare( "UPDATE flow SET flags = 2 WHERE flags = 3" ); 
+
+  select_->prepare( "SELECT counter_id FROM flow"
+      " WHERE counter_id == ?1 AND dtm == ?2 AND flags == 3 LIMIT 1" );
+
+
+  this->closeRecords();
 }
+
+CdbWriter::~CdbWriter() {
+  delete [] insert_;
+  delete [] update_;
+  delete [] select_;
+  delete [] close_;
+}
+
 
 void CdbWriter::write( int counterId, Ctime dtm, int cnt, Ctime dark, Ctime work, int test ) {
-  //TODO:
+  select_->bind_int( 1, counterId );
+  select_->bind_int( 2, dtm.sec );
+  if( select_->step() == SQLITE_ROW ) {//update
+    update_->bind_int( 1, counterId );//counter_id
+    update_->bind_int( 2, dtm.sec );//dtm
+    update_->bind_int( 3, cnt );//cnt
+    update_->bind_int( 4, dark.msec() );//dark_time
+    update_->bind_int( 5, work.msec() );//work_time
+    update_->bind_int( 6, test );//test
+    update_->step();
+    update_->reset();
+  } else { //insert
+    insert_->bind_int( 1, counterId );//counter_id
+    insert_->bind_int( 2, dtm.sec );//dtm
+    insert_->bind_int( 3, cnt );//cnt
+    insert_->bind_int( 4, dark.msec() );//dark_time
+    insert_->bind_int( 5, work.msec() );//work_time
+    insert_->bind_int( 6, test );//test
+    insert_->step();
+    insert_->reset();
+  }
+  select_->reset();
 }
 
-void CdbWriter::newAggr() {
-  //TODO:
+void CdbWriter::closeRecords() {
+  close_->step();
+  close_->reset();
+
 }
 
 

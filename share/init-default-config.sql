@@ -30,27 +30,6 @@ INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_sect
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'device'), 'flow-entry-retention-period-days', '3660' );
 
 
-INSERT INTO config_section (name) VALUES ( 'itd0' );
-INSERT INTO config_section (name) VALUES ( 'itd1' );
-INSERT INTO config_section (name) VALUES ( 'itd2' );
-INSERT INTO config_section (name) VALUES ( 'itd3' );
--- section itd0 --
-INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'itd0'), 'engage-delay-ms', '200' );
-INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'itd0'), 'release-delay-ms', '200' );
-INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'itd0'), 'active-low', '1' );
--- section itd1 --
-INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'itd1'), 'engage-delay-ms', '200' );
-INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'itd1'), 'release-delay-ms', '200' );
-INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'itd1'), 'active-low', '1' );
--- section itd2 --
-INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'itd2'), 'engage-delay-ms', '200' );
-INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'itd2'), 'release-delay-ms', '200' );
-INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'itd2'), 'active-low', '1' );
--- section itd3 --
-INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'itd3'), 'engage-delay-ms', '200' );
-INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'itd3'), 'release-delay-ms', '200' );
-INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'itd3'), 'active-low', '1' );
-
 
 INSERT INTO config_section (name) VALUES ( 'counter0' );
 INSERT INTO config_section (name) VALUES ( 'counter1' );
@@ -60,30 +39,73 @@ INSERT INTO config_section (name) VALUES ( 'counter3' );
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter0'), 'name', 'Wej 0' );
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter0'), 'counter_id', '1' ); -- flow.counter_id
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter0'), 'enabled', 'yes' );
-INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter0'), 'master', 'itd0' );
-INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter0'), 'slave', 'null' ); -- itdX OR null
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter0'), 'master', '/dev/itd0' ); --file
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter0'), 'master-reversed', 'no' );
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter0'), 'master-engage', '200' ); --miliseconds
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter0'), 'master-release', '200' ); --miliseconds
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter0'), 'slave', '' ); -- file OR {empty}
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter0'), 'slave-reversed', 'no' );
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter0'), 'slave-mode', 'single' ); -- single OR direction OR thickness OR nothick
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter0'), 'slave-engage', '200' ); --miliseconds
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter0'), 'slave-release', '200' ); --miliseconds
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter0'), 'stop', '' ); -- file OR {empty}
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter0'), 'stop-reversed', 'no' );
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter0'), 'stop-engage', '200' ); --miliseconds
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter0'), 'stop-release', '200' ); --miliseconds
 -- section counter1 --
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter1'), 'name', 'Wej 1' );
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter1'), 'counter_id', '2' ); -- flow.counter_id
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter1'), 'enabled', 'yes' );
-INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter1'), 'master', 'itd1' );
-INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter1'), 'slave', 'null' ); -- itdX OR null
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter1'), 'master', '/dev/itd1' ); --file
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter1'), 'master-reversed', 'no' );
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter1'), 'master-engage', '200' ); --miliseconds
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter1'), 'master-release', '200' ); --miliseconds
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter1'), 'slave', '' ); -- file OR {empty}
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter1'), 'slave-reversed', 'no' );
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter1'), 'slave-mode', 'single' ); -- single OR direction OR thickness OR nothick
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter1'), 'slave-engage', '200' ); --miliseconds
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter1'), 'slave-release', '200' ); --miliseconds
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter1'), 'stop', '' ); -- file OR {empty}
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter1'), 'stop-reversed', 'no' );
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter1'), 'stop-engage', '200' ); --miliseconds
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter1'), 'stop-release', '200' ); --miliseconds
 -- section counter2 --
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter2'), 'name', 'Wej 2' );
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter2'), 'counter_id', '3' ); -- flow.counter_id
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter2'), 'enabled', 'yes' );
-INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter2'), 'master', 'itd2' );
-INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter2'), 'slave', 'null' ); -- itdX OR null
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter2'), 'master', '/dev/itd2' ); --file
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter2'), 'master-reversed', 'no' );
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter2'), 'master-engage', '200' ); --miliseconds
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter2'), 'master-release', '200' ); --miliseconds
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter2'), 'slave', '' ); -- file OR {empty}
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter2'), 'slave-reversed', 'no' );
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter2'), 'slave-mode', 'single' ); -- single OR direction OR thickness OR nothick
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter2'), 'slave-engage', '200' ); --miliseconds
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter2'), 'slave-release', '200' ); --miliseconds
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter2'), 'stop', '' ); -- file OR {empty}
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter2'), 'stop-reversed', 'no' );
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter2'), 'stop-engage', '200' ); --miliseconds
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter2'), 'stop-release', '200' ); --miliseconds
 -- section counter3 --
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter3'), 'name', 'Wej 3' );
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter3'), 'counter_id', '4' ); -- flow.counter_id
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter3'), 'enabled', 'yes' );
-INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter3'), 'master', 'itd3' );
-INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter3'), 'slave', 'null' ); -- itdX OR null
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter3'), 'master', '/dev/itd3' ); --file
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter3'), 'master-reversed', 'no' );
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter3'), 'master-engage', '200' ); --miliseconds
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter3'), 'master-release', '200' ); --miliseconds
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter3'), 'slave', '' ); -- file OR {empty}
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter3'), 'slave-reversed', 'no' );
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter3'), 'slave-mode', 'single' ); -- single OR direction OR thickness OR nothick
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter3'), 'slave-engage', '200' ); --miliseconds
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter3'), 'slave-release', '200' ); --miliseconds
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter3'), 'stop', '' ); -- file OR {empty}
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter3'), 'stop-reversed', 'no' );
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter3'), 'stop-engage', '200' ); --miliseconds
+INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'counter3'), 'stop-release', '200' ); --miliseconds
+
+
+-- leds --
 INSERT INTO config_section (name) VALUES ( 'led0' );
 INSERT INTO config (section_id, key, value) VALUES ( (SELECT id FROM config_section WHERE name == 'led0'), 'master-counter_id', '1' ); -- counterX.counter_id
 INSERT INTO config_section (name) VALUES ( 'led1' );

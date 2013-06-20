@@ -47,8 +47,6 @@ CmenuItemTimeFoto::~CmenuItemTimeFoto() {
 }
 
 void CmenuItemTimeFoto::screen(Clcd *lcd) {
-  /*TODO pobranie danych z bazy*/
-//  int i;
   char buf[18];
   char timebuf[9];
   time_t rawtime;
@@ -107,8 +105,6 @@ CmenuItemDoubleTimeFoto::~CmenuItemDoubleTimeFoto() {
 }
 
 void CmenuItemDoubleTimeFoto::screen(Clcd *lcd) {
-  /*TODO pobranie danych z bazy*/
-//  int i;
   char buf[17];
   char timebuf[9];
   time_t rawtime;

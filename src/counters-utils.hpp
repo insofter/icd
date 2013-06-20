@@ -43,7 +43,7 @@ struct Ctime {
    * With no parameters gives current time.
    */
   Ctime();
-  Ctime(int sec_, int usec_=0);
+  Ctime( int sec_, int usec_=0 );
 
   void setCurrentTime();
   void setZero();
@@ -79,20 +79,29 @@ class Cled {
  * Class for writing to db
  */
 class CdbWriter {
-  /**
-   * Constructor.
-   * Uses global db access.
-   */
-  CdbWriter();
-  /**
-   * Writes record to db.
-   */
-  void write( int counterId, Ctime dtm, int cnt, Ctime dark,
-      Ctime work, int test );
-  /**
-   * Makes new aggregation period.
-   */
-  void newAggr();
+  public:
+    /**
+     * Constructor.
+     * Uses global db access.
+     */
+    CdbWriter();
+    ~CdbWriter();
+
+    /**
+     * Writes record to db.
+     */
+    void write( int counterId, Ctime dtm, int cnt, Ctime dark,
+        Ctime work, int test );
+    /**
+     * Makes new aggregation period.
+     */
+    void closeRecords();
+  protected:
+    sqlite3cc::stmt * insert_;
+    sqlite3cc::stmt * update_;
+    sqlite3cc::stmt * select_;
+    sqlite3cc::stmt * close_;
+
 };
 
 /**
