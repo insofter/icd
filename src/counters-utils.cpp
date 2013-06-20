@@ -100,11 +100,33 @@ Cevent Cevent::EMPTY() {
   return empty;
 }
 
+// temp solution
+Cevent latest( const Cevent & ev1, const Cevent & ev2 )
+{
+  if( ev1.time < ev2.time ) {
+    return ev2;
+  } else {
+    return ev1;
+  }
+}
+//temp solution
+Cevent earliest( const Cevent & ev1, const Cevent & ev2 )
+{
+  if( ev2.time < ev1.time ) {
+    return ev2;
+  } else {
+    return ev1;
+  }
+}
+
+
+
+
 void Cled::on(){
-//TODO:
+  //TODO:
 }
 void Cled::off(){
-//TODO:
+  //TODO:
 }
 
 
