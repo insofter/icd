@@ -121,3 +121,98 @@ CcounterVal CcounterMono::getCount( const Ctime time, Econstants reset ) {
   return ret;
 }
 
+
+CcounterThick::CcounterThick( int id, int master, int slave, const Ctime beginTime, const Ctime engage, const Ctime release, Econstants reverse ) :
+  Ccounter( id,  master, beginTime ), engage_( engage ), release_( release ), 
+  state_( LOW ), state_master_ ( LOW ) , state_slave_( LOW ),
+  reverse_( reverse ), 
+  last_( beginTime, 0 ), last_slave_( beginTime, 0 ), last_master_( beginTime, 0 ),
+  dark_( 0, 0 ), work_( 0, 0 ) {
+    0;
+    //NOOP
+  }
+
+CcounterThick::~CcounterThick() {
+  0; //NOOP
+}
+
+CcounterVal CcounterThick:: getCount( const Ctime time, Econstants reset ) {
+  CcounterVal ret;
+
+  Cevent ev_master = reader_->getEvent( masterId_ );
+  if( ev_master == Cevent::EMPTY() ) {
+    ev_master=last_master_;
+  }
+
+  Cevent ev_slave = reader_->getEvent( slaveId_ ) ;
+  if( ev_slave == Cevent::EMPTY() ) {
+    ev_slave=last_slave_;
+  }
+
+  if( ev_slave == last_slave_ && ev_master == last_master_ ) {// no change to counter 
+
+    if( state_master_==CONDHIGH ) {
+      if( ev_master.time + engage_ < time ) {
+        state_master_=HIGH;
+      } // if master havent reached -> keep calm and no action
+    }
+    if( state_slave_==CONDHIGH ) {
+      if( ev_slave.time + engage_ < time ) {
+        state_slave_=HIGH;
+      } // if slave havent reached -> keep calm and no action
+    }
+    if( state_slave_==state_master_==HIGH ) {//proper signal
+      state_=HIGH;
+      ledOn_();
+      ++counter_;
+    }
+
+
+    if( state_master_==CONDLOW) {
+      if( ev_master.time + release_ < time ) {
+        state_master_=LOW;
+      } // if master havent reached -> keep calm and no action
+    }
+    if( state_slave_==CONDLOW ) {
+      if( ev_slave.time + release_ < time ) {
+        state_slave_=LOW;
+      } // if slave havent reached -> keep calm and no action
+    }
+    if( state_slave_==LOW || state_master_==LOW ) {//signal down
+      state_=LOW;
+      ledOff_();
+    }
+
+  } else { // if either SLAVE or MASTER differs from last -> NEW EVENT
+    /*NEW EVENT*/
+
+    if( last_master_.value != ev_master.value ) { //check if master has changed duplicete -- ignotre
+
+      if( ev_master.value==0 ){ //change to CONDLOW
+        if( state_master_==CONDHIGH ) {
+          if( last_master_.time + engage_ < ev_master.time ) {//time passed count correct before event
+            state_master_=HIGH;
+          }
+        }
+        //TODO
+
+
+
+
+
+
+
+      }//end CONDLOW
+
+    }//end check master
+  }// end NEW EVENT
+
+  //TODO 
+  //reset
+  //condhigh 
+  //condlow
+
+
+    return ret;
+  }
+

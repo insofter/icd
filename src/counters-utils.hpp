@@ -66,6 +66,10 @@ struct Cevent {
   bool operator==( const Cevent & b ) const;
   bool operator!=( const Cevent & b ) const;
   static Cevent EMPTY();
+
+  //TODO temporary solution!
+  friend Cevent latest( const Cevent & ev1, const Cevent & ev2 );
+  friend Cevent earliest( const Cevent & ev1, const Cevent & ev2 );
 };
 
 class Cled {

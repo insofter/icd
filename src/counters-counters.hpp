@@ -102,8 +102,45 @@ class CcounterMono: public Ccounter {
 };
 
 
+class CcounterThick: public Ccounter {
+  public:
 
+    /*!
+     * constructor
+     * \param [in] id -- counter id
+     * \param [in] master -- master device id
+     * \param [in] slave -- slave device id
+     */
+    CcounterThick( int id, int master, int slave, const Ctime beginTime, const Ctime engage, const Ctime release, Econstants reverse=NORMAL );
+    /*! 
+     * destructor
+     */
+    virtual ~CcounterThick();
 
+    /*! 
+     * \brief returns counter value
+     * \param [in] time -- time to check for events?
+     * \param [in] reset -- if set, returns value and set counter to 0
+     */
+    virtual CcounterVal getCount( const Ctime time, Econstants reset=NO_RESET );
+
+  protected:
+    Ctime engage_;
+    Ctime release_;
+
+    Estate state_;
+    Estate state_master_;
+    Estate state_slave_;
+
+    Cevent last_;
+    Cevent last_slave_;
+    Cevent last_master_;
+
+    Ctime dark_;
+    Ctime work_;
+    int slaveId_;
+    Econstants reverse_;
+};
 
 
 
