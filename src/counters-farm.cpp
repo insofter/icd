@@ -41,7 +41,7 @@ int CcountersFarm::run() {
       per.sec/=3600;
       per.sec*=3600;
 
-      writer.write( cv.id, per.sec, cv.val, cv.dark, cv.work, 888 );
+     // writer.write( cv.id, per.sec, cv.val, cv.dark, cv.work, 888 );
     }
 
     /*debug*/

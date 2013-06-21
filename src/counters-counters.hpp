@@ -132,7 +132,6 @@ class CcounterThick: public Ccounter {
     Estate state_master_;
     Estate state_slave_;
 
-    Cevent last_;
     Cevent last_slave_;
     Cevent last_master_;
 
