@@ -16,7 +16,7 @@ if( isset( $_POST['name'] ) ) {
     $licznik['dev-release']=$_POST['dev-release'][$i];
     $licznik['dev-active-low']=$_POST['dev-active-low'][$i];
 
- 
+
     $licznik['thick']=$_POST['thick'][$i];
     $licznik['thick-active-low']=$_POST['thick-active-low'][$i];
     $licznik['thick-detect-direction']=$_POST['thick-detect-direction'][$i];
@@ -32,18 +32,112 @@ if( isset( $_POST['name'] ) ) {
 } else {
   $info='';
 }
-$licznik=$icdtcp->liczniki_pobierz();
+$liczniki=$icdtcp->liczniki_pobierz();
 
-print_r($licznik);
+print_r($liczniki);
 
 
 $tresc='<div id="tresc">
   <h3>Ustawienia licznika</h3>
-  '.$info.'
-  <form action="./?strona=licznik" method="POST">';
+  '.$info;
 
-$tresc.='<table class="liczniki">
-  <tr><th>Licznik</th>';
+function boolForm( $sect, $name, $label, $state, $yes, $no ) {
+  $ret='<label for="'.$name.'_'.$sect.'">'.$label.' </label>
+    <select name="'.$name.'" id="'.$name.'_'.$sect.'">
+    ';
+
+  if( $state=='yes' ) {
+    $ret.='<option selected="selected" value="yes">'.$yes.'</option>
+      <option value="no">'.$no.'</option>';
+  } else {
+    $ret.='<option value="yes">'.$yes.'</option>
+      <option selected="selected" value="no">'.$no.'</option>';
+  }
+  $ret.='
+    </select>';
+  return $ret;
+}
+function textForm( $sect, $name, $label, $value ) {
+  return '<label for="'.$name.'_'.$sect.'">'.$label.' </label>
+    <input type="text" id="'.$name.'_'.$sect.'" name="'.$name.'" value="'.$value.'">';
+}
+
+
+foreach( $liczniki as $sect=>$licznik ) {
+
+  $tresc.='<form action="./?strona=licznik" method="POST">
+    <input type="hidden" value="'.$sect.'" name="sect">';
+
+  $tresc.='<table class="liczniki">
+    <tr><td class="liczniki_tab liczniki_top" colspan="3">Id licznika: '.$licznik['counter_id'].'
+    <tr><td class="liczniki_tab" colspan="2">';
+  $tresc.='<table>
+    <tr><td>'
+    .textForm( $sect, 'name', 'Nazwa:', $licznik['name'] ).
+    '</td>
+    <td>'
+    .boolForm( $sect, 'enabled', 'Włączony:', $licznik['enabled'], 'Tak', 'Nie' ).
+    '</td></tr>
+    </table>';
+  $tresc.='</td><td class="liczniki_tab" rowspan="2">';
+  $tresc.='<table>
+    <tr><td>'
+    .textForm( $sect, 'slave', 'Wejście dodatkowe:', $licznik['slave'] ).
+    '</td></tr>
+    <tr><td>'
+    .textForm( $sect, 'slave-mode', 'TODO tryb pracy:', $licznik['slave-mode'] ).
+    '</td></tr>
+    <tr><td>'
+    .textForm( $sect, 'slave-engage', 'Czas narastania:', $licznik['slave-engage'] ).
+    '</td></tr>
+    <tr><td>'
+    .textForm( $sect, 'slave-release', 'Czas opadania:', $licznik['slave-release'] ).
+    '</td></tr>
+    <tr><td>'
+    .boolForm( $sect, 'slave-reversed', 'Stan aktywny:', $licznik['slave-reversed'], 'Niski', 'Wysoki' ).
+    '</td></tr>
+    </table>';
+  $tresc.='</td></tr><tr><td class="liczniki_tab">';
+  $tresc.='<table>
+    <tr><td>'
+    .textForm( $sect, 'master', 'Wejście główne:', $licznik['master'] ).
+    '</td></tr>
+    <tr><td>'
+    .textForm( $sect, 'master-engage', 'Czas narastania:', $licznik['master-engage'] ).
+    '</td></tr>
+    <tr><td>'
+    .textForm( $sect, 'master-release', 'Czas opadania:', $licznik['master-release'] ).
+    '</td></tr>
+    <tr><td>'
+    .boolForm( $sect, 'master-reversed', 'Stan aktywny:', $licznik['master-reversed'], 'Niski', 'Wysoki' ).
+    '</td></tr>
+    </table>';
+  $tresc.='</td><td class="liczniki_tab">';
+  $tresc.='<table>
+    <tr><td>'
+    .textForm( $sect, 'stop', 'Wyłącznik czasowy:', $licznik['stop'] ).
+    '</td></tr>
+    <tr><td>'
+    .textForm( $sect, 'stop-engage', 'Czas narastania:', $licznik['stop-engage'] ).
+    '</td></tr>
+    <tr><td>'
+    .textForm( $sect, 'stop-release', 'Czas opadania:', $licznik['stop-release'] ).
+    '</td></tr>
+    <tr><td>'
+    .boolForm( $sect, 'stop-reversed', 'Stan aktywny:', $licznik['stop-reversed'], 'Niski', 'Wysoki' ).
+    '</td></tr>
+    </table>';
+  $tresc.='</td></tr>
+    </table>';
+
+  $tresc.='</form><br><br>';
+
+}
+
+
+
+
+/*
 for( $i=0; $i<4; ++$i ) {
   $tresc.='<td>'.chr(ord('A')+$i).'</td>';
 }
@@ -112,7 +206,7 @@ for( $i=0; $i<4; ++$i ) {
           $tresc.='<td>
   <input type="text" name="enab-time['.$i.']"
       id="enab-time'.$i.'" value="'.$licznik['enab-time'][$i].'">
-  
+
       </td>';
 }
 $tresc.='</tr>
@@ -159,7 +253,7 @@ for( $i=0; $i<4; ++$i ) {
       <option selected="selected" value="no">Grubość</option>';
   }
   $tresc.='</select>
-  
+
     </td>';
 }
 $tresc.='</tr>
@@ -190,7 +284,10 @@ $tresc.='
 
   <input type="button" value="Test fotokomórek" onclick="window.open('."'".'popup.php?typ=test'."'".')">
 
-  </form></div>';
+  </form>
+
+ */
+$tresc.='</div>';
 
 
 ?>
