@@ -122,10 +122,20 @@ CcounterVal CcounterMono::getCount( const Ctime time, Econstants reset ) {
 }
 
 
-CcounterThick::CcounterThick( int id, int master, int slave, const Ctime beginTime, const Ctime engage, const Ctime release, Econstants reverse ) :
-  Ccounter( id,  master, beginTime ), engage_( engage ), release_( release ), 
-  state_( LOW ), state_master_ ( LOW ) , state_slave_( LOW ),
-  reverse_( reverse ), 
+CcounterThick::CcounterThick( 
+    int id, int master, int slave, 
+    const Ctime beginTime, 
+    const Ctime engage_master, const Ctime engage_slave, 
+    const Ctime release_master, const Ctime release_slave, 
+    Econstants reverse_master, Econstants reverse_slave
+    ) 
+:
+  Ccounter( id,  master, beginTime ), 
+  slaveId_( slave ), 
+  engage_master_( engage_master ), engage_slave_( engage_slave), 
+  release_master_( release_master ), release_slave_( release_slave ),
+  state_( LOW ),  state_master_ ( LOW ) , state_slave_( LOW ),
+  reverse_master_( reverse_master ), reverse_slave_( reverse_slave ),
   last_slave_( beginTime, 0 ), last_master_( beginTime, 0 ),
   dark_( 0, 0 ), work_( 0, 0 ) 
 {
@@ -154,16 +164,18 @@ CcounterVal CcounterThick:: getCount( const Ctime time, Econstants reset ) {
 
   if( ev_slave == last_slave_ && ev_master == last_master_ ) {// no change to counter 
 
+    std::cout<< "no change" << std::endl;
+
     /*high*/
     if( state_master_==CONDHIGH ) {
-      if( ev_master.time + engage_ < time ) {
+      if( ev_master.time + engage_master_ < time ) {
         state_master_=HIGH;
         std::cout << "<<< state master high" <<std::endl;
 
       } // if master havent reached -> keep calm and no action
     }
     if( state_slave_==CONDHIGH ) {
-      if( ev_slave.time + engage_ < time ) {
+      if( ev_slave.time + engage_slave_ < time ) {
         state_slave_=HIGH;
         std::cout << "<<< state slave high" <<std::endl;
       } // if slave havent reached -> keep calm and no action
@@ -178,17 +190,16 @@ CcounterVal CcounterThick:: getCount( const Ctime time, Econstants reset ) {
       }
     }
 
-
     /*low*/
     if( state_master_==CONDLOW) {
-      if( ev_master.time + release_ < time ) {
+      if( ev_master.time + release_master_ < time ) {
         state_master_=LOW;
         std::cout << "<<< state master low" <<std::endl;
 
       } // if master havent reached -> keep calm and no action
     }
     if( state_slave_==CONDLOW ) {
-      if( ev_slave.time + release_ < time ) {
+      if( ev_slave.time + release_slave_ < time ) {
         state_slave_=LOW;
         std::cout << "<<< state slave low" <<std::endl;
 
@@ -202,16 +213,24 @@ CcounterVal CcounterThick:: getCount( const Ctime time, Econstants reset ) {
 
     }
 
+    work_ = work_;
   } else { // if either SLAVE or MASTER differs from last -> NEW EVENT
     /*NEW EVENT*/
+
+    std::cout << "new event" << std::endl;
+
+    bool peek_high_master=false;
+    bool peek_high_slave=false;
 
     /*master*/
     if( last_master_.value != ev_master.value ) { //check if master has changed; duplicete -- ignore
 
+      std::cout << "new event: change master" << std::endl;
       if( ev_master.value==0 ){ //change master to CONDLOW
         if( state_master_==CONDHIGH ) {
-          if( last_master_.time + engage_ < ev_master.time ) {//time passed count correct before event
+          if( last_master_.time + engage_master_ < ev_master.time ) {//time passed count correct before event
             state_master_=HIGH;
+            peek_high_master=true;
             std::cout << "<< state master high" <<std::endl;
           }
         }
@@ -222,7 +241,7 @@ CcounterVal CcounterThick:: getCount( const Ctime time, Econstants reset ) {
         std::cout << "<< state master condlow" <<std::endl;
       } else { //change master to CONDHIGH
         if( state_master_==CONDLOW ) {
-          if( last_master_.time + release_ < ev_master.time ) {//time passed and count is correct before event
+          if( last_master_.time + release_master_ < ev_master.time ) {//time passed and count is correct before event
             state_master_=LOW;
             std::cout << "<< state master low" <<std::endl;
 
@@ -230,25 +249,24 @@ CcounterVal CcounterThick:: getCount( const Ctime time, Econstants reset ) {
             std::cout << "....state low" <<std::endl;
           }
         }
-        work_=work_ + ev_master.time - last_master_.time;
         state_master_=CONDHIGH;
         std::cout << "<< state master condhigh" <<std::endl;
 
       }
       last_master_=ev_master;
-    }
+    } // end check master
 
     /*slave*/
 
     if( last_slave_.value != ev_slave.value ) { //check if slave has changed; duplicete -- ignore
 
+      std::cout << "new event: change slave" << std::endl;
       if( ev_slave.value==0 ){ //change slave to CONDLOW
         if( state_slave_==CONDHIGH ) {
-          if( last_slave_.time + engage_ < ev_slave.time ) {//time passed count correct before event
+          if( last_slave_.time + engage_slave_ < ev_slave.time ) {//time passed count correct before event
             state_slave_=HIGH;
+            peek_high_slave=true;
             std::cout << "<< state slave high" <<std::endl;
-
-
           }
         }
         //count times and change state
@@ -257,7 +275,7 @@ CcounterVal CcounterThick:: getCount( const Ctime time, Econstants reset ) {
 
       } else { //change slave to CONDHIGH
         if( state_slave_==CONDLOW ) {
-          if( last_slave_.time + release_ < ev_slave.time ) {//time passed and count is correct before event
+          if( last_slave_.time + release_slave_ < ev_slave.time ) {//time passed and count is correct before event
             state_slave_=LOW;
             std::cout << "<< state slave low" <<std::endl;
 
@@ -266,18 +284,36 @@ CcounterVal CcounterThick:: getCount( const Ctime time, Econstants reset ) {
 
           }
         }
-        // work_=work_ + ev_master.time - last_master_.time;
+        work_=work_ + latest( ev_master, ev_slave).time - latest( last_master_, last_slave_ ).time;
         state_slave_=CONDHIGH;
         std::cout << "<< state slave condhigh" <<std::endl;
 
       }
       last_slave_=ev_slave;
+    }// end check slave
+
+    if( peek_high_master && peek_high_slave 
+        || peek_high_master && state_slave_==HIGH 
+        || peek_high_slave && state_master_==HIGH 
+      )  {
+      state_=HIGH;
+      ledOn_();
+      ++counter_;
+      std::cout << "....state high: counter++" <<std::endl;
+      state_ = LOW;
+      std::cout << "....state low" <<std::endl;
     }
+
+    dark_=dark_ + ev_master.time - last_master_.time;
+
+    work_=work_ + latest( ev_master, ev_slave).time - latest( last_master_, last_slave_ ).time;
+    //work_=work_ + ev_master.time - last_master_.time;
   }//end new event - counter doest change - wait for it
+
 
   ret.id=id_;
   ret.val=counter_;
-  ret.work=work_ + time - ev_master.time;
+  ret.work=work_ + time - latest( ev_master, ev_slave).time;
   if( state_==HIGH ) {//darktime is ticking
     ret.dark=dark_ + time - ev_master.time;
   } else {
