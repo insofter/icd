@@ -60,11 +60,15 @@ class Ccounter {
     /**
      * Sets led for turning it on and off.
      */
-    void setLed(Cled * led);
+    void addLed(Cled * led);
+    /**
+     * Remove all leds managed by counter. Removes only pointers NOT runs delete [].
+     */
+    void clearLeds();
 
   protected:
     CdevicesReader * reader_;
-    Cled * led_;
+    std::vector< Cled * > leds_;
     int id_;
     int masterId_;
     int counter_;

@@ -11,7 +11,7 @@ CcounterVal::CcounterVal( int val_, Ctime dark_, Ctime work_ ) :val(val_), dark(
 
 
 Ccounter::Ccounter( int id, int master, Ctime beginTime ): 
-  reader_(NULL), led_(NULL), id_(id), counter_(0), masterId_(master)
+  reader_(NULL), id_(id), counter_(0), masterId_(master)
 { 0; //NOOP
 }
 
@@ -22,19 +22,23 @@ Ccounter::~Ccounter() {
 void Ccounter::setReader( CdevicesReader* reader ) {
   reader_=reader;
 }
-void Ccounter::setLed( Cled * led ) {
-  led_=led;
+void Ccounter::addLed( Cled * led ) {
+  leds_.push_back(led);
+}
+
+void Ccounter::clearLeds() {
+  leds_.clear();
 }
 
 void Ccounter::ledOn_() {
-  if( led_!=NULL ) {
-    led_->on();
+  for( int i=0; i<leds_.size(); ++i ) {
+    leds_[i]->on();
   }
 }
 
 void Ccounter::ledOff_() {
-  if( led_!=NULL ) {
-    led_->off();
+  for( int i=0; i<leds_.size(); ++i ) {
+    leds_[i]->off();
   }
 }
 

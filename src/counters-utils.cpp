@@ -138,6 +138,9 @@ CdbWriter::CdbWriter() {
   update_ = new sqlite3cc::stmt( *globalLiveDb );
   select_ = new sqlite3cc::stmt( *globalLiveDb );
   close_ = new sqlite3cc::stmt( *globalLiveDb );
+  begin_ = new sqlite3cc::stmt( *globalLiveDb );
+  commit_ = new sqlite3cc::stmt( *globalLiveDb );
+
 
   insert_->prepare( "INSERT INTO flow (counter_id, dtm, cnt, dark_time, work_time, test, flags)"
             " VALUES (?1, ?2, ?3, ?4, ?5, ?6, 3)" );
@@ -150,6 +153,8 @@ CdbWriter::CdbWriter() {
   select_->prepare( "SELECT counter_id FROM flow"
       " WHERE counter_id == ?1 AND dtm == ?2 AND flags == 3 LIMIT 1" );
 
+  begin_->prepare( "BEGIN TRANSACTION" );
+  commit_->prepare( "COMMIT TRANSACTION" );
 
   this->closeRecords();
 }
@@ -159,6 +164,8 @@ CdbWriter::~CdbWriter() {
   delete [] update_;
   delete [] select_;
   delete [] close_;
+  delete [] begin_;
+  delete [] commit_;
 }
 
 
@@ -190,10 +197,17 @@ void CdbWriter::write( int counterId, Ctime dtm, int cnt, Ctime dark, Ctime work
 void CdbWriter::closeRecords() {
   close_->step();
   close_->reset();
-
 }
 
+void CdbWriter::beginTransaction() {
+  begin_->step();
+  begin_->reset();
+}
 
+void CdbWriter::commitTransaction() {
+  commit_->step();
+  commit_->reset();
+}
 
 
 CdevicesReader::CdevicesReader(): pollfd_(NULL) {

@@ -314,7 +314,9 @@ public:
 class CmenuContainerNoRoot: public CmenuList {
 protected:
   int _fastActive;
+  int _counterActive;
   std::vector< CmenuItem* > _fast;
+  std::vector< CmenuItem* > _counters;
   CmenuItem* _menu;
 public:
   CmenuContainerNoRoot(CmenuItem* menu, CmenuItem* item, std::string newname="");
@@ -325,6 +327,17 @@ public:
    * @return Number of item in list.
    */
   int fastAdd(CmenuItem* item);
+  /**
+   * Add counters to menu.
+   * @param item Pointer to menu item.
+   * @return Number of item in list.
+   */
+  int counterAdd(CmenuItem* item);
+  /**
+   * Removes all counters from menu.
+   */
+  void clearCounters();
+  
 
   /**
    * Switches to shortcut nr. It runs fullEsc() before.

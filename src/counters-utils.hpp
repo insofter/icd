@@ -92,6 +92,16 @@ class CdbWriter {
     ~CdbWriter();
 
     /**
+     * Begins transaction.
+     * Used for faster adding events.
+     */
+    void beginTransaction();
+    /**
+     * Commits transaction.
+     */
+    void commitTransaction();
+
+    /**
      * Writes record to db.
      */
     void write( int counterId, Ctime dtm, int cnt, Ctime dark,
@@ -105,6 +115,8 @@ class CdbWriter {
     sqlite3cc::stmt * update_;
     sqlite3cc::stmt * select_;
     sqlite3cc::stmt * close_;
+    sqlite3cc::stmt * begin_;
+    sqlite3cc::stmt * commit_;
 
 };
 
