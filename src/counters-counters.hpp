@@ -115,7 +115,14 @@ class CcounterThick: public Ccounter {
      * \param [in] master -- master device id
      * \param [in] slave -- slave device id
      */
-    CcounterThick( int id, int master, int slave, const Ctime beginTime, const Ctime engage, const Ctime release, Econstants reverse=NORMAL );
+    CcounterThick( 
+        int id, int master, int slave,
+        const Ctime beginTime,
+        const Ctime engage_master, const Ctime engage_slave,
+        const Ctime release_master,  const Ctime release_slave,
+        Econstants reverse_master=NORMAL, Econstants reverse_slave=NORMAL
+        );
+
     /*! 
      * destructor
      */
@@ -129,8 +136,12 @@ class CcounterThick: public Ccounter {
     virtual CcounterVal getCount( const Ctime time, Econstants reset=NO_RESET );
 
   protected:
-    Ctime engage_;
-    Ctime release_;
+    int slaveId_;
+
+    Ctime engage_master_;
+    Ctime engage_slave_;
+    Ctime release_master_;
+    Ctime release_slave_;
 
     Estate state_;
     Estate state_master_;
@@ -141,8 +152,9 @@ class CcounterThick: public Ccounter {
 
     Ctime dark_;
     Ctime work_;
-    int slaveId_;
-    Econstants reverse_;
+
+    Econstants reverse_master_;
+    Econstants reverse_slave_;
 };
 
 
