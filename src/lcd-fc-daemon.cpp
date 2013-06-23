@@ -220,12 +220,13 @@ MIN:
 
     menu->itemAdd( dbpl );
 
-    CmenuContainerNoRoot *mainMenu = new CmenuContainerNoRoot( menu, new CmenuItemTimeFoto( 1 ) );
-    mainMenu->itemAdd( new CmenuItemTimeFoto( 2 ) );
-    mainMenu->itemAdd( new CmenuItemTimeFoto( 3 ) );
-    mainMenu->itemAdd( new CmenuItemTimeFoto( 4 ) );
+    CmenuContainerNoRoot *mainMenu = new CmenuContainerNoRoot( menu, 
+        new CmenuItemAppParam( "Adres IP (Eth)", "icd-current eth ip" ) );
+    mainMenu->counterAdd( new CmenuItemTimeFoto( 1 ) );
+    mainMenu->counterAdd( new CmenuItemTimeFoto( 2 ) );
+    mainMenu->counterAdd( new CmenuItemTimeFoto( 3 ) );
+    mainMenu->counterAdd( new CmenuItemTimeFoto( 4 ) );
     mainMenu->itemAdd( new CmenuItemIdds );
-    mainMenu->itemAdd( new CmenuItemAppParam( "Adres IP (Eth)", "icd-current eth ip" ) );
     mainMenu->itemAdd( new CmenuItemAppParam( "IP (WiFi) i SSID", "icd-current wifi ip-ssid" ) );
     mainMenu->itemAdd( new CmenuItemFileParam( "Status wysyłania", "/tmp/last-send-status" ) );
     std::string cmd;

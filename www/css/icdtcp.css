@@ -171,7 +171,7 @@ input, select {
 }
 .liczniki_tab td, .liczniki_top {
   width: 300px;
-  height: 30px;
+  height: 35px;
 }
 
 .cienki {
@@ -179,9 +179,6 @@ input, select {
 }
 input:hover, select:hover {
   background-color: palegreen;
-}
-input[type="submit"], input[type="reset"], input[type="button"] {
-  margin-left: 30px;
 }
 input [type="file"] {
   width: 500px;

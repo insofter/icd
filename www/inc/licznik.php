@@ -2,44 +2,56 @@
 defined('INSOFTER') or die('<h1>Your Kung-Fu is too weak.</h1>');
 
 $icdtcp = new c_icdtcp();
+// print_r($_POST);
 
-if( isset( $_POST['name'] ) ) {
-
-  for( $i=0; $i<$icdtcp->il_foto; ++$i ) {
-    $licznik['name']=$_POST['name'][$i];
-    if( isset($_POST['enabled'][$i]) ) {
-      $licznik['enabled']='yes';
-    } else {
-      $licznik['enabled']='no';
-    }
-    $licznik['dev-engage']=$_POST['dev-engage'][$i];
-    $licznik['dev-release']=$_POST['dev-release'][$i];
-    $licznik['dev-active-low']=$_POST['dev-active-low'][$i];
+if( isset( $_POST['sect'] ) ) {
 
 
-    $licznik['thick']=$_POST['thick'][$i];
-    $licznik['thick-active-low']=$_POST['thick-active-low'][$i];
-    $licznik['thick-detect-direction']=$_POST['thick-detect-direction'][$i];
-    $licznik['enab']=$_POST['enab'][$i];
-    $licznik['enab-time']=$_POST['enab-time'][$i];
-    $licznik['enab-active-low']=$_POST['enab-active-low'][$i];
+  $licznik['name']=$_POST['name'];
+  $licznik['enabled']=$_POST['enabled'];
+  $licznik['slave']=$_POST['slave'];
+  $licznik['slave-mode']=$_POST['slave-mode'];
+  $licznik['slave-engage']=$_POST['slave-engage'];
+  $licznik['slave-release']=$_POST['slave-release'];
+  $licznik['slave-reversed']=$_POST['slave-reversed'];
+  $licznik['master']=$_POST['master'];
+  $licznik['master-engage']=$_POST['master-engage'];
+  $licznik['master-release']= $_POST['master-release'];
+  $licznik['master-reversed']=$_POST['master-reversed'];
+  $licznik['stop']= $_POST['stop'];
+  $licznik['stop-engage']= $_POST['stop-engage'];
+  $licznik['stop-release']= $_POST['stop-release'];
+  $licznik['stop-reversed']=$_POST['stop-reversed'];
 
-
-    $liczniki[$i]=$licznik;
+  if( substr( $_POST['sect'], 0, 7 )== 'counter' ) {
+    $icdtcp->liczniki_ustaw( $_POST['sect'], $licznik );
+    $info='<h4>Zmodyfikowano konfigurację</h4>';
+  }  else {
+    $info='';
   }
-  $icdtcp->liczniki_ustaw($liczniki);
+} else if( isset( $_POST['master-counter_id'] ) ) {
+
+  foreach( $_POST['master-counter_id'] as $sect=>$id ) {
+    $ledy[$sect]['master-counter_id']=$id;
+  }
+  $icdtcp->ledy_ustaw( $ledy );
   $info='<h4>Zmodyfikowano konfigurację</h4>';
+
 } else {
   $info='';
 }
 $liczniki=$icdtcp->liczniki_pobierz();
+$ledy=$icdtcp->ledy_pobierz();
 
-print_r($liczniki);
+
 
 
 $tresc='<div id="tresc">
-  <h3>Ustawienia licznika</h3>
+  <h3>Ustawienia licznika &nbsp; &nbsp; &nbsp; 
+  <input type="button" value="Test fotokomórek" onclick="window.open('."'".'popup.php?typ=test'."'".')"></h3>
   '.$info;
+
+
 
 function boolForm( $sect, $name, $label, $state, $yes, $no ) {
   $ret='<label for="'.$name.'_'.$sect.'">'.$label.' </label>
@@ -57,6 +69,24 @@ function boolForm( $sect, $name, $label, $state, $yes, $no ) {
     </select>';
   return $ret;
 }
+function selectForm( $sect, $name, $label, $selected, $options_array ) {
+  $ret='<label for="'.$name.'_'.$sect.'">'.$label.' </label>
+    <select name="'.$name.'" id="'.$name.'_'.$sect.'">
+    ';
+  foreach( $options_array as $opt_val=>$opt_label ) {
+    $ret.='<option';
+    if( $opt_val == $selected ) {
+      $ret.=' selected="selected"';
+    }
+    $ret.=' value="'.$opt_val.'">'.$opt_label.'</option>
+      ';
+  }
+  $ret.='
+    </select>';
+  return $ret;
+}
+
+
 function textForm( $sect, $name, $label, $value ) {
   return '<label for="'.$name.'_'.$sect.'">'.$label.' </label>
     <input type="text" id="'.$name.'_'.$sect.'" name="'.$name.'" value="'.$value.'">';
@@ -64,12 +94,14 @@ function textForm( $sect, $name, $label, $value ) {
 
 
 foreach( $liczniki as $sect=>$licznik ) {
+  $liczniki_led_lista[$licznik['counter_id']]='Licz.: '.$licznik['counter_id'].' - '.$licznik['name'];
 
   $tresc.='<form action="./?strona=licznik" method="POST">
     <input type="hidden" value="'.$sect.'" name="sect">';
 
   $tresc.='<table class="liczniki">
     <tr><td class="liczniki_tab liczniki_top" colspan="3">Id licznika: '.$licznik['counter_id'].'
+    <input type="submit" value="Modyfikuj"></td>
     <tr><td class="liczniki_tab" colspan="2">';
   $tresc.='<table>
     <tr><td>'
@@ -82,10 +114,10 @@ foreach( $liczniki as $sect=>$licznik ) {
   $tresc.='</td><td class="liczniki_tab" rowspan="2">';
   $tresc.='<table>
     <tr><td>'
-    .textForm( $sect, 'slave', 'Wejście dodatkowe:', $licznik['slave'] ).
+    .selectForm( $sect, 'slave', 'Wejście dodatkowe:', $licznik['slave'], $icdtcp->urzadzenia ).
     '</td></tr>
     <tr><td>'
-    .textForm( $sect, 'slave-mode', 'TODO tryb pracy:', $licznik['slave-mode'] ).
+    .selectForm( $sect, 'slave-mode', 'Tryb pracy:', $licznik['slave-mode'], $icdtcp->tryby_licznika ).
     '</td></tr>
     <tr><td>'
     .textForm( $sect, 'slave-engage', 'Czas narastania:', $licznik['slave-engage'] ).
@@ -100,7 +132,7 @@ foreach( $liczniki as $sect=>$licznik ) {
   $tresc.='</td></tr><tr><td class="liczniki_tab">';
   $tresc.='<table>
     <tr><td>'
-    .textForm( $sect, 'master', 'Wejście główne:', $licznik['master'] ).
+    .selectForm( $sect, 'master', 'Wejście główne:', $licznik['master'], $icdtcp->urzadzenia ).
     '</td></tr>
     <tr><td>'
     .textForm( $sect, 'master-engage', 'Czas narastania:', $licznik['master-engage'] ).
@@ -115,7 +147,7 @@ foreach( $liczniki as $sect=>$licznik ) {
   $tresc.='</td><td class="liczniki_tab">';
   $tresc.='<table>
     <tr><td>'
-    .textForm( $sect, 'stop', 'Wyłącznik czasowy:', $licznik['stop'] ).
+    .selectForm( $sect, 'stop', 'Wyłącznik czasowy:', $licznik['stop'], $icdtcp->urzadzenia ).
     '</td></tr>
     <tr><td>'
     .textForm( $sect, 'stop-engage', 'Czas narastania:', $licznik['stop-engage'] ).
@@ -131,162 +163,25 @@ foreach( $liczniki as $sect=>$licznik ) {
     </table>';
 
   $tresc.='</form><br><br>';
-
 }
 
+$tresc.='<form action="./?strona=licznik" method="POST">
+  <table><tr class="liczniki_tab">
+  <td class="liczniki_tab">Konfiguracja diod 
+  <input type="submit" value="Modyfikuj">';
 
 
-
-/*
-for( $i=0; $i<4; ++$i ) {
-  $tresc.='<td>'.chr(ord('A')+$i).'</td>';
+foreach( $ledy as $led=>$params ) {
+  $tresc.='<tr class="liczniki_tab"><td class="liczniki_tab">'
+    .selectForm( $led, 'master-counter_id['.$led.']', 'Led '.chr($led[3]+ord('A')).':', $params['master-counter_id'], $liczniki_led_lista ).
+    '</td></tr>';
 }
-$tresc.='</tr><tr><th>Nazwa</th>
-  ';
-for( $i=0; $i<4; ++$i ) {
-  $tresc.='<td><input type="text" name="name['.$i.']" id="name'
-    .$i.'" value="'.$licznik['name'][$i].'"></td>';
-}
-$tresc.='</tr>
-  <tr><th>Włączona</th>';
-for( $i=0; $i<4; ++$i ) {
-  $tresc.='<td><input type="checkbox" name="enabled['.$i.']" id="enabled'.$i.'"';
-  if( $licznik['enabled'][$i]=='yes' ) {
-    $tresc.=' checked="checked"';
-  }
-  $tresc.='></td>';
-}
-$tresc.='</tr>
-  <tr><th>Czas zwłoki</th>';
-for( $i=0; $i<4; ++$i ) {
-  $tresc.='<td><input type="text" name="dev-engage['.$i.']"
-    id="dev-engage'.$i.'" value="'.$licznik['dev-engage'][$i].'"></td>';
-}
-$tresc.='</tr>
-  <tr><th>Czas opóźnienia</th>';
-for( $i=0; $i<4; ++$i ) {
-    $tresc.='<td><input type="text" name="dev-release['.$i.']"
-      id="dev-release'.$i.'" value="'.$licznik['dev-release'][$i].'"></td>';
-}
-$tresc.='</tr>
-  <tr><th>Stan aktywny</th>';
-for( $i=0; $i<4; ++$i ) {
-      $tresc.='<td>
-    <select name="dev-active-low['.$i.']">';
-  if( $licznik['dev-active-low'][$i]=='yes' ) {
-    $tresc.='<option selected="selected" value="yes">Niski</option>
-      <option value="no">Wysoki</option>';
-  } else {
-    $tresc.='<option value="yes">Niski</option>
-      <option selected="selected" value="no">Wysoki</option>';
-  }
-
-  $tresc.='</select>
-    </td>';
-}
-$tresc.='</tr>';
+  $tresc.='</table></form>';
 
 
-$tresc.='<tr><th>Wyłącznik czasowy</th>';
-for( $i=0; $i<4; ++$i ) {
-        $tresc.='<td><select name="enab['.$i.']" id="enab'.$i.'">';
-  foreach( $icdtcp->urzadzenia as $wart=>$opis ) {
-    $tresc.='<option';
-    if( $wart==$licznik['enab'][$i] ) {
-      $tresc.=' selected="selected"';
-    }
-    $tresc.=' value="'.$wart.'">'.$opis.'</option>';
-  }
-  $tresc.='</select>
-    </td>';
-}
-$tresc.='</tr>
-  <tr><th>Czas wyłącznika</th>';
-for( $i=0; $i<4; ++$i ) {
-          $tresc.='<td>
-  <input type="text" name="enab-time['.$i.']"
-      id="enab-time'.$i.'" value="'.$licznik['enab-time'][$i].'">
-
-      </td>';
-}
-$tresc.='</tr>
-  <tr><th>Stan aktywny wyłącznika</th>';
-for( $i=0; $i<4; ++$i ) {
-            $tresc.='<td>
-  <select name="enab-active-low['.$i.']">';
-  if( $licznik['enab-active-low'][$i]=='yes' ) {
-    $tresc.='<option selected="selected" value="yes">Niski</option>
-      <option value="no">Wysoki</option>';
-  } else {
-    $tresc.='<option value="yes">Niski</option>
-      <option selected="selected" value="no">Wysoki</option>';
-  }
-
-  $tresc.='</select>
-    </td>';
-}
-$tresc.='</tr>
-  <tr><th>Wykrywanie grubości</th>';
-for( $i=0; $i<4; ++$i ) {
-              $tresc.='<td><select name="thick['.$i.']" id="thick'.$i.'">';
-  foreach( $icdtcp->urzadzenia as $wart=>$opis ) {
-    $tresc.='<option';
-    if( $wart==$licznik['thick'][$i] ) {
-      $tresc.=' selected="selected"';
-    }
-    $tresc.=' value="'.$wart.'">'.$opis.'</option>';
-  }
-  $tresc.='</select>
-    </td>';
-}
-$tresc.='</tr>
-  <tr><th>i kierunku</th>
-  ';
-for( $i=0; $i<4; ++$i ) {
-              $tresc.='<td>
-  <select name="thick-detect-direction['.$i.']">';
-  if( $licznik['thick-detect-direction'][$i]=='yes' ) {
-    $tresc.='<option selected="selected" value="yes">Grubość i kierunek</option>
-      <option value="no">Grubość</option>';
-  } else {
-    $tresc.='<option value="yes">Grubość i kierunek</option>
-      <option selected="selected" value="no">Grubość</option>';
-  }
-  $tresc.='</select>
-
-    </td>';
-}
-$tresc.='</tr>
-  <tr><th>Stan aktywny wykrywania</th>';
-for( $i=0; $i<4; ++$i ) {
-                $tresc.='<td>
-  <select name="thick-active-low['.$i.']">';
-  if( $licznik['thick-active-low'][$i]=='yes' ) {
-    $tresc.='<option selected="selected" value="yes">Niski</option>
-      <option value="no">Wysoki</option>';
-  } else {
-    $tresc.='<option value="yes">Niski</option>
-      <option selected="selected" value="no">Wysoki</option>';
-  }
-  $tresc.='</select>
-    </td>';
-}
-$tresc.='</tr>';
 
 
-$tresc.='</table><br><br>';
 
-$tresc.='
-  </table>
-  <br>
-  <input type="submit" value="Ustaw">
-  <input type="reset" value="Anuluj">
-
-  <input type="button" value="Test fotokomórek" onclick="window.open('."'".'popup.php?typ=test'."'".')">
-
-  </form>
-
- */
 $tresc.='</div>';
 
 

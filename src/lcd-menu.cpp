@@ -565,7 +565,7 @@ int CmenuDbParamList::enter(Clcd *lcd) {
           break;
         case CdbParam::editInt:
           _tmpi[0]=atoi( (globalConfig->entry( _list[_active]._sect,
-                                  _list[_active]._key)).c_str() );
+                  _list[_active]._key)).c_str() );
           _tmpp=8;
           break;
         case CdbParam::editIp:
@@ -671,7 +671,7 @@ void CmenuAppParamList::screen(Clcd *lcd) {
       pclose( cmd_out );
       _check=5;
     } else {
-       --_check;
+      --_check;
     }
 
     lcd->_lcd[0]=_list[_active]._name;
@@ -686,7 +686,7 @@ void CmenuAppParamList::screen(Clcd *lcd) {
       int ktora=std::floor( _lastPos/16 )+1;
 
       lcd->_cur._x=(( ktora*16 ) / ilCzesci)-1;
-        
+
       lcd->_cur._y=1;
       lcd->_cur._car=Ccur::line;
 
@@ -779,6 +779,14 @@ CmenuContainerNoRoot::~CmenuContainerNoRoot() {
       --(_fast[i]->refCnt);
     }
   }
+  for( i=0; i<_fast.size(); ++i ) {
+    if( _fast[i]->refCnt == 1 ) {
+      delete _fast[i];
+    } else {
+      --(_fast[i]->refCnt);
+    }
+  }
+  clearCounters();
 }
 
 
@@ -787,6 +795,28 @@ int CmenuContainerNoRoot::fastAdd(CmenuItem* item) {
   ++(item->refCnt);
   return _fast.size()-1;
 }
+
+int CmenuContainerNoRoot::counterAdd(CmenuItem* item) {
+  _counters.push_back(item);
+  ++(item->refCnt);
+  _active=-1;
+  _counterActive=0;
+  return _counters.size()-1;
+}
+
+void CmenuContainerNoRoot::clearCounters() {
+  unsigned int i;
+  for( i=0; i<_counters.size(); ++i ) {
+    if( _counters[i]->refCnt == 1 ) {
+      delete _counters[i];
+    } else {
+      --(_counters[i]->refCnt);
+    }
+  }
+  _counters.clear();
+}
+
+
 int CmenuContainerNoRoot::fastGoto(int nr) {
   this->fullEsc();
   if( nr>=0 && nr<_fast.size() ) {
@@ -799,16 +829,32 @@ int CmenuContainerNoRoot::up(Clcd *lcd) {
       _fastActive=-1;
       this->screen(lcd);
     }
-  } else if( _in ) {
+  } else if( _in ) {//in menu
     if( _menu->up(lcd) ) {
       _in=false;
-      _active=0;
+      if( _counters.size()>0 ) {//return to counters list
+        _active=-1;
+        _counterActive=0;
+      } else {//return to normal list
+        _active=0;
+      }
       this->screen(lcd);
     }
-  } else {
-    if( _active==0) {
-      _active=_list.size()-1;
-    } else {
+  } else {//in lists
+    if( _active==0) {//up end of list
+      if( _counters.size()>0 ) {//goto counters last
+        _active=-1;
+        _counterActive=_counters.size()-1;
+      } else {// no counters, goto list last
+        _active=_list.size()-1;
+      }
+    } else if( _active==-1 ) {//in counters
+      if( _counterActive==0 ) {//end of counters, goto last list 
+        _active=_list.size()-1;
+      } else {//--counters
+        --_counterActive;
+      }
+    } else {// --list
       --_active;
     }
     this->screen(lcd);
@@ -822,16 +868,32 @@ int CmenuContainerNoRoot::down(Clcd *lcd) {
       _fastActive=-1;
       this->screen(lcd);
     }
-  } else if( _in ) {
-    if( _menu->down(lcd) ) {
+  } else if( _in ) {//in menu
+    if( _menu->up(lcd) ) {
       _in=false;
-      _active=0;
+      if( _counters.size()>0 ) {//return to counters list
+        _active=-1;
+        _counterActive=0;
+      } else {//return to normal list
+        _active=0;
+      }
       this->screen(lcd);
     }
-  } else {
-    if( _active==((int)_list.size())-1 ) {
-      _active=0;
-    } else {
+  } else {//in lists
+    if( _active==((int)_list.size())-1 ) {//down end of list
+      if( _counters.size()>0 ) {//goto counters last
+        _active=-1;
+        _counterActive=0;//_counters.size()-1;
+      } else {// no counters, goto list first
+        _active=0;//_list.size()-1;
+      }
+    } else if( _active==-1 ) {//in counters
+      if( _counterActive==((int)_counters.size())-1 ) {//end of counters, goto last list 
+        _active=_list.size()-1;
+      } else {//++counters
+        ++_counterActive;
+      }
+    } else {// ++list
       ++_active;
     }
     this->screen(lcd);
@@ -847,7 +909,12 @@ void CmenuContainerNoRoot::fullEsc() {
     _menu->fullEsc();
   }
   _in=false;
-  _active=0;
+  if( _counters.size()>0 ) {
+    _counterActive=0;
+    _active=-1;
+  } else {
+    _active=0;
+  }
 }
 
 int CmenuContainerNoRoot::left(Clcd *lcd) {
@@ -859,7 +926,13 @@ int CmenuContainerNoRoot::left(Clcd *lcd) {
   } else if( _in ) {
     if( _menu->left(lcd) ) {
       _in=false;
-      _active=0;
+
+      if( _counters.size()>0 ) {
+        _counterActive=0;
+        _active=-1;
+      } else {
+        _active=0;
+      }
       this->screen(lcd);
     }
   } else {
@@ -877,7 +950,12 @@ int CmenuContainerNoRoot::right(Clcd *lcd) {
   } else if( _in ) {
     if( _menu->right(lcd) ) {
       _in=false;
-      _active=0;
+      if( _counters.size()>0 ) {
+        _counterActive=0;
+        _active=-1;
+      } else {
+        _active=0;
+      }
       this->screen(lcd);
     }
   } else {
@@ -896,7 +974,12 @@ int CmenuContainerNoRoot::enter(Clcd *lcd) {
   } else if( _in ) {
     if( _menu->enter(lcd) ) {
       _in=false;
-      _active=0;
+      if( _counters.size()>0 ) {
+        _counterActive=0;
+        _active=-1;
+      } else {
+        _active=0;
+      }
       this->screen(lcd);
     }
   } else {
@@ -915,7 +998,12 @@ int CmenuContainerNoRoot::esc(Clcd *lcd) {
   } else if( _in ) {
     if( _menu->esc(lcd) ) {
       _in=false;
-      _active=0;
+      if( _counters.size()>0 ) {
+        _counterActive=0;
+        _active=-1;
+      } else {
+        _active=0;
+      }
       this->screen(lcd);
     }
   } else {
@@ -930,13 +1018,17 @@ void CmenuContainerNoRoot::screen(Clcd *lcd) {
   } else if( _in ) {
     _menu->screen(lcd);
   } else {
-    _list[_active]->screen(lcd);
+    if( _active==-1 ) {
+      _counters[_counterActive]->screen(lcd);
+    } else {
+      _list[_active]->screen(lcd);
+    }
   }
 }
 
 //////////////////////////////////////////////////////
 CmenuTypeText::CmenuTypeText(): CmenuItem("") {
-         //0123456789012
+  //0123456789012
   _tab[0]="ABCDEFGHIJKLM";
   _tab[1]="NOPQRSTUVWXYZ";
   _tab[2]="abcdefghijklm";
@@ -947,7 +1039,7 @@ CmenuTypeText::CmenuTypeText(): CmenuItem("") {
   _ty=2;
   _ln=0;
 }
- 
+
 CmenuTypeText::~CmenuTypeText() {
 }
 

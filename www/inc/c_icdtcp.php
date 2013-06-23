@@ -57,6 +57,12 @@ class c_icdtcp {
       '/dev/itd2'=>'C',
       '/dev/itd3'=>'D',
       ''=>'Brak' );
+    $this->tryby_licznika=array( 'single'=>'Pojedynczy',
+      'direction'=>'Wyk. kierunku',
+      'thickness'=>'Wyk. długich obiektów',
+      'nothick'=>'Wyk. krótkich obiektów' );
+
+
 
 
     foreach( file("/etc/profile.d/icd.sh", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $tmp ) {
@@ -275,16 +281,46 @@ class c_icdtcp {
     }
     return $liczniki;
   }
-
-  function liczniki_ustaw($nowe) {
+  function liczniki_ustaw($sect, $nowy) {
 
     $sql="BEGIN TRANSACTION";
     $ans=$this->configDb->query($sql);
 
-    for( $i=0; $i<$this->il_foto; ++$i ) {
-      foreach( $nowe[$i] as $pole=>$wart ) {
+    foreach( $nowy as $pole=>$wart ) {
+      $sql="UPDATE config SET `value`=".$this->configDb->quote($wart)."
+        WHERE section_id=(SELECT `id` FROM config_section WHERE name="
+        .$this->configDb->quote($sect).")
+        AND `key`=".$this->configDb->quote($pole);
+      $this->configDb->query($sql);
+    }
+    $sql="COMMIT TRANSACTION";
+    $ans=$this->configDb->query($sql);
+  }
+
+  function ledy_pobierz() {
+
+    $sql="SELECT `name`, `key`, `value` FROM config_section cs LEFT JOIN config c on cs.id=c.section_id
+      WHERE cs.name LIKE 'led%' ";
+
+    $ans=$this->configDb->query($sql);
+    $ans->setFetchMode(PDO::FETCH_ASSOC);
+
+    foreach( $ans as $row ) {
+      $liczniki[$row['name']][$row['key']]=$row['value'];
+    }
+    return $liczniki;
+  }
+
+  function ledy_ustaw($tab) {
+
+    $sql="BEGIN TRANSACTION";
+    $ans=$this->configDb->query($sql);
+    foreach( $tab as $sect=>$nowy ) {
+
+      foreach( $nowy as $pole=>$wart ) {
         $sql="UPDATE config SET `value`=".$this->configDb->quote($wart)."
-          WHERE section_id=(SELECT `id` FROM config_section WHERE name='counter$i')
+          WHERE section_id=(SELECT `id` FROM config_section WHERE name="
+          .$this->configDb->quote($sect).")
           AND `key`=".$this->configDb->quote($pole);
         $this->configDb->query($sql);
       }
@@ -559,7 +595,7 @@ class c_icdtcp {
 
     $sql='UPDATE flow SET flags = -2 WHERE flags > 0 AND dtm >= '.$od.' AND dtm < '.$do;
     $this->dataDb->query($sql);
-    
+
     return 'Oznaczono dane z przedziału od '.date( 'Y-m-d H:i:s', $od ).' do '.date( 'Y-m-d H:i:s', ($do-1) );
   }
 }
