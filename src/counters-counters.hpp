@@ -134,6 +134,8 @@ class CcounterThick: public Ccounter {
   protected:
     int slaveId_;
 
+    Ctime begin_time_;
+    Ctime begin_work_;
     Ctime engage_master_;
     Ctime engage_slave_;
     Ctime release_master_;
