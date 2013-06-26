@@ -70,17 +70,24 @@ bool Ctime::operator==( const Ctime& b ) const {
   }
 }
 
-Cevent::Cevent( int sec_, int usec_, int value_ ): time( sec_, usec_ ), value(value_) {
+Cevent::Cevent( int sec_, int usec_, EeventVal value_ ): time( sec_, usec_ ), value(value_) {
 }
 
-Cevent::Cevent( Ctime time_, int value_ ): time(time_), value(value_) {
+Cevent::Cevent( Ctime time_, EeventVal value_ ): time(time_), value(value_) {
 }
 Cevent::Cevent( const char * buf ): time(0,0) {
-  if( sscanf( buf, "%d %d %d", &time.sec, &time.usec, &value )!=3 ) {
+  int tmp;
+  if( sscanf( buf, "%d %d %d", &time.sec, &time.usec, &tmp )==3 ) {
+    if( tmp==0 ) {
+      value=LIGHT;
+    } else {
+      value=DARK;
+    }
+  } else {
     //wrong event, set EMPTY
     time.sec=INT_MIN;
     time.usec=0;
-    value=INT_MIN;
+    value=ERROR;
   }
 }
 
@@ -96,7 +103,7 @@ bool Cevent::operator!=( const Cevent & b ) const {
 }
 
 Cevent Cevent::EMPTY() {
-  Cevent empty(INT_MIN, 0, INT_MIN);
+  Cevent empty(INT_MIN, 0, ERROR);
   return empty;
 }
 
@@ -292,10 +299,10 @@ const Cevent CdevicesReader::getEvent( int devId, Econstants reverse ) {
   if( events_.count( devId ) > 0 ) {
     Cevent ev=events_[devId];
     if( reverse==REVERSE ) {
-      if( ev.value==1 ) {
-        ev.value=0;
+      if( ev.value==DARK ) {
+        ev.value=LIGHT;
       } else {
-        ev.value=1;
+        ev.value=DARK;
       }
     }
     return ev;

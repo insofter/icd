@@ -44,7 +44,7 @@ void Ccounter::ledOff_() {
 
 CcounterMono::CcounterMono( int id, int master, const Ctime beginTime, const Ctime engage, const Ctime release, Econstants reverse ): 
   Ccounter( id, master, beginTime ), engage_(engage), release_(release), state_(LOW), reverse_(reverse),
-  last_( beginTime, 0 ), dark_(0, 0), work_(0, 0)
+  last_( beginTime, LIGHT ), dark_(0, 0), work_(0, 0)
 { 0; //NOOP
 }
 
@@ -78,7 +78,7 @@ CcounterVal CcounterMono::getCount( const Ctime time, Econstants reset ) {
 
   } else {//new event
     if( ev.value!=last_.value ) {//duplicated are ignored (ex. high to high)
-      if( ev.value==0 ) {//change to CONDLOW
+      if( ev.value==LIGHT ) {//change to CONDLOW
 
         if( state_==CONDHIGH ) {
           if( last_.time + engage_ < ev.time ) {//time passed and count is correct before event
@@ -141,11 +141,10 @@ CcounterThick::CcounterThick(
   release_master_( release_master ), release_slave_( release_slave ),
   state_( LOW ),  state_master_ ( LOW ) , state_slave_( LOW ),
   reverse_master_( reverse_master ), reverse_slave_( reverse_slave ),
-  last_slave_( beginTime, 0 ), last_master_( beginTime, 0 ),
+  last_slave_( beginTime, LIGHT ), last_master_( beginTime, LIGHT ),
   dark_( 0, 0 ), work_( 0, 0 ) 
 {
-  0;
-  //NOOP
+  0; //NOOP
 }
 
 CcounterThick::~CcounterThick() {
@@ -223,7 +222,7 @@ CcounterVal CcounterThick:: getCount( const Ctime time, Econstants reset ) {
     if( last_master_.value != ev_master.value ) { //check if master has changed; duplicete -- ignore
       std::cout << "new event: change master" << std::endl;
     
-      if( ev_master.value==0 ){// event to change master to CONDLOW
+      if( ev_master.value==LIGHT ){// event to change master to CONDLOW
        
         if( state_master_ == CONDLOW ) {//cond & new evernt - unproper
           std::cout << "== state master high" << std::endl;
@@ -263,7 +262,7 @@ CcounterVal CcounterThick:: getCount( const Ctime time, Econstants reset ) {
     if( last_slave_.value != ev_slave.value ) { //check if slave has changed; duplicete -- ignore
       std::cout << "new event: change slave" << std::endl;
      
-      if( ev_slave.value==0 ){//event to change slave to CONDLOW
+      if( ev_slave.value==LIGHT ){//event to change slave to CONDLOW
      
         if( state_slave_ == CONDLOW ) {//cond & new evernt - unproper
           std::cout << "== state slave high" << std::endl;

@@ -31,6 +31,11 @@ enum Econstants {
   REVERSE,
 };
 
+enum EeventVal {
+  ERROR=INT_MIN,
+  LIGHT=0,
+  DARK=1,
+};
 
 struct Ctime {
   enum constants {
@@ -59,9 +64,10 @@ struct Ctime {
 
 struct Cevent {
   Ctime time;
-  int value;
-  Cevent( int sec_=INT_MIN, int usec_=0, int value_=INT_MIN );
-  Cevent( Ctime time_, int value_ );
+  EeventVal value;
+//  int value_old;
+  Cevent( int sec_=INT_MIN, int usec_=0, EeventVal value_=ERROR );
+  Cevent( Ctime time_, EeventVal value_ );
   Cevent( const char * buf );
   bool operator==( const Cevent & b ) const;
   bool operator!=( const Cevent & b ) const;
