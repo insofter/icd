@@ -33,15 +33,15 @@ enum Econstants {
 
 enum EeventVal {
   ERROR=INT_MIN,
-  LIGHT=0,
-  DARK=1,
+  LIGHT=1,
+  DARK=0,
 };
 
 struct Ctime {
   enum constants {
     NUMBER_USECS=1000*1000,
   };
-  int sec;
+  long sec;
   int usec;
   /**
    * Constructor.
@@ -115,7 +115,7 @@ class CdbWriter {
      * Writes record to db.
      */
     void write( int counterId, Ctime dtm, int cnt, Ctime dark,
-        Ctime work, int test );
+        Ctime work, int test, int flags );
     /**
      * Makes new aggregation period.
      */

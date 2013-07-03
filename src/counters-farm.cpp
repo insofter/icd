@@ -28,6 +28,8 @@ int CcountersFarm::run( Ctime period ) {
   CdbWriter writer;
   Ctime current;
 
+  std::cout << "New aggr: " << ctime( &current.sec ) << std::endl;
+
   Ctime wait( 0, 200 );
   int r;
   while( 1==1 ) {
@@ -45,16 +47,17 @@ int CcountersFarm::run( Ctime period ) {
 
     for( int i=0; i< counters_.size(); ++i ) {
       CcounterVal cv=counters_[i]->getCount( Ctime() );
-      writer.write( cv.id, current.sec, cv.val, cv.dark, cv.work, 3 );
+      writer.write( cv.id, current.sec, cv.val, cv.dark, cv.work, -1, 3 );
     }
-    if( current < newtime ) {//all records were closed
+    if( current < newtime ) {//all records should be closed
       writer.closeRecords();
       current=newtime;
+      std::cout << "New aggr: " << ctime( &current.sec ) << std::endl;
     }
 
     writer.commitTransaction();
   } // while( 1==1 )
-
+}
 
 
       /*debug*/
@@ -81,4 +84,3 @@ int CcountersFarm::run( Ctime period ) {
 
 
     //TODO: check if db is modified and return
-}

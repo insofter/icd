@@ -116,11 +116,9 @@ class CcounterThick: public Ccounter {
      * \param [in] slave -- slave device id
      */
     CcounterThick( 
-        int id, int master, int slave,
-        const Ctime beginTime,
-        const Ctime engage_master, const Ctime engage_slave,
-        const Ctime release_master,  const Ctime release_slave,
-        Econstants reverse_master=NORMAL, Econstants reverse_slave=NORMAL
+        int id, const Ctime beginTime,
+        int master, const Ctime engage_master, const Ctime release_master, Econstants reverse_master,
+        int slave,  const Ctime engage_slave,  const Ctime release_slave,  Econstants reverse_slave
         );
 
     /*! 

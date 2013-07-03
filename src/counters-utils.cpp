@@ -82,9 +82,9 @@ Cevent::Cevent( const char * buf ): time(0,0) {
   int tmp;
   if( sscanf( buf, "%d %d %d", &time.sec, &time.usec, &tmp )==3 ) {
     if( tmp==0 ) {
-      value=LIGHT;
-    } else {
       value=DARK;
+    } else {
+      value=LIGHT;
     }
   } else {
     //wrong event, set EMPTY
@@ -158,10 +158,10 @@ CdbWriter::CdbWriter() {
 
 
   insert_->prepare( "INSERT INTO flow (counter_id, dtm, cnt, dark_time, work_time, test, flags)"
-            " VALUES (?1, ?2, ?3, ?4, ?5, ?6, 3)" );
+            " VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)" );
 
   update_->prepare( "UPDATE flow SET cnt = ?3, dark_time = ?4,"
-      " work_time = ?5, test = ?6 WHERE counter_id = ?1 AND dtm = ?2" );
+      " work_time = ?5, test = ?6, flags = ?7 WHERE counter_id = ?1 AND dtm = ?2" );
 
   close_->prepare( "UPDATE flow SET flags = 2 WHERE flags = 3" ); 
 
@@ -184,7 +184,7 @@ CdbWriter::~CdbWriter() {
 }
 
 
-void CdbWriter::write( int counterId, Ctime dtm, int cnt, Ctime dark, Ctime work, int test ) {
+void CdbWriter::write( int counterId, Ctime dtm, int cnt, Ctime dark, Ctime work, int test, int flags ) {
   select_->bind_int( 1, counterId );
   select_->bind_int( 2, dtm.sec );
   if( select_->step() == SQLITE_ROW ) {//update
@@ -194,6 +194,7 @@ void CdbWriter::write( int counterId, Ctime dtm, int cnt, Ctime dark, Ctime work
     update_->bind_int( 4, dark.msec() );//dark_time
     update_->bind_int( 5, work.msec() );//work_time
     update_->bind_int( 6, test );//test
+    update_->bind_int( 7, flags );//flags
     update_->step();
     update_->reset();
   } else { //insert
@@ -203,6 +204,7 @@ void CdbWriter::write( int counterId, Ctime dtm, int cnt, Ctime dark, Ctime work
     insert_->bind_int( 4, dark.msec() );//dark_time
     insert_->bind_int( 5, work.msec() );//work_time
     insert_->bind_int( 6, test );//test
+    insert_->bind_int( 7, flags );//flags
     insert_->step();
     insert_->reset();
   }

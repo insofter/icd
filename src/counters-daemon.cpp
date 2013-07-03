@@ -134,12 +134,42 @@ MIN:
       if( slave_mode.compare( "single" )==0 ) {
         counter=new CcounterMono( counter_id, master_id , start, master_engage, master_release, master_reversed );
         std::cout << "CcounterMono id=" << counter_id << ", master=" <<  master_id << std::endl;
-      } else if( slave_mode.compare( "thickness" )==0 ) {
+      } else {//multicounters
 
-        std::cout << "CcounterThick id=" << counter_id << ", master=" <<  master_id << std::endl;
-        //farm.addCounter( new CcounterThick( 2, 0, 1, Ctime(), Ctime( 2, 0 ), Ctime( 2, 0 ), Ctime( 2, 0 ), Ctime( 2, 0 ) ) );
+        std::string slave=globalConfig->entry( counters[i], "slave" );
 
+        int slave_id=-1;//management of devices
+        for( int j=0; j<devices.size(); ++j ) {
+          if( devices[j].compare( slave )==0 ) {
+            slave_id==j;
+            break;
+          }
+        }
+        if( slave_id==-1 ) {
+          slave_id=devices.size();
+          devices.push_back( slave );
+        }//management of devices
 
+        Ctime slave_engage( 0, (globalConfig->entry_long( counters[i], "slave-engage" )*1000) );
+
+        Ctime slave_release( 0, (globalConfig->entry_long( counters[i], "slave-release" )*1000) );
+
+        Econstants slave_reversed=NORMAL;
+        if( globalConfig->entry_bool( counters[i], "slave-reversed" ) ) {
+          slave_reversed=REVERSE;
+        }
+
+        if( slave_mode.compare( "thickness" )==0 ) {
+
+          counter=new CcounterThick( counter_id, start, 
+              master_id, master_engage, master_release, master_reversed,
+              slave_id, slave_engage, slave_release, slave_reversed );
+          std::cout << "CcounterThick id=" << counter_id << ", master=" <<  master_id << " slave=" << slave_id << std::endl;
+
+        } else if( slave_mode.compare( "direction" )==0 ) {
+          //tromba!
+          //TODO:
+        }
       }
 
       std::string stop=globalConfig->entry( counters[i], "stop" );
@@ -147,7 +177,7 @@ MIN:
 
       farm.addCounter( counter );
     }// if enabled
-  }
+  }//for counters
   for( int i=0; i< devices.size(); ++i ) {
     farm.addDevice( devices[i], i );
   }

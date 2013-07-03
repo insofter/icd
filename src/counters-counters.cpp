@@ -130,13 +130,10 @@ CcounterVal CcounterMono::getCount( const Ctime time, Econstants reset ) {
 
 
 CcounterThick::CcounterThick( 
-    int id, int master, int slave, 
-    const Ctime beginTime, 
-    const Ctime engage_master, const Ctime engage_slave, 
-    const Ctime release_master, const Ctime release_slave, 
-    Econstants reverse_master, Econstants reverse_slave
-    ) 
-:
+    int id, const Ctime beginTime,
+    int master, const Ctime engage_master, const Ctime release_master, Econstants reverse_master,
+    int slave,  const Ctime engage_slave,  const Ctime release_slave,  Econstants reverse_slave
+    ):
   Ccounter( id,  master, beginTime ), 
   slaveId_( slave ), 
   begin_time_( beginTime ), begin_work_(0 ,0 ),
@@ -157,7 +154,7 @@ CcounterThick::~CcounterThick() {
 CcounterVal CcounterThick:: getCount( const Ctime time, Econstants reset ) {
   CcounterVal ret;
 
-  std::cout << "================================" <<std::endl;
+//  std::cout << "================================" <<std::endl;
 
   Cevent ev_master = reader_->getEvent( masterId_ );
   if( ev_master == Cevent::EMPTY() ) {// if no event -- take last value
@@ -173,14 +170,14 @@ CcounterVal CcounterThick:: getCount( const Ctime time, Econstants reset ) {
   if( state_master_==CONDHIGH ) {
     if( last_master_.time + engage_master_ < time ) {
       state_master_=HIGH;
-      std::cout << "<<< state master high" <<std::endl;
-    //  dark_ = dark_ + ev_master.time - last_master_.time;
+//      std::cout << "<<< state master high" <<std::endl;
+      //  dark_ = dark_ + ev_master.time - last_master_.time;
     } // if master havent reached -> keep calm and no action
   }
   if( state_master_==CONDLOW) {
     if( last_master_.time + release_master_ < time ) {
       state_master_=LOW;
-      std::cout << ">>state  master low" << std::endl;
+//      std::cout << ">>state  master low" << std::endl;
       //dark_ = dark_ + ev_master.time - last_master_.time;
     } // if master havent reached -> keep calm and no action
   }
@@ -189,13 +186,13 @@ CcounterVal CcounterThick:: getCount( const Ctime time, Econstants reset ) {
   if( state_slave_==CONDHIGH ) {
     if( last_slave_.time + engage_slave_ < time ) {
       state_slave_=HIGH;
-      std::cout << "<<< state slave high" <<std::endl;
+//      std::cout << "<<< state slave high" <<std::endl;
     } // if slave havent reached -> keep calm and no action
   }
   if( state_slave_==CONDLOW ) {
     if( last_slave_.time + release_slave_ < time ) {
       state_slave_=LOW;
-      std::cout << "<<< state slave low" <<std::endl;
+//      std::cout << "<<< state slave low" <<std::endl;
     } // if slave havent reached -> keep calm and no action
   }
 
@@ -204,60 +201,60 @@ CcounterVal CcounterThick:: getCount( const Ctime time, Econstants reset ) {
       state_=HIGH;
       ledOn_();
       ++counter_;
-      std::cout << "....state high: counter++" <<std::endl;
+//      std::cout << "....state high: counter++" <<std::endl;
     }
   }
   if( state_slave_==LOW || state_master_==LOW ) {//counter state down
     state_=LOW;
     ledOff_();
-    std::cout << "....state low" <<std::endl;
+//    std::cout << "....state low" <<std::endl;
   }
 
 
   if( ev_slave == last_slave_ && ev_master == last_master_ ) {// check for new events 
-    std::cout<< "no change" << std::endl;
+//    std::cout<< "no change" << std::endl;
 
-      dark_ = dark_ + ev_master.time - last_master_.time;
+    dark_ = dark_ + ev_master.time - last_master_.time;
   } else { // if either SLAVE or MASTER differs from last -> NEW EVENT
 
     /*NEW EVENT*/
-    std::cout << "new event" << std::endl;
+//    std::cout << "new event" << std::endl;
 
     /*master*/
     if( last_master_.value != ev_master.value ) { //check if master has changed; duplicete -- ignore
-      std::cout << "new event: change master" << std::endl;
+//      std::cout << "new event: change master" << std::endl;
 
       if( ev_master.value==LIGHT ){// event to change master to CONDLOW
 
         if( state_master_ == CONDLOW ) {//cond & new evernt - unproper
-          std::cout << "== state master high" << std::endl;
+//          std::cout << "== state master high" << std::endl;
           state_master_ = HIGH; //last proper state
           dark_ = dark_ + ev_master.time - last_master_.time;
           //smth with dark?
         } else if( state_master_ == CONDHIGH ) {//cond & new event - unproper 
           dark_ = dark_ + ev_master.time - last_master_.time;
-          std::cout << "== state master low" << std::endl;
+//          std::cout << "== state master low" << std::endl;
           state_master_=LOW;
 
         } else { // proper change
           //count times and change state
           dark_ = dark_ + ev_master.time - last_master_.time;
           state_master_=CONDLOW;
-          std::cout << "<< state master condlow" <<std::endl;
+//          std::cout << "<< state master condlow" <<std::endl;
         }
 
       } else {// event to change master to CONDHIGH
         if( state_master_ == CONDLOW ) {//cond & new event - unproper
-          std::cout << "== state master high" << std::endl;
+//          std::cout << "== state master high" << std::endl;
           state_master_ = HIGH; //last proper state
           //dark stil ticking
         } else if( state_master_ == CONDHIGH ) {// cond & new even - unproper
-          std::cout << "== state master low" << std::endl;
+//          std::cout << "== state master low" << std::endl;
           state_master_=LOW;
 
         } else {// proper change
           state_master_=CONDHIGH;
-          std::cout << "<< state master condhigh" <<std::endl;
+//          std::cout << "<< state master condhigh" <<std::endl;
         }
       }
       last_master_ = ev_master;
@@ -265,33 +262,33 @@ CcounterVal CcounterThick:: getCount( const Ctime time, Econstants reset ) {
 
     /*slave*/
     if( last_slave_.value != ev_slave.value ) { //check if slave has changed; duplicete -- ignore
-      std::cout << "new event: change slave" << std::endl;
+//      std::cout << "new event: change slave" << std::endl;
 
       if( ev_slave.value==LIGHT ){//event to change slave to CONDLOW
 
         if( state_slave_ == CONDLOW ) {//cond & new evernt - unproper
-          std::cout << "== state slave high" << std::endl;
+//          std::cout << "== state slave high" << std::endl;
           state_slave_ = HIGH; //last proper state
         } else if( state_slave_ == CONDHIGH ) {//cond & new event - unproper 
-          std::cout << "== state slave low" << std::endl;
+//          std::cout << "== state slave low" << std::endl;
           state_slave_=LOW;
 
         } else { // proper change
           state_slave_=CONDLOW;
-          std::cout << "<< state slave condlow" <<std::endl;
+//          std::cout << "<< state slave condlow" <<std::endl;
         }
 
       } else { //event to change slave to CONDHIGH
         if( state_slave_ == CONDLOW ) {//cond & new event - unproper
-          std::cout << "== state slave high" << std::endl;
+//          std::cout << "== state slave high" << std::endl;
           state_slave_ = HIGH; //last proper state
         } else if( state_slave_ == CONDHIGH ) {// cond & new even - unproper
-          std::cout << "== state slave low" << std::endl;
+//          std::cout << "== state slave low" << std::endl;
           state_slave_=LOW;
 
         } else {// proper change
           state_slave_=CONDHIGH;
-          std::cout << "<< state slave condhigh" <<std::endl;
+//          std::cout << "<< state slave condhigh" <<std::endl;
         }
       }
       last_slave_=ev_slave;
