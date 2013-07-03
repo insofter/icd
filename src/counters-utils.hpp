@@ -59,6 +59,7 @@ struct Ctime {
   Ctime operator+( const Ctime & b ) const;
   bool operator<( const Ctime & b ) const;
   bool operator==( const Ctime & b ) const;
+  bool operator!=( const Ctime & b ) const;
 
 };
 
@@ -79,10 +80,13 @@ struct Cevent {
 };
 
 class Cled {
-
   public:
+    Cled( std::string dev );
+    ~Cled();
     void on();
     void off();
+  protected:
+    int fd_;
 };
 
 /**

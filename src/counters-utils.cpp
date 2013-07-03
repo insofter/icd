@@ -69,6 +69,9 @@ bool Ctime::operator==( const Ctime& b ) const {
     return false;
   }
 }
+bool Ctime::operator!=( const Ctime & b ) const {
+  return ( ! ( *this==b ) );
+}
 
 Cevent::Cevent( int sec_, int usec_, EeventVal value_ ): time( sec_, usec_ ), value(value_) {
 }
@@ -126,14 +129,19 @@ Cevent earliest( const Cevent & ev1, const Cevent & ev2 )
   }
 }
 
-
-
+Cled::Cled( std::string dev ) {
+  fd_=open( dev.c_str(), O_WRONLY );
+  this->off();
+}
+Cled::~Cled() {
+  close( fd_ );
+}
 
 void Cled::on() {
-//TODO: led
+  write( fd_, "1\n", 2 );
 }
 void Cled::off() {
-//TODO: led
+  write( fd_, "0\n", 2 );
 }
 
 

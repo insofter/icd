@@ -52,10 +52,10 @@ class c_icdtcp {
       250000=>'250 000',
       500000=>'500 000',
       1000000=>'1 000 000');
-    $this->urzadzenia=array( '/dev/itd0'=>'A',
-      '/dev/itd1'=>'B',
-      '/dev/itd2'=>'C',
-      '/dev/itd3'=>'D',
+    $this->urzadzenia=array( '/tmp/itd0'=>'A',
+      '/tmp/itd1'=>'B',
+      '/tmp/itd2'=>'C',
+      '/tmp/itd3'=>'D',
       ''=>'Brak' );
     $this->tryby_licznika=array( 'single'=>'Pojedynczy',
       'direction'=>'Wyk. kierunku',

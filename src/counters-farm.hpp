@@ -38,7 +38,7 @@ class CcountersFarm {
      * @param counter Valid pointer to counter.
      */
     void addCounter( Ccounter * counter );
-    int run();
+    int run( Ctime period );
 
   private:
     CdevicesReader reader_;

@@ -96,18 +96,75 @@ MIN:
 
 
   CcountersFarm farm;
+  Ctime start;
+  Ctime period( (globalConfig->entry_long( "device", "aggr-period-mins" )*60), 0 );//time of aggregation
+  std::vector< std::string > devices;
 
-/*  farm.addDevice( "/dev/itd0", 0 );
-  farm.addDevice( "/dev/itd1", 1 );
-  farm.addDevice( "/dev/itd2", 2 );
-  farm.addDevice( "/dev/itd3", 3 );*/
+  std::vector< std::string > counters=globalConfig->list_like( "counter" );
+  for( int i=0; i< counters.size(); ++i ) {
+    Ccounter * counter=NULL;
+    if( globalConfig->entry_bool( counters[i], "enabled" ) ) {
 
-  farm.addDevice( "/tmp/itd0", 0 );
-  farm.addDevice( "/tmp/itd1", 1 );
+      int counter_id=globalConfig->entry_long( counters[i], "counter_id" );
 
-  farm.addCounter( new CcounterThick( 2, 0, 1, Ctime(), Ctime( 2, 0 ), Ctime( 2, 0 ), Ctime( 2, 0 ), Ctime( 2, 0 ) ) );
+      std::string master=globalConfig->entry( counters[i], "master" );
 
-  farm.run();
+      int master_id=-1;//management of devices, and setting ids for them
+      for( int j=0; j<devices.size(); ++j ) {
+        if( devices[j].compare( master )==0 ) {
+          master_id=j;
+          break;
+        }
+      }
+      if( master_id==-1 ) {
+        master_id=devices.size();
+        devices.push_back( master );
+      }//management of devices, and setting ids for them
+
+      Ctime master_engage( 0, (globalConfig->entry_long( counters[i], "master-engage" )*1000) );
+      Ctime master_release( 0, (globalConfig->entry_long( counters[i], "master-release" )*1000) );
+
+      Econstants master_reversed=NORMAL;
+      if( globalConfig->entry_bool( counters[i], "master-reversed" ) ) {
+        master_reversed=REVERSE;
+      }
+
+      std::string slave_mode=globalConfig->entry( counters[i], "slave-mode" );
+
+      if( slave_mode.compare( "single" )==0 ) {
+        counter=new CcounterMono( counter_id, master_id , start, master_engage, master_release, master_reversed );
+        std::cout << "CcounterMono id=" << counter_id << ", master=" <<  master_id << std::endl;
+      } else if( slave_mode.compare( "thickness" )==0 ) {
+
+        std::cout << "CcounterThick id=" << counter_id << ", master=" <<  master_id << std::endl;
+        //farm.addCounter( new CcounterThick( 2, 0, 1, Ctime(), Ctime( 2, 0 ), Ctime( 2, 0 ), Ctime( 2, 0 ), Ctime( 2, 0 ) ) );
+
+
+      }
+
+      std::string stop=globalConfig->entry( counters[i], "stop" );
+      //TODO:
+
+      farm.addCounter( counter );
+    }// if enabled
+  }
+  for( int i=0; i< devices.size(); ++i ) {
+    farm.addDevice( devices[i], i );
+  }
+
+  /*
+     slave slave
+     slave-engage slave-engage
+     slave-mode slave-mode
+     slave-release slave-release
+     slave-reversed slave-reversed
+     stop stop
+     stop-engage stop-engage
+     stop-release stop-release
+     stop-reversed stop-reversed
+     */
+
+  farm.run( period );
 
   return 0;
 }

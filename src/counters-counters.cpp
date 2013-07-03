@@ -27,6 +27,9 @@ void Ccounter::addLed( Cled * led ) {
 }
 
 void Ccounter::clearLeds() {
+  for( int i=0; i< leds_.size(); ++i ) {
+    delete [] leds_[i];
+  }
   leds_.clear();
 }
 

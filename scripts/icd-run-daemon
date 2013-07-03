@@ -54,10 +54,11 @@ fi
 if [ -z "$nolog" ]
 then
   $@ 2>&1 | icd-logrotate "$logfile" &
+  echo "$!" > "$pidfile"
 else
   $@ > /dev/null 2>&1 &
+  echo "$!" > "$pidfile"
 fi
 
-pidof "$1" > "$pidfile"
 
 
