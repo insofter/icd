@@ -100,6 +100,13 @@ MIN:
   Ctime period( (globalConfig->entry_long( "device", "aggr-period-mins" )*60), 0 );//time of aggregation
   std::vector< std::string > devices;
 
+  std::vector< std::string > leds=globalConfig->list_like( "led" );
+  std::vector< int > leds_masters;
+
+  for( int i=0; i< leds.size(); ++i ) {
+    leds_masters.push_back( globalConfig->entry_long( leds[i], "master-counter_id", true, -1 ) );
+  }
+
   std::vector< std::string > counters=globalConfig->list_like( "counter" );
   for( int i=0; i< counters.size(); ++i ) {
     Ccounter * counter=NULL;
@@ -166,6 +173,19 @@ MIN:
               slave_id, slave_engage, slave_release, slave_reversed );
           std::cout << "CcounterThick id=" << counter_id << ", master=" <<  master_id << " slave=" << slave_id << std::endl;
 
+        } else if( slave_mode.compare( "nothick" )==0 ) {
+
+          if( slave_reversed==REVERSE ) {//in theory reversing second input should be enough
+            slave_reversed=NORMAL;
+          } else {
+            slave_reversed=REVERSE;
+          }
+
+          counter=new CcounterThick( counter_id, start, 
+              master_id, master_engage, master_release, master_reversed,
+              slave_id, slave_engage, slave_release, slave_reversed );
+          std::cout << "CcounterNoThick id=" << counter_id << ", master=" <<  master_id << " slave=" << slave_id << std::endl;
+
         } else if( slave_mode.compare( "direction" )==0 ) {
           //tromba!
           //TODO:
@@ -174,6 +194,17 @@ MIN:
 
       std::string stop=globalConfig->entry( counters[i], "stop" );
       //TODO:
+      
+
+      for( int j=0; j<leds.size(); ++j ) {
+        if( leds_masters[j]==counter_id ) {
+          std::string path="/sys/devices/platform/gpio-itd.";
+          path+=leds[j].substr(3);
+          path+="/led_ctrl";
+          counter->addLed( new Cled( path ) );
+        }
+      }
+
 
       farm.addCounter( counter );
     }// if enabled
@@ -182,12 +213,11 @@ MIN:
     farm.addDevice( devices[i], i );
   }
 
+  leds.clear();
+  leds_masters.clear();
+  devices.clear();
+  counters.clear();
   /*
-     slave slave
-     slave-engage slave-engage
-     slave-mode slave-mode
-     slave-release slave-release
-     slave-reversed slave-reversed
      stop stop
      stop-engage stop-engage
      stop-release stop-release
