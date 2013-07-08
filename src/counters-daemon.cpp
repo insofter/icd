@@ -148,7 +148,7 @@ MIN:
         int slave_id=-1;//management of devices
         for( int j=0; j<devices.size(); ++j ) {
           if( devices[j].compare( slave )==0 ) {
-            slave_id==j;
+            slave_id=j;
             break;
           }
         }

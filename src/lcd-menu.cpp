@@ -888,8 +888,8 @@ int CmenuContainerNoRoot::down(Clcd *lcd) {
         _active=0;//_list.size()-1;
       }
     } else if( _active==-1 ) {//in counters
-      if( _counterActive==((int)_counters.size())-1 ) {//end of counters, goto last list 
-        _active=_list.size()-1;
+      if( _counterActive==((int)_counters.size())-1 ) {//end of counters, goto first list 
+        _active=0;
       } else {//++counters
         ++_counterActive;
       }
