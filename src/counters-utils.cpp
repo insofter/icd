@@ -168,7 +168,7 @@ CdbWriter::CdbWriter() {
   select_->prepare( "SELECT counter_id FROM flow"
       " WHERE counter_id == ?1 AND dtm == ?2 AND flags == 3 LIMIT 1" );
 
-  begin_->prepare( "BEGIN TRANSACTION" );
+  begin_->prepare( "BEGIN IMMEDIATE TRANSACTION" );
   commit_->prepare( "COMMIT TRANSACTION" );
 
   this->closeRecords();
@@ -216,9 +216,16 @@ void CdbWriter::closeRecords() {
   close_->reset();
 }
 
-void CdbWriter::beginTransaction() {
-  begin_->step();
-  begin_->reset();
+bool CdbWriter::beginTransaction() {
+  bool ret=true;
+  try {
+    begin_->step();
+    begin_->reset();
+  } catch(...) {
+    std::cerr << "Nie rozpoczęto transakcji" << std::endl;
+    ret=false;
+  }
+  return ret;
 }
 
 void CdbWriter::commitTransaction() {

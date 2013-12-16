@@ -60,7 +60,7 @@ int createData( std::string & data ) {
 void commitData( const std::string & data, int ilDanych ) {
 
   sqlite3cc::stmt stmt( *globalDataDb );
-  stmt.prepare( "BEGIN TRANSACTION" );
+  stmt.prepare( "BEGIN IMMEDIATE TRANSACTION" );
   stmt.step();
   stmt.finalize();
 

@@ -9,7 +9,7 @@ namespace icd
 
   void config::begin_transaction() {
     sqlite3cc::stmt stmt(db);
-    stmt.prepare( "BEGIN TRANSACTION" );
+    stmt.prepare( "BEGIN IMMEDIATE TRANSACTION" );
     stmt.step();
     stmt.finalize();
   }

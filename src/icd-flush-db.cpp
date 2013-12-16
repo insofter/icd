@@ -37,7 +37,7 @@ int main( int argc, char *argv[] ) {
 
 
   sqlite3cc::stmt dataDbSql( *globalDataDb );
-  dataDbSql.prepare( "BEGIN TRANSACTION" );
+  dataDbSql.prepare( "BEGIN IMMEDIATE TRANSACTION" );
   dataDbSql.step();
   dataDbSql.finalize();
 

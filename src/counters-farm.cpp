@@ -30,8 +30,8 @@ int CcountersFarm::run( Ctime period ) {
 
   std::cout << "New aggr: " << ctime( &current.sec ) << std::endl;
 
-  Ctime wait( 0, 200 );
-  int r;
+  Ctime wait( 5, 0 );
+
   while( 1==1 ) {
 
 //    std::cout << "LOOP: " << reader_.pollEvents( wait ) << std::endl;
@@ -43,19 +43,22 @@ int CcountersFarm::run( Ctime period ) {
     newtime.sec*=period.sec;
 
 
-    writer.beginTransaction();
+    if( writer.beginTransaction() ) {
 
-    for( int i=0; i< counters_.size(); ++i ) {
-      CcounterVal cv=counters_[i]->getCount( Ctime() );
-      writer.write( cv.id, current.sec, cv.val, cv.dark, cv.work, -1, 3 );
-    }
-    if( current < newtime ) {//all records should be closed
-      writer.closeRecords();
-      current=newtime;
-      std::cout << "New aggr: " << ctime( &current.sec ) << std::endl;
-    }
+      for( int i=0; i< counters_.size(); ++i ) {
+        CcounterVal cv=counters_[i]->getCount( Ctime() );
+        writer.write( cv.id, current.sec, cv.val, cv.dark, cv.work, -1, 3 );
+      }
+      if( current < newtime ) {//all records should be closed
+        writer.closeRecords();
+        current=newtime;
+        std::cout << "New aggr: " << ctime( &current.sec ) << std::endl;
+      }
 
-    writer.commitTransaction();
+      writer.commitTransaction();
+    } else {
+      std::cout << "Db locked :( " << std::endl;
+    }
   } // while( 1==1 )
 }
 

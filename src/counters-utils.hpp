@@ -105,7 +105,7 @@ class CdbWriter {
      * Begins transaction.
      * Used for faster adding events.
      */
-    void beginTransaction();
+    bool beginTransaction();
     /**
      * Commits transaction.
      */
