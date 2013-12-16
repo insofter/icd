@@ -43,7 +43,11 @@ int CcountersFarm::run( Ctime period ) {
     newtime.sec*=period.sec;
 
 
+    Ctime qqqq;
+    std::cout << qqqq.usec;
     if( writer.beginTransaction() ) {
+      Ctime wwww;
+      std::cout << "----" << wwww.usec << std::endl;
 
       for( int i=0; i< counters_.size(); ++i ) {
         CcounterVal cv=counters_[i]->getCount( Ctime() );
