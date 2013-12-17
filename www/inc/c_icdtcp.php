@@ -178,7 +178,7 @@ class c_icdtcp {
         $start=time();
       }
       $sql2="SELECT sum(cnt) AS sum FROM flow WHERE counter_id='".$licznik['counter_id']."'
-        AND `dtm` < ".$start." AND `dtm` > ".( ((int)(time()/(24*3600)))*24*3600 );
+        AND `dtm` <= ".$start." AND `dtm` >= ".( ((int)(time()/(24*3600)))*24*3600 );
       $ans2=$this->dataDb->query($sql2);
       $ans2->setFetchMode(PDO::FETCH_ASSOC);
 

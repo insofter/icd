@@ -36,7 +36,7 @@ CmenuItemTimeFoto::CmenuItemTimeFoto(int a): _a(a) {
 
   sum = new sqlite3cc::stmt( *globalDataDb );
   sum->prepare( "SELECT sum(cnt) AS sum FROM flow WHERE counter_id = ?1 "
-      "AND `dtm` < ?2 AND `dtm` > ?3" );
+      "AND `dtm` <= ?2 AND `dtm` >= ?3" );
 }
 
 CmenuItemTimeFoto::~CmenuItemTimeFoto() {
