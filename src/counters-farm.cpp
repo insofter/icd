@@ -30,11 +30,13 @@ int CcountersFarm::run( Ctime period ) {
 
   std::cout << "New aggr: " << ctime( &current.sec ) << std::endl;
 
-  Ctime wait( 5, 0 );
+  Ctime wait( 0, 200*1000 );//200 ms == 200 000 us == 0,2 s
+  int dbCounter=0;
+  bool dbWrite=false;
 
   while( 1==1 ) {
+    ++dbCounter;
 
-//    std::cout << "LOOP: " << reader_.pollEvents( wait ) << std::endl;
     reader_.pollEvents( wait );
 
     Ctime newtime;
@@ -43,25 +45,39 @@ int CcountersFarm::run( Ctime period ) {
     newtime.sec*=period.sec;
 
 
-    Ctime qqqq;
-    std::cout << qqqq.usec;
-    if( writer.beginTransaction() ) {
-      Ctime wwww;
-      std::cout << "----" << wwww.usec << std::endl;
+    if( dbCounter > 50 || current < newtime ) {
+      if( writer.beginTransaction() ) {
+        dbWrite=true;
+        dbCounter=0;
+      } else {
+        dbCounter=47;
+        std::cout << "Db locked :( " << std::endl;
+      }
+    }
 
-      for( int i=0; i< counters_.size(); ++i ) {
-        CcounterVal cv=counters_[i]->getCount( Ctime() );
+    for( int i=0; i< counters_.size(); ++i ) {
+      CcounterVal cv;
+      if( dbWrite ) {
+        if( current < newtime ) {//all records should be closed
+          cv=counters_[i]->getCount( Ctime(), RESET );
+        } else {
+          cv=counters_[i]->getCount( Ctime() );
+        }
         writer.write( cv.id, current.sec, cv.val, cv.dark, cv.work, -1, 3 );
+      } else {
+        cv=counters_[i]->getCount( Ctime() );
       }
-      if( current < newtime ) {//all records should be closed
-        writer.closeRecords();
-        current=newtime;
-        std::cout << "New aggr: " << ctime( &current.sec ) << std::endl;
-      }
+    }
 
+    if( dbWrite && current < newtime ) {//all records should be closed
+      writer.closeRecords();
+      current=newtime;
+      std::cout << "New aggr: " << ctime( &current.sec ) << std::endl;
+    }
+
+    if( dbWrite ) {
       writer.commitTransaction();
-    } else {
-      std::cout << "Db locked :( " << std::endl;
+      dbWrite=false;
     }
   } // while( 1==1 )
 }
