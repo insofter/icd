@@ -45,12 +45,12 @@ int CcountersFarm::run( Ctime period ) {
     newtime.sec*=period.sec;
 
 
-    if( dbCounter > 50 || current < newtime ) {
+    if( dbCounter > 10 || current < newtime ) {
       if( writer.beginTransaction() ) {
         dbWrite=true;
         dbCounter=0;
       } else {
-        dbCounter=47;
+        dbCounter=5;
         std::cout << "Db locked :( " << std::endl;
       }
     }
