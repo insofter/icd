@@ -280,10 +280,11 @@ int CdevicesReader::pollEvents( Ctime wait ) {
           } else if( buf_[j]=='\n' ) {// end of event, create object
             buf_[j]=0;
             Cevent ev( buf_ );
-            events_[ devices_[ pollfd_[i].fd ] ]=ev;
-
-            /*debug*/std::cout << "event inserted: " << ev.time.sec << " " << ev.time.usec
-              << " " << ev.value << std::endl;
+            if( ev.time.sec > 3600 ) {
+              events_[ devices_[ pollfd_[i].fd ] ]=ev;
+              /*debug*/std::cout << "event inserted: " << ev.time.sec << " " << ev.time.usec
+                << " " << ev.value << std::endl;
+            }
 
             break;
           }

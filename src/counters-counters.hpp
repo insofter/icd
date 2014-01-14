@@ -21,10 +21,11 @@ extern sqlite3cc::conn *globalLiveDb;
 struct CcounterVal {
   int val;
   int id;
+  int test;
   Ctime dark;
   Ctime work;
   CcounterVal();
-  CcounterVal( int val_, Ctime dark_, Ctime work_ );
+  CcounterVal( int val_, Ctime dark_, Ctime work_, int test_ );
 
 };
 
@@ -66,12 +67,18 @@ class Ccounter {
      */
     void clearLeds();
 
+    /**
+     * Test main fotodetector of this counter
+     */
+    void test();
+
   protected:
     CdevicesReader * reader_;
     std::vector< Cled * > leds_;
     int id_;
     int masterId_;
     int counter_;
+    int test_;
     void ledOn_();
     void ledOff_();
 };

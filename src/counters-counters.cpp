@@ -1,17 +1,18 @@
 #include "counters-counters.hpp"
 #include <iostream>
+#include <stdio.h>
 
 CcounterVal::CcounterVal(): val(0) {
   0; //NOOP
 }
 
-CcounterVal::CcounterVal( int val_, Ctime dark_, Ctime work_ ) :val(val_), dark(dark_), work(work_) {
+CcounterVal::CcounterVal( int val_, Ctime dark_, Ctime work_, int test_ ) :val(val_), dark(dark_), work(work_), test(test_) {
   0; //NOOP
 }
 
 
 Ccounter::Ccounter( int id, int master, Ctime beginTime ): 
-  reader_(NULL), id_(id), counter_(0), masterId_(master)
+  reader_(NULL), id_(id), counter_(0), masterId_(master), test_(-1)
 { 0; //NOOP
 }
 
@@ -43,6 +44,16 @@ void Ccounter::ledOff_() {
   for( int i=0; i<leds_.size(); ++i ) {
     leds_[i]->off();
   }
+}
+
+void Ccounter::test() {
+  char testDev[64];
+  char out[2];
+  sprintf( testDev, "/sys/devices/platform/gpio-itd.%i/test", masterId_ );
+  int fd=open( testDev, O_RDONLY );
+  read( fd, out, 2 );
+  close( fd );
+  test_=out[0]-'0';
 }
 
 CcounterMono::CcounterMono( int id, int master, const Ctime beginTime, const Ctime engage, const Ctime release, Econstants reverse ): 
@@ -132,11 +143,15 @@ CcounterVal CcounterMono::getCount( const Ctime time, Econstants reset ) {
     ret.dark=dark_;
   }
 
+  ret.test=test_;
+
   if( reset==RESET ) {
     dark_.setZero();
     work_.setZero();
     counter_=0;
+    test_=-1;
   }
+
   return ret;
 }
 

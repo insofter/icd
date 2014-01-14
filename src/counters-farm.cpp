@@ -1,5 +1,21 @@
 #include "counters-farm.hpp"
 #include <iostream>
+#ifdef DESKTOP//different headers on arm and desktop,
+//use -DDESKTOP durng compilation on desktop 
+#include <unistd.h>
+#endif
+
+
+float randVal() {
+  unsigned int rand;
+  int rfile = open("/dev/urandom", O_RDONLY);
+  read(rfile, (void*) &rand, sizeof( int ) );
+  close( rfile );
+
+  return (float)rand/(float)UINT_MAX;
+}
+
+
 
 CcountersFarm::CcountersFarm() {
   0; //NOOP
@@ -33,6 +49,8 @@ int CcountersFarm::run( Ctime period ) {
   Ctime wait( 0, 200*1000 );//200 ms == 200 000 us == 0,2 s
   int dbCounter=0;
   bool dbWrite=false;
+  Ctime nextTest;
+
 
   while( 1==1 ) {
     ++dbCounter;
@@ -44,6 +62,12 @@ int CcountersFarm::run( Ctime period ) {
     newtime.sec/=period.sec;
     newtime.sec*=period.sec;
 
+    if( nextTest < Ctime() ) {
+      for( int i=0; i< counters_.size(); ++i ) {
+        counters_[i]->test();
+      }
+      nextTest.sec=newtime.sec+period.sec*(1.1+randVal()*0.8);
+    }
 
     if( dbCounter > 10 || current < newtime ) {
       if( writer.beginTransaction() ) {
@@ -63,7 +87,7 @@ int CcountersFarm::run( Ctime period ) {
         } else {
           cv=counters_[i]->getCount( Ctime() );
         }
-        writer.write( cv.id, current.sec, cv.val, cv.dark, cv.work, -1, 3 );
+        writer.write( cv.id, current.sec, cv.val, cv.dark, cv.work, cv.test, 3 );
       } else {
         cv=counters_[i]->getCount( Ctime() );
       }
