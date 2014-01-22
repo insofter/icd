@@ -47,13 +47,14 @@ int CcountersFarm::run( Ctime period ) {
   std::cout << "New aggr: " << ctime( &current.sec ) << std::endl;
 
   Ctime wait( 0, 200*1000 );//200 ms == 200 000 us == 0,2 s
-  int dbCounter=0;
+  int lazyCounter=0;
   bool dbWrite=false;
   Ctime nextTest;
+  int nextTestI=0;
 
 
   while( 1==1 ) {
-    ++dbCounter;
+    ++lazyCounter;
 
     reader_.pollEvents( wait );
 
@@ -62,19 +63,23 @@ int CcountersFarm::run( Ctime period ) {
     newtime.sec/=period.sec;
     newtime.sec*=period.sec;
 
-    if( nextTest < Ctime() ) {
-      for( int i=0; i< counters_.size(); ++i ) {
-        counters_[i]->test();
-      }
-      nextTest.sec=newtime.sec+period.sec*(1.1+randVal()*0.8);
-    }
 
-    if( dbCounter > 10 || current < newtime ) {
+    if( lazyCounter > 10 || current < newtime ) {
+      if( nextTest < Ctime() ) {
+        counters_[nextTestI]->test();
+        Ctime now;
+        std::cout << "Test (" << nextTestI << "): " << ctime( &now.sec ) << std::endl;
+        ++nextTestI;
+        if( nextTestI >= counters_.size() ) {
+          nextTest.sec=newtime.sec+period.sec*(1.1+randVal()*0.8);
+          nextTestI=0;
+        }
+      }
       if( writer.beginTransaction() ) {
         dbWrite=true;
-        dbCounter=0;
+        lazyCounter=0;
       } else {
-        dbCounter=5;
+        lazyCounter=5;
         std::cout << "Db locked :( " << std::endl;
       }
     }
@@ -130,4 +135,4 @@ int CcountersFarm::run( Ctime period ) {
     }*/
 
 
-    //TODO: check if db is modified and return
+//TODO: check if db is modified and return

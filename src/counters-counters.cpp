@@ -75,57 +75,58 @@ CcounterVal CcounterMono::getCount( const Ctime time, Econstants reset ) {
   }
 
   if( ev == last_ ) {//no change, only clock is ticking...
-    std::cout << "no change, only clock is ticking..." << std::endl;
+//    std::cout << "no change, only clock is ticking..." << std::endl;
 
     if( state_==CONDHIGH ) {
       if( ev.time + engage_ < time ) {//change to high and ++counter
-        std::cout << "change to high and ++counter" << std::endl;
         state_=HIGH;
         ledOn_();
         ++counter_;
+        std::cout << "change to high and ++counter " << counter_ <<  std::endl;
       }
     } else if( state_==CONDLOW ) {
       if( ev.time + release_ < time ) {//change to low and count darktime
-        std::cout << "change to low and count darktime" << std::endl;
+//        std::cout << "change to low and count darktime" << std::endl;
         state_=LOW;
         ledOff_();
       }
     }
     // LOW and HIGH with no change == no effect
-    std::cout << "change to low and count darktime" << std::endl;
+//    std::cout << "change to low and count darktime" << std::endl;
 
   } else {//new event
-    std::cout << "new event" << std::endl;
+//    std::cout << "new event" << std::endl;
     if( ev.value!=last_.value ) {//duplicated are ignored (ex. high to high)
-      std::cout << "duplicated are ignored (ex. high to high)" << std::endl;
+//      std::cout << "duplicated are ignored (ex. high to high)" << std::endl;
       if( ev.value==LIGHT ) {//change to CONDLOW
-        std::cout << "change to CONDLOW" << std::endl;
+//        std::cout << "change to CONDLOW" << std::endl;
 
         if( state_==CONDHIGH ) {
           if( last_.time + engage_ < ev.time ) {//time passed and count is correct before event
-            std::cout << "time passed and count is correct before event" << std::endl;
+//            std::cout << "time passed and count is correct before event" << std::endl;
             state_=HIGH;
             ledOn_();
             ++counter_;
+            std::cout << "change to high and ++counter " << counter_ <<  std::endl;
           }
         } 
         //count times and change state
-        std::cout << "count times and change state" << std::endl;
+//        std::cout << "count times and change state" << std::endl;
         dark_=dark_ + ev.time - last_.time;
         work_=work_ + ev.time - last_.time;
         state_=CONDLOW;
 
       } else {//change to CONDHIGH
-        std::cout << "change to CONDHIGH" << std::endl;
+//        std::cout << "change to CONDHIGH" << std::endl;
         if( state_==CONDLOW ) {
           if( last_.time + release_ < ev.time ) {//time passed and count is correct before event
-            std::cout << "time passed and count is correct before event" << std::endl;
+//            std::cout << "time passed and count is correct before event" << std::endl;
             state_=LOW;
             ledOff_();
           }
         }
         //count times and change state
-        std::cout << "count times and change state" << std::endl;
+//        std::cout << "count times and change state" << std::endl;
         work_=work_ + ev.time - last_.time;
         state_=CONDHIGH;
       }
@@ -137,7 +138,7 @@ CcounterVal CcounterMono::getCount( const Ctime time, Econstants reset ) {
   ret.val=counter_;
   ret.work=work_ + time - ev.time;
   if( state_==CONDHIGH || state_==HIGH ) {// darktime is ticking
-    std::cout << "darktime is ticking" << std::endl;
+//    std::cout << "darktime is ticking" << std::endl;
     ret.dark=dark_ + time - ev.time;
   } else {
     ret.dark=dark_;

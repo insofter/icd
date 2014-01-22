@@ -282,8 +282,8 @@ int CdevicesReader::pollEvents( Ctime wait ) {
             Cevent ev( buf_ );
             if( ev.time.sec > 3600 ) {
               events_[ devices_[ pollfd_[i].fd ] ]=ev;
-              /*debug*/std::cout << "event inserted: " << ev.time.sec << " " << ev.time.usec
-                << " " << ev.value << std::endl;
+              /*debug*/std::cout << "Event inserted: dev(" << devices_[ pollfd_[i].fd ] <<  "), usec(" 
+                << ev.time.usec << "), val(" << ev.value << "),  " << ctime( &ev.time.sec ) << std::endl;
             }
 
             break;

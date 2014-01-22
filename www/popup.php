@@ -74,7 +74,7 @@ if( isset( $_GET['typ'] ) ) {
       <title>Restart urządzenia</title>
       <meta http-equiv="refresh" content="30;URL='."'./'".'">
       </head>
-      <body><h3>Strona odswieży się w ciągu 30 sekund.</h3>
+      <body><h3>Strona odświeży się w ciągu 30 sekund.</h3>
       </body></html>';
     ob_flush();
     flush();
