@@ -35,6 +35,8 @@ if( isset($_GET['log']) ) {
     $tresc.='<li><a href="./?strona=log&amp;log='.$log.'">'.$log.'</a> &nbsp; &nbsp; &nbsp; &nbsp;
     <a href="./?strona=log&amp;pobierz='.$log.'"><small>(pobierz)</small></a> </li>';
   }
+  $tresc.='<li><a href="./?strona=log&amp;log=__linux__" style="font-weight: bold;">Statystyki systemu</a> &nbsp; &nbsp; &nbsp; &nbsp;
+  <a href="./?strona=log&amp;pobierz=__linux__"><small>(pobierz)</small></a> </li>';
   $tresc.='</ul></div>';
   //print_r($logi->lista());
 

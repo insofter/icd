@@ -64,7 +64,7 @@ int CcountersFarm::run( Ctime period ) {
     newtime.sec*=period.sec;
 
 
-    if( lazyCounter > 10 || current < newtime ) {
+    if( lazyCounter > 15 || current < newtime ) {
       if( nextTest < Ctime() ) {
         counters_[nextTestI]->test();
         Ctime now;
@@ -108,31 +108,12 @@ int CcountersFarm::run( Ctime period ) {
       writer.commitTransaction();
       dbWrite=false;
     }
+
+    //TODO: check if db is modified and return
+    
+
   } // while( 1==1 )
 }
 
 
-      /*debug*/
-    /*std::cout << "CV: v=" << cv.val << " d="
-        << cv.dark.sec << "." << cv.dark.usec << " w="
-        << cv.work.sec << "." << cv.work.usec << std::endl;
 
-      Ctime per;
-      per.sec/=3600;
-      per.sec*=3600;
-
-     // writer.write( cv.id, per.sec, cv.val, cv.dark, cv.work, 888 );
-    }*/
-
-    /*debug*/
-/*    for( int i=0; i<4; ++i ) {
-      Cevent ev=reader_.getEvent( i );
-      if( ev!=Cevent::EMPTY() ) {
-        std::cout << "event list (" << i <<"): " 
-          << ev.time.sec << " " << ev.time.usec
-          << " " << ev.value << std::endl;
-      }
-    }*/
-
-
-//TODO: check if db is modified and return

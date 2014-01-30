@@ -13,6 +13,18 @@ class c_logi {
     $this->ook=array('++',  );
   }
 
+  function linux() {
+    $out='# free -m'."\n";
+    $out.=shell_exec('free -m');
+
+    $out.="\n\n".'# df -h'."\n";
+    $out.=shell_exec('df -h');
+    
+    $out.="\n\n".'# top -n 1 -b'."\n";
+    $out.=shell_exec('top -n 1 -b');
+    return $out;
+  }
+
   function lista() {
     $lista=scandir( $this->katalog_logow );
     for( $i=0; $i<count($lista); ++$i ) {
@@ -32,11 +44,19 @@ class c_logi {
     foreach( $this->ook as $o ) {
       $tab[$o]='<em>'.$o.'</em>';
     }
-    $log=strtr( file_get_contents( $this->katalog_logow.'/'.basename($nazwa), null, null, 0, 50000 ), $tab );
+    if( $nazwa == '__linux__' ) {
+      $log=strtr( $this->linux(), $tab );
+    } else {
+      $log=strtr( file_get_contents( $this->katalog_logow.'/'.basename($nazwa), null, null, 0, 50000 ), $tab );
+    }
 
     return(  $log );
   }
   function pobierz($nazwa) {
-    return( file_get_contents($this->katalog_logow.'/'.basename($nazwa)) );
+    if( $nazwa == '__linux__' ) {    
+      return( $this->linux() );
+    } else {
+      return( file_get_contents($this->katalog_logow.'/'.basename($nazwa)) );
+    }
   }
 }
