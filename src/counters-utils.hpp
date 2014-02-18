@@ -23,6 +23,7 @@
 extern icd::config *globalConfig;
 extern sqlite3cc::conn *globalConfigDb;
 extern sqlite3cc::conn *globalLiveDb;
+extern sqlite3cc::conn *globalDataDb;
 
 enum Econstants {
   NO_RESET,
@@ -105,29 +106,41 @@ class CdbWriter {
      * Begins transaction.
      * Used for faster adding events.
      */
-    bool beginTransaction();
+    bool liveBeginTransaction();
+    bool dataBeginTransaction();
     /**
      * Commits transaction.
      */
-    void commitTransaction();
+    void liveCommitTransaction();
+    void dataCommitTransaction();
 
     /**
      * Writes record to db.
      */
-    void write( int counterId, Ctime dtm, int cnt, Ctime dark,
+    void liveWrite( int counterId, Ctime dtm, int cnt, Ctime dark,
+        Ctime work, int test, int flags );
+    void dataWrite( int counterId, Ctime dtm, int cnt, Ctime dark,
         Ctime work, int test, int flags );
     /**
      * Makes new aggregation period.
      */
-    void closeRecords();
+    void liveCloseRecords();
+    void dataCloseRecords();
   protected:
-    sqlite3cc::stmt * insert_;
-    sqlite3cc::stmt * update_;
-    sqlite3cc::stmt * select_;
-    sqlite3cc::stmt * close_;
-    sqlite3cc::stmt * begin_;
-    sqlite3cc::stmt * commit_;
+    sqlite3cc::stmt * dataInsert_;
+    sqlite3cc::stmt * dataUpdate_;
+    sqlite3cc::stmt * dataSelect_;
+    sqlite3cc::stmt * dataClose_;
+    sqlite3cc::stmt * dataBegin_;
+    sqlite3cc::stmt * dataCommit_;
 
+    sqlite3cc::stmt * liveInsert_;
+    sqlite3cc::stmt * liveUpdate_;
+    sqlite3cc::stmt * liveSelect_;
+    sqlite3cc::stmt * liveClose_;
+    sqlite3cc::stmt * liveDelete_;
+    sqlite3cc::stmt * liveBegin_;
+    sqlite3cc::stmt * liveCommit_;
 };
 
 /**

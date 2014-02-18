@@ -102,14 +102,14 @@ MIN:
   globalConfig=new icd::config( *globalConfigDb );
 
 
-#define FLUSH_DELAY 180
+//#define FLUSH_DELAY 180
 
   sleep( randVal()*20.0+10 );
   system( "icd-transfer-data" );//first sync
 
 
   int timeOfNextTransfer;
-  int timeOfNextFlush;
+//  int timeOfNextFlush;
   int timeNow;
   int delayNow=0;
 
@@ -118,11 +118,11 @@ MIN:
 
     sleep( 30 );//sleep to avoid running loop twice in one second
     timeNow=time(NULL);
-    timeOfNextFlush=timeNow;
-    timeOfNextFlush/=FLUSH_DELAY;
-    timeOfNextFlush+=1;
-    timeOfNextFlush*=FLUSH_DELAY;
-    timeOfNextFlush+=5;//rounded to 3 min, + 5 secs
+//    timeOfNextFlush=timeNow;
+//    timeOfNextFlush/=FLUSH_DELAY;
+//    timeOfNextFlush+=1;
+//    timeOfNextFlush*=FLUSH_DELAY;
+//    timeOfNextFlush+=5;//rounded to 3 min, + 5 secs
 
     if( delayNow!=getDelay() ) {//delay changed by user or transfer 
       delayNow=getDelay();
@@ -138,21 +138,21 @@ MIN:
       timeOfNextTransfer+=30;
     }
 
-    if( timeOfNextTransfer<=timeOfNextFlush ) {//transfer will be faster than flush
+//    if( timeOfNextTransfer<=timeOfNextFlush ) {//transfer will be faster than flush
       if( timeOfNextTransfer-timeNow > 0 ) {
         sleep( timeOfNextTransfer-timeNow );
       }
-      system( "icd-flush-db" );
+//      system( "icd-flush-db" );
       system( "icd-transfer-data" );
       delayNow=0;//force get delay and calculate new time
 
-    } else {//only flush
-      if( timeOfNextFlush-timeNow > 0 ) {
-        sleep( timeOfNextFlush-timeNow );
-      }
-      system( "icd-flush-db" );
+//    } else {//only flush
+//      if( timeOfNextFlush-timeNow > 0 ) {
+//        sleep( timeOfNextFlush-timeNow );
+//      }
+//      system( "icd-flush-db" );
 
-    }
+//    }
   }//end while( 1==1 )
 
   return 0;

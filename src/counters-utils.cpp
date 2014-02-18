@@ -149,78 +149,153 @@ void Cled::off() {
 CdbWriter::CdbWriter() {
 
 
-  insert_ = new sqlite3cc::stmt( *globalLiveDb );
-  update_ = new sqlite3cc::stmt( *globalLiveDb );
-  select_ = new sqlite3cc::stmt( *globalLiveDb );
-  close_ = new sqlite3cc::stmt( *globalLiveDb );
-  begin_ = new sqlite3cc::stmt( *globalLiveDb );
-  commit_ = new sqlite3cc::stmt( *globalLiveDb );
+  dataInsert_ = new sqlite3cc::stmt( *globalDataDb );
+  dataUpdate_ = new sqlite3cc::stmt( *globalDataDb );
+  dataSelect_ = new sqlite3cc::stmt( *globalDataDb );
+  dataClose_ = new sqlite3cc::stmt( *globalDataDb );
+  dataBegin_ = new sqlite3cc::stmt( *globalDataDb );
+  dataCommit_ = new sqlite3cc::stmt( *globalDataDb );
 
-
-  insert_->prepare( "INSERT INTO flow (counter_id, dtm, cnt, dark_time, work_time, test, flags)"
+  dataInsert_->prepare( "INSERT INTO flow (counter_id, dtm, cnt, dark_time, work_time, test, flags)"
             " VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)" );
 
-  update_->prepare( "UPDATE flow SET cnt = ?3, dark_time = ?4,"
+  dataUpdate_->prepare( "UPDATE flow SET cnt = ?3, dark_time = ?4,"
       " work_time = ?5, test = ?6, flags = ?7 WHERE counter_id = ?1 AND dtm = ?2" );
 
-  close_->prepare( "UPDATE flow SET flags = 2 WHERE flags = 3" ); 
+  dataClose_->prepare( "UPDATE flow SET flags = 2 WHERE flags = 3" ); 
 
-  select_->prepare( "SELECT counter_id FROM flow"
+  dataSelect_->prepare( "SELECT counter_id FROM flow"
+      " WHERE counter_id == ?1 AND dtm == ?2 LIMIT 1" ); //usunięte ,,AND flags == 3'', nie potrzebne
+
+  dataBegin_->prepare( "BEGIN IMMEDIATE TRANSACTION" );
+  dataCommit_->prepare( "COMMIT TRANSACTION" );
+
+  this->dataCloseRecords();
+  //---------------------------------------------------------
+  liveInsert_ = new sqlite3cc::stmt( *globalLiveDb );
+  liveUpdate_ = new sqlite3cc::stmt( *globalLiveDb );
+  liveSelect_ = new sqlite3cc::stmt( *globalLiveDb );
+  liveClose_ = new sqlite3cc::stmt( *globalLiveDb );
+  liveBegin_ = new sqlite3cc::stmt( *globalLiveDb );
+  liveCommit_ = new sqlite3cc::stmt( *globalLiveDb );
+
+  liveInsert_->prepare( "INSERT INTO flow (counter_id, dtm, cnt, dark_time, work_time, test, flags)"
+            " VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)" );
+
+  liveUpdate_->prepare( "UPDATE flow SET cnt = ?3, dark_time = ?4,"
+      " work_time = ?5, test = ?6, flags = ?7 WHERE counter_id = ?1 AND dtm = ?2" );
+
+  liveClose_->prepare( "UPDATE flow SET flags = 2 WHERE flags = 3" ); //zmienione
+  liveDelete_->prepare( "DELETE FROM flow WHERE flags = 2" );
+
+  liveSelect_->prepare( "SELECT counter_id FROM flow"
       " WHERE counter_id == ?1 AND dtm == ?2 AND flags == 3 LIMIT 1" );
 
-  begin_->prepare( "BEGIN IMMEDIATE TRANSACTION" );
-  commit_->prepare( "COMMIT TRANSACTION" );
+  liveBegin_->prepare( "BEGIN IMMEDIATE TRANSACTION" );
+  liveCommit_->prepare( "COMMIT TRANSACTION" );
 
-  this->closeRecords();
+  this->liveCloseRecords();
 }
 
 CdbWriter::~CdbWriter() {
-  delete [] insert_;
-  delete [] update_;
-  delete [] select_;
-  delete [] close_;
-  delete [] begin_;
-  delete [] commit_;
+  delete [] liveInsert_;
+  delete [] liveUpdate_;
+  delete [] liveSelect_;
+  delete [] liveClose_;
+  delete [] liveDelete_;
+  delete [] liveBegin_;
+  delete [] liveCommit_;
+
+  delete [] dataInsert_;
+  delete [] dataUpdate_;
+  delete [] dataSelect_;
+  delete [] dataClose_;
+  delete [] dataBegin_;
+  delete [] dataCommit_;
 }
 
 
-void CdbWriter::write( int counterId, Ctime dtm, int cnt, Ctime dark, Ctime work, int test, int flags ) {
-  select_->bind_int( 1, counterId );
-  select_->bind_int( 2, dtm.sec );
-  if( select_->step() == SQLITE_ROW ) {//update
-    update_->bind_int( 1, counterId );//counter_id
-    update_->bind_int( 2, dtm.sec );//dtm
-    update_->bind_int( 3, cnt );//cnt
-    update_->bind_int( 4, dark.msec() );//dark_time
-    update_->bind_int( 5, work.msec() );//work_time
-    update_->bind_int( 6, test );//test
-    update_->bind_int( 7, flags );//flags
-    update_->step();
-    update_->reset();
+void CdbWriter::dataWrite( int counterId, Ctime dtm, int cnt, Ctime dark, Ctime work, int test, int flags ) {
+  dataSelect_->bind_int( 1, counterId );
+  dataSelect_->bind_int( 2, dtm.sec );
+  if( dataSelect_->step() == SQLITE_ROW ) {//update
+    dataUpdate_->bind_int( 1, counterId );//counter_id
+    dataUpdate_->bind_int( 2, dtm.sec );//dtm
+    dataUpdate_->bind_int( 3, cnt );//cnt
+    dataUpdate_->bind_int( 4, dark.msec() );//dark_time
+    dataUpdate_->bind_int( 5, work.msec() );//work_time
+    dataUpdate_->bind_int( 6, test );//test
+    dataUpdate_->bind_int( 7, flags );//flags
+    dataUpdate_->step();
+    dataUpdate_->reset();
   } else { //insert
-    insert_->bind_int( 1, counterId );//counter_id
-    insert_->bind_int( 2, dtm.sec );//dtm
-    insert_->bind_int( 3, cnt );//cnt
-    insert_->bind_int( 4, dark.msec() );//dark_time
-    insert_->bind_int( 5, work.msec() );//work_time
-    insert_->bind_int( 6, test );//test
-    insert_->bind_int( 7, flags );//flags
-    insert_->step();
-    insert_->reset();
+    dataInsert_->bind_int( 1, counterId );//counter_id
+    dataInsert_->bind_int( 2, dtm.sec );//dtm
+    dataInsert_->bind_int( 3, cnt );//cnt
+    dataInsert_->bind_int( 4, dark.msec() );//dark_time
+    dataInsert_->bind_int( 5, work.msec() );//work_time
+    dataInsert_->bind_int( 6, test );//test
+    dataInsert_->bind_int( 7, flags );//flags
+    dataInsert_->step();
+    dataInsert_->reset();
   }
-  select_->reset();
+  dataSelect_->reset();
 }
 
-void CdbWriter::closeRecords() {
-  close_->step();
-  close_->reset();
+void CdbWriter::liveWrite( int counterId, Ctime dtm, int cnt, Ctime dark, Ctime work, int test, int flags ) {
+  liveSelect_->bind_int( 1, counterId );
+  liveSelect_->bind_int( 2, dtm.sec );
+  if( liveSelect_->step() == SQLITE_ROW ) {//update
+    liveUpdate_->bind_int( 1, counterId );//counter_id
+    liveUpdate_->bind_int( 2, dtm.sec );//dtm
+    liveUpdate_->bind_int( 3, cnt );//cnt
+    liveUpdate_->bind_int( 4, dark.msec() );//dark_time
+    liveUpdate_->bind_int( 5, work.msec() );//work_time
+    liveUpdate_->bind_int( 6, test );//test
+    liveUpdate_->bind_int( 7, flags );//flags
+    liveUpdate_->step();
+    liveUpdate_->reset();
+  } else { //insert
+    liveInsert_->bind_int( 1, counterId );//counter_id
+    liveInsert_->bind_int( 2, dtm.sec );//dtm
+    liveInsert_->bind_int( 3, cnt );//cnt
+    liveInsert_->bind_int( 4, dark.msec() );//dark_time
+    liveInsert_->bind_int( 5, work.msec() );//work_time
+    liveInsert_->bind_int( 6, test );//test
+    liveInsert_->bind_int( 7, flags );//flags
+    liveInsert_->step();
+    liveInsert_->reset();
+    liveDelete_->step();
+    liveDelete_->reset();
+  }
+  liveSelect_->reset();
 }
 
-bool CdbWriter::beginTransaction() {
+void CdbWriter::dataCloseRecords() {
+  dataClose_->step();
+  dataClose_->reset();
+}
+void CdbWriter::liveCloseRecords() {
+  liveClose_->step();
+  liveClose_->reset();
+}
+
+bool CdbWriter::dataBeginTransaction() {
   bool ret=true;
   try {
-    begin_->step();
-    begin_->reset();
+    dataBegin_->step();
+    dataBegin_->reset();
+  } catch(...) {
+    std::cerr << "Nie rozpoczęto transakcji" << std::endl;
+    ret=false;
+  }
+  return ret;
+}
+bool CdbWriter::liveBeginTransaction() {
+  bool ret=true;
+  try {
+    liveBegin_->step();
+    liveBegin_->reset();
   } catch(...) {
     std::cerr << "Nie rozpoczęto transakcji" << std::endl;
     ret=false;
@@ -228,9 +303,13 @@ bool CdbWriter::beginTransaction() {
   return ret;
 }
 
-void CdbWriter::commitTransaction() {
-  commit_->step();
-  commit_->reset();
+void CdbWriter::dataCommitTransaction() {
+  dataCommit_->step();
+  dataCommit_->reset();
+}
+void CdbWriter::liveCommitTransaction() {
+  liveCommit_->step();
+  liveCommit_->reset();
 }
 
 
