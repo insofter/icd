@@ -148,7 +148,6 @@ void Cled::off() {
 
 CdbWriter::CdbWriter() {
 
-
   dataInsert_ = new sqlite3cc::stmt( *globalDataDb );
   dataUpdate_ = new sqlite3cc::stmt( *globalDataDb );
   dataSelect_ = new sqlite3cc::stmt( *globalDataDb );
@@ -178,6 +177,7 @@ CdbWriter::CdbWriter() {
   liveClose_ = new sqlite3cc::stmt( *globalLiveDb );
   liveBegin_ = new sqlite3cc::stmt( *globalLiveDb );
   liveCommit_ = new sqlite3cc::stmt( *globalLiveDb );
+  liveDelete_ = new sqlite3cc::stmt( *globalLiveDb );
 
   liveInsert_->prepare( "INSERT INTO flow (counter_id, dtm, cnt, dark_time, work_time, test, flags)"
             " VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)" );

@@ -94,6 +94,10 @@ MIN:
   globalLiveDb->open( std::getenv("ICD_LIVE_DB") );
   globalLiveDb->busy_timeout( db_timeout );
 
+  globalDataDb=new sqlite3cc::conn();
+  globalDataDb->open( std::getenv("ICD_DATA_DB") );
+  globalDataDb->busy_timeout( db_timeout );
+
 
   CcountersFarm farm;
   Ctime start;

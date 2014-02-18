@@ -43,27 +43,25 @@ void CcountersFarm::addCounter( Ccounter* counter ) {
 int CcountersFarm::run( Ctime period ) {
   CdbWriter writer;
   Ctime current;
-  CcounterVal cv[ counters_.size() ];
+  std::vector< CcounterVal > cv( counters_.size() );
 
   std::cout << "New aggr: " << ctime( &current.sec ) << std::endl;
 
   Ctime wait( 0, 200*1000 );//200 ms == 200 000 us == 0,2 s
   Ctime nextTest;
   int nextTestI=0;
+  Ctime nextData;
+  nextData.sec+=90;
+  Ctime nextLive;
 
-
-  while( 1==1 ) {
+  while( 1==1 ) {// main loop
 
     reader_.pollEvents( wait );
 
     Ctime newtime;
-    Ctime nextData;
-    nextData.sec+=90;
-    Ctime nextLive;
     newtime.usec=0;
     newtime.sec/=period.sec;
     newtime.sec*=period.sec;
-
 
     if( nextTest < Ctime() ) {//testing loop TODO: zmienic całkiem testy
       counters_[nextTestI]->test();
@@ -85,6 +83,7 @@ int CcountersFarm::run( Ctime period ) {
     }//reading loop
 
     if( current < newtime ) {//new aggr
+//      std::cout << "try newaggr" << std::endl;
       if( writer.liveBeginTransaction() ) {
 
         if( writer.dataBeginTransaction() ) {
@@ -101,15 +100,16 @@ int CcountersFarm::run( Ctime period ) {
         writer.liveCommitTransaction();
       }
     } else if( nextData < Ctime() ) {//end new aggr -- data sync
+//      std::cout << "try data write" << std::endl;
       if( writer.dataBeginTransaction() ) {
         for( int i=0; i< counters_.size(); ++i ) {
           writer.dataWrite( cv[i].id, current.sec, cv[i].val, cv[i].dark, cv[i].work, cv[i].test, 3 );
         }
         writer.dataCommitTransaction();
       }
-      nextData.setCurrentTime();
       nextData.sec+=180;//3 min between syncs
     } else if( nextLive < Ctime() ) {//end data sync -- live sync
+//      std::cout << "try live write" << std::endl;
       if( writer.liveBeginTransaction() ) {
         for( int i=0; i< counters_.size(); ++i ) {
           writer.liveWrite( cv[i].id, current.sec, cv[i].val, cv[i].dark, cv[i].work, cv[i].test, 3 );
