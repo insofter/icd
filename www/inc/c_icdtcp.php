@@ -296,6 +296,9 @@ class c_icdtcp {
     $sql="COMMIT TRANSACTION";
     $ans=$this->configDb->query($sql);
   }
+  function liczniki_restart() {
+    exec( 'sudo icd-counters-daemon-restart' );
+  }
 
   function ledy_pobierz() {
 

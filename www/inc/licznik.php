@@ -37,6 +37,9 @@ if( isset( $_POST['sect'] ) ) {
   $icdtcp->ledy_ustaw( $ledy );
   $info='<h4>Zmodyfikowano konfigurację</h4>';
 
+} else if( isset( $_POST['restart'] ) && $_POST['restart']=='Restart modułu liczącego' ) {
+  $icdtcp->liczniki_restart();
+  $info='<h4>Uruchomiono ponownie moduł liczący</h4>';
 } else {
   $info='';
 }
@@ -47,8 +50,14 @@ $ledy=$icdtcp->ledy_pobierz();
 
 
 $tresc='<div id="tresc">
-  <h3>Ustawienia licznika &nbsp; &nbsp; &nbsp; 
-  <input type="button" value="Test fotokomórek" onclick="window.open('."'".'popup.php?typ=test'."'".')"></h3>
+  <h3>
+  <form action="./?strona=licznik" method="POST">
+  Ustawienia licznika &nbsp; &nbsp; &nbsp; 
+  <input type="button" value="Test fotokomórek" onclick="window.open('."'".'popup.php?typ=test'."'".')">
+  &nbsp; &nbsp;
+  <input type="submit" value="Restart modułu liczącego" name="restart">
+  </form>
+  </h3>
   '.$info;
 
 

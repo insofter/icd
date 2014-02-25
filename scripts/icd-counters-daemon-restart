@@ -1,0 +1,24 @@
+#!/bin/sh
+
+killall icd-counters-daemon
+
+kill $( ps | grep "[c]at /dev/itd" | awk '{print $1}' )
+
+rm -rf /tmp/itd0
+rm -rf /tmp/itd1
+rm -rf /tmp/itd2
+rm -rf /tmp/itd3
+
+sleep 1
+
+mknod /tmp/itd0 p # workaround because driver output (mknod .. c) is unbuffered 
+mknod /tmp/itd1 p # and can't work properly with poll() (mknod .. p works)
+mknod /tmp/itd2 p
+mknod /tmp/itd3 p
+
+cat /dev/itd0 >> /tmp/itd0 &
+cat /dev/itd1 >> /tmp/itd1 &
+cat /dev/itd2 >> /tmp/itd2 &
+cat /dev/itd3 >> /tmp/itd3 &
+
+icd-run-daemon -- icd-counters-daemon

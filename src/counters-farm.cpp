@@ -68,6 +68,7 @@ int CcountersFarm::run( Ctime period ) {
       Ctime now;
       std::cout << "Test (" << nextTestI << "): " << ctime( &now.sec ) << std::endl;
       ++nextTestI;
+      nextTest.sec+=5;
       if( nextTestI >= counters_.size() ) {
         nextTest.sec=newtime.sec+period.sec*(1.1+randVal()*0.8);
         nextTestI=0;
