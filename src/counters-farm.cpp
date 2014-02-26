@@ -117,8 +117,15 @@ int CcountersFarm::run( Ctime period ) {
         }
         writer.liveCommitTransaction();
       }
-      nextLive.sec+=2;
     }//end live sync
+
+    if( nextLive < Ctime() ) {//restart module
+      if( unlink( "/tmp/counters-reset" ) == 0 ) {
+        std::cout << "counters-daemon restart" << std::endl;
+        break;
+      }
+      nextLive.sec+=2;
+    }
 
   } // while( 1==1 )
 }

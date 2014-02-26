@@ -98,137 +98,140 @@ MIN:
   globalDataDb->open( std::getenv("ICD_DATA_DB") );
   globalDataDb->busy_timeout( db_timeout );
 
+  while( 1==1 ) {// main loop -------------------------------------------------------------------
 
-  CcountersFarm farm;
-  Ctime start;
-  Ctime period( (globalConfig->entry_long( "device", "aggr-period-mins" )*60), 0 );//time of aggregation
-  std::vector< std::string > devices;
+    CcountersFarm farm;
+    Ctime start;
+    Ctime period( (globalConfig->entry_long( "device", "aggr-period-mins" )*60), 0 );//time of aggregation
+    std::vector< std::string > devices;
 
-  std::vector< std::string > leds=globalConfig->list_like( "led" );
-  std::vector< int > leds_masters;
+    std::vector< std::string > leds=globalConfig->list_like( "led" );
+    std::vector< int > leds_masters;
 
-  for( int i=0; i< leds.size(); ++i ) {
-    leds_masters.push_back( globalConfig->entry_long( leds[i], "master-counter_id", true, -1 ) );
-  }
+    for( int i=0; i< leds.size(); ++i ) {
+      leds_masters.push_back( globalConfig->entry_long( leds[i], "master-counter_id", true, -1 ) );
+    }
 
-  std::vector< std::string > counters=globalConfig->list_like( "counter" );
-  for( int i=0; i< counters.size(); ++i ) {
-    Ccounter * counter=NULL;
-    if( globalConfig->entry_bool( counters[i], "enabled" ) ) {
+    std::vector< std::string > counters=globalConfig->list_like( "counter" );
+    for( int i=0; i< counters.size(); ++i ) {
+      Ccounter * counter=NULL;
+      if( globalConfig->entry_bool( counters[i], "enabled" ) ) {
 
-      int counter_id=globalConfig->entry_long( counters[i], "counter_id" );
+        int counter_id=globalConfig->entry_long( counters[i], "counter_id" );
 
-      std::string master=globalConfig->entry( counters[i], "master" );
+        std::string master=globalConfig->entry( counters[i], "master" );
 
-      int master_id=-1;//management of devices, and setting ids for them
-      for( int j=0; j<devices.size(); ++j ) {
-        if( devices[j].compare( master )==0 ) {
-          master_id=j;
-          break;
-        }
-      }
-      if( master_id==-1 ) {
-        master_id=devices.size();
-        devices.push_back( master );
-      }//management of devices, and setting ids for them
-
-      Ctime master_engage( 0, (globalConfig->entry_long( counters[i], "master-engage" )*1000) );
-      Ctime master_release( 0, (globalConfig->entry_long( counters[i], "master-release" )*1000) );
-
-      Econstants master_reversed=NORMAL;
-      if( globalConfig->entry_bool( counters[i], "master-reversed" ) ) {
-        master_reversed=REVERSE;
-      }
-
-      std::string slave_mode=globalConfig->entry( counters[i], "slave-mode" );
-
-      if( slave_mode.compare( "single" )==0 ) {
-        counter=new CcounterMono( counter_id, master_id , start, master_engage, master_release, master_reversed );
-        std::cout << "CcounterMono id=" << counter_id << ", master=" <<  master_id << std::endl;
-      } else {//multicounters
-
-        std::string slave=globalConfig->entry( counters[i], "slave" );
-
-        int slave_id=-1;//management of devices
+        int master_id=-1;//management of devices, and setting ids for them
         for( int j=0; j<devices.size(); ++j ) {
-          if( devices[j].compare( slave )==0 ) {
-            slave_id=j;
+          if( devices[j].compare( master )==0 ) {
+            master_id=j;
             break;
           }
         }
-        if( slave_id==-1 ) {
-          slave_id=devices.size();
-          devices.push_back( slave );
-        }//management of devices
+        if( master_id==-1 ) {
+          master_id=devices.size();
+          devices.push_back( master );
+        }//management of devices, and setting ids for them
 
-        Ctime slave_engage( 0, (globalConfig->entry_long( counters[i], "slave-engage" )*1000) );
+        Ctime master_engage( 0, (globalConfig->entry_long( counters[i], "master-engage" )*1000) );
+        Ctime master_release( 0, (globalConfig->entry_long( counters[i], "master-release" )*1000) );
 
-        Ctime slave_release( 0, (globalConfig->entry_long( counters[i], "slave-release" )*1000) );
-
-        Econstants slave_reversed=NORMAL;
-        if( globalConfig->entry_bool( counters[i], "slave-reversed" ) ) {
-          slave_reversed=REVERSE;
+        Econstants master_reversed=NORMAL;
+        if( globalConfig->entry_bool( counters[i], "master-reversed" ) ) {
+          master_reversed=REVERSE;
         }
 
-        if( slave_mode.compare( "thickness" )==0 ) {
+        std::string slave_mode=globalConfig->entry( counters[i], "slave-mode" );
 
-          counter=new CcounterThick( counter_id, start, 
-              master_id, master_engage, master_release, master_reversed,
-              slave_id, slave_engage, slave_release, slave_reversed );
-          std::cout << "CcounterThick id=" << counter_id << ", master=" <<  master_id << " slave=" << slave_id << std::endl;
+        if( slave_mode.compare( "single" )==0 ) {
+          counter=new CcounterMono( counter_id, master_id , start, master_engage, master_release, master_reversed );
+          std::cout << "CcounterMono id=" << counter_id << ", master=" <<  master_id << std::endl;
+        } else {//multicounters
 
-        } else if( slave_mode.compare( "nothick" )==0 ) {
+          std::string slave=globalConfig->entry( counters[i], "slave" );
 
-          if( slave_reversed==REVERSE ) {//in theory reversing second input should be enough
-            slave_reversed=NORMAL;
-          } else {
+          int slave_id=-1;//management of devices
+          for( int j=0; j<devices.size(); ++j ) {
+            if( devices[j].compare( slave )==0 ) {
+              slave_id=j;
+              break;
+            }
+          }
+          if( slave_id==-1 ) {
+            slave_id=devices.size();
+            devices.push_back( slave );
+          }//management of devices
+
+          Ctime slave_engage( 0, (globalConfig->entry_long( counters[i], "slave-engage" )*1000) );
+
+          Ctime slave_release( 0, (globalConfig->entry_long( counters[i], "slave-release" )*1000) );
+
+          Econstants slave_reversed=NORMAL;
+          if( globalConfig->entry_bool( counters[i], "slave-reversed" ) ) {
             slave_reversed=REVERSE;
           }
 
-          counter=new CcounterThick( counter_id, start, 
-              master_id, master_engage, master_release, master_reversed,
-              slave_id, slave_engage, slave_release, slave_reversed );
-          std::cout << "CcounterNoThick id=" << counter_id << ", master=" <<  master_id << " slave=" << slave_id << std::endl;
+          if( slave_mode.compare( "thickness" )==0 ) {
 
-        } else if( slave_mode.compare( "direction" )==0 ) {
-          //tromba!
-          //TODO:
+            counter=new CcounterThick( counter_id, start, 
+                master_id, master_engage, master_release, master_reversed,
+                slave_id, slave_engage, slave_release, slave_reversed );
+            std::cout << "CcounterThick id=" << counter_id << ", master=" <<  master_id << " slave=" << slave_id << std::endl;
+
+          } else if( slave_mode.compare( "nothick" )==0 ) {
+
+            if( slave_reversed==REVERSE ) {//in theory reversing second input should be enough
+              slave_reversed=NORMAL;
+            } else {
+              slave_reversed=REVERSE;
+            }
+
+            counter=new CcounterThick( counter_id, start, 
+                master_id, master_engage, master_release, master_reversed,
+                slave_id, slave_engage, slave_release, slave_reversed );
+            std::cout << "CcounterNoThick id=" << counter_id << ", master=" <<  master_id << " slave=" << slave_id << std::endl;
+
+          } else if( slave_mode.compare( "direction" )==0 ) {
+            //tromba!
+            //TODO:
+          }
         }
-      }
 
-      std::string stop=globalConfig->entry( counters[i], "stop" );
-      //TODO:
-      
+        std::string stop=globalConfig->entry( counters[i], "stop" );
+        //TODO:
 
-      for( int j=0; j<leds.size(); ++j ) {
-        if( leds_masters[j]==counter_id ) {
-          std::string path="/sys/devices/platform/gpio-itd.";
-          path+=leds[j].substr(3);
-          path+="/led_ctrl";
-          counter->addLed( new Cled( path ) );
+
+        for( int j=0; j<leds.size(); ++j ) {
+          if( leds_masters[j]==counter_id ) {
+            std::string path="/sys/devices/platform/gpio-itd.";
+            path+=leds[j].substr(3);
+            path+="/led_ctrl";
+            counter->addLed( new Cled( path ) );
+          }
         }
-      }
 
 
-      farm.addCounter( counter );
-    }// if enabled
-  }//for counters
-  for( int i=0; i< devices.size(); ++i ) {
-    farm.addDevice( devices[i], i );
-  }
+        farm.addCounter( counter );
+      }// if enabled
+    }//for counters
+    for( int i=0; i< devices.size(); ++i ) {
+      farm.addDevice( devices[i], i );
+    }
 
-  leds.clear();
-  leds_masters.clear();
-  devices.clear();
-  counters.clear();
-  /*
-     stop stop
-     stop-engage stop-engage
-     stop-release stop-release
-     stop-reversed stop-reversed
-     */
+    leds.clear();
+    leds_masters.clear();
+    devices.clear();
+    counters.clear();
+    /*
+       stop stop
+       stop-engage stop-engage
+       stop-release stop-release
+       stop-reversed stop-reversed
+       */
 
-  farm.run( period );
+    farm.run( period );
+
+  }//while ( 1==1 ) main loop -------------------------------------------------------------------
 
   return 0;
 }

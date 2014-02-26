@@ -297,7 +297,9 @@ class c_icdtcp {
     $ans=$this->configDb->query($sql);
   }
   function liczniki_restart() {
-    exec( 'sudo icd-counters-daemon-restart' );
+    $fp = fopen('/tmp/counters-reset', 'w');
+    fwrite($fp, date(DATE_RFC822) );
+    fclose($fp);
   }
 
   function ledy_pobierz() {
