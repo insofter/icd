@@ -314,7 +314,10 @@ void CdbWriter::liveCommitTransaction() {
 
 
 CdevicesReader::CdevicesReader(): pollfd_(NULL) {
-  0; //NOOP
+  for( int i=0; i<4; ++i ) {
+    testVal_[i]=-1;
+    testCross_[i]=0;
+  }
 }
 CdevicesReader::~CdevicesReader() {
   delete [] pollfd_;
@@ -324,9 +327,22 @@ CdevicesReader::~CdevicesReader() {
   }
 }
 
+int CdevicesReader::testVal( int id ) {
+  return testVal_[ testCross_[id] ];
+}
+
+void CdevicesReader::testRun() {
+  FILE * cmd_out=popen( "icd-test --format=raw" , "r" );
+  fscanf( cmd_out, "%i %i %i %i", testVal_, testVal_+1,  testVal_+2,  testVal_+3 );
+  pclose( cmd_out );
+}
+
 int CdevicesReader::addDevice( std::string dev, int id ) {
   int fd = open( dev.c_str(), O_RDONLY | O_NONBLOCK );
   std::cerr << "Opened '" << dev << "' as number " << id << std::endl;
+  
+  testCross_[id]=dev[8]-'0';
+
   if( fd!=-1 ) {
     devices_[fd]=id;
     if( pollfd_!=NULL ) {

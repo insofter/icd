@@ -47,13 +47,7 @@ void Ccounter::ledOff_() {
 }
 
 void Ccounter::test() {
-  char testDev[64];
-  char out[2];
-  sprintf( testDev, "/sys/devices/platform/gpio-itd.%i/test", masterId_ );
-  int fd=open( testDev, O_RDONLY );
-  read( fd, out, 2 );
-  close( fd );
-  test_=out[0]-'0';
+  test_=reader_->testVal( masterId_ );
 }
 
 CcounterMono::CcounterMono( int id, int master, const Ctime beginTime, const Ctime engage, const Ctime release, Econstants reverse ): 

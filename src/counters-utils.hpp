@@ -168,11 +168,18 @@ class CdevicesReader {
      */
     const Cevent getEvent( int devId, Econstants reverse=NORMAL );
 
+    int testVal( int id );
+
+    void testRun();
+
+
   private:
     char buf_[32];//10=unixtime + 1=space + 7usecs + 1=space + 1=event + 1=\n ( + 3=multiplexer )
     struct pollfd * pollfd_;
     std::map< /*id*/int, Cevent > events_;
     std::map< /*fd*/int, /*id*/int > devices_;
+    int testVal_[4];
+    int testCross_[4];
 
 };
 

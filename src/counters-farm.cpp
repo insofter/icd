@@ -49,7 +49,6 @@ int CcountersFarm::run( Ctime period ) {
 
   Ctime wait( 0, 200*1000 );//200 ms == 200 000 us == 0,2 s
   Ctime nextTest;
-  int nextTestI=0;
   Ctime nextData;
   nextData.sec+=90;
   Ctime nextLive;
@@ -63,17 +62,16 @@ int CcountersFarm::run( Ctime period ) {
     newtime.sec/=period.sec;
     newtime.sec*=period.sec;
 
-    if( nextTest < Ctime() ) {//testing loop TODO: zmienic całkiem testy
-      counters_[nextTestI]->test();
-      Ctime now;
-      std::cout << "Test (" << nextTestI << "): " << ctime( &now.sec ) << std::endl;
-      ++nextTestI;
-      nextTest.sec+=5;
-      if( nextTestI >= counters_.size() ) {
-        nextTest.sec=newtime.sec+period.sec*(1.1+randVal()*0.8);
-        nextTestI=0;
+    if( nextTest < Ctime() ) {//testing loop 
+      reader_.testRun();
+
+      for( int i=0; i<counters_.size(); ++i ) {
+        counters_[ i ]->test();
       }
-    }//testing loop
+      Ctime now;
+      std::cout << "Test: " << ctime( &now.sec ) << std::endl;
+      nextTest.sec=newtime.sec+period.sec*(1.1+randVal()*0.8);
+    }//testing 
 
     for( int i=0; i< counters_.size(); ++i ) {//reading loop
       if( current < newtime ) {//all records should be closed
