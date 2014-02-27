@@ -230,6 +230,7 @@ MIN:
        */
 
     farm.run( period );
+    std::cout << "end of farm.run( period );" << std::endl;
 
   }//while ( 1==1 ) main loop -------------------------------------------------------------------
 

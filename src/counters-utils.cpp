@@ -134,7 +134,9 @@ Cled::Cled( std::string dev ) {
   this->off();
 }
 Cled::~Cled() {
+  std::cout << "~Cled" << std::endl;
   close( fd_ );
+  std::cout << "~Cled ok" << std::endl;
 }
 
 void Cled::on() {
@@ -175,9 +177,9 @@ CdbWriter::CdbWriter() {
   liveUpdate_ = new sqlite3cc::stmt( *globalLiveDb );
   liveSelect_ = new sqlite3cc::stmt( *globalLiveDb );
   liveClose_ = new sqlite3cc::stmt( *globalLiveDb );
+  liveDelete_ = new sqlite3cc::stmt( *globalLiveDb );
   liveBegin_ = new sqlite3cc::stmt( *globalLiveDb );
   liveCommit_ = new sqlite3cc::stmt( *globalLiveDb );
-  liveDelete_ = new sqlite3cc::stmt( *globalLiveDb );
 
   liveInsert_->prepare( "INSERT INTO flow (counter_id, dtm, cnt, dark_time, work_time, test, flags)"
             " VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)" );
@@ -198,20 +200,22 @@ CdbWriter::CdbWriter() {
 }
 
 CdbWriter::~CdbWriter() {
-  delete [] liveInsert_;
-  delete [] liveUpdate_;
-  delete [] liveSelect_;
-  delete [] liveClose_;
-  delete [] liveDelete_;
-  delete [] liveBegin_;
-  delete [] liveCommit_;
+  std::cout << "~CdbWriter" << std::endl;
+  delete liveInsert_;
+  delete liveUpdate_;
+  delete liveSelect_;
+  delete liveClose_;
+  delete liveDelete_;
+  delete liveBegin_;
+  delete liveCommit_;
 
-  delete [] dataInsert_;
-  delete [] dataUpdate_;
-  delete [] dataSelect_;
-  delete [] dataClose_;
-  delete [] dataBegin_;
-  delete [] dataCommit_;
+  delete dataInsert_;
+  delete dataUpdate_;
+  delete dataSelect_;
+  delete dataClose_;
+  delete dataBegin_;
+  delete dataCommit_;
+  std::cout << "~CdbWriter ok" << std::endl;
 }
 
 
@@ -320,11 +324,13 @@ CdevicesReader::CdevicesReader(): pollfd_(NULL) {
   }
 }
 CdevicesReader::~CdevicesReader() {
+  std::cout << "~CdevicesReader" << std::endl;
   delete [] pollfd_;
 
   for( std::map< int, int >::iterator i=devices_.begin(); i!=devices_.end(); ++i ) {
     close( i->first );
   }
+  std::cout << "~CdevicesReader ok" << std::endl;
 }
 
 int CdevicesReader::testVal( int id ) {

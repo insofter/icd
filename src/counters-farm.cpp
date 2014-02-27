@@ -23,9 +23,11 @@ CcountersFarm::CcountersFarm() {
 
 
 CcountersFarm::~CcountersFarm() {
+  std::cout << "~CcountersFarm" << std::endl;
   for( int i=0; i< counters_.size(); ++i ) {
-    delete [] counters_[i];
+    delete counters_[i];
   }
+  std::cout << "~CcountersFarm ok" << std::endl;
 }
 
 
@@ -119,6 +121,12 @@ int CcountersFarm::run( Ctime period ) {
 
     if( nextLive < Ctime() ) {//restart module
       if( unlink( "/tmp/counters-reset" ) == 0 ) {
+        if( writer.dataBeginTransaction() ) {
+          for( int i=0; i< counters_.size(); ++i ) {
+            writer.dataWrite( cv[i].id, current.sec, cv[i].val, cv[i].dark, cv[i].work, cv[i].test, 3 );
+          }
+          writer.dataCommitTransaction();
+        }
         std::cout << "counters-daemon restart" << std::endl;
         break;
       }
